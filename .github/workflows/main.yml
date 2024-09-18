@@ -107,7 +107,7 @@ jobs:
     - name: Upload webpack build
       uses: actions/upload-artifact@v4
       with:
-        name: webpack-build
+        name: webpack
         path: |
           hawc/webpack-stats.json
           hawc/static/bundles/
@@ -149,7 +149,7 @@ jobs:
     - name: Download webpack build
       uses: actions/download-artifact@v4
       with:
-        name: webpack-build
+        name: webpack
         path: hawc
     - name: install hawc
       run: |
@@ -187,7 +187,7 @@ jobs:
     - name: Upload wheels
       uses: actions/upload-artifact@v4
       with:
-        name: hawc-wheels
+        name: wheel
         path: dist/*.whl
         if-no-files-found: ignore
         retention-days: 7
