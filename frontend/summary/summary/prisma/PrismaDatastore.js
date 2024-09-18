@@ -63,4 +63,4 @@ class PrismaDatastore {
     }
 }
 
-export default HeatmapDatastore;
+export default PrismaDatastore;
