@@ -3,7 +3,7 @@ interactions:
     body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=21813367
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
@@ -102,7 +102,8 @@ interactions:
         PubStatus="accepted"><Year>2011</Year><Month>8</Month><Day>3</Day></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>2011</Year><Month>8</Month><Day>5</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="pubmed"><Year>2011</Year><Month>8</Month><Day>5</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="medline"><Year>2012</Year><Month>3</Month><Day>28</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="medline"><Year>2012</Year><Month>3</Month><Day>28</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2011</Year><Month>8</Month><Day>3</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">21813367</ArticleId><ArticleId IdType="pmc">PMC3261988</ArticleId><ArticleId
         IdType="doi">10.1289/ehp.1103729</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Abdellatif
         AG, Preat V, Taper HS, Roberfroid M. The modulation of rat liver carcinogenesis
@@ -249,20 +250,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:42:36 GMT
+      - Thu, 05 Sep 2024 23:00:59 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B5F7AF2370105000033A87084F65C.1.1.m_3
+      - 322CCF3C14420015000045F44108F373.1.1.m_3
       NCBI-SID:
-      - 8C52A59423E00E19_DED2SID
+      - ACE6CFCCE0E5D50D_6452SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=8C52A59423E00E19_DED2SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:42:36 GMT
+      - ncbi_sid=ACE6CFCCE0E5D50D_6452SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 23:00:59 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -270,7 +271,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '8'
+      - '5'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

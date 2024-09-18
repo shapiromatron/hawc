@@ -1,19 +1,19 @@
 interactions:
 - request:
-    body: db=pubmed&term=1998+Longstreth+health+risks+ozone+depletion&rettype=count
+    body: db=pubmed&retmode=xml&term=1998+Longstreth+health+risks+ozone+depletion&api_key=<omitted>&rettype=count
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '73'
+      - '130'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -34,28 +34,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:38:23 GMT
+      - Thu, 05 Sep 2024 22:58:27 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C45D975EA9B4500003CDBC746C8AB.1.1.m_1
+      - 939B82323C968185000039C206AC2588.1.1.m_1
       NCBI-SID:
-      - F27F52428E083B1C_165ASID
+      - 41AF0490C597F879_49EASID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=F27F52428E083B1C_165ASID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:38:24 GMT
+      - ncbi_sid=41AF0490C597F879_49EASID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:27 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '8'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -66,20 +66,22 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=5000&db=pubmed&api_key=<omitted>&term=1998+Longstreth+health+risks+ozone+depletion&retstart=0
+    body: db=pubmed&retmode=xml&term=1998+Longstreth+health+risks+ozone+depletion&api_key=<omitted>&retmax=5000&retstart=0
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '127'
+      - '139'
       Content-Type:
       - application/x-www-form-urlencoded
+      Cookie:
+      - ncbi_sid=41AF0490C597F879_49EASID
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -113,20 +115,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:38:23 GMT
+      - Thu, 05 Sep 2024 22:58:27 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C45D975EA9B4500003FDBCC115E8D.1.1.m_1
+      - D0BD9D8EE5AB4CE500004BEDB5F764C6.1.1.m_1
       NCBI-SID:
-      - E0CC325D244FD9D8_719ASID
+      - 41AF0490C597F879_49EASID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=E0CC325D244FD9D8_719ASID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:38:24 GMT
+      - ncbi_sid=41AF0490C597F879_49EASID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:28 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -134,7 +136,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '9'
+      - '7'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -148,7 +150,7 @@ interactions:
     body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=9894351
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -158,7 +160,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
@@ -256,20 +258,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:38:24 GMT
+      - Thu, 05 Sep 2024 22:58:28 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B5F7AF2370105000036A397FC1324.1.1.m_3
+      - 939B82323C96818500004DC209407AB6.1.1.m_3
       NCBI-SID:
-      - 91DC06B75302DCD0_2D14SID
+      - 0E4722958EBD8FC2_6412SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=91DC06B75302DCD0_2D14SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:38:25 GMT
+      - ncbi_sid=0E4722958EBD8FC2_6412SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:28 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -277,7 +279,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '8'
+      - '7'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -291,13 +293,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1200/recordsperpage/100.json
   response:
@@ -356,26 +358,26 @@ interactions:
         J; de Gruijl, FR; Kripke, ML; Abseck, S; Arnold, F; Slaper, HI; Velders, G;
         Takizawa, Y; van der Leun, JC","noPDFAvailable":false,"tag_path_type":["category|project","category|project|usage","category|project|usage","category|project|usage","category|project|usage","category|project|usage","category|project|usage","category|project|usage|usage"],"isPeerReviewed":true,"code":"pd","isDeleted":false,"REDIRECT_DATA":{},"isPublic":true,"hasPublicDoc":false,"SOURCE":"Journal
         of Photochemistry and Photobiology B: Biology 46:20-39. [Review]","wosid":"WOS:000077997100004","TITLE":"Health
-        risks","modified":"2023-12-05T14:29:19Z","PMID":9894351,"keywords":["chlorofluorocarbons;
+        risks","modified":"2024-06-26T19:35:12Z","PMID":9894351,"keywords":["chlorofluorocarbons;
         health risks; ozone-depleting substances; ultraviolet-B radiation; skin cancer;
         cataract; photoaging;"],"journalTitle":"Journal of Photochemistry and Photobiology
-        B: Biology","_version_":1784452546464579585}],"isValid":true,"message":"Success","error":""} '
+        B: Biology","_version_":1802953569344684032}],"isValid":true,"message":"Success","error":""} '
     headers:
       Connection:
       - Keep-Alive
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Tue, 20 Feb 2024 16:38:26 GMT
+      - Thu, 05 Sep 2024 22:58:28 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      - Apache/2.4.62 (Win64) OpenSSL/3.1.6 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14825872; Expires=Wed, 21 Feb 2024 16:38:26 GMT; Path=/; HttpOnly
-      - CFTOKEN=90600565; Expires=Wed, 21 Feb 2024 16:38:26 GMT; Path=/; HttpOnly
-      - JSESSIONID=ADBB69646258CE9F18EA8FFF2F44B9C3.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F20%2011%3A38%3A26; Path=/
+      - CFID=35158063; Expires=Fri, 06 Sep 2024 22:58:28 GMT; Path=/; HttpOnly
+      - CFTOKEN=42037379; Expires=Fri, 06 Sep 2024 22:58:28 GMT; Path=/; HttpOnly
+      - JSESSIONID=B5BCB736D35010A322735BE977E1355D.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F09%2F05%2018%3A58%3A28; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:

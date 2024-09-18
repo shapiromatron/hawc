@@ -769,3 +769,56 @@ class BulkMergeConflictsForm(forms.Form):
         helper = BaseFormHelper(self)
         helper.form_tag = False
         return helper
+
+
+class VennForm(forms.Form):
+    tag1 = forms.ModelChoiceField(
+        queryset=models.ReferenceFilterTag.objects.all(), help_text="Select tag", required=True
+    )
+    tag2 = forms.ModelChoiceField(
+        queryset=models.ReferenceFilterTag.objects.all(), help_text="Select tag", required=True
+    )
+    tag3 = forms.ModelChoiceField(
+        queryset=models.ReferenceFilterTag.objects.all(), help_text="Select tag", required=False
+    )
+    tag4 = forms.ModelChoiceField(
+        queryset=models.ReferenceFilterTag.objects.all(), help_text="Select tag", required=False
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop("assessment")
+        tags = kwargs.pop("tags")
+        super().__init__(*args, **kwargs)
+        self.fields["tag1"].empty_label = None
+        self.fields["tag2"].empty_label = None
+        for field in ("tag1", "tag2", "tag3", "tag4"):
+            self.fields[field].queryset = tags
+            self.fields[field].label_from_instance = lambda tag: tag.get_nested_name()
+
+    @property
+    def helper(self):
+        inputs = {"form_actions": [cfl.Submit("Submit", "Submit")]}
+        helper = BaseFormHelper(self, **inputs)
+        helper.add_row("tag1", 4, "col-md-3")
+        helper.form_method = "GET"
+        helper.attrs.update(**{"hx-get": ".", "hx-trigger": "submit"})
+        helper.form_class = "border edit-form-background p-3 pad-form"
+        return helper
+
+    def get_venn(self):
+        sets = []
+        for field in ("tag1", "tag2", "tag3", "tag4"):
+            tag = self.cleaned_data[field]
+            if tag is not None:
+                sets.append(
+                    dict(
+                        name=tag.name,
+                        id=tag.id,
+                        values=list(
+                            models.Reference.objects.filter(
+                                tags__path__startswith=tag.path
+                            ).values_list("id", flat=True)
+                        ),
+                    )
+                )
+        return sets

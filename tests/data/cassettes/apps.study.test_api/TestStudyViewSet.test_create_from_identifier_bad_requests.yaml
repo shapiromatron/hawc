@@ -3,7 +3,7 @@ interactions:
     body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=-1
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
@@ -80,20 +80,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:39:31 GMT
+      - Thu, 05 Sep 2024 22:58:41 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C45D975EA9B45000044DD2D1F8057.1.1.m_3
+      - 939B82323C968185000032C2363F3060.1.1.m_3
       NCBI-SID:
-      - D5006DD16EC0C4BD_8C9CSID
+      - 94137365B52E1C89_F06ASID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=D5006DD16EC0C4BD_8C9CSID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:32 GMT
+      - ncbi_sid=94137365B52E1C89_F06ASID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:41 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:

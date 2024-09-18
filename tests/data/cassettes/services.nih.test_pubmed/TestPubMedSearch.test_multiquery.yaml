@@ -1,19 +1,19 @@
 interactions:
 - request:
-    body: db=pubmed&term=science%5Bjournal%5D+AND+breast+cancer+AND+2008%5Bpdat%5D&rettype=count
+    body: db=pubmed&retmode=xml&term=science%5Bjournal%5D+AND+breast+cancer+AND+2008%5Bpdat%5D&api_key=<omitted>&rettype=count
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '86'
+      - '143'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -34,28 +34,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:42:26 GMT
+      - Thu, 05 Sep 2024 23:00:56 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C45D975EA9B4500003AE168CFEB62.1.1.m_1
+      - 322CCF3C1442001500002EF43B2A11DB.1.1.m_1
       NCBI-SID:
-      - 474B7DE2803148B6_950ASID
+      - 1E550576D06CBB31_F7FFSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=474B7DE2803148B6_950ASID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:42:27 GMT
+      - ncbi_sid=1E550576D06CBB31_F7FFSID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 23:00:56 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '7'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -66,20 +66,22 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=3&db=pubmed&api_key=<omitted>&term=science%5Bjournal%5D+AND+breast+cancer+AND+2008%5Bpdat%5D&retstart=0
+    body: db=pubmed&retmode=xml&term=science%5Bjournal%5D+AND+breast+cancer+AND+2008%5Bpdat%5D&api_key=<omitted>&retmax=3&retstart=0
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '137'
+      - '149'
       Content-Type:
       - application/x-www-form-urlencoded
+      Cookie:
+      - ncbi_sid=1E550576D06CBB31_F7FFSID
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -121,20 +123,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:42:27 GMT
+      - Thu, 05 Sep 2024 23:00:55 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C45D975EA9B4500005AE16EDD74E0.1.1.m_1
+      - D0BD9D8EE5AB4CE5000057EF6BD70670.1.1.m_1
       NCBI-SID:
-      - DAA65AF454EDDA51_AC6ASID
+      - 1E550576D06CBB31_F7FFSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=DAA65AF454EDDA51_AC6ASID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:42:28 GMT
+      - ncbi_sid=1E550576D06CBB31_F7FFSID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 23:00:56 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -142,7 +144,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '9'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -153,20 +155,22 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=3&db=pubmed&api_key=<omitted>&term=science%5Bjournal%5D+AND+breast+cancer+AND+2008%5Bpdat%5D&retstart=3
+    body: db=pubmed&retmode=xml&term=science%5Bjournal%5D+AND+breast+cancer+AND+2008%5Bpdat%5D&api_key=<omitted>&retmax=3&retstart=3
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '137'
+      - '149'
       Content-Type:
       - application/x-www-form-urlencoded
+      Cookie:
+      - ncbi_sid=1E550576D06CBB31_F7FFSID
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -208,20 +212,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:42:28 GMT
+      - Thu, 05 Sep 2024 23:00:56 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD9F070703C0B500005BDBEA2F66E4.1.1.m_1
+      - 322CCF3C14420015000038F43C44BDA9.1.1.m_1
       NCBI-SID:
-      - 399ADD438DF83B3C_8D25SID
+      - 1E550576D06CBB31_F7FFSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=399ADD438DF83B3C_8D25SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:42:29 GMT
+      - ncbi_sid=1E550576D06CBB31_F7FFSID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 23:00:56 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -229,7 +233,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '8'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

@@ -3,23 +3,39 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Type:
-      - application/json
       User-Agent:
-      - python-requests/2.32.3
+      - hawc
       x-api-key:
       - <omitted>
     method: GET
     uri: https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/DTXSID7020970
   response:
     body:
-      string: "{\n  \"id\" : \"1630792\",\n  \"inchikey\" : \"XITQUSLLOSKDTB-UHFFFAOYSA-N\",\n
-        \ \"wikipediaArticle\" : \"Nitrofen\",\n  \"cpdataCount\" : null,\n  \"dtxsid\"
+      string: "{\n  \"id\" : \"1630792\",\n  \"msReadySmiles\" : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n
+        \ \"irisLink\" : null,\n  \"pprtvLink\" : \"Nitrofentechnicalgrade\",\n  \"descriptorStringTsv\"
+        : \"0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t1\\t1\\t1\\t0\\t0\\t1\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\",\n
+        \ \"isMarkush\" : false,\n  \"cpdataCount\" : null,\n  \"wikipediaArticle\"
+        : \"Nitrofen\",\n  \"inchikey\" : \"XITQUSLLOSKDTB-UHFFFAOYSA-N\",\n  \"nhanes\"
+        : \"Y\",\n  \"toxvalData\" : \"Y\",\n  \"waterSolubilityTest\" : 1.86209E-6,\n
+        \ \"waterSolubilityOpera\" : 3.53106E-6,\n  \"viscosityCpCpTestPred\" : null,\n
+        \ \"vaporPressureMmhgTestPred\" : 4.48745E-7,\n  \"vaporPressureMmhgOperaPred\"
+        : 1.71599E-6,\n  \"thermalConductivity\" : 133.645,\n  \"tetrahymenaPyriformis\"
+        : 3.22107E-6,\n  \"surfaceTension\" : null,\n  \"soilAdsorptionCoefficient\"
+        : 10030.7,\n  \"oralRatLd50Mol\" : 0.00961612,\n  \"operaKmDaysOperaPred\"
+        : 7.23919,\n  \"octanolWaterPartition\" : 4.6398,\n  \"octanolAirPartitionCoeff\"
+        : 8.61388,\n  \"meltingPointDegcTestPred\" : 99.224,\n  \"meltingPointDegcOperaPred\"
+        : 70.1221,\n  \"hrFatheadMinnow\" : 1.06905E-6,\n  \"hrDiphniaLc50\" : 1.63682E-6,\n
+        \ \"henrysLawAtm\" : 6.79835E-5,\n  \"flashPointDegcTestPred\" : 184.658,\n
+        \ \"devtoxTestPred\" : 0.697,\n  \"density\" : 1.452,\n  \"boilingPointDegcTestPred\"
+        : 359.215,\n  \"boilingPointDegcOperaPred\" : 358.785,\n  \"biodegradationHalfLifeDays\"
+        : 3.71673,\n  \"bioconcentrationFactorTestPred\" : 899.498,\n  \"bioconcentrationFactorOperaPred\"
+        : 739.33,\n  \"atmosphericHydroxylationRate\" : 2.58539E-12,\n  \"amesMutagenicityTestPred\"
+        : 0.751,\n  \"pkaaOperaPred\" : 8.27,\n  \"pkabOperaPred\" : null,\n  \"dtxsid\"
         : \"DTXSID7020970\",\n  \"dtxcid\" : \"DTXCID30970\",\n  \"casrn\" : \"1836-75-5\",\n
         \ \"compoundId\" : 970,\n  \"genericSubstanceId\" : 20970,\n  \"preferredName\"
         : \"Nitrofen\",\n  \"activeAssays\" : 122,\n  \"molFormula\" : \"C12H7Cl2NO3\",\n
@@ -34,27 +50,8 @@ interactions:
         : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n  \"inchiString\" :
         \"InChI=1S/C12H7Cl2NO3/c13-8-1-6-12(11(14)7-8)18-10-4-2-9(3-5-10)15(16)17/h1-7H\\n\",\n
         \ \"averageMass\" : 284.09,\n  \"qcNotes\" : null,\n  \"qsarReadySmiles\"
-        : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n  \"msReadySmiles\"
-        : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n  \"irisLink\" : null,\n
-        \ \"pprtvLink\" : \"Nitrofentechnicalgrade\",\n  \"descriptorStringTsv\" :
-        \"0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t1\\t1\\t1\\t0\\t0\\t1\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\",\n
-        \ \"isMarkush\" : false,\n  \"expocatMedianPrediction\" : \"2.23E-07\",\n
-        \ \"expocat\" : \"Y\",\n  \"nhanes\" : \"Y\",\n  \"toxvalData\" : \"Y\",\n
-        \ \"waterSolubilityTest\" : 1.86209E-6,\n  \"waterSolubilityOpera\" : 3.53106E-6,\n
-        \ \"viscosityCpCpTestPred\" : null,\n  \"vaporPressureMmhgTestPred\" : 4.48745E-7,\n
-        \ \"vaporPressureMmhgOperaPred\" : 1.71599E-6,\n  \"thermalConductivity\"
-        : 133.645,\n  \"tetrahymenaPyriformis\" : 3.22107E-6,\n  \"surfaceTension\"
-        : null,\n  \"soilAdsorptionCoefficient\" : 10030.7,\n  \"oralRatLd50Mol\"
-        : 0.00961612,\n  \"operaKmDaysOperaPred\" : 7.23919,\n  \"octanolWaterPartition\"
-        : 4.6398,\n  \"octanolAirPartitionCoeff\" : 8.61388,\n  \"meltingPointDegcTestPred\"
-        : 99.224,\n  \"meltingPointDegcOperaPred\" : 70.1221,\n  \"hrFatheadMinnow\"
-        : 1.06905E-6,\n  \"hrDiphniaLc50\" : 1.63682E-6,\n  \"henrysLawAtm\" : 6.79835E-5,\n
-        \ \"flashPointDegcTestPred\" : 184.658,\n  \"devtoxTestPred\" : 0.697,\n  \"density\"
-        : 1.452,\n  \"boilingPointDegcTestPred\" : 359.215,\n  \"boilingPointDegcOperaPred\"
-        : 358.785,\n  \"biodegradationHalfLifeDays\" : 3.71673,\n  \"bioconcentrationFactorTestPred\"
-        : 899.498,\n  \"bioconcentrationFactorOperaPred\" : 739.33,\n  \"atmosphericHydroxylationRate\"
-        : 2.58539E-12,\n  \"amesMutagenicityTestPred\" : 0.751,\n  \"pkaaOperaPred\"
-        : 8.27,\n  \"pkabOperaPred\" : null\n}"
+        : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n  \"expocatMedianPrediction\"
+        : \"2.23E-07\",\n  \"expocat\" : \"Y\"\n}"
     headers:
       Cache-Control:
       - max-age=0, must-revalidate, no-transform
@@ -63,7 +60,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Tue, 03 Sep 2024 20:50:09 GMT
+      - Thu, 05 Sep 2024 23:00:48 GMT
       Strict-Transport-Security:
       - max-age=31536000
       Transfer-Encoding:
@@ -71,9 +68,9 @@ interactions:
       Vary:
       - Accept-Encoding
       Via:
-      - 1.1 baddfcb4f2a6876b4fcc03bcd62427ee.cloudfront.net (CloudFront)
+      - 1.1 841dfa6074cf4b3b0718988f088a4ac2.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - GmKljHWjjcsP2oEPYAWTd9xPiBMwA6fB5WwDm888zG-9EzVq_NsGmQ==
+      - cKB6pb7iIrw_ALhD-1OWz4kofsgGCdNDfvjVQZFCr5ySpWztDc1fHw==
       X-Amz-Cf-Pop:
       - IAD89-C1
       X-Cache:
@@ -83,7 +80,7 @@ interactions:
       X-Frame-Options:
       - DENY
       X-Vcap-Request-Id:
-      - 16ee5272-af5e-4eb5-73e6-d7f5e6f42bbc
+      - c8208b1b-c47e-4d6b-480d-c87b7cebd89e
       X-Xss-Protection:
       - 1; mode=block
     status:

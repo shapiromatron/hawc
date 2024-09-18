@@ -15,7 +15,7 @@ from django.views.generic import TemplateView
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig, tryParseInt
+from ..common.helper import WebappConfig, try_parse_list_ints, tryParseInt
 from ..common.htmx import HtmxView, HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCopyForm,
@@ -692,7 +692,7 @@ def _get_viz_app_startup(view, context, search=None) -> WebappConfig:
 
 class SearchTagsVisualization(BaseDetail):
     model = models.Search
-    template_name = "lit/reference_visual.html"
+    template_name = "lit/reference_search_visual.html"
 
     def get_object(self, **kwargs):
         obj = get_object_or_404(
@@ -1016,7 +1016,32 @@ class RefVisualization(BaseDetail):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(2, lit_overview_breadcrumb(self.assessment))
+        self.set_venn_data(context)
         return context
+
+    def set_venn_data(self, context: dict):
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        form = forms.VennForm(
+            assessment=self.assessment,
+            tags=tags,
+            data=self.request.GET if self.request.GET else None,
+            initial=dict(tag1=tags[0], tag2=tags[1]),
+        )
+        context.update(
+            venn=dict(
+                form=form,
+                app=WebappConfig(
+                    app="litStartup",
+                    page="startupVenn",
+                    data={
+                        "sets": form.get_venn() if form.is_valid() else [],
+                        "csrf": get_token(self.request),
+                        "url": reverse("lit:interactive", args=(self.assessment.id,))
+                        + "?action=venn_reference_list",
+                    },
+                ).model_dump(),
+            )
+        )
 
     def get_app_config(self, context) -> WebappConfig:
         return _get_viz_app_startup(self, context)
@@ -1208,3 +1233,20 @@ class WorkflowViewSet(HtmxViewSet):
         form = forms.WorkflowForm(data=None, instance=request.item.object)
         context = self.get_context_data(form=form)
         return render(request, self.form_fragment, context)
+
+
+class AssessmentInteractive(HtmxView):
+    actions = {"venn_reference_list"}
+
+    def dispatch(self, request, *args, **kwargs):
+        self.assessment = get_object_or_404(Assessment, pk=kwargs.get("pk"))
+        if not self.assessment.user_can_view_object(request.user):
+            raise PermissionDenied()
+        return super().dispatch(request, *args, **kwargs)
+
+    def venn_reference_list(self, request, *args, **kwargs):
+        ids = try_parse_list_ints(request.POST.get("ids"))
+        context = {
+            "qs": models.Reference.objects.assessment_qs(self.assessment.id).filter(id__in=ids)
+        }
+        return render(request, "lit/components/venn_reference_list.html", context=context)
