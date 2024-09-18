@@ -64,7 +64,7 @@ class SummaryClient(BaseClient):
         url = f"{self.session.root_url}/summary/api/visual/{visual_id}/"
         self.session.delete(url)
 
-    def get_visual(self, visual_id: int):
+    def get_visual(self, visual_id: int) -> dict:
         """Get a visual.
 
         Args:
