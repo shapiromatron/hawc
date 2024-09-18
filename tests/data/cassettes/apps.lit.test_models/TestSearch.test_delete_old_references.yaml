@@ -1,19 +1,19 @@
 interactions:
 - request:
-    body: db=pubmed&term=burritos+school+lunch&rettype=count
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch&api_key=<omitted>&rettype=count
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '50'
+      - '107'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -34,28 +34,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:38:57 GMT
+      - Thu, 05 Sep 2024 22:58:29 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD9F070703C0B5000033D7EA671C30.1.1.m_1
+      - D0BD9D8EE5AB4CE5000033EDBB527152.1.1.m_1
       NCBI-SID:
-      - 87A71114DEFD6CE8_6C4CSID
+      - B8E55438C9289D7D_37C0SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=87A71114DEFD6CE8_6C4CSID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:38:57 GMT
+      - ncbi_sid=B8E55438C9289D7D_37C0SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:30 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '7'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -66,20 +66,22 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=5000&db=pubmed&api_key=<omitted>&term=burritos+school+lunch&retstart=0
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch&api_key=<omitted>&retmax=5000&retstart=0
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '104'
+      - '116'
       Content-Type:
       - application/x-www-form-urlencoded
+      Cookie:
+      - ncbi_sid=B8E55438C9289D7D_37C0SID
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -113,20 +115,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:38:58 GMT
+      - Thu, 05 Sep 2024 22:58:30 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD9F070703C0B500004DD7EF6FB251.1.1.m_1
+      - D0BD9D8EE5AB4CE500005CEDBC0E1203.1.1.m_1
       NCBI-SID:
-      - C35487E3517C3724_C3EASID
+      - B8E55438C9289D7D_37C0SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=C35487E3517C3724_C3EASID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:38:58 GMT
+      - ncbi_sid=B8E55438C9289D7D_37C0SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:30 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -134,7 +136,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '9'
+      - '7'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -148,7 +150,7 @@ interactions:
     body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=30473488&id=16865905&id=16410761
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -158,7 +160,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
@@ -392,20 +394,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:38:58 GMT
+      - Thu, 05 Sep 2024 22:58:30 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD9F070703C0B5000038D7F52E606B.1.1.m_3
+      - 322CCF3C14420015000035F2AC2B1E9C.1.1.m_3
       NCBI-SID:
-      - BB05BB3315682558_C20DSID
+      - 300B441EADF622FA_8955SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=BB05BB3315682558_C20DSID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:38:59 GMT
+      - ncbi_sid=300B441EADF622FA_8955SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:30 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -413,7 +415,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '8'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -424,20 +426,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: db=pubmed&term=burritos+school+lunch+gastrointestinal&rettype=count
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch+gastrointestinal&api_key=<omitted>&rettype=count
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '67'
+      - '124'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -458,28 +460,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:38:59 GMT
+      - Thu, 05 Sep 2024 22:58:30 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B5F7AF237010500005BA43423F1B6.1.1.m_1
+      - D0BD9D8EE5AB4CE5000029EDBDCD37B4.1.1.m_1
       NCBI-SID:
-      - 169B726B517229C0_3080SID
+      - C3B3B2B1D3C185E3_5CF2SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=169B726B517229C0_3080SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:00 GMT
+      - ncbi_sid=C3B3B2B1D3C185E3_5CF2SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:31 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -490,20 +492,22 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=5000&db=pubmed&api_key=<omitted>&term=burritos+school+lunch+gastrointestinal&retstart=0
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch+gastrointestinal&api_key=<omitted>&retmax=5000&retstart=0
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '121'
+      - '133'
       Content-Type:
       - application/x-www-form-urlencoded
+      Cookie:
+      - ncbi_sid=C3B3B2B1D3C185E3_5CF2SID
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -542,20 +546,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:39:00 GMT
+      - Thu, 05 Sep 2024 22:58:30 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B5F7AF2370105000043A437A514DC.1.1.m_1
+      - D0BD9D8EE5AB4CE5000046EDBE86B8C5.1.1.m_1
       NCBI-SID:
-      - 4139ECC1B9A67F57_4A87SID
+      - C3B3B2B1D3C185E3_5CF2SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=4139ECC1B9A67F57_4A87SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:00 GMT
+      - ncbi_sid=C3B3B2B1D3C185E3_5CF2SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:31 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -563,7 +567,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '9'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -574,20 +578,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: db=pubmed&term=burritos+school+lunch&rettype=count
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch&api_key=<omitted>&rettype=count
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '50'
+      - '107'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -608,28 +612,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:39:00 GMT
+      - Thu, 05 Sep 2024 22:58:30 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B5F7AF2370105000042A43C659EE4.1.1.m_1
+      - 939B82323C968185000045C2168FC330.1.1.m_1
       NCBI-SID:
-      - 27D2C43049868921_B192SID
+      - 15B43D2782165B93_7C65SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=27D2C43049868921_B192SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:01 GMT
+      - ncbi_sid=15B43D2782165B93_7C65SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:31 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -640,20 +644,22 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=5000&db=pubmed&api_key=<omitted>&term=burritos+school+lunch&retstart=0
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch&api_key=<omitted>&retmax=5000&retstart=0
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '104'
+      - '116'
       Content-Type:
       - application/x-www-form-urlencoded
+      Cookie:
+      - ncbi_sid=15B43D2782165B93_7C65SID
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -687,20 +693,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:39:01 GMT
+      - Thu, 05 Sep 2024 22:58:31 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD9F070703C0B500005ED80AFF9769.1.1.m_1
+      - D0BD9D8EE5AB4CE5000059EDC0CAA511.1.1.m_1
       NCBI-SID:
-      - 92ECC1224C8BC0BB_BB78SID
+      - 15B43D2782165B93_7C65SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=92ECC1224C8BC0BB_BB78SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:02 GMT
+      - ncbi_sid=15B43D2782165B93_7C65SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:32 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -708,7 +714,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '9'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -719,20 +725,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: db=pubmed&term=burritos+school+lunch+gastrointestinal&rettype=count
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch+gastrointestinal&api_key=<omitted>&rettype=count
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '67'
+      - '124'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -753,28 +759,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:39:02 GMT
+      - Thu, 05 Sep 2024 22:58:32 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD9F070703C0B5000032D811B2C15E.1.1.m_1
+      - 322CCF3C1442001500003EF2AE645173.1.1.m_1
       NCBI-SID:
-      - 1FDB41B5C81B6EA8_5067SID
+      - A9253BA780307A02_D181SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=1FDB41B5C81B6EA8_5067SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:03 GMT
+      - ncbi_sid=A9253BA780307A02_D181SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:32 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '7'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -785,20 +791,22 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=5000&db=pubmed&api_key=<omitted>&term=burritos+school+lunch+gastrointestinal&retstart=0
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch+gastrointestinal&api_key=<omitted>&retmax=5000&retstart=0
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '121'
+      - '133'
       Content-Type:
       - application/x-www-form-urlencoded
+      Cookie:
+      - ncbi_sid=A9253BA780307A02_D181SID
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -837,20 +845,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:39:03 GMT
+      - Thu, 05 Sep 2024 22:58:31 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD9F070703C0B500004DD819278E91.1.1.m_1
+      - 939B82323C968185000023C219B68CC4.1.1.m_1
       NCBI-SID:
-      - B234523888109D5E_0574SID
+      - A9253BA780307A02_D181SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=B234523888109D5E_0574SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:03 GMT
+      - ncbi_sid=A9253BA780307A02_D181SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:32 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -858,7 +866,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '9'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -869,20 +877,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: db=pubmed&term=burritos+school+lunch&rettype=count
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch&api_key=<omitted>&rettype=count
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '50'
+      - '107'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -903,28 +911,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:39:04 GMT
+      - Thu, 05 Sep 2024 22:58:32 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B5F7AF2370105000028A44D4F7856.1.1.m_1
+      - D0BD9D8EE5AB4CE5000062EDC4122E0F.1.1.m_1
       NCBI-SID:
-      - BFB68960AC49B8DB_E0A1SID
+      - 2A609DADABC548AF_7025SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=BFB68960AC49B8DB_E0A1SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:04 GMT
+      - ncbi_sid=2A609DADABC548AF_7025SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:32 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -935,20 +943,22 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=5000&db=pubmed&api_key=<omitted>&term=burritos+school+lunch&retstart=0
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch&api_key=<omitted>&retmax=5000&retstart=0
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '104'
+      - '116'
       Content-Type:
       - application/x-www-form-urlencoded
+      Cookie:
+      - ncbi_sid=2A609DADABC548AF_7025SID
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -982,20 +992,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:39:04 GMT
+      - Thu, 05 Sep 2024 22:58:32 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B5F7AF2370105000050A4533CE20C.1.1.m_1
+      - 939B82323C968185000026C21B2A37DF.1.1.m_1
       NCBI-SID:
-      - 29A290D8E76EE8AF_B7BCSID
+      - 2A609DADABC548AF_7025SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=29A290D8E76EE8AF_B7BCSID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:05 GMT
+      - ncbi_sid=2A609DADABC548AF_7025SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:33 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -1003,7 +1013,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '9'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -1014,20 +1024,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: db=pubmed&term=burritos+school+lunch+gastrointestinal&rettype=count
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch+gastrointestinal&api_key=<omitted>&rettype=count
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '67'
+      - '124'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -1048,28 +1058,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:39:05 GMT
+      - Thu, 05 Sep 2024 22:58:33 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B5F7AF2370105000032A459D39D51.1.1.m_1
+      - D0BD9D8EE5AB4CE500005BEDC63E7E55.1.1.m_1
       NCBI-SID:
-      - 655FF43B28EA75F1_F1D4SID
+      - 84D4B0398B7A00F6_85E4SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=655FF43B28EA75F1_F1D4SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:06 GMT
+      - ncbi_sid=84D4B0398B7A00F6_85E4SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:33 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -1080,20 +1090,22 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=5000&db=pubmed&api_key=<omitted>&term=burritos+school+lunch+gastrointestinal&retstart=0
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch+gastrointestinal&api_key=<omitted>&retmax=5000&retstart=0
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '121'
+      - '133'
       Content-Type:
       - application/x-www-form-urlencoded
+      Cookie:
+      - ncbi_sid=84D4B0398B7A00F6_85E4SID
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -1132,20 +1144,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:39:06 GMT
+      - Thu, 05 Sep 2024 22:58:33 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD9F070703C0B5000059D83396E4EB.1.1.m_1
+      - 939B82323C968185000027C21CC33287.1.1.m_1
       NCBI-SID:
-      - 652D48D111EDF1C3_7BB2SID
+      - 84D4B0398B7A00F6_85E4SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=652D48D111EDF1C3_7BB2SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:06 GMT
+      - ncbi_sid=84D4B0398B7A00F6_85E4SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:33 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -1153,7 +1165,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '9'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -1164,20 +1176,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: db=pubmed&term=burritos+school+lunch&rettype=count
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch&api_key=<omitted>&rettype=count
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '50'
+      - '107'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -1198,28 +1210,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:39:06 GMT
+      - Thu, 05 Sep 2024 22:58:34 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD9F070703C0B500002ED83A7E3F47.1.1.m_1
+      - D0BD9D8EE5AB4CE500004CEDC82368E4.1.1.m_1
       NCBI-SID:
-      - 61C9B65AFC3F41C0_AE78SID
+      - 2073714D1E638BE9_A19ESID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=61C9B65AFC3F41C0_AE78SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:07 GMT
+      - ncbi_sid=2073714D1E638BE9_A19ESID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:34 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -1230,20 +1242,22 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=5000&db=pubmed&api_key=<omitted>&term=burritos+school+lunch&retstart=0
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch&api_key=<omitted>&retmax=5000&retstart=0
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '104'
+      - '116'
       Content-Type:
       - application/x-www-form-urlencoded
+      Cookie:
+      - ncbi_sid=2073714D1E638BE9_A19ESID
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -1277,20 +1291,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:39:07 GMT
+      - Thu, 05 Sep 2024 22:58:34 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B5F7AF2370105000048A46AE975FF.1.1.m_1
+      - 939B82323C96818500003FC21EB31C57.1.1.m_1
       NCBI-SID:
-      - DE24D1C88A1A2075_2539SID
+      - 2073714D1E638BE9_A19ESID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=DE24D1C88A1A2075_2539SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:08 GMT
+      - ncbi_sid=2073714D1E638BE9_A19ESID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:34 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -1298,7 +1312,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '9'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -1309,20 +1323,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: db=pubmed&term=burritos+school+lunch+gastrointestinal&rettype=count
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch+gastrointestinal&api_key=<omitted>&rettype=count
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '67'
+      - '124'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -1343,28 +1357,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:39:08 GMT
+      - Thu, 05 Sep 2024 22:58:33 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 939B5F7AF2370105000024A4726DA203.1.1.m_1
+      - 939B82323C96818500005AC220007674.1.1.m_1
       NCBI-SID:
-      - DC04C3F3C5A03931_8976SID
+      - 8B51FA0C7CC803C9_FE94SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=DC04C3F3C5A03931_8976SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:09 GMT
+      - ncbi_sid=8B51FA0C7CC803C9_FE94SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:34 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -1375,20 +1389,22 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=5000&db=pubmed&api_key=<omitted>&term=burritos+school+lunch+gastrointestinal&retstart=0
+    body: db=pubmed&retmode=xml&term=burritos+school+lunch+gastrointestinal&api_key=<omitted>&retmax=5000&retstart=0
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '121'
+      - '133'
       Content-Type:
       - application/x-www-form-urlencoded
+      Cookie:
+      - ncbi_sid=8B51FA0C7CC803C9_FE94SID
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
@@ -1427,20 +1443,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:39:09 GMT
+      - Thu, 05 Sep 2024 22:58:34 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C45D975EA9B45000047DCA4FB9600.1.1.m_1
+      - 939B82323C96818500005BC220D6E093.1.1.m_1
       NCBI-SID:
-      - CEC4899F7EECB3AE_AF6DSID
+      - 8B51FA0C7CC803C9_FE94SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=CEC4899F7EECB3AE_AF6DSID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:39:10 GMT
+      - ncbi_sid=8B51FA0C7CC803C9_FE94SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:34 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -1448,7 +1464,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '9'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

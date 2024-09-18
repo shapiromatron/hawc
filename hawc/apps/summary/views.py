@@ -435,6 +435,8 @@ class VisualizationCreate(BaseCreate):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
+        if context["visual_type"] == constants.VisualType.PRISMA:
+            context.update(prisma_data=models.Visual.get_prisma_data(self.assessment))
         return context
 
     def get_initial_visual(self, context) -> dict:
@@ -533,6 +535,8 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         context["rob_metrics"] = json.dumps(
             list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
         )
+        if context["visual_type"] == constants.VisualType.PRISMA:
+            context.update(prisma_data=models.Visual.get_prisma_data(self.assessment))
         context["initial_data"] = json.dumps(
             serializers.VisualSerializer().to_representation(self.object)
         )

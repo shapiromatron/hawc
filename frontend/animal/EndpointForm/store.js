@@ -2,6 +2,8 @@ import _ from "lodash";
 import {action, computed, observable} from "mobx";
 import h from "shared/utils/helpers";
 
+import {termUrlLookup} from "./constants";
+
 const fields = ["system", "organ", "effect", "effect_subtype", "name"];
 
 class EndpointFormStore {
@@ -34,7 +36,7 @@ class EndpointFormStore {
 
     @action.bound
     endpointNameLookup(val) {
-        const url = `/vocab/api/ehv/${val}/endpoint-name-lookup/`;
+        const url = termUrlLookup("id-lookup", this.config.vocabulary).replace(":id", val);
 
         if (!val) {
             return;

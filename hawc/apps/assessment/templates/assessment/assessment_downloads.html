@@ -40,6 +40,8 @@
         {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-data' text='Complete Export' help_text="Complete animal bioassay data export, where each row is a endpoint-group for all data extracted." %}
         {% url 'animal:api:assessment-endpoint-export' assessment.pk as the_url %}
         {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-summary' text='Endpoint Summary' help_text="Endpoint summary animal bioassay data, where each row is an extracted endpoint." %}
+        {% url 'animal:api:assessment-bmds-export' assessment.pk as the_url %}
+        {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-bmds' text='BMD Modeling' help_text="Data in a format ready for dose-response modeling. Includes just the dose-response data; you may need to combine with other non-quantitative metadata to determine what to model." %}
       </div>
     {% endif %}
 
@@ -99,5 +101,5 @@
 {% endblock %}
 
 {% block extrajs %}
-  {% include "assessment/fragments/downloads_select_js.html" with name_list="#references, #references-usertags, #rob-final, #rob-all, #animal-data, #animal-summary, #epi-data, #epi-study-design, #epimeta-data, #invitro-data, #eco-data, #udf-model-content, #udf-tag-content" %}
+  {% include "assessment/fragments/downloads_select_js.html" with name_list="#references, #references-usertags, #rob-final, #rob-all, #animal-data, #animal-summary, #animal-bmds, #epi-data, #epi-study-design, #epimeta-data, #invitro-data, #eco-data, #udf-model-content, #udf-tag-content" %}
 {% endblock extrajs %}
