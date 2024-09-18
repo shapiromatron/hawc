@@ -1,12 +1,13 @@
 name: ci-checks
 
-# run on all pull requests and on select branch pushes
 on:
   pull_request:
   push:
     branches:
       - main
-      - next
+  schedule:
+    - cron: '30 3 1 */1 *'  # At 03:30 on the 1st of every month
+  workflow_dispatch:
 
 jobs:
   backend:
@@ -75,11 +76,18 @@ jobs:
         coverage run -m pytest --record-mode=none
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
         coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+        coverage html -d coverage -i
     - name: loc
       run: |
         sudo apt-get install -y cloc
         echo "# Lines of code report" >> $GITHUB_STEP_SUMMARY
         make loc >> $GITHUB_STEP_SUMMARY
+    - name: Upload Coverage Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage
+        path: coverage
+        retention-days: 90
 
   frontend:
     name: frontend
@@ -106,7 +114,7 @@ jobs:
     - name: Upload webpack build
       uses: actions/upload-artifact@v4
       with:
-        name: webpack-build
+        name: webpack
         path: |
           hawc/webpack-stats.json
           hawc/static/bundles/
@@ -148,7 +156,7 @@ jobs:
     - name: Download webpack build
       uses: actions/download-artifact@v4
       with:
-        name: webpack-build
+        name: webpack
         path: hawc
     - name: install hawc
       run: |
@@ -186,7 +194,7 @@ jobs:
     - name: Upload wheels
       uses: actions/upload-artifact@v4
       with:
-        name: hawc-wheels
+        name: wheel
         path: dist/*.whl
         if-no-files-found: ignore
         retention-days: 7
