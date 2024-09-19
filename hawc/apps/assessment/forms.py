@@ -13,7 +13,11 @@ from django.utils import timezone
 
 from ...services.epa.dsstox import DssSubstance
 from ..common.auth.turnstile import Turnstile
-from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
+from ..common.autocomplete import (
+    AutocompleteMultipleChoiceField,
+    AutocompleteSelectMultipleWidget,
+    AutocompleteTextWidget,
+)
 from ..common.forms import (
     BaseFormHelper,
     QuillField,
@@ -24,7 +28,6 @@ from ..common.helper import new_window_a
 from ..common.widgets import DateCheckboxInput
 from ..myuser.autocomplete import UserAutocomplete
 from ..study.autocomplete import StudyAutocomplete
-from ..study.models import Study
 from . import autocomplete, constants, models
 
 
@@ -175,6 +178,12 @@ class AssessmentValueForm(forms.ModelForm):
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update current assessment value."
 
+    studies = AutocompleteMultipleChoiceField(
+        autocomplete_class=StudyAutocomplete,
+        help_text=models.AssessmentValue.studies.field.help_text,
+        required=False,
+    )
+
     class Meta:
         model = models.AssessmentValue
         exclude = ["assessment"]
@@ -210,7 +219,6 @@ class AssessmentValueForm(forms.ModelForm):
             "confidence": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="confidence"
             ),
-            "studies": AutocompleteSelectMultipleWidget(autocomplete_class=StudyAutocomplete),
         }
 
     def __init__(self, *args, **kwargs):
@@ -218,7 +226,7 @@ class AssessmentValueForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
-        self.fields["studies"].queryset = Study.objects.filter(assessment=self.instance.assessment)
+        self.fields["studies"].set_filters({"assessment_id": self.instance.assessment.id})
 
     def clean(self):
         cleaned_data = super().clean()
