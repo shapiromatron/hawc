@@ -1,5 +1,7 @@
+from django.contrib.postgres.aggregates import ArrayAgg
+
 from ..common.exports import Exporter, ModelExport
-from ..common.models import arr_m2m, sql_display, str_m2m
+from ..common.models import sql_display, str_m2m
 from . import constants
 
 
@@ -40,7 +42,7 @@ class AssessmentValueExport(ModelExport):
             "uncertainty_display": sql_display(
                 query_prefix + "uncertainty", constants.UncertaintyChoices
             ),
-            "studies__id": arr_m2m(query_prefix + "studies__id"),
+            "studies__id": ArrayAgg(query_prefix + "studies__id"),
             "studies__short_citation": str_m2m(query_prefix + "studies__short_citation"),
         }
 
