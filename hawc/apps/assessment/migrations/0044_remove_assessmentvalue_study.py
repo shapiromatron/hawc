@@ -5,7 +5,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("assessment", "0042_auto_20240904_1441"),
+        ("assessment", "0043_migrate_assessment_values"),
     ]
 
     operations = [

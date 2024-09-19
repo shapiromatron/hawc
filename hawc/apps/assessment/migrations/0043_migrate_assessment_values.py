@@ -7,21 +7,24 @@ def study_to_studies(apps, schema_editor):
     """Copies existing data in AssessmentValue.study to new field with M2M relationship."""
     AssessmentValue = apps.get_model("assessment", "AssessmentValue")
     for value in AssessmentValue.objects.all():
-        value.studies.add(value.study)
-        value.save()
+        if value.study:
+            value.studies.add(value.study)
+            value.save()
 
 
 def studies_to_study(apps, schema_editor):
     """Copies existing data in AssessmentValue.studies to study field when reversing."""
     AssessmentValue = apps.get_model("assessment", "AssessmentValue")
     for value in AssessmentValue.objects.all():
-        value.study = value.studies.first()
-        value.save()
+        study = value.studies.first()
+        if study:
+            value.study = value.studies.first()
+            value.save()
 
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("assessment", "0041_assessmentvalue_studies_and_more"),
+        ("assessment", "0042_assessmentvalue_studies_and_more"),
     ]
 
     operations = [migrations.RunPython(study_to_studies, studies_to_study)]

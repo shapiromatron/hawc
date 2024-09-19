@@ -5,8 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("assessment", "0040_dsstox_search_dsstox_dsstox_search_idx"),
-        ("study", "0012_study_eco"),
+        ("assessment", "0041_alter_assessment_vocabulary"),
     ]
 
     operations = [
