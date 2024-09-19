@@ -515,7 +515,7 @@ class EndpointGroupFlatCompleteExporter(Exporter):
 
 class EndpointGroupFlatComplete(FlatFileExporter):
     def handle_doses(self, df: pd.DataFrame) -> pd.DataFrame:
-        df1 = df.pivot(
+        df1 = df.query("`endpoint_group-id`.notna()").pivot(
             index="endpoint_group-id",
             columns="dose_group-dose_units_name",
             values="dose_group-dose",
