@@ -15,7 +15,7 @@ class PrismaDatastore {
         this.settings = settings;
         this.dataset = dataset;
         this.objects = settings;
-        this.setup_objects()
+        this.setup_objects();
     }
 
     initialize() {
@@ -41,8 +41,8 @@ class PrismaDatastore {
     }
 
     setup_objects() {
-        this.set_counts()
-        this.set_text()
+        this.set_counts();
+        this.set_text();
     }
 
     @computed get settingsHash() {

@@ -1,9 +1,9 @@
 import BaseVisual from "./BaseVisual";
-import PrismaStore from "summary/summaryForms/stores/PrismaStore";
+import PrismaDatastore from "./prisma/PrismaDatastore";
 
 const startupPrismaAppRender = function (el, settings, datastore, options) {
 
-    const store = new PrismaDataStore(settings, datastore, options);
+    const store = new PrismaDatastore(settings, datastore, options);
     try {
         if (store.withinRenderableBounds) {
             store.initialize();
