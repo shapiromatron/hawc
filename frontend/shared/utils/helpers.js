@@ -73,6 +73,15 @@ const helpers = {
             body: $(form).serialize(),
         };
     },
+    fetchPostForm(csrf, formData) {
+        formData.append("csrfmiddlewaretoken", csrf);
+        return {
+            credentials: "same-origin",
+            method: "POST",
+            headers: new Headers({"X-CSRFToken": csrf}),
+            body: formData,
+        };
+    },
     fetchBulk(csrf, obj, verb = "PATCH") {
         obj["csrfmiddlewaretoken"] = csrf;
         return {

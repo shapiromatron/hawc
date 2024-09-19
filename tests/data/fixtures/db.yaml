@@ -1691,7 +1691,8 @@
     pod_unit: mg/kg/day
     uncertainty: 30
     species_studied: rat
-    study: 7
+    studies:
+    - 7
     tumor_type: ''
     extrapolation_method: ''
     evidence: ''
@@ -1717,7 +1718,8 @@
     pod_unit: mg/kg/day
     uncertainty: 30
     species_studied: rat
-    study: 7
+    studies:
+    - 7
     tumor_type: ''
     extrapolation_method: ''
     evidence: ''
@@ -1747,7 +1749,8 @@
     pod_unit: ''
     uncertainty: null
     species_studied: rat
-    study: 7
+    studies:
+    - 7
     tumor_type: Hepatocellular adenomas and carcinomas
     extrapolation_method: Linear extrapolation from the POD ((BMCL10(HED)) associated
       with 10% extra cancer risk.
