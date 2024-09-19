@@ -64,7 +64,7 @@ class TestTaskDashboard:
         assert response.status_code == 200
         assertTemplateUsed(response, "mgmt/fragments/task_form.html")
 
-        response = c.post(url, data=dict(status=20))
+        response = c.post(url, data=dict(status=2))
         assert response.status_code == 200
         assertTemplateUsed(response, "mgmt/fragments/task_detail.html")
 

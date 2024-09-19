@@ -15,6 +15,13 @@ class TaskForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        status_names = [
+            (status.id, status.name)
+            for status in models.TaskStatus.objects.filter(
+                assessment=self.instance.study.assessment
+            )
+        ]
+        self.fields["status"].widget = forms.Select(choices=status_names)
         self.fields["owner"].queryset = self.instance.study.assessment.pms_and_team_users()
 
     @property

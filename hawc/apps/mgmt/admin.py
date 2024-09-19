@@ -14,9 +14,53 @@ class TaskAdmin(admin.ModelAdmin):
         "type",
         "owner",
         "status",
-        "open",
+        "notes",
         "due_date",
         "started",
         "completed",
     )
-    list_select_related = ("study", "owner")
+    list_select_related = ("study", "owner", "type", "status")
+
+
+@admin.register(models.TaskType)
+class TaskTypeAdmin(admin.ModelAdmin):
+    search_fields = ("assessment__name", "assessment__id", "name")
+    list_display = (
+        "assessment",
+        "name",
+        "order",
+        "description",
+        "created",
+        "last_updated",
+    )
+    list_select_related = ("assessment",)
+
+
+@admin.register(models.TaskStatus)
+class TaskStatusAdmin(admin.ModelAdmin):
+    search_fields = ("assessment__name", "assessment__id", "name")
+    list_display = (
+        "assessment",
+        "name",
+        "value",
+        "description",
+        "order",
+        "color",
+        "terminal_status",
+        "created",
+        "last_updated",
+    )
+
+
+@admin.register(models.TaskTrigger)
+class TaskTriggerAdmin(admin.ModelAdmin):
+    search_fields = ("task_type__name", "current_status__name", "event")
+    list_display = (
+        "task_type",
+        "current_status",
+        "next_status",
+        "event",
+        "created",
+        "last_updated",
+    )
+    list_select_related = ("task_type", "current_status", "next_status")
