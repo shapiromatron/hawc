@@ -5,6 +5,18 @@ from django.utils import timezone
 from .helper import FlatExport
 
 
+def clean_html(series: pd.Series):
+    """Vectorized method to clean html."""
+    return (
+        series.str.replace("\n", " ")
+        .str.replace("\r", "")
+        .str.replace("<br>", "\n")
+        .str.replace("&nbsp;", " ")
+        .str.replace(r"<[^>]*>", "", regex=True)  # strip tags
+        .str.replace(r"&(?:\w+|#\d+);", "", regex=True)  # strip entities
+    )
+
+
 class ModelExport:
     """Model level export module for use in Exporter class."""
 

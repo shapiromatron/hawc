@@ -8,10 +8,9 @@ from django.db.models.functions import Cast, Sqrt
 from django.db.models.lookups import Exact
 from scipy import stats
 
-from ..assessment.models import DoseUnits
 from ..bmd.models import Session
-from ..common.exports import Exporter, ModelExport
-from ..common.helper import FlatFileExporter, cleanHTML
+from ..common.exports import Exporter, ModelExport, clean_html
+from ..common.helper import FlatFileExporter
 from ..common.models import sql_display, sql_format, str_m2m
 from ..materialized.exports import get_final_score_df
 from ..study.exports import StudyExport
@@ -112,7 +111,7 @@ class ExperimentExport(ModelExport):
         # clean html text
         description = self.get_column_name("description")
         if description in df.columns:
-            df.loc[:, description] = df[description].apply(cleanHTML)
+            df.loc[:, description] = clean_html(df[description])
         return df
 
 
@@ -148,7 +147,7 @@ class AnimalGroupExport(ModelExport):
         # clean html text
         comments = self.get_column_name("comments")
         if comments in df.columns:
-            df.loc[:, comments] = df[comments].apply(cleanHTML)
+            df.loc[:, comments] = clean_html(df[comments])
         return df
 
 
@@ -185,7 +184,7 @@ class DosingRegimeExport(ModelExport):
         # clean html text
         description = self.get_column_name("description")
         if description in df.columns:
-            df.loc[:, description] = df[description].apply(cleanHTML)
+            df.loc[:, description] = clean_html(df[description])
         return df
 
 
@@ -259,11 +258,11 @@ class EndpointExport(ModelExport):
         # clean html text
         results_notes = self.get_column_name("results_notes")
         if results_notes in df.columns:
-            df.loc[:, results_notes] = df[results_notes].apply(cleanHTML)
+            df.loc[:, results_notes] = clean_html(df[results_notes])
 
         endpoint_notes = self.get_column_name("endpoint_notes")
-        if results_notes in df.columns:
-            df.loc[:, endpoint_notes] = df[endpoint_notes].apply(cleanHTML)
+        if endpoint_notes in df.columns:
+            df.loc[:, endpoint_notes] = clean_html(df[endpoint_notes])
 
         return df
 
@@ -507,46 +506,27 @@ class EndpointGroupFlatCompleteExporter(Exporter):
                 "endpoint", "", exclude=("expected_adversity_direction", "data_type_display")
             ),
             EndpointGroupExport("endpoint_group", "groups", exclude=("treatment_effect",)),
-            DoseGroupExport(
-                "dose_group", "animal_group__dosing_regime__doses", exclude=("dose_units_id",)
-            ),
         ]
 
 
 class EndpointGroupFlatComplete(FlatFileExporter):
-    def handle_doses(self, df: pd.DataFrame) -> pd.DataFrame:
-        # TODO this is really slow; maybe its the filtering to find matching dose group ids?
-        # solutions: ?, put the burden on SQL w/ Prefetch and Subquery (messy)
-        # long term solutions: group and dose group should be related
-        def _func(group_df: pd.DataFrame) -> pd.DataFrame:
-            # handle case with no dose data
-            if group_df["dose_group-id"].isna().all():
-                return group_df
-
-            # add dose data
-            group_df["doses-" + group_df["dose_group-dose_units_name"]] = group_df[
-                "dose_group-dose"
-            ].tolist()
-
-            # return a df that is dose agnostic
-            return group_df.drop_duplicates(
-                subset=group_df.columns[group_df.columns.str.endswith("-id")].difference(
-                    ["dose_group-id"]
-                )
-            )
-
-        return (
-            df.groupby("endpoint_group-id", group_keys=False, sort=False)
-            .apply(_func)
-            .drop(
-                columns=[
-                    "dose_group-id",
-                    "dose_group-dose_units_name",
-                    "dose_group-dose_group_id",
-                    "dose_group-dose",
-                ]
-            )
-            .reset_index(drop=True)
+    def handle_doses(self, df: pd.DataFrame, assessment_id: int) -> pd.DataFrame:
+        df2 = pd.DataFrame(
+            models.DoseGroup.objects.filter(
+                dose_regime__dosed_animals__experiment__study__assessment_id=assessment_id
+            ).values("dose_regime_id", "dose_units__name", "dose_group_id", "dose")
+        ).pivot(
+            index=["dose_regime_id", "dose_group_id"], columns="dose_units__name", values="dose"
+        )
+        df2.columns = [f"doses-{name}" for name in df2.columns]
+        # cast to Int64; needed all values in a dataframe are None for this field
+        df["dosing_regime-id"] = df["dosing_regime-id"].astype("Int64")
+        df["endpoint_group-dose_group_id"] = df["endpoint_group-dose_group_id"].astype("Int64")
+        return df.merge(
+            df2,
+            left_on=["dosing_regime-id", "endpoint_group-dose_group_id"],
+            right_index=True,
+            how="left",
         )
 
     def handle_stdev(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -600,20 +580,15 @@ class EndpointGroupFlatComplete(FlatFileExporter):
                 "animal_group__experiment__study",
                 "animal_group__dosing_regime",
             )
-            .prefetch_related("groups", "animal_group__dosing_regime__doses")
-            .order_by("id", "groups", "animal_group__dosing_regime__doses")
+            .prefetch_related("groups")
+            .order_by("id", "groups")
         )
-        df = df[
-            pd.isna(df["dose_group-id"])
-            | (df["endpoint_group-dose_group_id"] == df["dose_group-dose_group_id"])
-        ]
         if df.empty:
             return df
         if obj := self.queryset.first():
-            doses = DoseUnits.objects.get_animal_units_names(obj.assessment_id)
+            assessment_id = obj.assessment_id
+            df = self.handle_doses(df, assessment_id)
 
-            df = df.assign(**{f"doses-{d}": None for d in doses})
-            df = self.handle_doses(df)
         df["dosing_regime-dosed_animals"] = df["dosing_regime-dosed_animals"].astype(str)
         df = self.handle_stdev(df)
         df = self.handle_ci(df)
