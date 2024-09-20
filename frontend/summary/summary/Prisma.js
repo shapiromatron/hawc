@@ -80,8 +80,37 @@ PrismaComponent.propTypes = {
 
 
 class Prisma extends BaseVisual {
+    constructor(data, dataset) {
+        super(data);
+        this.dataset = {data: 1};
+    }
+
+    getDataset(callback) {
+        callback({dataset: this.dataset});
+    }
     displayAsPage($el, options) {
-        $el.html("Add Prisma diagram!");
+        var $plotDiv = $("<div>"),
+        callback = resp => {
+            if (resp.dataset || resp.error) {
+                // exit early if we got an error
+                if (resp.error) {
+                    HAWCUtils.addAlert(resp.error, $plotDiv);
+                    $el.empty().append($plotDiv);
+                    return;
+                }
+                try {
+                    $el.empty().append($plotDiv);
+                    startupPrismaAppRender($plotDiv[0], {}, {}, {});
+                } catch(err) {
+                    return handleVisualError(err, $plotDiv);
+                }
+
+            } else {
+                throw "Unknown status.";
+            }
+        };
+
+        this.getDataset(callback);
     }
 
     displayAsModal(options) {}

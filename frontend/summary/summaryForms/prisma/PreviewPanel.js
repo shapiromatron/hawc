@@ -25,7 +25,8 @@ class PreviewPanel extends Component {
         const { hasDataset, dataRefreshRequired, settingsHash } = this.props.store.base;
         let content;
         if (!hasDataset) {
-            content = <MissingData />;
+            // content = <MissingData />;
+            content = <div id={settingsHash}>{settingsHash}</div>;
         } else if (dataRefreshRequired) {
             content = <RefreshRequired />;
         } else {
