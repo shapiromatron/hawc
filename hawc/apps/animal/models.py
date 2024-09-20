@@ -236,6 +236,8 @@ class AnimalGroup(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    udf_content = GenericRelation(ModelUDFContent, related_query_name="animal_group")
+
     BREADCRUMB_PARENT = "experiment"
 
     def __str__(self):

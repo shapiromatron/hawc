@@ -498,6 +498,11 @@ class EndpointGroupFlatDataPivotExporter(Exporter):
                     "sex_symbol",
                 ),
             ),
+            ModelUDFContentExport(
+                "animal_group_udf_content",
+                "animal_group__udf_content",
+                include=("content",),
+            ),
             DosingRegimeExport(
                 "dosing_regime",
                 "animal_group__dosing_regime",
@@ -896,6 +901,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             columns=[
                 "endpoint_udf_content-content",
                 "study_udf_content-content",
+                "endpoint_udf_content-content",
                 "endpoint-observation_time",
                 "dose_group-id",
                 "dose_group-dose_group_id",
@@ -949,6 +955,11 @@ class EndpointFlatDataPivotExporter(Exporter):
                     "sex_display",
                     "sex_symbol",
                 ),
+            ),
+            ModelUDFContentExport(
+                "animal_group_udf_content",
+                "animal_group__udf_content",
+                include=("content",),
             ),
             DosingRegimeExport(
                 "dosing_regime",
@@ -1197,6 +1208,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         df = df.drop(
             columns=[
                 "endpoint_udf_content-content",
+                "animal_group_udf_content-content",
                 "study_udf_content-content",
                 "endpoint_group-stdev",
                 "percent lower ci",
