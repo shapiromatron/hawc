@@ -168,6 +168,21 @@ class TestTagsCopy:
 
 
 @pytest.mark.django_db
+class TestAssessmentInteractive:
+    def test_index(self):
+        c = get_client("team")
+        url = reverse("lit:interactive", args=(2,))
+        assert c.get(url).status_code == 404
+
+    def test_venn_reference_list(self):
+        c = get_client("team")
+        url = reverse("lit:interactive", args=(2,))
+        resp = c.post(url + "?action=venn_reference_list", {"ids": "5,8"})
+        assert resp.status_code == 200
+        assert resp.context["qs"].count() == 2
+
+
+@pytest.mark.django_db
 def test_get_200():
     client = get_client("pm")
     main = 1

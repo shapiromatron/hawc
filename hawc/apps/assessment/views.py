@@ -416,6 +416,9 @@ class AssessmentValueUpdate(BaseUpdate):
 class AssessmentValueDetail(BaseDetail):
     model = models.AssessmentValue
 
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related("studies")
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["adaf_footnote"] = constants.ADAF_FOOTNOTE

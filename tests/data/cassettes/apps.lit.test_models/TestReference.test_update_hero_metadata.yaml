@@ -3,13 +3,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/2,3/recordsperpage/100.json
   response:
@@ -121,16 +121,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Tue, 20 Feb 2024 16:38:56 GMT
+      - Thu, 05 Sep 2024 22:58:29 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      - Apache/2.4.62 (Win64) OpenSSL/3.1.6 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14825888; Expires=Wed, 21 Feb 2024 16:38:56 GMT; Path=/; HttpOnly
-      - CFTOKEN=71626609; Expires=Wed, 21 Feb 2024 16:38:56 GMT; Path=/; HttpOnly
-      - JSESSIONID=BAA96F1CE60D25ED8480145B201DFD5B.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F20%2011%3A38%3A56; Path=/
+      - CFID=35158064; Expires=Fri, 06 Sep 2024 22:58:29 GMT; Path=/; HttpOnly
+      - CFTOKEN=31107337; Expires=Fri, 06 Sep 2024 22:58:29 GMT; Path=/; HttpOnly
+      - JSESSIONID=7DA4D6C7A3062BE936C40C15602C14FA.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F09%2F05%2018%3A58%3A29; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -141,10 +141,10 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=6682033&id=7318792
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=7318792&id=6682033
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -154,7 +154,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
@@ -166,7 +166,47 @@ interactions:
 
         <PubmedArticleSet>
 
-        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">6682033</PMID><DateCompleted><Year>1983</Year><Month>05</Month><Day>05</Day></DateCompleted><DateRevised><Year>2019</Year><Month>09</Month><Day>04</Day></DateRevised><Article
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">7318792</PMID><DateCompleted><Year>1982</Year><Month>03</Month><Day>13</Day></DateCompleted><DateRevised><Year>2019</Year><Month>09</Month><Day>04</Day></DateRevised><Article
+        PubModel="Print"><Journal><ISSN IssnType="Print">0013-9351</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>26</Volume><Issue>2</Issue><PubDate><Year>1981</Year><Month>Dec</Month></PubDate></JournalIssue><Title>Environmental
+        research</Title><ISOAbbreviation>Environ Res</ISOAbbreviation></Journal><ArticleTitle>Early
+        lung events following low-dose asbestos exposure.</ArticleTitle><Pagination><StartPage>392</StartPage><EndPage>401</EndPage><MedlinePgn>392-401</MedlinePgn></Pagination><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>B&#xe9;gin</LastName><ForeName>R</ForeName><Initials>R</Initials></Author><Author
+        ValidYN="Y"><LastName>Rola-Pleszczynski</LastName><ForeName>M</ForeName><Initials>M</Initials></Author><Author
+        ValidYN="Y"><LastName>Sirois</LastName><ForeName>P</ForeName><Initials>P</Initials></Author><Author
+        ValidYN="Y"><LastName>Lemaire</LastName><ForeName>I</ForeName><Initials>I</Initials></Author><Author
+        ValidYN="Y"><LastName>Nadeau</LastName><ForeName>D</ForeName><Initials>D</Initials></Author><Author
+        ValidYN="Y"><LastName>Bureau</LastName><ForeName>M A</ForeName><Initials>MA</Initials></Author><Author
+        ValidYN="Y"><LastName>Mass&#xe9;</LastName><ForeName>S</ForeName><Initials>S</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013485">Research
+        Support, Non-U.S. Gov''t</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>Netherlands</Country><MedlineTA>Environ
+        Res</MedlineTA><NlmUniqueID>0147621</NlmUniqueID><ISSNLinking>0013-9351</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D004391">Dust</NameOfSubstance></Chemical><Chemical><RegistryNumber>1332-21-4</RegistryNumber><NameOfSubstance
+        UI="D001194">Asbestos</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001194" MajorTopicYN="N">Asbestos</DescriptorName><QualifierName UI="Q000009"
+        MajorTopicYN="Y">adverse effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D002452" MajorTopicYN="N">Cell Count</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004391" MajorTopicYN="Y">Dust</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D007958" MajorTopicYN="N">Leukocyte Count</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008168" MajorTopicYN="N">Lung</DescriptorName><QualifierName UI="Q000166"
+        MajorTopicYN="N">cytology</QualifierName><QualifierName UI="Q000187" MajorTopicYN="Y">drug
+        effects</QualifierName><QualifierName UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008214" MajorTopicYN="N">Lymphocytes</DescriptorName><QualifierName UI="Q000166"
+        MajorTopicYN="N">cytology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008264" MajorTopicYN="N">Macrophages</DescriptorName><QualifierName UI="Q000166"
+        MajorTopicYN="N">cytology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008297" MajorTopicYN="N">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012119" MajorTopicYN="N">Respiration</DescriptorName><QualifierName UI="Q000187"
+        MajorTopicYN="Y">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012129" MajorTopicYN="N">Respiratory Function Tests</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D012756" MajorTopicYN="N">Sheep</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="pubmed"><Year>1981</Year><Month>12</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>1981</Year><Month>12</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>1981</Year><Month>12</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">7318792</ArticleId><ArticleId IdType="doi">10.1016/0013-9351(81)90215-2</ArticleId><ArticleId
+        IdType="pii">0013-9351(81)90215-2</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">6682033</PMID><DateCompleted><Year>1983</Year><Month>05</Month><Day>05</Day></DateCompleted><DateRevised><Year>2019</Year><Month>09</Month><Day>04</Day></DateRevised><Article
         PubModel="Print"><Journal><ISSN IssnType="Print">0013-9351</ISSN><JournalIssue
         CitedMedium="Print"><Volume>30</Volume><Issue>1</Issue><PubDate><Year>1983</Year><Month>Feb</Month></PubDate></JournalIssue><Title>Environmental
         research</Title><ISOAbbreviation>Environ Res</ISOAbbreviation></Journal><ArticleTitle>Asbestos-induced
@@ -224,47 +264,7 @@ interactions:
         PubStatus="medline"><Year>1983</Year><Month>2</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>1983</Year><Month>2</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">6682033</ArticleId><ArticleId IdType="doi">10.1016/0013-9351(83)90180-9</ArticleId><ArticleId
-        IdType="pii">0013-9351(83)90180-9</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
-        Status="MEDLINE" Owner="NLM"><PMID Version="1">7318792</PMID><DateCompleted><Year>1982</Year><Month>03</Month><Day>13</Day></DateCompleted><DateRevised><Year>2019</Year><Month>09</Month><Day>04</Day></DateRevised><Article
-        PubModel="Print"><Journal><ISSN IssnType="Print">0013-9351</ISSN><JournalIssue
-        CitedMedium="Print"><Volume>26</Volume><Issue>2</Issue><PubDate><Year>1981</Year><Month>Dec</Month></PubDate></JournalIssue><Title>Environmental
-        research</Title><ISOAbbreviation>Environ Res</ISOAbbreviation></Journal><ArticleTitle>Early
-        lung events following low-dose asbestos exposure.</ArticleTitle><Pagination><StartPage>392</StartPage><EndPage>401</EndPage><MedlinePgn>392-401</MedlinePgn></Pagination><AuthorList
-        CompleteYN="Y"><Author ValidYN="Y"><LastName>B&#xe9;gin</LastName><ForeName>R</ForeName><Initials>R</Initials></Author><Author
-        ValidYN="Y"><LastName>Rola-Pleszczynski</LastName><ForeName>M</ForeName><Initials>M</Initials></Author><Author
-        ValidYN="Y"><LastName>Sirois</LastName><ForeName>P</ForeName><Initials>P</Initials></Author><Author
-        ValidYN="Y"><LastName>Lemaire</LastName><ForeName>I</ForeName><Initials>I</Initials></Author><Author
-        ValidYN="Y"><LastName>Nadeau</LastName><ForeName>D</ForeName><Initials>D</Initials></Author><Author
-        ValidYN="Y"><LastName>Bureau</LastName><ForeName>M A</ForeName><Initials>MA</Initials></Author><Author
-        ValidYN="Y"><LastName>Mass&#xe9;</LastName><ForeName>S</ForeName><Initials>S</Initials></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
-        UI="D016428">Journal Article</PublicationType><PublicationType UI="D013485">Research
-        Support, Non-U.S. Gov''t</PublicationType></PublicationTypeList></Article><MedlineJournalInfo><Country>Netherlands</Country><MedlineTA>Environ
-        Res</MedlineTA><NlmUniqueID>0147621</NlmUniqueID><ISSNLinking>0013-9351</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
-        UI="D004391">Dust</NameOfSubstance></Chemical><Chemical><RegistryNumber>1332-21-4</RegistryNumber><NameOfSubstance
-        UI="D001194">Asbestos</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
-        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
-        UI="D001194" MajorTopicYN="N">Asbestos</DescriptorName><QualifierName UI="Q000009"
-        MajorTopicYN="Y">adverse effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D002452" MajorTopicYN="N">Cell Count</DescriptorName></MeshHeading><MeshHeading><DescriptorName
-        UI="D004391" MajorTopicYN="Y">Dust</DescriptorName></MeshHeading><MeshHeading><DescriptorName
-        UI="D007958" MajorTopicYN="N">Leukocyte Count</DescriptorName></MeshHeading><MeshHeading><DescriptorName
-        UI="D008168" MajorTopicYN="N">Lung</DescriptorName><QualifierName UI="Q000166"
-        MajorTopicYN="N">cytology</QualifierName><QualifierName UI="Q000187" MajorTopicYN="Y">drug
-        effects</QualifierName><QualifierName UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D008214" MajorTopicYN="N">Lymphocytes</DescriptorName><QualifierName UI="Q000166"
-        MajorTopicYN="N">cytology</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D008264" MajorTopicYN="N">Macrophages</DescriptorName><QualifierName UI="Q000166"
-        MajorTopicYN="N">cytology</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D008297" MajorTopicYN="N">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName
-        UI="D012119" MajorTopicYN="N">Respiration</DescriptorName><QualifierName UI="Q000187"
-        MajorTopicYN="Y">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
-        UI="D012129" MajorTopicYN="N">Respiratory Function Tests</DescriptorName></MeshHeading><MeshHeading><DescriptorName
-        UI="D012756" MajorTopicYN="N">Sheep</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
-        PubStatus="pubmed"><Year>1981</Year><Month>12</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
-        PubStatus="medline"><Year>1981</Year><Month>12</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>1981</Year><Month>12</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
-        IdType="pubmed">7318792</ArticleId><ArticleId IdType="doi">10.1016/0013-9351(81)90215-2</ArticleId><ArticleId
-        IdType="pii">0013-9351(81)90215-2</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
+        IdType="pii">0013-9351(83)90180-9</ArticleId></ArticleIdList></PubmedData></PubmedArticle></PubmedArticleSet>'
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -279,20 +279,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:38:56 GMT
+      - Thu, 05 Sep 2024 22:58:29 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD9F070703C0B500004FD7E3E8E92E.1.1.m_3
+      - 939B82323C96818500004BC20F829FC0.1.1.m_3
       NCBI-SID:
-      - 8D9315BE99A5057F_EBF6SID
+      - 5BB3F51BC0B71235_AB3ASID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=8D9315BE99A5057F_EBF6SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:38:57 GMT
+      - ncbi_sid=5BB3F51BC0B71235_AB3ASID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:29 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -300,7 +300,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '9'
+      - '8'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

@@ -599,7 +599,7 @@ class AssessmentValue(models.Model):
         help_text="Type of derived value",
     )
     value = models.FloatField(
-        help_text="The derived value",
+        help_text="The derived value (e.g., 2.1E-09)",
     )
     value_unit = models.CharField(verbose_name="Value units", max_length=32)
     adaf = models.BooleanField(
@@ -632,7 +632,7 @@ class AssessmentValue(models.Model):
         verbose_name="POD Value",
         blank=True,
         null=True,
-        help_text="The Point of Departure (POD)",
+        help_text="The Point of Departure (POD) (e.g., 2.1E-06)",
     )
     pod_unit = models.CharField(
         verbose_name="POD units",
@@ -652,13 +652,12 @@ class AssessmentValue(models.Model):
         verbose_name="Species and strain",
         help_text="Provide information about the animal(s) studied, including species and strain information",
     )
-    study = models.ForeignKey(
+    studies = models.ManyToManyField(
         "study.Study",
-        on_delete=models.SET_NULL,
         blank=True,
-        null=True,
-        verbose_name="Key study",
-        help_text="Link to Key Study in HAWC. If it does not exist or there are multiple studies, leave blank and explain in comments",
+        verbose_name="Key studies",
+        help_text="Link to Key Study or Studies in HAWC. If it does not exist, leave blank and explain in comments",
+        related_name="assessment_values",
     )
     evidence = models.TextField(
         verbose_name="Evidence characterization",

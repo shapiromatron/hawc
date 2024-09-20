@@ -3,13 +3,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/5353200,2199697,5920377,5176411,595055/recordsperpage/100.json
   response:
@@ -128,20 +128,22 @@ interactions:
         REs|OPPT Evidence Map: Butyl benzyl phthalate (BBP)|TSCA Literature|TSCA Submissions
         Search\",\"OPPT REs|OPPT Evidence Map: Butyl benzyl phthalate (BBP)|TSCA Literature|TSCA
         Section 8d - Dermal\",\"OPPT REs|OPPT Evidence Map: Butyl benzyl phthalate
-        (BBP)|Systematic Review|Hazard|Full Text Review|Meets PECO Criteria\",\"OPPT
-        REs|OPPT Evidence Map: Butyl benzyl phthalate (BBP)|Systematic Review|Hazard|Data
-        Evaluation|Ecotoxicology\"],\"category_key\":[32],\"PROJECTS\":[{\"PROJECT\":\"OPPT
+        (BBP)|Suggested Literature|Public Comments\",\"OPPT REs|OPPT Evidence Map:
+        Butyl benzyl phthalate (BBP)|Systematic Review|Hazard|Full Text Review|Meets
+        PECO Criteria\",\"OPPT REs|OPPT Evidence Map: Butyl benzyl phthalate (BBP)|Systematic
+        Review|Hazard|Data Evaluation|Ecotoxicology\"],\"category_key\":[32],\"PROJECTS\":[{\"PROJECT\":\"OPPT
         Evidence Map: Butyl benzyl phthalate (BBP)\",\"PROJECT_ID\":2842,\"USAGES\":[{\"USAGE_ID\":\"33501\",\"USAGE\":\"TSCA
         Literature\",\"USAGES\":[{\"USAGE_ID\":\"22152\",\"USAGE\":\"TSCA Submissions
         Search\",\"USAGES\":[]},{\"USAGE_ID\":\"30935\",\"USAGE\":\"TSCA Section 8d
         - Dermal\",\"USAGES\":[]}]},{\"USAGE_ID\":\"30944\",\"USAGE\":\"Systematic
         Review\",\"USAGES\":[{\"USAGE_ID\":\"30948\",\"USAGE\":\"Hazard\",\"USAGES\":[{\"USAGE_ID\":\"30988\",\"USAGE\":\"Full
         Text Review\",\"USAGES\":[{\"USAGE_ID\":\"30993\",\"USAGE\":\"Meets PECO Criteria\",\"USAGES\":[]}]},{\"USAGE_ID\":\"30930\",\"USAGE\":\"Data
-        Evaluation\",\"USAGES\":[{\"USAGE_ID\":\"30976\",\"USAGE\":\"Ecotoxicology\",\"USAGES\":[]}]}]}]}]}],\"tag_path_key\":[\"32|2842|33501|22152\",\"32|2842|33501|30935\",\"32|2842|30944|30948|30988|30993\",\"32|2842|30944|30948|30930|30976\"],\"AUTHORS\":\"EG&G
-        Bionomics\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\"],\"isPeerReviewed\":false,\"code\":\"re\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"(BW-79-2-404).
+        Evaluation\",\"USAGES\":[{\"USAGE_ID\":\"30976\",\"USAGE\":\"Ecotoxicology\",\"USAGES\":[]}]}]}]},{\"USAGE_ID\":\"33505\",\"USAGE\":\"Suggested
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"30936\",\"USAGE\":\"Public Comments\",\"USAGES\":[]}]}]}],\"tag_path_key\":[\"32|2842|33501|22152\",\"32|2842|33501|30935\",\"32|2842|33505|30936\",\"32|2842|30944|30948|30988|30993\",\"32|2842|30944|30948|30930|30976\"],\"AUTHORS\":\"EG&G
+        Bionomics\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\"],\"isPeerReviewed\":false,\"code\":\"re\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"(BW-79-2-404).
         Wareham, MA: EG & G Bionomics, Aquatic Toxicology Laboratory.\",\"TITLE\":\"[Sanitized]
         The chronic toxicity of Santicizer 160 (BN-78-1384327-1) to the water flea
-        (Daphnia magna)\",\"modified\":\"2023-09-07T15:57:29Z\",\"PMID\":\"\",\"_version_\":1776394961205329923},{\"REFERENCE_ID\":2199697,\"ABSTRACT\":\"HAPAB
+        (Daphnia magna)\",\"modified\":\"2024-07-23T21:07:44Z\",\"PMID\":\"\",\"_version_\":1805405930512187392},{\"REFERENCE_ID\":2199697,\"ABSTRACT\":\"HAPAB
         \ Zooplankton lipid samples from various stations in the Atlantic Ocean consistently
         contained polychlorinated biphenyls in greater amounts than total DDT.  PCB
         ratios ranged from 4.8 to GT 45,000.  Concentrations of PCBs in zooplankton
@@ -171,16 +173,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Tue, 20 Feb 2024 16:40:52 GMT
+      - Thu, 05 Sep 2024 22:59:44 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      - Apache/2.4.62 (Win64) OpenSSL/3.1.6 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14825933; Expires=Wed, 21 Feb 2024 16:40:52 GMT; Path=/; HttpOnly
-      - CFTOKEN=67088465; Expires=Wed, 21 Feb 2024 16:40:52 GMT; Path=/; HttpOnly
-      - JSESSIONID=05803AA58195520BD800C2961CFC62E6.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F20%2011%3A40%3A52; Path=/
+      - CFID=35158096; Expires=Fri, 06 Sep 2024 22:59:44 GMT; Path=/; HttpOnly
+      - CFTOKEN=68604667; Expires=Fri, 06 Sep 2024 22:59:44 GMT; Path=/; HttpOnly
+      - JSESSIONID=60CF7B473B7F7A3E5FEC75A5E7FFDA63.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F09%2F05%2018%3A59%3A44; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
