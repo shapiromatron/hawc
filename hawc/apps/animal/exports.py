@@ -901,7 +901,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
             columns=[
                 "endpoint_udf_content-content",
                 "study_udf_content-content",
-                "endpoint_udf_content-content",
+                "animal_group_udf_content-content",
                 "endpoint-observation_time",
                 "dose_group-id",
                 "dose_group-dose_group_id",
