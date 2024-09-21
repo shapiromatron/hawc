@@ -173,3 +173,8 @@ def test_flatten(input, expected):
 )
 def test_unique_text_list(input, expected):
     assert list(helper.unique_text_list(input)) == expected
+
+
+def test_get_contrasting_text_color():
+    assert helper.get_contrasting_text_color("#000000") == "#FFFFFF"
+    assert helper.get_contrasting_text_color("#FFFFFF") == "#000000"

@@ -27,7 +27,13 @@ from treebeard.mp_tree import MP_Node
 
 from ...services.epa.dsstox import DssSubstance
 from ..common.exceptions import AssessmentNotFound
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cacheable, new_window_a
+from ..common.helper import (
+    HAWCDjangoJSONEncoder,
+    SerializerHelper,
+    cacheable,
+    get_contrasting_text_color,
+    new_window_a,
+)
 from ..common.models import AssessmentRootMixin, ColorField, get_private_data_storage
 from ..common.validators import FlatJSON, validate_hyperlink
 from ..materialized.models import refresh_all_mvs
@@ -1361,12 +1367,7 @@ class Label(AssessmentRootMixin, MP_Node):
         return cls.add_root(**kwargs)
 
     def save(self, *args, **kwargs):
-        hex_color = self.color.lstrip("#")
-        (r, g, b) = tuple(int(hex_color[i : i + 2], 16) for i in (0, 2, 4))
-        a_type = [r / 255.0, g / 255.0, b / 255.0]
-        a_type = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in a_type]
-        luminance = 0.2126 * a_type[0] + 0.7152 * a_type[1] + 0.0722 * a_type[2]
-        self.text_color = "#000000" if luminance > 0.5 else "#FFFFFF"
+        self.text_color = get_contrasting_text_color(self.color)
         super().save(*args, **kwargs)
 
     def get_nested_name(self) -> str:
