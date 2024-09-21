@@ -144,7 +144,7 @@ class NumericTextValidator(RegexValidator):
 
 
 class ColorValidator(RegexValidator):
-    regex = r"^#[a-f0-9]{6}$"
+    regex = r"^#[A-Fa-f0-9]{6}$"
     flags = re.IGNORECASE
     message = "Must be in #rrggbb hexadecimal format."
 
