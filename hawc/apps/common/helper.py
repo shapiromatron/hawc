@@ -618,4 +618,4 @@ def get_contrasting_text_color(bg: str) -> str:
     a_type = [r / 255.0, g / 255.0, b / 255.0]
     a_type = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in a_type]
     luminance = 0.2126 * a_type[0] + 0.7152 * a_type[1] + 0.0722 * a_type[2]
-    return "#FFFFFF" if luminance < 0.179 else "#000000"
+    return "#ffffff" if luminance < 0.179 else "#000000"

@@ -176,5 +176,5 @@ def test_unique_text_list(input, expected):
 
 
 def test_get_contrasting_text_color():
-    assert helper.get_contrasting_text_color("#000000") == "#FFFFFF"
-    assert helper.get_contrasting_text_color("#FFFFFF") == "#000000"
+    assert helper.get_contrasting_text_color("#000000") == "#ffffff"
+    assert helper.get_contrasting_text_color("#ffffff") == "#000000"
