@@ -421,11 +421,8 @@ class CustomURLField(URLField):
     default_validators = [validators.CustomURLValidator()]
 
     def formfield(self, **kwargs):
-        # As with CharField, this will cause URL validation to be performed
-        # twice.
-        defaults = {
-            "form_class": forms.CustomURLField,
-        }
+        # As with CharField, this will cause URL validation to be performed twice.
+        defaults = {"form_class": forms.CustomURLField}
         defaults.update(kwargs)
         return super().formfield(**defaults)
 
@@ -654,12 +651,7 @@ class ColorField(models.CharField):
     default_validators = [validators.ColorValidator()]
 
     def formfield(self, **kwargs):
-        return super().formfield(
-            **{
-                "form_class": forms.ColorField,
-                **kwargs,
-            }
-        )
+        return super().formfield(**{"form_class": forms.ColorField, **kwargs})
 
 
 def search_query(value: str) -> SearchQuery:
