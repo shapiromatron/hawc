@@ -41,10 +41,10 @@
                 <i class="fa fa-eye-slash mx-1" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
               {% endif %}
               {% debug_badge visual.id %}
-              {% if visual.caption %}
-                <div class='text-muted mx-1 text-nowrap' title="{{visual.caption|striptags|safe}}">{{visual.caption|striptags|truncatewords:20|safe}}</div>
-              {% endif %}
             </div>
+            {% if visual.caption %}
+              <div class='text-muted text-nowrap' title="{{visual.caption|striptags|safe}}">{{visual.caption|striptags|truncatewords:20|safe}}</div>
+            {% endif %}
           </td>
           <td>{{visual.get_visual_type_display}}</td>
           <td>{{ visual.created|date:"Y-m-d" }}</td>
