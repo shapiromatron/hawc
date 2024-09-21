@@ -12,7 +12,7 @@ import h from "shared/utils/helpers";
 import $ from "$";
 
 import BaseVisual from "./BaseVisual";
-import {handleVisualError} from "./common";
+import {addLabelAction, addLabelIndicators, handleVisualError} from "./common";
 import {NULL_VALUE} from "./constants";
 import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
 import DatasetTable from "./heatmap/DatasetTable";
@@ -170,13 +170,7 @@ class ExploreHeatmap extends BaseVisual {
                     "Visualization editing",
                     {href: this.data.url_update, text: '<i class="fa fa-edit"></i>&nbsp;Update'},
                     {href: this.data.url_delete, text: '<i class="fa fa-trash"></i>&nbsp;Delete'},
-                    {
-                        "hx-get": this.data.label_htmx,
-                        "hx-target": "#label-modal-content",
-                        text: "Apply labels",
-                        "data-toggle": "modal",
-                        "data-target": "#label-modal",
-                    },
+                    addLabelAction(this.data.label_htmx),
                 ]
             );
         }
@@ -190,9 +184,7 @@ class ExploreHeatmap extends BaseVisual {
         options = options || {};
 
         var title = $("<h2>").text(this.data.title),
-            labelIndicators = $(
-                `<div id="label-indicators" hx-get="${this.data.label_indicators_htmx}" hx-trigger="load" hx-swap="none">`
-            ),
+            labelIndicators = addLabelIndicators(this.data.label_indicators_htmx),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),

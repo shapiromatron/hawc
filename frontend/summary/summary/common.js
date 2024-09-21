@@ -148,6 +148,18 @@ const Patterns = {
         } else {
             alert(msg);
         }
+    },
+    addLabelAction = function(url) {
+        return {
+            "hx-get": url,
+            "hx-target": "#label-modal-content",
+            text: "Apply labels",
+            "data-toggle": "modal",
+            "data-target": "#label-modal",
+        };
+    },
+    addLabelIndicators = function(url) {
+        return `<div id="label-indicators" hx-get="${url}" hx-trigger="load" hx-swap="none">`;
     };
 
-export {applyStyles, handleVisualError, Patterns};
+export {addLabelAction, addLabelIndicators, applyStyles, handleVisualError, Patterns};

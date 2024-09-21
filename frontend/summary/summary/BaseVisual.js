@@ -3,6 +3,8 @@ import h from "shared/utils/helpers";
 
 import $ from "$";
 
+import {addLabelAction} from "./common";
+
 class BaseVisual {
     constructor(data) {
         this.data = data;
@@ -37,13 +39,7 @@ class BaseVisual {
             "Visualization editing",
             {href: this.data.url_update, text: "Update"},
             {href: this.data.url_delete, text: "Delete"},
-            {
-                "hx-get": this.data.label_htmx,
-                "hx-target": "#label-modal-content",
-                text: "Apply labels",
-                "data-toggle": "modal",
-                "data-target": "#label-modal",
-            },
+            addLabelAction(this.data.label_htmx),
         ]);
     }
 

@@ -4,15 +4,14 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 
 import $ from "$";
 
+import {addLabelIndicators} from "./common";
 import RoBBarchartPlot from "./RoBBarchartPlot";
 import RoBHeatmap from "./RoBHeatmap";
 
 class RoBBarchart extends RoBHeatmap {
     displayAsPage($el, options) {
         var title = $("<h2>").text(this.data.title),
-            labelIndicators = $(
-                `<div id="label-indicators" hx-get="${this.data.label_indicators_htmx}" hx-trigger="load" hx-swap="none">`
-            ),
+            labelIndicators = addLabelIndicators(this.data.label_indicators_htmx),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),

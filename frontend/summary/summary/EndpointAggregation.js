@@ -9,7 +9,7 @@ import h from "shared/utils/helpers";
 import $ from "$";
 
 import BaseVisual from "./BaseVisual";
-import {handleVisualError} from "./common";
+import {addLabelIndicators, handleVisualError} from "./common";
 import EndpointAggregationExposureResponsePlot from "./EndpointAggregationExposureResponsePlot";
 import EndpointAggregationForestPlot from "./EndpointAggregationForestPlot";
 
@@ -31,9 +31,7 @@ class EndpointAggregation extends BaseVisual {
 
     displayAsPage($el, options) {
         var title = $("<h2>").text(this.data.title),
-            labelIndicators = $(
-                `<div id="label-indicators" hx-get="${this.data.label_indicators_htmx}" hx-trigger="load" hx-swap="none">`
-            ),
+            labelIndicators = addLabelIndicators(this.data.label_indicators_htmx),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             self = this;
