@@ -7,10 +7,7 @@ import hawc.apps.common.models
 
 
 class Migration(migrations.Migration):
-    dependencies = [
-        ("assessment", "0039_remove_assessment_enable_summary_text"),
-        ("contenttypes", "0002_remove_content_type_name"),
-    ]
+    dependencies = [("assessment", "0044_remove_assessmentvalue_study")]
 
     operations = [
         migrations.CreateModel(
