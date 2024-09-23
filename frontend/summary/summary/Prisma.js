@@ -10,6 +10,7 @@ import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
+import PrismaPlot from "./PrismaPlot";
 
 import $ from "$";
 
@@ -43,13 +44,12 @@ class PrismaComponent extends Component {
             el = document.getElementById(id);
 
         if (el) {
-            new PrismaPlot(store, this.props.options).render(el, tooltipEl);
+            new PrismaPlot(store, this.props.options).render(el);
         }
     }
     render() {
         const { store } = this.props,
-            id = store.settingsHash,
-            hasFilters = store.settings.filter_widgets.length > 0;
+            id = store.settingsHash;
 
         if (!store.hasDataset) {
             return <Alert message={"No data are available."} />;
@@ -67,7 +67,6 @@ class PrismaComponent extends Component {
                             <Loading />
                         </div>
                     </div>
-                    <div id={`tooltip-${id}`} style={{ position: "absolute" }}></div>
                 </div>
             </>
         );

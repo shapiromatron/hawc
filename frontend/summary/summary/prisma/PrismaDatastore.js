@@ -50,7 +50,8 @@ class PrismaDatastore {
     }
 
     @computed get hasDataset() {
-        return this.dataset !== null && this.dataset.length > 0;
+        // return this.dataset !== null && this.dataset.length > 0;
+        return true;
     }
 
     @computed get withinRenderableBounds() {
