@@ -5,24 +5,24 @@ import Prisma from "summary/summary/Prisma";
 
 import $ from "$";
 
-import { MissingData, RefreshRequired } from "./common";
+import {MissingData, RefreshRequired} from "./common";
 
 @inject("store")
 @observer
 class PreviewPanel extends Component {
     componentDidMount() {
-        const { settingsHash, dataset } = this.props.store.base,
-            { settings } = this.props.store.subclass;
+        const {settingsHash, dataset} = this.props.store.base,
+            {settings} = this.props.store.subclass;
         const el = document.getElementById(settingsHash);
         if (el) {
-            new Prisma({ settings }, dataset).displayAsPage($(el), {
+            new Prisma({settings}, dataset).displayAsPage($(el), {
                 dev: true,
             });
         }
     }
 
     render() {
-        const { hasDataset, dataRefreshRequired, settingsHash } = this.props.store.base;
+        const {hasDataset, dataRefreshRequired, settingsHash} = this.props.store.base;
         let content;
         if (!hasDataset) {
             // content = <MissingData />;

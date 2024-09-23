@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import React, {Component} from "react";
 
 class MissingData extends Component {
     render() {
@@ -21,4 +21,4 @@ class RefreshRequired extends Component {
     }
 }
 
-export { MissingData, RefreshRequired };
+export {MissingData, RefreshRequired};

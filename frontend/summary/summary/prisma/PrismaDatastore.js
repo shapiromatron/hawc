@@ -1,10 +1,10 @@
 import * as d3 from "d3";
 import _ from "lodash";
-import { action, computed, observable, toJS } from "mobx";
+import {action, computed, observable, toJS} from "mobx";
 import HAWCModal from "shared/utils/HAWCModal";
 import h from "shared/utils/helpers";
 
-import { NULL_VALUE } from "../../summary/constants";
+import {NULL_VALUE} from "../../summary/constants";
 
 class PrismaDatastore {
     @observable dataset = null;
@@ -25,12 +25,9 @@ class PrismaDatastore {
 
     set_counts() {
         // add reference counts to lists, boxes, and cards
-
         // get filter type and id from object
-
         // get reference count from search id
         // get reference count from tag id
-
         // set count
     }
 
