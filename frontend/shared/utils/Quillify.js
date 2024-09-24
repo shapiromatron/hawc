@@ -1,7 +1,6 @@
 import "quill/dist/quill.snow.css";
 
 import Quill from "quill";
-import SmartInline from "shared/smartTags/QuillSmartInline";
 import SmartTag from "shared/smartTags/QuillSmartTag";
 import SmartTagModal from "shared/smartTags/QuillSmartTagModal";
 import SmartTagContainer from "shared/smartTags/SmartTagContainer";
@@ -9,7 +8,7 @@ import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import $ from "$";
 
 Quill.register(SmartTag, true);
-Quill.register(SmartInline, true);
+/* TODO - enable use of data attributes? */
 
 const toolbarOptions = {
         container: [
@@ -18,7 +17,7 @@ const toolbarOptions = {
             [{script: "sub"}, {script: "super"}],
             [{color: []}, {background: []}],
             ["link", {list: "ordered"}, {list: "bullet"}, "blockquote"],
-            ["smartTag", "smartInline"],
+            ["smartTag"],
             ["clean"],
         ],
         handlers: {
@@ -30,14 +29,6 @@ const toolbarOptions = {
                 }
                 this.quill.smartTagModal.showModal("smartTag", sel, value);
             },
-            smartInline(value) {
-                let sel = this.quill.getSelection();
-                if (sel === null || sel.length === 0) {
-                    window.alert("Select text to add an inline smart-tag.");
-                    return;
-                }
-                this.quill.smartTagModal.showModal("smartInline", sel, value);
-            },
         },
     },
     formatSmartTagButtons = function(q) {
@@ -45,18 +36,12 @@ const toolbarOptions = {
         $(tb.container)
             .find(".ql-smartTag")
             .append('<i class="fa fa-tag">');
-        $(tb.container)
-            .find(".ql-smartInline")
-            .append('<i class="fa fa-sticky-note">');
         q.smartTagModal = new SmartTagModal(q, $("#smartTagModal"));
     },
     hideSmartTagButtons = function(q) {
         var tb = q.getModule("toolbar");
         $(tb.container)
             .find(".ql-smartTag")
-            .hide();
-        $(tb.container)
-            .find(".ql-smartInline")
             .hide();
     };
 

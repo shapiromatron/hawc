@@ -1,7 +1,4 @@
-import Endpoint from "animal/Endpoint";
 import Study from "study/Study";
-import DataPivot from "summary/dataPivot/DataPivot";
-import Visual from "summary/summary/Visual";
 
 import $ from "$";
 
@@ -35,12 +32,7 @@ class SmartTagModal {
     }
 
     getModelClass(type) {
-        let map = {
-            endpoint: Endpoint,
-            study: Study,
-            visual: Visual,
-            data_pivot: DataPivot,
-        };
+        let map = {study: Study};
         return map[this.type];
     }
 }

@@ -1,6 +1,5 @@
 import $ from "$";
 
-import SmartTagInline from "./SmartTagInline";
 import SmartTagModal from "./SmartTagModal";
 
 class SmartTagContainer {
@@ -13,33 +12,11 @@ class SmartTagContainer {
     }
 
     renderAndEnable() {
-        this.renderInlines();
         this.enableModals();
     }
 
     unrenderAndDisable() {
-        this.unrenderInlines();
         this.disableModals();
-    }
-
-    renderInlines() {
-        this.$el.find("div.smart-tag").each(function() {
-            let st = $(this).data("_smartTag");
-            if (!st) {
-                st = new SmartTagInline(this);
-            }
-            st.render();
-        });
-    }
-
-    unrenderInlines($el) {
-        this.$el.find("div.smart-tag").each(function() {
-            let st = $(this).data("_smartTag");
-            if (!st) {
-                st = new SmartTagInline(this);
-            }
-            st.unrender();
-        });
     }
 
     enableModals() {

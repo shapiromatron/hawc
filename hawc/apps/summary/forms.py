@@ -10,7 +10,6 @@ from django.urls import reverse
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
 
-from ..animal.autocomplete import EndpointAutocomplete
 from ..animal.forms import MultipleEndpointChoiceField
 from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits
@@ -29,7 +28,7 @@ from ..common.helper import new_window_a
 from ..common.validators import validate_html_tags, validate_hyperlinks, validate_json_pydantic
 from ..lit.models import ReferenceFilterTag
 from ..study.autocomplete import StudyAutocomplete
-from . import autocomplete, constants, models, prefilters
+from . import constants, models, prefilters
 
 
 class SummaryTableForm(forms.ModelForm):
@@ -858,36 +857,14 @@ class DataPivotSelectorForm(CopyForm):
 
 
 class SmartTagForm(forms.Form):
-    RESOURCE_CHOICES = (
-        ("study", "Study"),
-        ("endpoint", "Endpoint"),
-        ("visual", "Visualization"),
-        ("data_pivot", "Data Pivot"),
-    )
+    RESOURCE_CHOICES = (("study", "Study"),)
     resource = forms.ChoiceField(choices=RESOURCE_CHOICES)
     study = AutocompleteChoiceField(
         autocomplete_class=StudyAutocomplete,
         help_text="Type a few characters of the study name, then click to select.",
-    )
-    endpoint = AutocompleteChoiceField(
-        autocomplete_class=EndpointAutocomplete,
-        help_text="Type a few characters of the endpoint name, then click to select.",
-    )
-    visual = AutocompleteChoiceField(
-        autocomplete_class=autocomplete.VisualAutocomplete,
-        help_text="Type a few characters of the visual name, then click to select.",
-    )
-    data_pivot = AutocompleteChoiceField(
-        autocomplete_class=autocomplete.DataPivotAutocomplete,
-        help_text="Type a few characters of the data-pivot name, then click to select.",
     )
 
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop("assessment_id", -1)
         super().__init__(*args, **kwargs)
         self.fields["study"].set_filters({"assessment_id": assessment_id})
-        self.fields["endpoint"].set_filters(
-            {"animal_group__experiment__study__assessment_id": assessment_id}
-        )
-        self.fields["visual"].set_filters({"assessment_id": assessment_id})
-        self.fields["data_pivot"].set_filters({"assessment_id": assessment_id})

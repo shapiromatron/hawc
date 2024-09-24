@@ -17,20 +17,9 @@ class SmartTagModal {
             .change(function() {
                 let v = $(this).val(),
                     show,
-                    hides = [
-                        "#div_id_study",
-                        "#div_id_endpoint",
-                        "#div_id_data_pivot",
-                        "#div_id_visual",
-                    ];
+                    hides = ["#div_id_study"];
                 if (v === "study") {
                     show = hides.splice(hides.indexOf("#div_id_study"), 1);
-                } else if (v === "endpoint") {
-                    show = hides.splice(hides.indexOf("#div_id_endpoint"), 1);
-                } else if (v === "data_pivot") {
-                    show = hides.splice(hides.indexOf("#div_id_data_pivot"), 1);
-                } else if (v === "visual") {
-                    show = hides.splice(hides.indexOf("#div_id_visual"), 1);
                 }
                 m.find(show.join(",")).show();
                 m.find(hides.join(",")).hide();
@@ -78,15 +67,6 @@ class SmartTagModal {
         switch (type) {
             case "study":
                 pk = m.find("#id_study").val();
-                break;
-            case "endpoint":
-                pk = m.find("#id_endpoint").val();
-                break;
-            case "data_pivot":
-                pk = m.find("#id_data_pivot").val();
-                break;
-            case "visual":
-                pk = m.find("#id_visual").val();
                 break;
         }
 
