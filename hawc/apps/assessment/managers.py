@@ -3,9 +3,12 @@ from datetime import datetime, timedelta
 from typing import Any, NamedTuple
 
 import pandas as pd
+from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Case, Exists, OuterRef, Q, QuerySet, Value, When
+from django.contrib.contenttypes.prefetch import GenericPrefetch
+from django.db.models import Case, Exists, OuterRef, Q, QuerySet, TextField, Value, When
+from django.db.models.functions import Concat
 from reversion.models import Version
 from treebeard.mp_tree import MP_NodeManager
 
@@ -321,5 +324,54 @@ class LabelManager(MP_NodeManager):
         return self.filter(items__content_type=content_type, items__object_id=object_id)
 
 
+class LabeledItemQuerySet(QuerySet):
+    def prefetch_content_objects(self):
+        return self.prefetch_related(
+            GenericPrefetch(
+                "content_object",
+                [
+                    apps.get_model("summary", "Visual").objects.all(),
+                    apps.get_model("summary", "DataPivotUpload").objects.all(),
+                    apps.get_model("summary", "DataPivotQuery").objects.all(),
+                    apps.get_model("summary", "SummaryTable").objects.all(),
+                ],
+            )
+        )
+
+    def filter_title(self, query: str):
+        filter = (
+            Q(summary_table__title__icontains=query)
+            | Q(visual__title__icontains=query)
+            | Q(datapivot_query__title__icontains=query)
+            | Q(datapivot_upload__title__icontains=query)
+        )
+        return self.filter(filter)
+
+    def matching_all_labels(self, labels: list):
+        if len(labels) == 0:
+            return self.none()
+
+        matched = set()
+        qs = self.annotate(
+            object_info=Concat("content_type", "object_id", output_field=TextField()),
+        )
+        for i, label in enumerate(labels):
+            # quit early if we run out of candidates
+            if i > 0 and len(matched) == 0:
+                return self.none()
+
+            objects = (
+                qs.filter(label__path__startswith=label.path)
+                .values_list("object_info", flat=True)
+                .distinct()
+            )
+            # filtering for objects matching all labels
+            matched = matched.intersection(objects) if i > 0 else set(objects)
+        return qs.filter(object_info__in=matched)
+
+
 class LabeledItemManager(BaseManager):
     assessment_relation = "label__assessment"
+
+    def get_queryset(self):
+        return LabeledItemQuerySet(self.model, using=self._db)

@@ -1,7 +1,6 @@
 import django_filters as df
 from django import forms
-from django.db.models import Q, TextField
-from django.db.models.functions import Concat
+from django.db.models import Q
 from django.urls import reverse
 
 from ..common.filterset import (
@@ -168,8 +167,8 @@ class EffectTagFilterSet(df.FilterSet):
 class LabeledItemFilterset(BaseFilterSet):
     name = df.CharFilter(
         method="filter_title",
-        label="Object Name",
-        help_text="Filter by object name",
+        label="Name",
+        help_text="Filter by name",
     )
     label = AutocompleteModelMultipleChoiceFilter(
         autocomplete_class=LabelAutocomplete,
@@ -188,38 +187,12 @@ class LabeledItemFilterset(BaseFilterSet):
     def filter_title(self, queryset, name, value):
         if not value:
             return queryset
-        query = (
-            Q(summary_table__title__icontains=value)
-            | Q(visual__title__icontains=value)
-            | Q(datapivot_query__title__icontains=value)
-            | Q(datapivot_upload__title__icontains=value)
-        )
-        return queryset.filter(query)
+        return queryset.filter_title(value)
 
     def filter_labels(self, queryset, name, value):
         if not value:
             return queryset
-        queryset = queryset.annotate(
-            object_info=Concat("content_type", "object_id", output_field=TextField()),
-        )  # annotate each in the list with content_type + object_id to create a unique field
-        matching_objects = None
-        for label in value:
-            if (
-                not matching_objects or len(matching_objects) > 0
-            ):  # quit early if we run out of matching objects
-                objects_with_label = (
-                    queryset.filter(
-                        label__path__startswith=label.path, label__depth__gte=label.depth
-                    )
-                    .values_list("object_info", flat=True)
-                    .distinct()
-                )
-                matching_objects = (
-                    matching_objects.intersection(objects_with_label)
-                    if matching_objects
-                    else set(objects_with_label)
-                )  # only filtering for objects matching all labels
-        return queryset.filter(object_info__in=matching_objects)
+        return queryset.matching_all_labels(value)
 
     def create_form(self):
         form = super().create_form()
