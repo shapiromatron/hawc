@@ -13,7 +13,11 @@ from django.utils import timezone
 
 from ...services.epa.dsstox import DssSubstance
 from ..common.auth.turnstile import Turnstile
-from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
+from ..common.autocomplete import (
+    AutocompleteMultipleChoiceField,
+    AutocompleteSelectMultipleWidget,
+    AutocompleteTextWidget,
+)
 from ..common.forms import (
     BaseFormHelper,
     QuillField,
@@ -23,7 +27,7 @@ from ..common.forms import (
 from ..common.helper import new_window_a
 from ..common.widgets import DateCheckboxInput
 from ..myuser.autocomplete import UserAutocomplete
-from ..study.models import Study
+from ..study.autocomplete import StudyAutocomplete
 from . import autocomplete, constants, models
 
 
@@ -174,6 +178,12 @@ class AssessmentValueForm(forms.ModelForm):
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update current assessment value."
 
+    studies = AutocompleteMultipleChoiceField(
+        autocomplete_class=StudyAutocomplete,
+        help_text=models.AssessmentValue.studies.field.help_text,
+        required=False,
+    )
+
     class Meta:
         model = models.AssessmentValue
         exclude = ["assessment"]
@@ -216,7 +226,7 @@ class AssessmentValueForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
-        self.fields["study"].queryset = Study.objects.filter(assessment=self.instance.assessment)
+        self.fields["studies"].set_filters({"assessment_id": self.instance.assessment.id})
 
     def clean(self):
         cleaned_data = super().clean()

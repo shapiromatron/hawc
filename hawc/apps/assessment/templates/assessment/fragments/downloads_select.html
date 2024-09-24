@@ -4,7 +4,7 @@
     <div class="d-flex align-items-center flex-wrap flex-md-nowrap">
       <div class="input-group input-group-sm flex-shrink-0 px-2" style="width: fit-content;" role="group" aria-label="Downlink link button group with format select">
         <div class="input-group-prepend">
-          <a class="btn btn-primary" type="button" id="{{name}}-url" href="{{link}}?format={{format}}{% if allow_unpublished %}&unpublished=false{% endif %}"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download</a>
+          <a class="btn btn-primary" type="button" id="{{name}}-url" href="{{link}}?format={{format}}{% if allow_unpublished %}&unpublished=false{% endif %}{% if reference_long %}&export_format=wide{% endif %}"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download</a>
         </div>
         <select id="{{name}}" class="custom-select" required>
           <option selected value="xlsx">xlsx</option>
@@ -13,6 +13,12 @@
           <option value="json">json</option>
           <option value="html">html</option>
         </select>
+        {% if reference_long %}
+          <select class="custom-select reference-format-selector" required>
+            <option selected value="wide">wide</option>
+            <option value="long">long</option>
+          </select>
+        {% endif %}
         {% if allow_unpublished %}
           <div class="input-group-append">
             <div class="input-group-text">

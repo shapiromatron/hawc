@@ -7,6 +7,7 @@ from django.conf import settings
 
 from ...services.utils.doi import try_get_doi
 from ..utils.authors import get_author_short_text, get_first, normalize_authors
+from ..utils.sessions import get_session
 
 logger = logging.getLogger(__name__)
 
@@ -90,8 +91,6 @@ class HEROFetch:
     default_settings = {"recordsperpage": 100}
 
     def __init__(self, id_list: list[int], **kwargs):
-        if id_list is None:
-            raise Exception("List of IDs are required for a PubMed search")
         self.ids = id_list
         self.ids_count = len(id_list)
         self.content: list[dict] = []
@@ -123,10 +122,13 @@ class HEROFetch:
             self.failures = []
             return dict(success=self.content, failure=self.failures)
 
+        headers = {}
         if settings.HAWC_FEATURES.ENABLE_NEW_HERO:
             if settings.HERO_API_KEY is None:
                 raise ValueError("HERO_API_KEY required.")
             headers = {"Authorization": f"Bearer {settings.HERO_API_KEY}"}
+
+        session = get_session(headers)
 
         parse_func = parse_article_new if settings.HAWC_FEATURES.ENABLE_NEW_HERO else parse_article
         rng = list(range(0, self.ids_count, self.settings["recordsperpage"]))
@@ -139,7 +141,7 @@ class HEROFetch:
                 url = "https://heronetnext.epa.gov/api/reference/export/json"
                 data = {"type": "hero", "id": request_ids}
                 try:
-                    r = requests.post(url, json=data, headers=headers, timeout=30.0)
+                    r = session.post(url, json=data, timeout=30.0)
                     if r.status_code == 200:
                         results = r.json()
                     else:
@@ -151,7 +153,7 @@ class HEROFetch:
             else:
                 url = f"https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/{ids}/recordsperpage/{rpp}.json"
                 try:
-                    r = requests.get(url, timeout=30.0)
+                    r = session.get(url, timeout=30.0)
                     if r.status_code == 200:
                         data = json.loads(r.text)
                         results = data["results"]

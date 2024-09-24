@@ -1,6 +1,7 @@
+from django.contrib.postgres.aggregates import ArrayAgg
+
 from ..common.exports import Exporter, ModelExport
 from ..common.models import sql_display, str_m2m
-from ..study.exports import StudyExport
 from . import constants
 
 
@@ -24,6 +25,8 @@ class AssessmentValueExport(ModelExport):
             "evidence": "evidence",
             "tumor_type": "tumor_type",
             "extrapolation_method": "extrapolation_method",
+            "study_ids": "studies__id",
+            "study_short_citations": "studies__short_citation",
             "comments": "comments",
             "extra": "extra",
             "created": "created",
@@ -39,6 +42,8 @@ class AssessmentValueExport(ModelExport):
             "uncertainty_display": sql_display(
                 query_prefix + "uncertainty", constants.UncertaintyChoices
             ),
+            "studies__id": ArrayAgg(query_prefix + "studies__id"),
+            "studies__short_citation": str_m2m(query_prefix + "studies__short_citation"),
         }
 
     def prepare_df(self, df):
@@ -102,7 +107,4 @@ class AssessmentExporter(Exporter):
             AssessmentExport("assessment", "assessment"),
             AssessmentDetailExport("assessment_detail", "assessment__details"),
             AssessmentValueExport("assessment_value", ""),
-            StudyExport(
-                "study", "study", include=("id", "short_citation", "hero_id", "pubmed_id", "doi")
-            ),
         ]
