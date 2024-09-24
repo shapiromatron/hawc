@@ -73,9 +73,7 @@ export default function() {
         textarea.hide().before(editor);
 
         q = new Quill(editor, {
-            modules: {
-                toolbar: toolbarOptions,
-            },
+            modules: {toolbar: toolbarOptions},
             theme: "snow",
         });
 
@@ -85,13 +83,9 @@ export default function() {
         } else {
             hideSmartTagButtons(q);
         }
-
-        q.pasteHTML(textarea.val());
+        q.clipboard.dangerouslyPasteHTML(textarea.val());
         q.on("text-change", function(delta, oldDelta, source) {
-            let content = $(editor)
-                .find(".ql-editor")
-                .html();
-            textarea.val(content);
+            textarea.val(q.getSemanticHTML());
         });
         textarea.data("_quill", q);
 
