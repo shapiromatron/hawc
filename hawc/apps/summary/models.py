@@ -228,6 +228,10 @@ class Visual(models.Model):
         null=True,
         help_text="Upload an image file. Valid formats: png, jpg, jpeg. Must be > 10KB and < 3MB in size.",
     )
+    legacy_id = models.BigIntegerField(blank=True, null=True)
+    dataset = models.ForeignKey(
+        "assessment.Dataset", on_delete=models.PROTECT, blank=True, null=True
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     labels = GenericRelation(LabeledItem, related_query_name="visuals")
