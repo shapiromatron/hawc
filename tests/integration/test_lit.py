@@ -106,7 +106,7 @@ class TestLiterature(PlaywrightTestCase):
         page.get_by_role("group", name="Removal Criteria").get_by_label(
             "Tagged With:"
         ).select_option("32")
-        page.locator("#div_id_removal_tags_descendants").get_by_text(
+        page.locator("#div_id_workflow-new-removal_tags_descendants").get_by_text(
             "Include Descendants of above tag(s)"
         ).click()
         page.locator("#workflow-create").click()
