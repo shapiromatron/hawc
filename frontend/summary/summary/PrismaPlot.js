@@ -23,15 +23,22 @@ class PrismaPlot {
             .style("fill", obj.bg_color)
             .style("border-width", obj.border_width)
             .attr("stroke", obj.border_color);
-        const titleBox = rect.append("rect")
-            .attr("width", obj.width/2)
-            .attr("height", obj.height/2)
-            .attr("fill", obj.bg_color)
-            .style("border-width", obj.border_width)
-            .attr("stroke", obj.border_color);
-        titleBox.append("text")
+        // const titleBox = g.append("rect")
+        //     .attr("x", obj.rx)
+        //     .attr("y", obj.ry)
+        //     .attr("width", obj.width/2)
+        //     .attr("height", obj.height/2)
+        //     .attr("fill", obj.bg_color)
+        //     .style("border-width", obj.border_width)
+        //     .attr("stroke", obj.border_color);
+        g.append("text")
+            .attr("x", obj.rx + 5)
+            .attr("y", obj.ry + 15)
             .text(obj.name)
             .attr("class", "prisma_section_text")
+            .style("background-color", "white")
+            .style("border", "solid")
+            .style("border-width", 2)
             .style("font-color", obj.font_color);
     }
 
