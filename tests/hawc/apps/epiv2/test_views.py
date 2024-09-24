@@ -66,7 +66,7 @@ class TestTimeSpentEditing:
         }
 
     def _valid_chemical(self):
-        return {"name": "example"}
+        return {"chemical-new-name": "example"}
 
     # check that TestTimeSpentEditing is captured for this app
     def test_design(self, db_keys):
@@ -108,7 +108,8 @@ class TestTimeSpentEditing:
         url = reverse("epiv2:chemical-htmx", args=(chemical.id, "update"))
         resp = client.get(url, headers=htmx_headers)
         time.sleep(0.05)
-        resp = client.post(url, data=self._valid_chemical(), headers=htmx_headers)
+        data = {v.replace("new", str(chemical.id)): k for v, k in self._valid_chemical().items()}
+        resp = client.post(url, data=data, headers=htmx_headers)
         assert resp.status_code == 200
         latest = check_timespent(chemical)
         assert latest.seconds > seconds
