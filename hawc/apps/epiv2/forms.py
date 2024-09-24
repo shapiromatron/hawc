@@ -101,6 +101,8 @@ class ExposureForm(forms.ModelForm):
         design = kwargs.pop("parent", None)
         prefix = f"exposure-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
         super().__init__(*args, prefix=prefix, **kwargs)
+        self.fields["measurement_type"].widget.attrs["data-name"] = "measurement_type"
+        self.fields["biomonitoring_matrix"].widget.attrs["data-name"] = "biomonitoring_matrix"
         if design:
             self.instance.design = design
 
