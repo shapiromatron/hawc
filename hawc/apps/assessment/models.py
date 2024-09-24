@@ -602,7 +602,7 @@ class AssessmentValue(models.Model):
     )
     value_unit = models.CharField(verbose_name="Value units", max_length=32)
     adaf = models.BooleanField(
-        verbose_name="Apply ADAF?",
+        verbose_name="ADAF has been applied?",
         default=False,
         help_text="When checked, the ADAF note will appear as a footnote for the value. Add supporting information about ADAF in the comments.",
     )

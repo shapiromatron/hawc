@@ -3,10 +3,10 @@ from django.db import models
 from .permissions import AssessmentPermissions
 
 ADAF_FOOTNOTE = (
-    "Age-dependent ajustment factors (ADAFs) have not been applied to the value shown. "
-    "Application of ADAFs is recommended in combination with appropriate exposure data when "
-    "assessing risk associated with early-life exposure. More information is available in the "
-    "comments field for this value."
+    "An age-dependent adjustment factor (ADAF) has been applied to the value shown. Application of "
+    "ADAFs is recommended in combination with appropriate exposure data when assessing risk "
+    "associated with early-life exposure. More information is available in the comments field for "
+    "this value."
 )
 
 
