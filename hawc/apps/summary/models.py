@@ -71,7 +71,7 @@ class SummaryTable(models.Model):
         help_text="For assessments marked for public viewing, mark table to be viewable by public",
     )
     caption = models.TextField(blank=True, validators=[validate_html_tags, validate_hyperlinks])
-    labels = GenericRelation(LabeledItem, related_query_name="summary_table")
+    labels = GenericRelation(LabeledItem, related_query_name="summary_tables")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -230,7 +230,7 @@ class Visual(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    labels = GenericRelation(LabeledItem, related_query_name="visual")
+    labels = GenericRelation(LabeledItem, related_query_name="visuals")
 
     BREADCRUMB_PARENT = "assessment"
 
@@ -650,7 +650,7 @@ class DataPivotUpload(DataPivot):
         max_length=64,
         blank=True,
     )
-    labels = GenericRelation(LabeledItem, related_query_name="datapivot_upload")
+    labels = GenericRelation(LabeledItem, related_query_name="datapivot_uploads")
 
     @property
     def visual_type(self):
@@ -693,7 +693,7 @@ class DataPivotQuery(DataPivot):
         "creating one plot similar, but not identical, dose-units.",
     )
     prefilters = models.JSONField(default=dict)
-    labels = GenericRelation(LabeledItem, related_query_name="datapivot_query")
+    labels = GenericRelation(LabeledItem, related_query_name="datapivot_queries")
 
     def clean(self):
         count = self.get_queryset().count()
