@@ -1023,7 +1023,7 @@ class LabelItem(HtmxView):
         return handler(request, *args, **kwargs)
 
     def label(self, request: HttpRequest, *args, **kwargs):
-        if self.assessment.user_can_edit_object(request.user):
+        if not self.assessment.user_can_edit_object(request.user):
             raise PermissionDenied()
         context = dict(
             content_type=self.content_type, object_id=self.object_id, assessment=self.assessment

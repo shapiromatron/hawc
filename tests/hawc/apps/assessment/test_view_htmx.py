@@ -1,19 +1,19 @@
 import pytest
 from django.contrib.contenttypes.models import ContentType
-from django.test import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from hawc.apps.assessment import models
 from hawc.apps.summary.models import Visual
 
+from ..test_utils import get_client
+
 
 @pytest.mark.django_db
 class TestLabels:
     def test_labels(self, db_keys):
         assessment_id = db_keys.assessment_working
-        client = Client(headers={"hx-request": "true"})
-        assert client.login(email="pm@hawcproject.org", password="pw") is True
+        client = get_client("pm", htmx=True)
 
         root_label = models.Label.get_assessment_root(db_keys.assessment_working)
         initial_label_count = models.Label.objects.count()
@@ -68,7 +68,7 @@ class TestLabels:
 class TestLabeling:
     def test_labeling(self, db_keys):
         assessment_id = db_keys.assessment_working
-        client = Client(headers={"hx-request": "true"})
+        client = get_client("", htmx=True)
 
         visual = Visual.objects.filter(assessment=assessment_id).first()
         content_type = ContentType.objects.get_for_model(Visual)
@@ -77,7 +77,7 @@ class TestLabeling:
             args=(content_type.pk, visual.pk),
         )
 
-        assert client.login(email="pm@hawcproject.org", password="pw") is True
+        client = get_client("pm", htmx=True)
 
         initial_labeled_items = models.LabeledItem.objects.count()
         label = models.Label.objects.filter(assessment=assessment_id)[1]
