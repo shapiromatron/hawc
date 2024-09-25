@@ -2,7 +2,8 @@
 
 {% block content %}
   <div class="d-flex">
-    <h2>{{object}}</h2> {% include "assessment/fragments/label_indicators.html" with content_type=content_object.0.pk object_id=content_object.1 %}
+    <h2>{{object}}</h2>
+    {% include "assessment/fragments/label_indicators.html" %}
     {% include "common/unpublished_badge.html" %}
     {% if crud == "Read" %}
       {% actions %}
@@ -19,15 +20,13 @@
           <a class="dropdown-item" href="{{object.get_delete_url}}">
             <i class="fa fa-fw fa-trash"></i>&nbsp;Delete
           </a>
-          <a class="dropdown-item" data-toggle="modal" data-target="#label-modal" hx-get="{% url 'assessment:label-item' content_object.0.pk content_object.1 %}?action=label" hx-target="#label-modal-content">
-            <i class="fa fa-fw fa-tag"></i>&nbsp;Apply labels
-          </a>
+          {% include "assessment/components/label_modal_button.html" with icon=True %}
         {% endif %}
       {% endactions %}
     {% endif %}
   </div>
   <div id="main" style="min-height: 400px"></div>
-  {% include "assessment/components/label_modal.html" with modal_id="label-modal"%}
+  {% include "assessment/components/label_modal.html" with modal_id="label-modal" %}
 {% endblock %}
 
 {% block extrajs %}

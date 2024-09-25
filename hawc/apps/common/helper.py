@@ -603,10 +603,6 @@ def unique_text_list(items: list[str]) -> list[str]:
     return items
 
 
-def object_to_content_object(_object) -> tuple[ContentType, int]:
-    return ContentType.objects.get_for_model(_object), _object.pk
-
-
 def get_contrasting_text_color(bg: str) -> str:
     """Returns black or white as text color depending on background color hue.
 

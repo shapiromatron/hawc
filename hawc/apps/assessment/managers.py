@@ -12,7 +12,7 @@ from django.db.models.functions import Concat
 from reversion.models import Version
 from treebeard.mp_tree import MP_NodeManager
 
-from ..common.helper import HAWCDjangoJSONEncoder, object_to_content_object
+from ..common.helper import HAWCDjangoJSONEncoder
 from ..common.models import BaseManager, replace_null, str_m2m
 from . import constants
 
@@ -320,8 +320,8 @@ class LogManager(BaseManager):
 
 class LabelManager(MP_NodeManager):
     def get_applied(self, _object):
-        content_type, object_id = object_to_content_object(_object)
-        return self.filter(items__content_type=content_type, items__object_id=object_id)
+        content_type = ContentType.objects.get_for_model(_object)
+        return self.filter(items__content_type=content_type, items__object_id=_object.id)
 
 
 class LabeledItemQuerySet(QuerySet):

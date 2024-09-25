@@ -9,9 +9,10 @@
     {% endfor %}
   </div>
 {% else %}
+  {% label_htmx_url object as url %}
   <div
     id="label-indicators"
-    hx-get="{% url 'assessment:label-item' content_type object_id %}?action=label_indicators"
+    hx-get="{{url}}?action=label_indicators"
     hx-trigger="load"
     hx-swap="none"
   ></div>

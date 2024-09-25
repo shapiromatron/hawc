@@ -14,7 +14,7 @@ from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..assessment.views import check_published_status
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig, object_to_content_object
+from ..common.helper import WebappConfig
 from ..common.views import (
     BaseCopyForm,
     BaseCreate,
@@ -77,7 +77,6 @@ class SummaryTableDetail(GetSummaryTableMixin, BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["content_object"] = object_to_content_object(self.get_object())
         if context["object"].published is False and context["obj_perms"]["edit"] is False:
             raise PermissionDenied()
         context["breadcrumbs"].insert(
@@ -207,7 +206,6 @@ class SummaryTableDelete(GetSummaryTableMixin, BaseDelete):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["content_object"] = object_to_content_object(self.get_object())
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_table_list_crumb(self.assessment)
         )
@@ -694,7 +692,6 @@ class DataPivotDetail(GetDataPivotObjectMixin, BaseDetail):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["content_object"] = object_to_content_object(self.get_object())
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
@@ -712,7 +709,6 @@ class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )
-        context["content_object"] = object_to_content_object(self.get_object())
         context["config"] = {
             "data_url": self.object.get_data_url(),
             "settings": self.object.settings,
@@ -762,7 +758,6 @@ class DataPivotDelete(GetDataPivotObjectMixin, BaseDelete):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["content_object"] = object_to_content_object(self.get_object())
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )

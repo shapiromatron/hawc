@@ -130,3 +130,9 @@ def e_notation(value: str) -> str:
     if abs(value) <= 1e-5 or abs(value) >= 1e5:
         return f"{value:.2e}"
     return f"{value:g}"
+
+
+@register.simple_tag
+def label_htmx_url(item) -> str:
+    ct = ContentType.objects.get_for_model(item)
+    return reverse("assessment:label-item", args=(ct.id, item.id))
