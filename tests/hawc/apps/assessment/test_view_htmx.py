@@ -1,5 +1,4 @@
 import pytest
-from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
@@ -10,8 +9,8 @@ from ..test_utils import get_client
 
 
 @pytest.mark.django_db
-class TestLabels:
-    def test_labels(self, db_keys):
+class TestLabelViewSet:
+    def test_label_crud(self, db_keys):
         assessment_id = db_keys.assessment_working
         client = get_client("pm", htmx=True)
 
@@ -65,36 +64,25 @@ class TestLabels:
 
 
 @pytest.mark.django_db
-class TestLabeling:
+class TestLabelItem:
     def test_labeling(self, db_keys):
         assessment_id = db_keys.assessment_working
-        client = get_client("", htmx=True)
-
-        visual = Visual.objects.filter(assessment=assessment_id).first()
-        content_type = ContentType.objects.get_for_model(Visual)
-        base_url = reverse(
-            "assessment:label-item",
-            args=(content_type.pk, visual.pk),
-        )
-
         client = get_client("pm", htmx=True)
 
+        visual = Visual.objects.filter(assessment=assessment_id).first()
+        label_url = models.LabeledItem.get_label_url(visual, "label")
+        label_indicator_url = models.LabeledItem.get_label_url(visual, "label_indicators")
         initial_labeled_items = models.LabeledItem.objects.count()
         label = models.Label.objects.filter(assessment=assessment_id)[1]
 
         # label
-        url = f"{base_url}?action=label"
-        data = {
-            "labels": label.pk,
-        }
-        resp = client.post(url, data=data)
+        resp = client.post(label_url, data={"labels": label.pk})
         assertTemplateUsed(resp, "assessment/components/label_modal_content.html")
         assert resp.status_code == 200
         assert "Apply labels" in str(resp.content)
 
         # label indicators
-        url = f"{base_url}?action=label_indicators"
-        resp = client.get(url)
+        resp = client.get(label_indicator_url)
         assertTemplateUsed(resp, "assessment/fragments/label_indicators.html")
         assert f"{label.name}" in str(resp.content)
         assert resp.status_code == 200

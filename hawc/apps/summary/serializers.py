@@ -1,7 +1,7 @@
-from django.urls import reverse
 from rest_framework import serializers
 
-from ..common.helper import SerializerHelper, object_to_content_object
+from ..assessment.models import LabeledItem
+from ..common.helper import SerializerHelper
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from . import constants, models
 
@@ -69,21 +69,8 @@ class VisualSerializer(serializers.ModelSerializer):
             ret["url_update"] = instance.get_update_url()
             ret["url_delete"] = instance.get_delete_url()
             ret["data_url"] = instance.get_data_url()
-            content_type, object_id = object_to_content_object(instance)
-            ret["label_htmx"] = (
-                reverse(
-                    "assessment:label-item",
-                    kwargs={"content_type": content_type.pk, "object_id": object_id},
-                )
-                + "?action=label"
-            )
-            ret["label_indicators_htmx"] = (
-                reverse(
-                    "assessment:label-item",
-                    kwargs={"content_type": content_type.pk, "object_id": object_id},
-                )
-                + "?action=label_indicators"
-            )
+            ret["label_htmx"] = LabeledItem.get_label_url(instance, "label")
+            ret["label_indicators_htmx"] = LabeledItem.get_label_url(instance, "label_indicators")
 
         if instance.visual_type in [
             constants.VisualType.ROB_HEATMAP,

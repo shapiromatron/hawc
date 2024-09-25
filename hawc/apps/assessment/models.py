@@ -2,7 +2,7 @@ import json
 import logging
 import uuid
 from collections import namedtuple
-from typing import Any, NamedTuple
+from typing import Any, Literal, NamedTuple
 
 import numpy as np
 import pandas as pd
@@ -1398,6 +1398,11 @@ class LabeledItem(models.Model):
 
     def __str__(self):
         return f"{self.label} on {self.content_object}"
+
+    @classmethod
+    def get_label_url(cls, object, action: Literal["label", "label_indicators"]):
+        type = ContentType.objects.get_for_model(object)
+        return reverse("assessment:label-item", args=(type.id, object.id)) + f"?action={action}"
 
 
 reversion.register(DSSTox)
