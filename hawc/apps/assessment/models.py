@@ -1338,7 +1338,7 @@ class Content(models.Model):
 class Label(AssessmentRootMixin, MP_Node):
     objects = managers.LabelManager()
 
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=64)
     description = models.TextField(blank=True)
     color = ColorField(default="#4d8055")
     assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="labels")
@@ -1350,51 +1350,51 @@ class Label(AssessmentRootMixin, MP_Node):
     cache_template_taglist = "assessment.label.labellist.assessment-{0}"
     cache_template_tagtree = "assessment.label.labeltree.assessment-{0}"
 
-    class Meta:
-        constraints = [models.UniqueConstraint(fields=["assessment", "name"], name="label_name")]
-
     def __str__(self):
         return self.name
 
     @classmethod
-    def create_root(cls, assessment_id, **kwargs):
-        """
-        Constructor to define root with assessment-creation
-        """
-        kwargs["name"] = cls.get_assessment_root_name(assessment_id)
-        kwargs["assessment_id"] = assessment_id
-        kwargs["published"] = True
-        return cls.add_root(**kwargs)
+    def create_root(cls, assessment_id: int, **kw):
+        kw.update(
+            name=cls.get_assessment_root_name(assessment_id),
+            assessment_id=assessment_id,
+            published=True,
+        )
+        return cls.add_root(**kw)
 
     def save(self, *args, **kwargs):
         self.text_color = get_contrasting_text_color(self.color)
         super().save(*args, **kwargs)
 
     def get_nested_name(self) -> str:
-        if self.is_root():
-            return "<root-node>"
-        else:
-            return f"{'━ ' * (self.depth - 1)}{self.name}"
+        return "<root-node>" if self.is_root() else f"{'━ ' * (self.depth - 1)}{self.name}"
 
     def get_absolute_url(self):
-        return reverse("assessment:label-htmx", args=[self.pk, "read"])
+        return reverse("assessment:label-htmx", args=(self.pk, "read"))
 
     def get_edit_url(self):
-        return reverse("assessment:label-htmx", args=[self.pk, "update"])
+        return reverse("assessment:label-htmx", args=(self.pk, "update"))
 
     def get_delete_url(self):
-        return reverse("assessment:label-htmx", args=[self.pk, "delete"])
+        return reverse("assessment:label-htmx", args=(self.pk, "delete"))
 
 
 class LabeledItem(models.Model):
     objects = managers.LabeledItemManager()
 
     label = models.ForeignKey(Label, models.CASCADE, related_name="items")
-    content_type = models.ForeignKey(ContentType, models.CASCADE)
+    content_type = models.ForeignKey(ContentType, models.CASCADE, related_name="labeled_items")
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey("content_type", "object_id")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["label", "content_type", "object_id"], name="label_item"
+            )
+        ]
 
     def __str__(self):
         return f"{self.label} on {self.content_object}"

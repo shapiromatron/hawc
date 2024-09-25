@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
                 ("path", models.CharField(max_length=255, unique=True)),
                 ("depth", models.PositiveIntegerField()),
                 ("numchild", models.PositiveIntegerField(default=0)),
-                ("name", models.CharField(max_length=20)),
+                ("name", models.CharField(max_length=64)),
                 ("description", models.TextField(blank=True)),
                 ("color", hawc.apps.common.models.ColorField(default="#4d8055")),
                 ("published", models.BooleanField(default=False)),
@@ -55,7 +55,9 @@ class Migration(migrations.Migration):
                 (
                     "content_type",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="contenttypes.contenttype"
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="labeled_items",
+                        to="contenttypes.contenttype",
                     ),
                 ),
                 (
@@ -69,7 +71,9 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.AddConstraint(
-            model_name="label",
-            constraint=models.UniqueConstraint(fields=("assessment", "name"), name="label_name"),
+            model_name="labeleditem",
+            constraint=models.UniqueConstraint(
+                fields=("label", "content_type", "object_id"), name="label_item"
+            ),
         ),
     ]
