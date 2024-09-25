@@ -917,7 +917,7 @@ def check_published_status(user, published: bool, assessment: models.Assessment)
 class LabelList(BaseList):
     parent_model = models.Assessment
     model = models.Label
-    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
+    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
 
     def get_queryset(self):
         # include root for permission checking
