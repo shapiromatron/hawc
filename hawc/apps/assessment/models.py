@@ -597,6 +597,11 @@ class AssessmentValue(models.Model):
         choices=constants.ValueType,
         help_text="Type of derived value",
     )
+    value_type_qualifier = models.CharField(
+        blank=True,
+        max_length=64,
+        help_text="A custom qualifier that will be displayed with the Value Type. E.g., Adult-based. This value is typically used to clarify when a value has an adjustment applied like an ADAF.",
+    )
     value = models.FloatField(
         help_text="The derived value (e.g., 2.1E-09)",
     )
@@ -690,6 +695,13 @@ class AssessmentValue(models.Model):
 
     class Meta:
         verbose_name_plural = "values"
+
+    @property
+    def get_combined_value_type(self):
+        text = self.get_value_type_display()
+        if self.value_type_qualifier:
+            text = f"{self.value_type_qualifier} " + text
+        return text
 
     @property
     def show_cancer_fields(self):

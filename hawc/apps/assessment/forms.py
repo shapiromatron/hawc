@@ -207,6 +207,10 @@ class AssessmentValueForm(forms.ModelForm):
             "evidence": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="evidence"
             ),
+            "value_type_qualifier": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete,
+                field="value_type_qualifier",
+            ),
             "value_unit": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="value_unit"
             ),
@@ -266,7 +270,9 @@ class AssessmentValueForm(forms.ModelForm):
 
         helper.set_textarea_height(("comments", "basis", "extra"), 3)
         helper.add_row("evaluation_type", 2, "col-md-6")
-        helper.add_row("value_type", 4, "col-md-3")
+        helper.add_row(
+            "value_type", 5, ["col-md-3", "col-md-3", "col-md-2", "col-md-2", "col-md-2"]
+        )
         helper.add_row("confidence", 3, "col-md-4")
         helper.add_row("pod_type", 4, "col-md-3")
         helper.add_row("species_studied", 3, "col-md-4")
