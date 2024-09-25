@@ -152,7 +152,8 @@ class ModelBindingForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("parent", None)
         user = kwargs.pop("user", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"model-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if self.instance.id is None:
             # include assessment for unique_together validation
             self.fields["assessment"].initial = self.assessment
@@ -191,7 +192,8 @@ class TagBindingForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("parent", None)
         user = kwargs.pop("user", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"tag-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if self.instance.id is None:
             # include assessment for unique_together validation
             self.fields["assessment"].initial = self.assessment

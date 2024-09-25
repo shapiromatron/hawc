@@ -19,11 +19,11 @@ class TestWorkflows:
         # workflow create
         url = reverse("lit:workflow-htmx", args=[assessment_id, "create"])
         inputs = {
-            "title": "Title/Abstract",
-            "description": "Example title/abstract workflow",
-            "admission_tags": tags.all()[0].id,
-            "admission_tags_descendants": True,
-            "completion_tags": tags.all()[1].id,
+            "workflow-new-title": "Title/Abstract",
+            "workflow-new-description": "Example title/abstract workflow",
+            "workflow-new-admission_tags": tags.all()[0].id,
+            "workflow-new-admission_tags_descendants": True,
+            "workflow-new-completion_tags": tags.all()[1].id,
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "lit/fragments/workflow_row.html")
@@ -42,7 +42,7 @@ class TestWorkflows:
         # workflow update
         url = workflow.get_edit_url()
         inputs = {
-            "title": "Title/Abstract update",
+            f"workflow-{workflow.id}-title": "Title/Abstract update",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "lit/fragments/workflow_row.html")

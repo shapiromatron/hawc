@@ -100,6 +100,11 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.animal.data_summary(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
+    def test_animal_bmds(self):
+        client = HawcClient(self.live_server_url)
+        response = client.animal.bmds_endpoints(self.db_keys.assessment_client)
+        assert isinstance(response, pd.DataFrame)
+
     def test_animal_endpoints(self):
         client = HawcClient(self.live_server_url)
 
@@ -1274,7 +1279,7 @@ class TestClient(LiveServerTestCase, TestCase):
         visual_id = visual["id"]
 
         # read
-        visual = client.summary.get_visual(visual_id).json()
+        visual = client.summary.get_visual(visual_id)
         assert visual["title"] == visual_title
 
         # update
@@ -1286,7 +1291,7 @@ class TestClient(LiveServerTestCase, TestCase):
         # read
         slug = "animal-bioassay-data-pivot-endpoint"
         dp_id = DataPivot.objects.get(slug=slug).pk
-        dp = client.summary.get_datapivot(dp_id).json()
+        dp = client.summary.get_datapivot(dp_id)
         assert dp["slug"] == slug
 
         # create

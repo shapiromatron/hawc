@@ -3,13 +3,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1/recordsperpage/100.json
   response:
@@ -20,9 +20,9 @@ interactions:
         disease; airway responses; exposure-response relations; environmental control
         limits; risk of low level exposure; evaluation of the impact of control measures;
         gradient in biological effects between different fibres or types of exposure;
-        clinical issues.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1\",\"hasPDF\":false,\"YEAR\":1982,\"allAuthors\":[\"Becklake,
+        clinical issues.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1\",\"hasPDF\":true,\"YEAR\":1982,\"allAuthors\":[\"Becklake,
         MR\"],\"HEROID\":1,\"id\":\"1\",\"project_key\":[42,993,1436,1713,2220,2488,2533,2810,2979,3019,3048],\"referencetype\":[\"journal
-        article\"],\"type\":\"reference\",\"doi\":\"10.1164/arrd.1982.126.2.187\",\"sortYear\":1982,\"tag_path_text\":[\"IRIS|Acenaphthene\",\"IRIS|Allyl
+        article\"],\"type\":\"reference\",\"pdfURL\":\"https://www.atsjournals.org/doi/10.1164/arrd.1982.126.2.187?url_ver=z39.88-2003&rfr_id=ori:rid:crossref.org&rfr_dat=cr_pub%20%200pubmed\",\"doi\":\"10.1164/arrd.1982.126.2.187\",\"sortYear\":1982,\"tag_path_text\":[\"IRIS|Acenaphthene\",\"IRIS|Allyl
         chloride\",\"IRIS|Asbestos\",\"NAAQS|Litsearch-Lead ISA 2020_SWIFT Screening|Full
         Text Screening|Tox|Supplemental|Hematological\",\"NAAQS|Litsearch-Lead ISA
         2020_SWIFT Screening|Full Text Screening|Tox|Supplemental|Hepatic\",\"NAAQS|Litsearch-Lead
@@ -72,29 +72,29 @@ interactions:
         Import 14-Feb-2022 11:39:22\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|1436\",\"2|993\",\"2|42\",\"1|3019|33041|35093|35094|35099\",\"1|3019|33041|35093|35094|35100\",\"1|3019|33041|35093|35094|35106\",\"30|2810\",\"32|3048|32084|32085|32089\",\"32|3048|32084|32085|32090\",\"32|3048|32084|32085|32093\",\"32|3048|32084|32085|32094\",\"32|3048|32132|32142|32143|32146\",\"32|3048|32132|32142|32147\",\"32|2533|13964|10250|10251|10253\",\"32|2979|25858|25865\",\"32|2979|25858|25861\",\"32|2979|25858|25867\",\"32|2979|25858|25866\",\"32|2979|28726|27685\",\"18|2488|7593|7596\",\"18|2488|7593|7594\",\"18|2220|2472\",\"18|2220|2474\",\"18|1713|6884|8213\",\"18|1713|33273\",\"18|1713|35286\"],\"firstAuthor\":\"Becklake\",\"AUTHORS\":\"Becklake,
         MR\",\"noPDFAvailable\":true,\"tag_path_type\":[\"category|project\",\"category|project\",\"category|project\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"American
         Review of Respiratory Disease 126:187-194. [Review]\",\"wosid\":\"WOS:A1982PC43700001\",\"TITLE\":\"Asbestos-related
-        diseases of the lungs and pleura: Current clinical issues\",\"modified\":\"2024-02-12T14:25:43Z\",\"PMID\":7049025,\"keywords\":[\"Dust;
+        diseases of the lungs and pleura: Current clinical issues\",\"modified\":\"2024-08-12T20:51:34Z\",\"PMID\":7049025,\"keywords\":[\"Dust;
         Asbestos; 1332-21-4; Abridged Index Medicus; Index Medicus; Mesothelioma --
         etiology; Lung -- analysis; Dust -- analysis; Pulmonary Fibrosis -- etiology;
         Environmental Exposure; Bronchitis -- etiology; Lung Neoplasms -- etiology;
         Asbestosis -- etiology; Asbestos -- adverse effects; Lung Diseases -- etiology;
         Pleural Diseases -- etiology\"],\"journalTitle\":\"American Review of Respiratory
-        Disease\",\"_version_\":1790703509466775553}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
+        Disease\",\"_version_\":1807216431439282176}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
     headers:
       Connection:
       - Keep-Alive
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Tue, 20 Feb 2024 16:38:04 GMT
+      - Thu, 05 Sep 2024 22:58:19 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      - Apache/2.4.62 (Win64) OpenSSL/3.1.6 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14825858; Expires=Wed, 21 Feb 2024 16:38:04 GMT; Path=/; HttpOnly
-      - CFTOKEN=21884536; Expires=Wed, 21 Feb 2024 16:38:04 GMT; Path=/; HttpOnly
-      - JSESSIONID=C4AC49935132AAB271775C3141587D7D.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F20%2011%3A38%3A04; Path=/
+      - CFID=35158053; Expires=Fri, 06 Sep 2024 22:58:19 GMT; Path=/; HttpOnly
+      - CFTOKEN=81038650; Expires=Fri, 06 Sep 2024 22:58:19 GMT; Path=/; HttpOnly
+      - JSESSIONID=E98FAF896BE83C8ED4DBD23A51B2917E.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F09%2F05%2018%3A58%3A19; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -108,13 +108,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/1/recordsperpage/100.json
   response:
@@ -125,9 +125,9 @@ interactions:
         disease; airway responses; exposure-response relations; environmental control
         limits; risk of low level exposure; evaluation of the impact of control measures;
         gradient in biological effects between different fibres or types of exposure;
-        clinical issues.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1\",\"hasPDF\":false,\"YEAR\":1982,\"allAuthors\":[\"Becklake,
+        clinical issues.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/1\",\"hasPDF\":true,\"YEAR\":1982,\"allAuthors\":[\"Becklake,
         MR\"],\"HEROID\":1,\"id\":\"1\",\"project_key\":[42,993,1436,1713,2220,2488,2533,2810,2979,3019,3048],\"referencetype\":[\"journal
-        article\"],\"type\":\"reference\",\"doi\":\"10.1164/arrd.1982.126.2.187\",\"sortYear\":1982,\"tag_path_text\":[\"IRIS|Acenaphthene\",\"IRIS|Allyl
+        article\"],\"type\":\"reference\",\"pdfURL\":\"https://www.atsjournals.org/doi/10.1164/arrd.1982.126.2.187?url_ver=z39.88-2003&rfr_id=ori:rid:crossref.org&rfr_dat=cr_pub%20%200pubmed\",\"doi\":\"10.1164/arrd.1982.126.2.187\",\"sortYear\":1982,\"tag_path_text\":[\"IRIS|Acenaphthene\",\"IRIS|Allyl
         chloride\",\"IRIS|Asbestos\",\"NAAQS|Litsearch-Lead ISA 2020_SWIFT Screening|Full
         Text Screening|Tox|Supplemental|Hematological\",\"NAAQS|Litsearch-Lead ISA
         2020_SWIFT Screening|Full Text Screening|Tox|Supplemental|Hepatic\",\"NAAQS|Litsearch-Lead
@@ -177,29 +177,29 @@ interactions:
         Import 14-Feb-2022 11:39:22\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|1436\",\"2|993\",\"2|42\",\"1|3019|33041|35093|35094|35099\",\"1|3019|33041|35093|35094|35100\",\"1|3019|33041|35093|35094|35106\",\"30|2810\",\"32|3048|32084|32085|32089\",\"32|3048|32084|32085|32090\",\"32|3048|32084|32085|32093\",\"32|3048|32084|32085|32094\",\"32|3048|32132|32142|32143|32146\",\"32|3048|32132|32142|32147\",\"32|2533|13964|10250|10251|10253\",\"32|2979|25858|25865\",\"32|2979|25858|25861\",\"32|2979|25858|25867\",\"32|2979|25858|25866\",\"32|2979|28726|27685\",\"18|2488|7593|7596\",\"18|2488|7593|7594\",\"18|2220|2472\",\"18|2220|2474\",\"18|1713|6884|8213\",\"18|1713|33273\",\"18|1713|35286\"],\"firstAuthor\":\"Becklake\",\"AUTHORS\":\"Becklake,
         MR\",\"noPDFAvailable\":true,\"tag_path_type\":[\"category|project\",\"category|project\",\"category|project\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"American
         Review of Respiratory Disease 126:187-194. [Review]\",\"wosid\":\"WOS:A1982PC43700001\",\"TITLE\":\"Asbestos-related
-        diseases of the lungs and pleura: Current clinical issues\",\"modified\":\"2024-02-12T14:25:43Z\",\"PMID\":7049025,\"keywords\":[\"Dust;
+        diseases of the lungs and pleura: Current clinical issues\",\"modified\":\"2024-08-12T20:51:34Z\",\"PMID\":7049025,\"keywords\":[\"Dust;
         Asbestos; 1332-21-4; Abridged Index Medicus; Index Medicus; Mesothelioma --
         etiology; Lung -- analysis; Dust -- analysis; Pulmonary Fibrosis -- etiology;
         Environmental Exposure; Bronchitis -- etiology; Lung Neoplasms -- etiology;
         Asbestosis -- etiology; Asbestos -- adverse effects; Lung Diseases -- etiology;
         Pleural Diseases -- etiology\"],\"journalTitle\":\"American Review of Respiratory
-        Disease\",\"_version_\":1790703509466775553}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
+        Disease\",\"_version_\":1807216431439282176}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
     headers:
       Connection:
       - Keep-Alive
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Tue, 20 Feb 2024 16:38:05 GMT
+      - Thu, 05 Sep 2024 22:58:19 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      - Apache/2.4.62 (Win64) OpenSSL/3.1.6 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14825859; Expires=Wed, 21 Feb 2024 16:38:05 GMT; Path=/; HttpOnly
-      - CFTOKEN=83408631; Expires=Wed, 21 Feb 2024 16:38:05 GMT; Path=/; HttpOnly
-      - JSESSIONID=03B4A2B119C5F68D372492428B710434.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F20%2011%3A38%3A05; Path=/
+      - CFID=35158054; Expires=Fri, 06 Sep 2024 22:58:19 GMT; Path=/; HttpOnly
+      - CFTOKEN=15752481; Expires=Fri, 06 Sep 2024 22:58:19 GMT; Path=/; HttpOnly
+      - JSESSIONID=21637BC3B13EC08F60A3E8BD991C13B1.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F09%2F05%2018%3A58%3A19; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:
@@ -213,7 +213,7 @@ interactions:
     body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=7049025
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -223,7 +223,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
@@ -289,20 +289,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:38:05 GMT
+      - Thu, 05 Sep 2024 22:58:20 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C45D975EA9B45000055DB41B42C2E.1.1.m_3
+      - 939B82323C96818500003FC1E2A178D1.1.1.m_3
       NCBI-SID:
-      - E4FA42114E293A21_D952SID
+      - B062CFF968141EFC_E926SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=E4FA42114E293A21_D952SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:38:06 GMT
+      - ncbi_sid=B062CFF968141EFC_E926SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:20 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
