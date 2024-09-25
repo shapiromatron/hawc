@@ -1011,12 +1011,15 @@ class LabelItem(HtmxView):
             self.content_object = ContentType.objects.get_for_id(
                 self.content_type
             ).get_object_for_this_type(pk=self.object_id)
-            self.assessment = self.content_object.get_assessment()
         except ObjectDoesNotExist as err:
             raise Http404() from err
 
-        handler = self.get_handler(request)
+        try:
+            self.assessment = self.content_object.get_assessment()
+        except AttributeError as err:
+            raise Http404() from err
 
+        handler = self.get_handler(request)
         return handler(request, *args, **kwargs)
 
     def label(self, request: HttpRequest, *args, **kwargs):
