@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.serializers.json import DjangoJSONEncoder
