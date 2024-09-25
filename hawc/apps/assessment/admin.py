@@ -342,6 +342,7 @@ class LabelAdmin(admin.ModelAdmin):
     )
     readonly_fields = ("id",)
     search_fields = ("name",)
+    readonly_fields = ("path", "depth", "numchild")
 
 
 @admin.register(models.LabeledItem)
