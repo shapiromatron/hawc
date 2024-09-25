@@ -491,5 +491,12 @@ class HAWCUtils {
             });
         }
     }
+
+    static watchForHtmx(selector) {
+        // Process HTMX elements that are inserted into the DOM
+        const target = document.querySelector(selector),
+            observer = new MutationObserver(() => window.htmx.process(target));
+        observer.observe(target, {subtree: true, childList: true});
+    }
 }
 export default HAWCUtils;

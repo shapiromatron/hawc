@@ -17,9 +17,6 @@
       window.isEditable = {{obj_perms.edit|lower}};
       summary.Visual.displayAsPage({{object.id}}, $(".visualization"));
     });
-    // Process HTMX elements that are inserted into the DOM
-    const target = document.querySelector(".visualization"),
-          observer = new MutationObserver(()=>htmx.process(target));
-    observer.observe(target, {subtree:true, childList:true});
+    window.app.HAWCUtils.watchForHtmx('.visualization');
   </script>
 {% endblock %}
