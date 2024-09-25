@@ -1016,14 +1016,12 @@ class LabelItem(HtmxView):
             raise Http404() from err
 
         handler = self.get_handler(request)
-        if request.action == "label" and not self.assessment.user_can_edit_object(request.user):
-            raise PermissionDenied()
-        elif not self.assessment.user_can_view_object(request.user):
-            raise PermissionDenied()
 
         return handler(request, *args, **kwargs)
 
     def label(self, request: HttpRequest, *args, **kwargs):
+        if self.assessment.user_can_edit_object(request.user):
+            raise PermissionDenied()
         context = dict(
             content_type=self.content_type, object_id=self.object_id, assessment=self.assessment
         )
@@ -1053,6 +1051,8 @@ class LabelItem(HtmxView):
         return render(request, "assessment/components/label_modal_content.html", context)
 
     def label_indicators(self, request: HttpRequest, *args, **kwargs):
+        if not self.assessment.user_can_view_object(request.user):
+            raise PermissionDenied()
         labels = models.Label.objects.get_applied(self.content_object)
         if not self.assessment.user_can_edit_object(request.user):
             labels = labels.filter(published=True)
