@@ -1,6 +1,6 @@
 
 <div hx-target="this" hx-swap="outerHTML" class="label-edit-row list-group-item d-flex {% if action == 'delete' %} bg-pink {% else %} bg-lightblue {% endif %}">
-  <form method="post" enctype="multipart/form-data" class="d-flex align-items-center p-1 w-100">
+  <form method="post" class="d-flex align-items-center p-1 w-100">
     <div class="col-md-auto flex-fill pl-0 py-2">
       {% crispy form %}
     </div>

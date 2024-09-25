@@ -22,19 +22,12 @@
       {% endif %}
     {% endactions %}
   </div>
-
   {% block dp_content %}
-
     <div id="dp_display"></div>
-
     <div id="loading_div"></div>
-
     <div id="caption">{{object.caption|safe}}</div>
-
   {% endblock dp_content %}
-
   {% include "assessment/components/label_modal.html" with modal_id="label-modal" %}
-
 {% endblock %}
 
 {% block extrajs %}

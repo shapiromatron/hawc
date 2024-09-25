@@ -66,6 +66,7 @@ input[type="submit"].btn, section button.btn, section input[type="button"].btn, 
     text-decoration: underline;
 }
 
+/* make labels hoverable on {% url 'assessment:labeled-items' %} */
 .clickable:hover:has(.label:hover) {
     background-color: unset !important;
 }
