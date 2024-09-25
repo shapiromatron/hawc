@@ -22,12 +22,12 @@ class TestDesignChildren:
         url = reverse("eco:cause-htmx", args=[design.id, "create"])
         term_id = models.NestedTerm.objects.first().id
         inputs = {
-            "name": "cause",
-            "term": term_id,
-            "level": "level",
-            "level_units": "grams",
-            "duration": "10 days",
-            "as_reported": "not reported",
+            "cause-new-name": "cause",
+            "cause-new-term": term_id,
+            "cause-new-level": "level",
+            "cause-new-level_units": "grams",
+            "cause-new-duration": "10 days",
+            "cause-new-as_reported": "not reported",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "eco/fragments/cause_row.html")
@@ -56,7 +56,8 @@ class TestDesignChildren:
 
         # cause update
         url = reverse("eco:cause-htmx", args=[cause.id, "update"])
-        inputs["name"] = "cause update"
+        inputs["cause-new-name"] = "cause update"
+        inputs = {k.replace("new", str(cause.id)): v for k, v in inputs.items()}
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "eco/fragments/cause_row.html")
         assert resp.status_code == 200
@@ -67,10 +68,10 @@ class TestDesignChildren:
         # effect create
         url = reverse("eco:effect-htmx", args=[design.id, "create"])
         inputs = {
-            "name": "effect",
-            "term": term_id,
-            "units": "grams",
-            "as_reported": "not reported",
+            "effect-new-name": "effect",
+            "effect-new-term": term_id,
+            "effect-new-units": "grams",
+            "effect-new-as_reported": "not reported",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "eco/fragments/effect_row.html")
@@ -99,7 +100,8 @@ class TestDesignChildren:
 
         # effect update
         url = reverse("eco:effect-htmx", args=[effect.id, "update"])
-        inputs["name"] = "effect update"
+        inputs["effect-new-name"] = "effect update"
+        inputs = {k.replace("new", str(effect.id)): v for k, v in inputs.items()}
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "eco/fragments/effect_row.html")
         assert resp.status_code == 200
@@ -110,14 +112,14 @@ class TestDesignChildren:
         # result create
         url = reverse("eco:result-htmx", args=[design.id, "create"])
         inputs = {
-            "name": "result",
-            "cause": cause.id,
-            "effect": effect.id,
-            "sort_order": 3,
-            "relationship_direction": 0,
-            "modifying_factors": "none,reported",
-            "variability": 94,
-            "statistical_sig_type": 99,
+            "result-new-name": "result",
+            "result-new-cause": cause.id,
+            "result-new-effect": effect.id,
+            "result-new-sort_order": 3,
+            "result-new-relationship_direction": 0,
+            "result-new-modifying_factors": "none,reported",
+            "result-new-variability": 94,
+            "result-new-statistical_sig_type": 99,
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "eco/fragments/result_row.html")
@@ -146,7 +148,8 @@ class TestDesignChildren:
 
         # result update
         url = reverse("eco:result-htmx", args=[result.id, "update"])
-        inputs["modifying_factors"] = "one"
+        inputs["result-new-modifying_factors"] = "one"
+        inputs = {k.replace("new", str(result.id)): v for k, v in inputs.items()}
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "eco/fragments/result_row.html")
         assert resp.status_code == 200

@@ -187,9 +187,9 @@ class TestAttachmentViewSet:
         resp = client.post(
             url,
             {
-                "title": "test",
-                "description": "test",
-                "attachment": SimpleUploadedFile("zzzz.txt", b"test"),
+                "attachment-new-title": "test",
+                "attachment-new-description": "test",
+                "attachment-new-attachment": SimpleUploadedFile("zzzz.txt", b"test"),
             },
             follow=True,
         )
@@ -219,9 +219,9 @@ class TestAttachmentViewSet:
         resp = client.post(
             url,
             {
-                "title": "test2",
-                "description": "test2",
-                "attachment": SimpleUploadedFile("test2.txt", b"test2"),
+                f"attachment-{instance_id}-title": "test2",
+                f"attachment-{instance_id}-description": "test2",
+                f"attachment-{instance_id}-attachment": SimpleUploadedFile("test2.txt", b"test2"),
             },
             follow=True,
         )
