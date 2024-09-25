@@ -781,16 +781,22 @@ class LabelItemForm(forms.Form):
 
     @transaction.atomic
     def save(self):
-        # delete old labels
-        models.LabeledItem.objects.filter(
+        qs = models.LabeledItem.objects.filter(
             content_type_id=self.content_type, object_id=self.object_id
-        ).delete()
-        # apply new labels
-        labels = []
-        for label in self.cleaned_data["labels"]:
-            labels.append(
+        )
+        existing = set(qs.values_list("label_id", flat=True))
+        next = set(label.id for label in self.cleaned_data["labels"])
+
+        deletes = existing - next
+        if deletes:
+            qs.filter(label_id__in=deletes).delete()
+
+        creates = next - existing
+        if creates:
+            labels = [
                 models.LabeledItem(
-                    label=label, content_type_id=self.content_type, object_id=self.object_id
+                    label_id=label_id, content_type_id=self.content_type, object_id=self.object_id
                 )
-            )
-        models.LabeledItem.objects.bulk_create(labels)
+                for label_id in creates
+            ]
+            models.LabeledItem.objects.bulk_create(labels)
