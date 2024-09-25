@@ -43,16 +43,16 @@ class VisualFilterSet(BaseFilterSet):
         form = InlineFilterForm
 
     def annotate_queryset(self, queryset):
-        if self.perms["edit"]:
-            return queryset.prefetch_related(Prefetch("labels", to_attr="visible_labels"))
-        else:
-            return queryset.prefetch_related(
-                Prefetch(
-                    "labels",
-                    queryset=LabeledItem.objects.filter(label__published=True),
-                    to_attr="visible_labels",
-                )
+        query = Q()
+        if not self.perms["edit"]:
+            query &= Q(label__published=True)
+        return queryset.prefetch_related(
+            Prefetch(
+                "labels",
+                queryset=LabeledItem.objects.filter(query).select_related("label"),
+                to_attr="visible_labels",
             )
+        )
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
@@ -101,9 +101,7 @@ class VisualFilterSet(BaseFilterSet):
             if not self.perms["edit"]
             else {"assessment_id": self.assessment.id}
         )
-        form.fields["label"].widget.attrs.update(
-            {"data-placeholder": "Visualizations with label applied"}
-        )
+        form.fields["label"].widget.attrs.update({"data-placeholder": "Labels"})
         form.fields["label"].widget.attrs["size"] = 1
         return form
 
@@ -120,24 +118,21 @@ class DataPivotFilterSet(VisualFilterSet):
         model = models.DataPivot
 
     def annotate_queryset(self, queryset):
-        if self.perms["edit"]:
-            return queryset.prefetch_related(
-                Prefetch("datapivotquery__labels", to_attr="visible_query_labels"),
-                Prefetch("datapivotupload__labels", to_attr="visible_upload_labels"),
-            )
-        else:
-            return queryset.prefetch_related(
-                Prefetch(
-                    "datapivotquery__labels",
-                    queryset=LabeledItem.objects.filter(label__published=True),
-                    to_attr="visible_query_labels",
-                ),
-                Prefetch(
-                    "datapivotupload__labels",
-                    queryset=LabeledItem.objects.filter(label__published=True),
-                    to_attr="visible_upload_labels",
-                ),
-            )
+        filters = Q()
+        if not self.perms["edit"]:
+            filters &= Q(label__published=True)
+        return queryset.prefetch_related(
+            Prefetch(
+                "datapivotquery__labels",
+                queryset=LabeledItem.objects.filter(filters).select_related("label"),
+                to_attr="visible_query_labels",
+            ),
+            Prefetch(
+                "datapivotupload__labels",
+                queryset=LabeledItem.objects.filter(filters).select_related("label"),
+                to_attr="visible_upload_labels",
+            ),
+        )
 
     def filter_queryset(self, queryset):
         return super().filter_queryset(queryset).select_related("datapivotquery", "datapivotupload")
@@ -214,18 +209,21 @@ class SummaryTableFilterSet(BaseFilterSet):
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
         query = Q(assessment=self.assessment)
-        if self.perms["edit"]:
-            queryset = queryset.prefetch_related(Prefetch("labels", to_attr="visible_labels"))
-        else:
-            queryset = queryset.prefetch_related(
+        label_query = Q()
+        if not self.perms["edit"]:
+            label_query &= Q(label__published=True)
+            query &= Q(published=True)
+        return (
+            queryset.filter(query)
+            .prefetch_related(
                 Prefetch(
                     "labels",
-                    queryset=LabeledItem.objects.filter(label__published=True),
+                    queryset=LabeledItem.objects.filter(label_query).select_related("label"),
                     to_attr="visible_labels",
                 )
             )
-            query &= Q(published=True)
-        return queryset.filter(query).order_by("id")
+            .order_by("id")
+        )
 
     def filter_labels(self, queryset, name, value):
         if not value:

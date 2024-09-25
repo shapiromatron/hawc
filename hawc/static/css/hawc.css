@@ -58,24 +58,12 @@ input[type="submit"].btn, section button.btn, section input[type="button"].btn, 
     border-radius: 8px 15px 15px 8px;
     overflow: hidden;
     font-size: 0.85rem;
-    padding: .2rem 1rem .2rem .4rem;
-    font-family: Source Sans Pro Web, "Noto Sans Arabic", "Noto Sans BN homepage", "Noto Sans GU homepage", "Noto Sans KR homepage", "Noto Sans SC homepage", "Noto Sans BN", "Noto Sans GU", "Noto Sans KR", "Noto Sans SC", "Noto Sans TC", "Helvetica Neue", Helvetica, Arial, sans;
-    clip-path: polygon(
-        0% 0,
-        calc(100% - 12px) 0,
-        100% 48%,
-        100% 52%,
-        calc(100% - 12px) 100%,
-        0% 100%
-    );
-    -webkit-transition: all 0.1s ease-in;
-    transition: all 0.1s ease-in;
+    padding: 0.2rem 1rem 0.2rem 0.4rem;
+    clip-path: polygon(0% 0, calc(100% - 12px) 0, 100% 48%, 100% 52%, calc(100% - 12px) 100%, 0% 100%);
+    cursor: pointer;
 }
 .label:hover{
-    -webkit-transform: scale(1.1);
-    transform: scale(1.1);
-    text-decoration: none;
-    cursor: pointer;
+    text-decoration: underline;
 }
 
 .clickable:hover:has(.label:hover) {

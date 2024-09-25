@@ -620,6 +620,13 @@ class DataPivot(models.Model):
         else:
             return self.datapivotquery.visual_type
 
+    @property
+    def visible_labels(self):
+        if hasattr(self, "datapivotupload"):
+            return self.datapivotupload.visible_upload_labels
+        else:
+            return self.datapivotquery.visible_query_labels
+
     def get_visual_type_display(self):
         return self.visual_type
 

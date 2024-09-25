@@ -21,34 +21,26 @@
     {% bs4_colgroup "50,26,12,12" %}
     {% bs4_thead "Visual,Type,Created,Modified" %}
     <tbody>
-      {% for visual in objects %}
+      {% for object in objects %}
         <tr>
           <td>
-            <div class="d-flex align-items-center">
-              <a class="text-nowrap" href="{{visual.get_absolute_url}}">{{visual.title}}</a>
-              <div class="d-flex flex-wrap">
-                {% for labeled_item in visual.visible_labels %}
-                  {% include "assessment/fragments/label.html" with label=labeled_item.label anchor_tag=True %}
-                {% endfor %}
-                {% for labeled_item in visual.datapivotquery.visible_query_labels %}
-                  {% include "assessment/fragments/label.html" with label=labeled_item.label anchor_tag=True %}
-                {% endfor %}
-                {% for labeled_item in visual.datapivotupload.visible_upload_labels %}
-                  {% include "assessment/fragments/label.html" with label=labeled_item.label anchor_tag=True %}
-                {% endfor %}
-              </div>
-              {% if not visual.published %}
-                <i class="fa fa-eye-slash mx-1" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
-              {% endif %}
-              {% debug_badge visual.id %}
+            <div>
+              {% debug_badge object.id %}
+              <a class="text-nowrap" href="{{object.get_absolute_url}}">{{object.title}}</a>
+              {% if not object.published %}<i class="fa fa-eye-slash mx-1" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>{% endif %}
             </div>
-            {% if visual.caption %}
-              <div class='text-muted text-nowrap' title="{{visual.caption|striptags|safe}}">{{visual.caption|striptags|truncatewords:20|safe}}</div>
+            <div class="d-flex flex-wrap">
+              {% for labeled_item in object.visible_labels %}
+                {% include "assessment/fragments/label.html" with label=labeled_item.label anchor_tag=True %}
+              {% endfor %}
+            </div>
+            {% if object.caption %}
+              <div class='text-muted' title="{{object.caption|striptags|safe}}">{{object.caption|striptags|truncatewords:20|safe}}</div>
             {% endif %}
           </td>
-          <td>{{visual.get_visual_type_display}}</td>
-          <td>{{ visual.created|date:"Y-m-d" }}</td>
-          <td>{{ visual.last_updated|date:"Y-m-d" }}</td>
+          <td>{{ object.get_visual_type_display }}</td>
+          <td>{{ object.created|date:"Y-m-d" }}</td>
+          <td>{{ object.last_updated|date:"Y-m-d" }}</td>
         </tr>
       {% endfor %}
     </tbody>
