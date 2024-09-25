@@ -6,8 +6,7 @@
     <button class="btn btn-primary ml-2 ml-auto align-self-start flex-shrink-0"
             hx-get="{% url 'assessment:label-htmx' assessment.pk 'create' %}"
             hx-target="#label-listgroup"
-            hx-swap="beforeend"
-    >
+            hx-swap="beforeend">
       <i class="fa fa-fw fa-save"></i>&nbsp;
       Create label
     </button>
