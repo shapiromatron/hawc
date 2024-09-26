@@ -15,9 +15,7 @@ class TaskQuerySet(QuerySet):
         return self.filter(owner=user)
 
     def exclude_completed_and_abandonded(self):
-        return self.exclude(
-            status__in=[constants.TaskStatus.COMPLETED, constants.TaskStatus.ABANDONED]
-        )
+        return self.exclude(status__terminal_status=True)
 
 
 class TaskManager(BaseManager):
@@ -38,17 +36,26 @@ class TaskManager(BaseManager):
 
         studies = Study.objects.assessment_qs(assessment.id).prefetch_related("tasks")
         tasks = []
-
-        # get all statuses and types
-        statuses = self._get_missing_statuses(assessment)
-        types = self._get_missing_types(assessment)
+        statuses = []
+        types = assessment.task_types.all()
 
         for study in studies:
-            tasks.extend(self._get_missing_tasks(study, statuses, types))
+            # if an assessment already has tasks or setup defined, create new tasks
+            if types:
+                # add tasks according to new task types
+                tasks.extend(self._get_updated_tasks(study))
+            else:
+                # create default tasks
+                statuses = self._get_missing_statuses(assessment)
+                types = self._get_missing_types(assessment)
+                tasks.extend(self._get_missing_tasks(study, statuses, types))
+
         logger.info(f"Creating {len(tasks)} tasks for assessment {assessment.id}.")
         self.bulk_create(tasks)
 
-        self._create_assessment_triggers(assessment, statuses, types)
+        # load initial default triggers
+        if not assessment.task_triggers.all():
+            self._create_default_assessment_triggers(assessment, statuses, types)
 
     def create_study_tasks(self, study):
         """
@@ -60,14 +67,51 @@ class TaskManager(BaseManager):
         if not assessment.enable_project_management:
             return
 
-        statuses = self._get_missing_statuses(assessment)
-        types = self._get_missing_types(assessment)
-        tasks = self._get_missing_tasks(study, statuses, types)
+        # Create default tasks only if a new study is created
+        if study.tasks.all():
+            tasks = self._get_updated_tasks(study)
+        else:
+            statuses = self._get_missing_statuses(assessment)
+            types = self._get_missing_types(assessment)
+            tasks = self._get_missing_tasks(study, statuses, types)
 
         logger.info(f"Creating {len(tasks)} tasks for study {study.id}.")
         self.bulk_create(tasks)
 
-    def _create_assessment_triggers(self, assessment, statuses, types):
+    def progress_next_status(self, task):
+        """
+        If a user assigned task is set to a terminal status, start their next task
+
+        Method called via signal whenever a task is created/modified.
+        """
+        status = task.status
+        type = task.type
+        assessment = task.study.assessment
+
+        if not status.terminal_status:
+            return
+
+        next_task = self.model.objects.filter(
+            owner=task.owner,
+            study=task.study,
+            type__order__gt=type.order,
+            status__terminal_status=False,
+        ).first()
+
+        # Start the next task
+        if next_task:
+            next_status = (
+                assessment.task_statuses.filter(order__gt=next_task.status.order)
+                .order_by("order")
+                .exclude(terminal_status=True)
+                .first()
+            )
+
+            if next_status:
+                next_task.status = next_status
+                next_task.save()
+
+    def _create_default_assessment_triggers(self, assessment, statuses, types):
         """
         Create task triggers for an assessment and save to database. This
         should eventually take user-defined input, but currently creates all
@@ -77,6 +121,7 @@ class TaskManager(BaseManager):
         """
 
         TaskTrigger = apps.get_model("mgmt", "TaskTrigger")
+        triggers = []
 
         def create_trigger(task_type, event, trigger_type):
             """Create trigger given event and task type"""
@@ -88,12 +133,14 @@ class TaskManager(BaseManager):
                 next_status = self._get_task_status(constants.TaskStatus.COMPLETED, statuses)
 
             if curr_status and next_status:
-                TaskTrigger.objects.get_or_create(
-                    assessment=assessment,
-                    task_type=task_type,
-                    current_status=curr_status,
-                    next_status=next_status,
-                    event=event,
+                triggers.append(
+                    TaskTrigger(
+                        assessment=assessment,
+                        task_type=task_type,
+                        current_status=curr_status,
+                        next_status=next_status,
+                        event=event,
+                    )
                 )
 
         # default hardcoded triggers
@@ -116,6 +163,21 @@ class TaskManager(BaseManager):
             elif event == constants.StartTaskTriggerEvent.COMPLETE_ROB:
                 task_type = self._get_task_type(constants.TaskType.ROB, types)
                 create_trigger(task_type, event, 2)
+
+        TaskTrigger.objects.bulk_create(triggers)
+        logger.info(f"Creating {len(triggers)} tasks for assessment {assessment.id}.")
+
+    def _get_updated_tasks(self, study):
+        types = self.model.objects.all()
+        types = study.assessment.task_types.all()
+        status = study.assessment.task_statuses.order_by("order").first()
+        tasks = []
+        # create new tasks set to the initial status
+        for type in types:
+            if not study.tasks.filter(type=type):
+                new_type = self.model(study=study, type=type, status=status)
+                tasks.append(new_type)
+        return tasks
 
     def _get_missing_tasks(self, study, statuses, types):
         """Return list of unsaved Task objects for single study."""
@@ -163,14 +225,16 @@ class TaskManager(BaseManager):
         statuses = []
         # create all possible statuses for each task
         for value, name in constants.TaskStatus.choices:
-            status_instance, _ = TaskStatus.objects.get_or_create(
+            status_instance = TaskStatus(
                 assessment=assessment,
                 name=name,
                 value=value,
                 order=value,
                 color=constants.TaskStatus.status_colors(value),
+                terminal_status=self._get_terminal_status(value),
             )
             statuses.append(status_instance)
+        TaskStatus.objects.bulk_create(statuses)
         return statuses
 
     def _get_missing_types(self, assessment):
@@ -179,12 +243,14 @@ class TaskManager(BaseManager):
         types = []
 
         for type, type_name in constants.TaskType.choices:
-            type_instance, _ = TaskType.objects.get_or_create(
+            type_instance = TaskType(
                 assessment=assessment,
                 name=type_name,
                 order=type,
             )
             types.append(type_instance)
+
+        TaskType.objects.bulk_create(types)
         return types
 
     def _get_task_type(self, task_type, type_list):
@@ -200,6 +266,11 @@ class TaskManager(BaseManager):
             if status.order == task_status:
                 return status
         return None
+
+    def _get_terminal_status(self, status):
+        if status in (constants.TaskStatus.COMPLETED, constants.TaskStatus.ABANDONED):
+            return True
+        return False
 
     def ensure_preparation_started(self, study, user):
         """Start preparation task if not started."""

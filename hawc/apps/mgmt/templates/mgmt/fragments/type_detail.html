@@ -1,0 +1,26 @@
+<tr class="task-row" hx-target="this">
+  <td>
+    <span>{{ object.name }}</span>
+  </td>
+  <td>
+    {{object.order|default:"---"}}
+  </td>
+  <td>
+    {{object.description|default:"---"}}
+  </td>
+  <td>
+    <div class="d-flex">
+      <button class="btn btn-primary ml-auto" hx-post="{% url 'mgmt:task-type-htmx' object.pk 'down' %}" hx-target="#type-rows" hx-swap="outerHTML">
+        <i title="Switch order up" class="fa fa-arrow-down" aria-hidden="true"></i>
+      </button>
+      <button class="btn btn-primary ml-auto" hx-post="{% url 'mgmt:task-type-htmx' object.pk 'up' %}" hx-target="#type-rows" hx-swap="outerHTML">
+        <i title="Switch order up" class="fa fa-arrow-up" aria-hidden="true"></i>
+      </button>
+      <button class="btn btn-light ml-auto" hx-get="{% url 'mgmt:task-type-htmx' object.pk 'update' %}" hx-swap="outerHTML">
+        <i title="Edit this task type" class="fa fa-pencil-square-o" aria-hidden="true"></i>
+      </button>
+    </div>
+  </td>
+</tr>
+
+

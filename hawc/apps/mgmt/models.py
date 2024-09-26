@@ -6,6 +6,7 @@ from typing import Self
 import plotly.express as px
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.timezone import now
 from plotly.graph_objs._figure import Figure
@@ -19,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class TaskType(models.Model):
-    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
+    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE, related_name="task_types")
     name = models.CharField(max_length=64)
     order = models.PositiveSmallIntegerField(help_text="Task order in an assessment")
     description = models.TextField(blank=True)
@@ -27,11 +28,25 @@ class TaskType(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.name}"
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("mgmt:task-type-htmx", args=[self.pk, "read"])
+
+    def get_edit_url(self):
+        return reverse("mgmt:task-type-htmx", args=[self.pk, "update"])
+
+    def get_delete_url(self):
+        return reverse("mgmt:task-type-htmx", args=[self.pk, "delete"])
+
+    def get_assessment(self):
+        return self.assessment
 
 
 class TaskStatus(models.Model):
-    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
+    assessment = models.ForeignKey(
+        Assessment, on_delete=models.CASCADE, related_name="task_statuses"
+    )
     name = models.CharField(max_length=32)
     value = models.PositiveSmallIntegerField()
     description = models.TextField(blank=True)
@@ -45,23 +60,35 @@ class TaskStatus(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.name}"
+        return self.name
+
+    def get_by_terminal(self):
+        # return users that are either project managers or team members
+        return self.objects.filter(terminal_status=False).order_by("order").distinct("id")
+
+    def get_assessment(self):
+        return self.assessment
+
+    def get_absolute_url(self):
+        return reverse("mgmt:task-status-htmx", args=[self.pk, "read"])
+
+    def get_edit_url(self):
+        return reverse("mgmt:task-status-htmx", args=[self.pk, "update"])
+
+    def get_delete_url(self):
+        return reverse("mgmt:task-status-htmx", args=[self.pk, "delete"])
 
     def save(self, *args, **kwargs):
-        """Alter model terminal status"""
-        if (
-            self.value == constants.TaskStatus.COMPLETED
-            or self.value == constants.TaskStatus.ABANDONED
-        ):
-            self.terminal_status = True
-        else:
-            self.terminal_status = False
-
+        """Alter model value"""
+        if self.value is None:
+            self.value = self.order
         super().save(*args, **kwargs)
 
 
 class TaskTrigger(models.Model):
-    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)  # is this actually needed
+    assessment = models.ForeignKey(
+        Assessment, on_delete=models.CASCADE, related_name="task_triggers"
+    )
     task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE)
     current_status = models.ForeignKey(
         TaskStatus, on_delete=models.CASCADE, null=True, related_name="current_triggers"
@@ -73,8 +100,20 @@ class TaskTrigger(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    def get_assessment(self):
+        return self.assessment
+
     def __str__(self):
         return f"{self.event}"
+
+    def get_absolute_url(self):
+        return reverse("mgmt:task-trigger-htmx", args=[self.pk, "read"])
+
+    def get_edit_url(self):
+        return reverse("mgmt:task-trigger-htmx", args=[self.pk, "update"])
+
+    def get_delete_url(self):
+        return reverse("mgmt:task-trigger-htmx", args=[self.pk, "delete"])
 
 
 class Task(models.Model):
@@ -121,14 +160,10 @@ class Task(models.Model):
 
     def save(self, *args, **kwargs):
         """Alter model business logic for timestamps and completion"""
-        if self.status.order == constants.TaskStatus.NOT_STARTED:
-            self.started = None
-            self.completed = None
-        elif self.status.order == constants.TaskStatus.STARTED:
-            self.started = timezone.now()
-            self.completed = None
-        elif self.status.terminal_status:
+        if self.status.terminal_status:
             self.completed = timezone.now()
+        else:
+            self.completed = None
 
         super().save(*args, **kwargs)
 
@@ -136,6 +171,7 @@ class Task(models.Model):
         """Save task as started by user if currently not started."""
         if not self.started:
             self.owner = user
+            self.started = timezone.now()
             logger.info(f'Starting "{self.type}" task {self.id}')
             self.save()
 
@@ -145,9 +181,12 @@ class Task(models.Model):
             logger.info(f'Stopping "{self.type}" task {self.id}')
             self.save()
 
+    def get_absolute_url(self):
+        return reverse("mgmt:task-htmx", args=[self.pk, "read"])
+
     @classmethod
     def barchart(cls, tasks: list[Self], title: str = "") -> Figure:
-        counts = Counter(el.status for el in tasks)
+        counts = Counter(el.status.order for el in tasks)
         status_count = {
             label: counts.get(value, 0) for value, label in constants.TaskStatus.choices
         }
@@ -174,9 +213,4 @@ class Task(models.Model):
 
     @property
     def overdue(self):
-        return (
-            self.due_date
-            and self.status.order
-            in [constants.TaskStatus.NOT_STARTED, constants.TaskStatus.STARTED]
-            and self.due_date < now()
-        )
+        return self.due_date and not self.status.terminal_status and self.due_date < now()

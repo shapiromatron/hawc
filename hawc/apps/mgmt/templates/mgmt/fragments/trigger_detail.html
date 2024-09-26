@@ -1,0 +1,21 @@
+<tr class="task-row" hx-target="this" hx-swap="outerHTML">
+  <td>
+    <span>{{ object.task_type }}</span>
+  </td>
+  <td>
+    {{object.current_status}}
+  </td>
+  <td>
+    {{object.next_status}}
+  </td>
+  <td>
+    {{object.get_event_display}}
+  </td>
+  <td>
+    <div class="d-flex">
+      <button class="btn btn-light ml-auto" hx-get="{% url 'mgmt:task-trigger-htmx' object.pk 'update' %}">
+        <i title="Edit this task" class="fa fa-pencil-square-o" aria-hidden="true"></i>
+      </button>
+    </div>
+  </td>
+</tr>

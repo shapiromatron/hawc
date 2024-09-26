@@ -1,0 +1,5 @@
+<tbody id="{{setup}}-rows">
+  {% for object in obj_list %}
+    {% include "mgmt/fragments/"|add:setup|add:"_detail.html" %}
+  {% endfor %}
+</tbody>

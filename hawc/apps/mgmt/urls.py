@@ -33,4 +33,26 @@ urlpatterns = [
         views.AssessmentAnalytics.as_view(),
         name="assessment-analytics",
     ),
+    path(
+        "assessment/<int:pk>/task-setup/",
+        views.TaskSetupList.as_view(),
+        name="task-setup-list",
+    ),
+    path("assessment/<int:pk>/copy/", views.TaskSetupCopy.as_view(), name="task-setup-copy"),
+    # task setup htmx viewsets
+    path(
+        "type/<int:pk>/<slug:action>/",
+        views.TaskTypeViewSet.as_view(),
+        name="task-type-htmx",
+    ),
+    path(
+        "trigger/<int:pk>/<slug:action>/",
+        views.TaskTriggerViewSet.as_view(),
+        name="task-trigger-htmx",
+    ),
+    path(
+        "status/<int:pk>/<slug:action>/",
+        views.TaskStatusViewSet.as_view(),
+        name="task-status-htmx",
+    ),
 ]

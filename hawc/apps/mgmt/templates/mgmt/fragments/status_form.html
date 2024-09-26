@@ -1,0 +1,33 @@
+<tr hx-target="this" hx-swap="outerHTML" class="status-edit-row">
+  <td colspan="6">
+    <form method="post" class="border my-2 p-2 pb-5 edit-form-background form-design">
+      {% if not form.instance.id %}
+        <h3 class="py-2">Create Task Status</h3>
+      {% endif %}
+
+      {% crispy form %}
+      <div class="d-block container">
+        <div class="float-right">
+          {% if form.instance.id %}
+            {% if action == 'delete' %}
+              {% include "mgmt/fragments/confirm_delete.html" %}
+            {% else %}
+              <button class="btn btn-sm btn-info" hx-post="{% url 'mgmt:task-status-htmx' object.pk 'update' %}">Save</button>
+              <button class="btn btn-sm btn-light" hx-get="{% url 'mgmt:task-status-htmx' object.pk 'read' %}"><i class="fa fa-fw fa-times mr-1"></i>Cancel</button>
+              <button
+                class="btn btn-sm btn-danger ml-auto flex-shrink-0 align-self-start"
+                id="type-delete"
+                hx-get="{{ object.get_delete_url }}">
+                <i class="fa fa-fw fa-trash"></i>&nbsp;Delete</button>
+            {% endif %}
+          {% else %}
+            <button class="btn btn-sm btn-info" hx-post="{% url 'mgmt:task-status-htmx' assessment.pk 'create' %}">Create</button>
+            <button class="btn btn-sm btn-light" id="task-type-cancel" onclick="window.app.HAWCUtils.hideElement($(this).closest('.status-edit-row'), deleteEl=true)">
+              Cancel
+            </button>
+          {% endif %}
+        </div>
+      </div>
+    </form>
+  </td>
+</tr>
