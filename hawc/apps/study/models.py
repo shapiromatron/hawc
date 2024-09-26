@@ -116,7 +116,7 @@ class Study(Reference):
         help_text="Project-managers and team-members are allowed to edit this study.",
     )
 
-    udf_content = GenericRelation(ModelUDFContent, related_query_name="study")
+    udfs = GenericRelation(ModelUDFContent, related_query_name="studies")
 
     BREADCRUMB_PARENT = "assessment"
 

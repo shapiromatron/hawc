@@ -236,7 +236,7 @@ class AnimalGroup(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    udf_content = GenericRelation(ModelUDFContent, related_query_name="animal_group")
+    udfs = GenericRelation(ModelUDFContent, related_query_name="animal_groups")
 
     BREADCRUMB_PARENT = "experiment"
 
@@ -637,7 +637,7 @@ class Endpoint(BaseEndpoint):
     )
     additional_fields = models.TextField(default="{}")
 
-    udf_content = GenericRelation(ModelUDFContent, related_query_name="animal_endpoint")
+    udfs = GenericRelation(ModelUDFContent, related_query_name="endpoints")
 
     BREADCRUMB_PARENT = "animal_group"
 
