@@ -10,6 +10,7 @@ from .exceptions import HawcClientException, HawcServerException
 from .interactive import InteractiveHawcClient
 from .invitro import InvitroClient
 from .literature import LiteratureClient
+from .mgmt import MgmtClient
 from .riskofbias import RiskOfBiasClient
 from .session import HawcSession
 from .study import StudyClient
@@ -45,6 +46,7 @@ class HawcClient(BaseClient):
         self.epiv2 = EpiV2Client(self.session)
         self.invitro = InvitroClient(self.session)
         self.lit = LiteratureClient(self.session)
+        self.mgmt = MgmtClient(self.session)
         self.riskofbias = RiskOfBiasClient(self.session)
         self.summary = SummaryClient(self.session)
         self.study = StudyClient(self.session)

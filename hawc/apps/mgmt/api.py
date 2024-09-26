@@ -28,7 +28,7 @@ class MgmtViewSet(BaseAssessmentViewSet):
         assessment: Assessment = self.get_object()
         qs = (
             models.Task.objects.get_qs(assessment)
-            .select_related("study", "owner")
+            .select_related("study", "owner", "type", "status")
             .order_by("study_id", "type", "id")
         )
         exporter = exports.TaskExporter.flat_export(qs, filename=f"{assessment}-task")

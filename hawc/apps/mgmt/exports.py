@@ -1,7 +1,5 @@
 from ..common.exports import Exporter, ModelExport
-from ..common.models import sql_display
 from ..study.exports import StudyExport
-from . import constants
 
 
 class TaskExport(ModelExport):
@@ -11,18 +9,12 @@ class TaskExport(ModelExport):
             "owner_id": "owner",
             "owner_email": "owner__email",
             "type": "type",
-            "type_display": "type_display",
+            "type_display": "type__name",
             "status": "status",
-            "status_display": "status_display",
+            "status_display": "status__name",
             "due_date": "due_date",
             "started": "started",
             "completed": "completed",
-        }
-
-    def get_annotation_map(self, query_prefix):
-        return {
-            "type_display": sql_display(query_prefix + "type", constants.TaskType),
-            "status_display": sql_display(query_prefix + "status", constants.TaskStatus),
         }
 
 

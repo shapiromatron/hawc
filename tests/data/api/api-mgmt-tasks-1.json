@@ -24,13 +24,13 @@
     "task-completed": 1597431583848,
     "task-due_date": 1754020800000,
     "task-id": 1,
-    "task-owner_email": "team@hawcproject.org",
-    "task-owner_id": 3.0,
+    "task-owner_email": "admin@hawcproject.org",
+    "task-owner_id": 1.0,
     "task-started": null,
     "task-status": 1,
-    "task-status_display": "?",
+    "task-status_display": "Not Started",
     "task-type": 1,
-    "task-type_display": "?"
+    "task-type_display": "Preparation"
   },
   {
     "study-ask_author": "",
@@ -57,13 +57,13 @@
     "task-completed": null,
     "task-due_date": null,
     "task-id": 2,
-    "task-owner_email": "team@hawcproject.org",
-    "task-owner_id": 3.0,
+    "task-owner_email": "admin@hawcproject.org",
+    "task-owner_id": 1.0,
     "task-started": null,
     "task-status": 1,
-    "task-status_display": "?",
+    "task-status_display": "Not Started",
     "task-type": 2,
-    "task-type_display": "?"
+    "task-type_display": "Data Extraction"
   },
   {
     "study-ask_author": "",
@@ -94,9 +94,9 @@
     "task-owner_id": null,
     "task-started": null,
     "task-status": 1,
-    "task-status_display": "?",
+    "task-status_display": "Not Started",
     "task-type": 3,
-    "task-type_display": "?"
+    "task-type_display": "QA/QC"
   },
   {
     "study-ask_author": "",
@@ -127,8 +127,8 @@
     "task-owner_id": null,
     "task-started": null,
     "task-status": 1,
-    "task-status_display": "?",
+    "task-status_display": "Not Started",
     "task-type": 4,
-    "task-type_display": "?"
+    "task-type_display": "Study Evaluation"
   }
 ]
