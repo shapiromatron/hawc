@@ -1118,7 +1118,7 @@ class DatasetRevision(models.Model):
         except Exception as exc:
             raise ValueError("Unable load dataframe") from exc
 
-        if df.shape[0] == 0:
+        if df.empty:
             raise ValueError("Dataframe contains no rows")
 
         if df.shape[1] == 0:

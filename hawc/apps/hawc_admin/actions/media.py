@@ -44,7 +44,7 @@ def media_metadata_report(root_uri: str) -> pd.DataFrame:
     # build dataframe
     df = pd.DataFrame(data)
 
-    if df.shape[0] > 0:
+    if not df.empty:
         # transform columns using vectorized operations
         df.uri = df.uri.str.replace(media_root.as_uri(), media_url)
         df.size_mb = df.size_mb / (1024 * 1024)

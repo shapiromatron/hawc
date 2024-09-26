@@ -159,7 +159,7 @@ class ModelExport:
         return df
 
     def format_time(self, df: pd.DataFrame) -> pd.DataFrame:
-        if df.shape[0] == 0:
+        if df.empty:
             return df
         tz = timezone.get_default_timezone()
         for key in [self.get_column_name("created"), self.get_column_name("last_updated")]:
