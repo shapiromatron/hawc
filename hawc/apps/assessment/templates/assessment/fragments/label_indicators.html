@@ -1,7 +1,7 @@
 {% if oob %}
   <div class="d-flex align-items-center ml-1 pb-3 flex-wrap"
-    id="label-indicators"
-    hx-swap-oob="outerHTML">
+       id="label-indicators"
+       hx-swap-oob="outerHTML">
     {% for label in labels %}
       {% include "assessment/fragments/label.html" with big=True anchor_tag=True %}
     {% endfor %}
