@@ -378,7 +378,7 @@ class IdentifiersManager(BaseManager):
                 (doi_dupes, "DOIs"),
                 (wos_dupes, "WoS IDs"),
             ]:
-                if dupes.shape[0] > 0:
+                if not dupes.empty:
                     error_msg.append(
                         f"The following HERO IDs have duplicate {id_type}: {dupes.HEROID.tolist()}. "
                     )
