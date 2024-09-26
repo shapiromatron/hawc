@@ -39,15 +39,17 @@ class TaskManager(BaseManager):
         statuses = []
         types = assessment.task_types.all()
 
+        # get default assessment setup if not created
+        if not types:
+            statuses = self._get_missing_statuses(assessment)
+            types = self._get_missing_types(assessment)
+
         for study in studies:
-            # if an assessment already has tasks or setup defined, create new tasks
             if types:
                 # add tasks according to new task types
                 tasks.extend(self._get_updated_tasks(study))
             else:
                 # create default tasks
-                statuses = self._get_missing_statuses(assessment)
-                types = self._get_missing_types(assessment)
                 tasks.extend(self._get_missing_tasks(study, statuses, types))
 
         logger.info(f"Creating {len(tasks)} tasks for assessment {assessment.id}.")
@@ -71,8 +73,8 @@ class TaskManager(BaseManager):
         if study.tasks.all():
             tasks = self._get_updated_tasks(study)
         else:
-            statuses = self._get_missing_statuses(assessment)
-            types = self._get_missing_types(assessment)
+            statuses = study.assessment.task_statuses.all()
+            types = study.assessment.task_types.all()
             tasks = self._get_missing_tasks(study, statuses, types)
 
         logger.info(f"Creating {len(tasks)} tasks for study {study.id}.")
@@ -304,10 +306,9 @@ class TaskManager(BaseManager):
             trigger = triggers.objects.filter(
                 event=event, task_type=task.type, current_status=task.status
             )
-
             if trigger.first():
+                # get next status from the trigger
                 task.status = trigger.first().next_status
-
                 if task.started:
                     task.stop_if_started()
                 else:
