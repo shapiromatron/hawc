@@ -82,6 +82,19 @@ def maximum_percent_control_change(changes: list):
     return val
 
 
+def rename_udf_cols(df) -> pd.DataFrame:
+    colnames = set(df.columns)
+    match = "_udfs-content-field-"
+
+    def _rename(name) -> str:
+        if match not in name:
+            return name
+        candidate = name.replace(match, " ")
+        return candidate if candidate not in colnames else name.replace(match, " udf ")
+
+    return df.rename(_rename, axis="columns")
+
+
 class ExperimentExport(ModelExport):
     def get_value_map(self):
         return {
@@ -626,8 +639,8 @@ class EndpointGroupFlatDataPivotExporter(Exporter):
                 include=("id", "short_citation", "study_identifier", "published"),
             ),
             ModelUDFContentExport(
-                "study_udf_content",
-                "animal_group__experiment__study__udf_content",
+                "study_udfs",
+                "animal_group__experiment__study__udfs",
                 include=("content",),
             ),
             ExperimentExport(
@@ -651,8 +664,8 @@ class EndpointGroupFlatDataPivotExporter(Exporter):
                 ),
             ),
             ModelUDFContentExport(
-                "animal_group_udf_content",
-                "animal_group__udf_content",
+                "animal_group_udfs",
+                "animal_group__udfs",
                 include=("content",),
             ),
             DosingRegimeExport(
@@ -689,8 +702,8 @@ class EndpointGroupFlatDataPivotExporter(Exporter):
                 ),
             ),
             ModelUDFContentExport(
-                "endpoint_udf_content",
-                "udf_content",
+                "endpoint_udfs",
+                "udfs",
                 include=("content",),
             ),
             EndpointGroupExport(
@@ -998,11 +1011,6 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         df = self.handle_incidence_summary(df)
 
         df = df.rename(
-            lambda x: x.replace("_udf_content-content-field-", " "),
-            axis="columns",
-        )
-
-        df = df.rename(
             columns={
                 "study-id": "study id",
                 "study-short_citation": "study name",
@@ -1051,9 +1059,9 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         )
         df = df.drop(
             columns=[
-                "endpoint_udf_content-content",
-                "study_udf_content-content",
-                "animal_group_udf_content-content",
+                "endpoint_udfs-content",
+                "study_udfs-content",
+                "animal_group_udfs-content",
                 "endpoint-observation_time",
                 "dose_group-id",
                 "dose_group-dose_group_id",
@@ -1071,6 +1079,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                 "dosing_regime-route_of_exposure_display",
             ]
         )
+        df = rename_udf_cols(df)
 
         return df
 
@@ -1084,8 +1093,8 @@ class EndpointFlatDataPivotExporter(Exporter):
                 include=("id", "short_citation", "study_identifier", "published"),
             ),
             ModelUDFContentExport(
-                "study_udf_content",
-                "animal_group__experiment__study__udf_content",
+                "study_udfs",
+                "animal_group__experiment__study__udfs",
                 include=("content",),
             ),
             ExperimentExport(
@@ -1109,8 +1118,8 @@ class EndpointFlatDataPivotExporter(Exporter):
                 ),
             ),
             ModelUDFContentExport(
-                "animal_group_udf_content",
-                "animal_group__udf_content",
+                "animal_group_udfs",
+                "animal_group__udfs",
                 include=("content",),
             ),
             DosingRegimeExport(
@@ -1147,8 +1156,8 @@ class EndpointFlatDataPivotExporter(Exporter):
                 ),
             ),
             ModelUDFContentExport(
-                "endpoint_udf_content",
-                "udf_content",
+                "endpoint_udfs",
+                "udfs",
                 include=("content",),
             ),
             EndpointGroupExport(
@@ -1318,11 +1327,6 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         df = df.drop_duplicates(subset="endpoint-id")
 
         df = df.rename(
-            lambda x: x.replace("_udf_content-content-field-", " "),
-            axis="columns",
-        )
-
-        df = df.rename(
             columns={
                 "study-id": "study id",
                 "study-short_citation": "study name",
@@ -1359,9 +1363,9 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         )
         df = df.drop(
             columns=[
-                "endpoint_udf_content-content",
-                "animal_group_udf_content-content",
-                "study_udf_content-content",
+                "study_udfs-content",
+                "animal_group_udfs-content",
+                "endpoint_udfs-content",
                 "endpoint_group-stdev",
                 "percent lower ci",
                 "percent affected",
@@ -1395,6 +1399,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 "endpoint-observation_time",
             ]
         )
+        df = rename_udf_cols(df)
 
         return df
 
