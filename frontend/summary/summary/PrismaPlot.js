@@ -37,7 +37,7 @@ class PrismaPlot {
             }
             prevNodeGroup = prevNodeGroup.group.getBBox();
             node.rect.setAttribute("y", prevNodeGroup.y + prevNodeGroup.height + nodeSpacing);
-            this.updateNodeTextAttributes(node, { "y": prevNodeGroup.y + prevNodeGroup.height + nodeSpacing + TEXT_OFFSET_Y });
+            this.updateNodeTextAttributes(node, { "y": prevNodeGroup.y + prevNodeGroup.height + nodeSpacing + this.TEXT_OFFSET_Y });
         }
 
         // wrap and push down all immediate text elements
@@ -46,7 +46,7 @@ class PrismaPlot {
             HAWCUtils.wrapText(node.text[i], width);
             for (let j = i + 1; j < node.text.length; j++) {
                 let previousTextY = node.text[j - 1].getBBox().y + node.text[j - 1].getBBox().height;
-                node.text[j].setAttribute("y", previousTextY + TEXT_OFFSET_Y);
+                node.text[j].setAttribute("y", previousTextY + this.TEXT_OFFSET_Y);
             }
         }
 
@@ -58,17 +58,17 @@ class PrismaPlot {
                 let prevChildNodeSpacing = parseFloat(child.previous.styling["spacing-vertical"]);
 
                 child.rect.setAttribute("y", prevChildBBox.y + prevChildBBox.height + prevChildNodeSpacing);
-                this.updateNodeTextAttributes(child, { "y": prevChildBBox.y + prevChildBBox.height + prevChildNodeSpacing + TEXT_OFFSET_Y });
+                this.updateNodeTextAttributes(child, { "y": prevChildBBox.y + prevChildBBox.height + prevChildNodeSpacing + this.TEXT_OFFSET_Y });
             }
             else if (child.previous) {
                 let prevBBox = child.previous.rect.getBBox();
                 child.rect.setAttribute("y", prevBBox.y);
-                this.updateNodeTextAttributes(child, { "y": prevBBox.y + TEXT_OFFSET_Y });
+                this.updateNodeTextAttributes(child, { "y": prevBBox.y + this.TEXT_OFFSET_Y });
             }
             else {
                 let prevChildBBox = node.text[node.text.length - 1].getBBox();
                 child.rect.setAttribute("y", prevChildBBox.y + prevChildBBox.height + 15);
-                this.updateNodeTextAttributes(child, { "y": prevChildBBox.y + prevChildBBox.height + TEXT_OFFSET_Y + 15 });
+                this.updateNodeTextAttributes(child, { "y": prevChildBBox.y + prevChildBBox.height + this.TEXT_OFFSET_Y + 15 });
             }
             this.resizeNodes(child);
         }
@@ -77,8 +77,8 @@ class PrismaPlot {
         if (node.rect.getAttribute("fixed-height") == "true") {
             //return node;
         }
-        else if (Math.floor(node.group.getBBox().height) <= MIN_HEIGHT) {
-            node.rect.setAttribute("height", MIN_HEIGHT);
+        else if (Math.floor(node.group.getBBox().height) <= this.MIN_HEIGHT) {
+            node.rect.setAttribute("height", this.MIN_HEIGHT);
         }
         else {
             node.rect.setAttribute("height", node.group.getBBox().height + 15);
@@ -123,22 +123,22 @@ class PrismaPlot {
 
     // return a group with rect and text child elements
     createRectangleWithText(id = "", text = "", x = 0, y = 0, styling = {}) {
-        for (const [key, value] of Object.entries(STYLE_DEFAULT)) {
+        for (const [key, value] of Object.entries(this.STYLE_DEFAULT)) {
             if (!styling[key]) styling[key] = value;
         }
 
-        let group = document.createElementNS(NAMESPACE, "g");
+        let group = document.createElementNS(this.NAMESPACE, "g");
         group.setAttribute("id", id);
         group.setAttribute("class", "node");
         group.setAttribute("data-styling", JSON.stringify(styling));
 
-        let rect = document.createElementNS(NAMESPACE, "rect");
+        let rect = document.createElementNS(this.NAMESPACE, "rect");
         rect.setAttribute("x", x);
         rect.setAttribute("y", y);
         rect.setAttribute("class", "node-rect");
         rect.setAttribute("id", id + "-box");
         if (styling.width == 0) {
-            rect.setAttribute("width", MAX_WIDTH);
+            rect.setAttribute("width", this.MAX_WIDTH);
             rect.setAttribute("fixed-width", false);
         }
         else {
@@ -146,7 +146,7 @@ class PrismaPlot {
             rect.setAttribute("fixed-width", true);
         }
         if (styling.height == 0) {
-            rect.setAttribute("height", MIN_HEIGHT);
+            rect.setAttribute("height", this.MIN_HEIGHT);
             rect.setAttribute("fixed-height", false);
         }
         else {
@@ -170,7 +170,7 @@ class PrismaPlot {
     }
 
     addTextToNode(node, id, text, styling = {}) {
-        for (const [key, value] of Object.entries(STYLE_DEFAULT)) {
+        for (const [key, value] of Object.entries(this.STYLE_DEFAULT)) {
             if (!styling[key]) styling[key] = value;
         }
 
@@ -178,13 +178,13 @@ class PrismaPlot {
         let x = node.rect.getBBox().x;
         let y = node.rect.getBBox().y;
 
-        let textElement = document.createElementNS(NAMESPACE, "text");
+        let textElement = document.createElementNS(this.NAMESPACE, "text");
         textElement.setAttribute("data-styling", JSON.stringify(styling));
-        textElement.setAttribute("x", x + TEXT_OFFSET_X + parseFloat(styling["text-padding-x"]));
-        textElement.setAttribute("y", y + TEXT_OFFSET_Y);
+        textElement.setAttribute("x", x + this.TEXT_OFFSET_X + parseFloat(styling["text-padding-x"]));
+        textElement.setAttribute("y", y + this.TEXT_OFFSET_Y);
         textElement.setAttribute("display", "none");
         textElement.setAttribute("id", id);
-        textElement.setAttribute("font-size", TEXT_SIZE + parseFloat(styling["text-size"]) + "em");
+        textElement.setAttribute("font-size", this.TEXT_SIZE + parseFloat(styling["text-size"]) + "em");
         textElement.setAttribute("font-weight", styling["text-style"]);
         textElement.style["fill"] = styling["text-color"];
         textElement.innerHTML = text;
@@ -297,7 +297,7 @@ class PrismaPlot {
     }
 
     connectPoints(id, xy1, xy2, arrowhead = true, styling = {}) {
-        for (const [key, value] of Object.entries(STYLE_DEFAULT)) {
+        for (const [key, value] of Object.entries(this.STYLE_DEFAULT)) {
             if (!styling[key]) styling[key] = value;
         }
         let arrowType = "arrow" + styling["arrow-type"];
@@ -322,8 +322,8 @@ class PrismaPlot {
         let initialNode = this.createRectangleWithText(
             id,
             text,
-            WORKSPACE_START_X,
-            WORKSPACE_START_Y,
+            this.WORKSPACE_START_X,
+            this.WORKSPACE_START_Y,
             styling
         );
         return this.addNodeToHTML(initialNode);
@@ -332,7 +332,7 @@ class PrismaPlot {
     createNewVerticalNode(prevNode, id, text, group = false, styling = {}) {
         prevNode = this.getGroup(prevNode.id);
         let prevBBox = prevNode.rect.getBBox();
-        let nodeSpacing = styling["spacing-vertical"] ? this.parseFloat(styling["spacing-vertical"]) : SPACING_V;
+        let nodeSpacing = styling["spacing-vertical"] ? this.parseFloat(styling["spacing-vertical"]) : this.SPACING_V;
         let y = prevBBox.y + prevBBox.height + nodeSpacing;
 
         let verticalNode = this.createRectangleWithText(id, text, prevBBox.x, y, styling);
@@ -350,7 +350,7 @@ class PrismaPlot {
         prevNode = this.getGroup(prevNode.id);
         let prevBBox = prevNode.rect.getBBox();
         let x;
-        let nodeSpacing = styling["spacing-horizontal"] ? this.parseFloat(styling["spacing-horizontal"]) : SPACING_H;
+        let nodeSpacing = styling["spacing-horizontal"] ? this.parseFloat(styling["spacing-horizontal"]) : this.SPACING_H;
         if (prevNode.parent && !group) {
             x = prevNode.parent.rect.getBBox().width + nodeSpacing;
         }
@@ -452,7 +452,7 @@ class PrismaPlot {
                 if (!blockStyle["text-padding-x"]) blockStyle["text-padding-x"] = "5";
 
                 let subblockId = currentNode.id + "-text_" + i;
-                let subblockText = HTML_BULLET + ` ${blocks[i].label}: ${blocks[i].value}`;
+                let subblockText = this.HTML_BULLET + ` ${blocks[i].label}: ${blocks[i].value}`;
 
                 let txtEle = this.addTextToNode(currentNode, subblockId, subblockText, blockStyle);
                 txtEle.onclick = (e) => { console.log(blocks[i]) };
@@ -549,24 +549,24 @@ class PrismaPlot {
             arrows: [],
         };
 
-        const NAMESPACE = "http://www.w3.org/2000/svg";
-        const HTML_BULLET = "&#8226;";
-        const WORKSPACE_START_X = 20; // first box always placed here
-        const WORKSPACE_START_Y = 20;
-        const MAX_WIDTH = 300; // box dimensions
-        const MIN_HEIGHT = 100;
-        const SPACING_V = 100; // distance between boxes
-        const SPACING_H = 120;
-        const TEXT_OFFSET_X = 10;
-        const TEXT_OFFSET_Y = 20;
-        const TEXT_SIZE = 1;
-        const STYLE_DEFAULT = {
+        this.NAMESPACE = "http://www.w3.org/2000/svg";
+        this.HTML_BULLET = "&#8226;";
+        this.WORKSPACE_START_X = 20; // first box always placed here
+        this.WORKSPACE_START_Y = 20;
+        this.MAX_WIDTH = 300; // box dimensions
+        this.MIN_HEIGHT = 100;
+        this.SPACING_V = 100; // distance between boxes
+        this.SPACING_H = 120;
+        this.TEXT_OFFSET_X = 10;
+        this.TEXT_OFFSET_Y = 20;
+        this.TEXT_SIZE = 1;
+        this.STYLE_DEFAULT = {
             "x": "0", // +- centered around current box position (moves relevant text as well)
             "y": "0",
             "width": "0", // non-0 value for fixed
             "height": "0",
-            "spacing-horizontal": SPACING_H,
-            "spacing-vertical": SPACING_V,
+            "spacing-horizontal": this.SPACING_H,
+            "spacing-vertical": this.SPACING_V,
             "text-padding-x": "0", // +- centered around global text offset values
             "text-padding-y": "0",
             "text-color": "black",
@@ -596,7 +596,7 @@ class PrismaPlot {
                 "label": "Records",
                 "block_layout": "card",
                 "styling": {
-                    "width": MAX_WIDTH * 2 + SPACING_H + 30,
+                    "width": this.MAX_WIDTH * 2 + this.SPACING_H + 30,
                 },
                 "blocks": [
                     {
@@ -738,7 +738,7 @@ class PrismaPlot {
                         "label": "References excluded",
                         "block_layout": "list",
                         "styling": {
-                            "height": MIN_HEIGHT
+                            "height": this.MIN_HEIGHT
                         },
                         "sub_blocks": [
                             {
