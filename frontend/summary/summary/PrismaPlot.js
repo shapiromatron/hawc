@@ -7,7 +7,6 @@ class PrismaPlot {
         this.modal = new HAWCModal();
         this.store = store;
         this.options = options;
-        this.cardRowLength = -1;
     }
 
     render(div) {
@@ -17,7 +16,7 @@ class PrismaPlot {
 
    makeGroupTextVisible(node) {
         for (let child of node.children) {
-            child = getGroup(child.id);
+            child = this.getGroup(child.id);
             this.makeGroupTextVisible(child);
         }
         this.updateNodeTextAttributes(node, { "display": "inline" });
@@ -27,7 +26,7 @@ class PrismaPlot {
     resizeNodes(node) {
         node = this.getGroup(node.id);
         this.makeGroupTextVisible(node);
-        let nodeSpacing = this.parseFloat(node.styling["spacing-vertical"]);
+        let nodeSpacing = parseFloat(node.styling["spacing-vertical"]);
 
         // adjust position of vertical nodes when the previous node is part of a separate group
         if (node.isVertical && !node.parent) {
@@ -105,8 +104,8 @@ class PrismaPlot {
             "text": text,
             "styling": styling,
             "isVertical": (isVertical == "true"),
-            "parent": getGroup(parent?.id),
-            "previous": getGroup(previous?.id),
+            "parent": this.getGroup(parent?.id),
+            "previous": this.getGroup(previous?.id),
             "children": children
         }
     }
@@ -203,8 +202,8 @@ class PrismaPlot {
         let txtEle = this.addTextToNode(node, node.id + "-text", node.text, node.styling);
         node.text = txtEle;
 
-        node.rect.onclick = nodeOnClick;
-        txtEle.onclick = nodeOnClick;
+        node.rect.onclick = this.nodeOnClick;
+        txtEle.onclick = this.nodeOnClick;
         return node;
     }
 
@@ -332,7 +331,7 @@ class PrismaPlot {
     createNewVerticalNode(prevNode, id, text, group = false, styling = {}) {
         prevNode = this.getGroup(prevNode.id);
         let prevBBox = prevNode.rect.getBBox();
-        let nodeSpacing = styling["spacing-vertical"] ? this.parseFloat(styling["spacing-vertical"]) : this.SPACING_V;
+        let nodeSpacing = styling["spacing-vertical"] ? parseFloat(styling["spacing-vertical"]) : this.SPACING_V;
         let y = prevBBox.y + prevBBox.height + nodeSpacing;
 
         let verticalNode = this.createRectangleWithText(id, text, prevBBox.x, y, styling);
@@ -350,7 +349,7 @@ class PrismaPlot {
         prevNode = this.getGroup(prevNode.id);
         let prevBBox = prevNode.rect.getBBox();
         let x;
-        let nodeSpacing = styling["spacing-horizontal"] ? this.parseFloat(styling["spacing-horizontal"]) : this.SPACING_H;
+        let nodeSpacing = styling["spacing-horizontal"] ? parseFloat(styling["spacing-horizontal"]) : this.SPACING_H;
         if (prevNode.parent && !group) {
             x = prevNode.parent.rect.getBBox().width + nodeSpacing;
         }
@@ -421,7 +420,7 @@ class PrismaPlot {
         prevNode = this.getGroup(prevNode.id);
         let id = parent.id + "_" + allCards.length;
 
-        cardRowLength++;
+        this.cardrowlength++;
         if (allCards.length > 0) {
             let parentPosition = parent.rect.getBBox().x + parent.rect.getBBox().width;
             let prevCardPosition = prevNode.rect.getBBox().x + prevNode.rect.getBBox().width;
@@ -431,12 +430,12 @@ class PrismaPlot {
                 return this.createNewHorizontalNode(prevNode, id, text, true, styling);
             }
             else { // new row
-                prevNode = allCards[allCards.length - cardRowLength];
-                cardRowLength = 0;
+                prevNode = allCards[allCards.length - this.cardrowlength];
+                this.cardrowlength = 0;
                 return this.createNewVerticalNode(prevNode, id, text, true, styling);
             }
         }
-        cardRowLength = 0;
+        this.cardrowlength = 0;
         return this.createChildNode(parent, id, text, styling);
     }
 
@@ -444,7 +443,7 @@ class PrismaPlot {
     // handles list/card layouts at the section and block level
     listCardLayout(id, col) {
         let blocks = col.blocks || col.sub_blocks;
-        let currentNode = getGroup(id);
+        let currentNode = this.getGroup(id);
 
         if (col.block_layout == "list") {
             for (let i = 0; i < blocks.length; i++) {
@@ -583,6 +582,18 @@ class PrismaPlot {
             "arrow-force-vertical": "false"
         }
 
+        this.plot_div.empty()
+        this.svg = d3
+            .select(this.plot_div[0])
+            .append("svg")
+            .attr("role", "image")
+            .attr("aria-label", "An exploratory heatmap graphic")
+            .attr("class", "d3")
+            .attr("id", "svgworkspace")
+            .attr("width", "100%")
+            .attr("height", "2000")
+            .node();
+        this.cardrowlength = -1;
         // Examples
         // Hero litflow diagram: https://hero.epa.gov/hero/index.cfm/litflow/viewProject/project_id/2489
         // https://hawcproject.org/summary/visual/assessment/405/eFigure-1-Reference-Flow-Diagram/
@@ -838,7 +849,7 @@ class PrismaPlot {
 
         // NOTE changed separator from | to .
         // NOTE removed "type"
-        connections = [
+        let connections = [
             {
                 "src": "Records",
                 "dst": "TIAB",
@@ -879,11 +890,11 @@ class PrismaPlot {
             }
         ]
 
-        for (let connection of connections) {
-            let srcId = connection.src.replace(/ /g, '');
-            let dstId = connection.dst.replace(/ /g, '');
-            this.drawConnection(srcId, dstId, connection.styling);
-        }
+        // for (let connection of connections) {
+        //     let srcId = connection.src.replace(/ /g, '');
+        //     let dstId = connection.dst.replace(/ /g, '');
+        //     this.drawConnection(srcId, dstId, connection.styling);
+        // }
 
     }
 }
