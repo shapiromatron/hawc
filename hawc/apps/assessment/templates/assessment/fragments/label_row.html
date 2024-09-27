@@ -1,0 +1,21 @@
+<div
+  {% if canEdit or permissions.edit %}
+    hx-get="{{ object.get_edit_url }}"
+    class="list-group-item clickable d-flex label-row"
+    hx-indicator="#spinner-{{object.pk}}"
+    title="Click to update" hx-swap="outerHTML"
+  {% else %}
+    class="list-group-item d-flex"
+  {% endif %}>
+  <div class="pl-4">
+    <div class="row">
+      {% widthratio object.depth 10 20 as marginLeft %}
+      <i class="fa fa-spinner fa-spin htmx-indicator align-self-start m-1" id="spinner-{{object.pk}}" aria-hidden="true"></i>
+      <p class="label align-self-start mt-0" style="background-color: {{object.color}}; color: {{object.text_color}}; {% if object.depth > 0 %} margin-left: {{ marginLeft|add:"-4" }}rem;{% endif %}" label_url="{% url 'assessment:labeled-items' assessment.pk %}?label={{object.id}}">{{object.name}}</p>
+      <div class="card mx-3 d-inline-block align-self-start {{ object.published|yesno:'border-success text-success,text-muted' }}" title="{{ object.published|yesno:'Published,Unpublished' }}">
+        <p class="m-0"><i class="fa fa-{{ object.published|yesno:'eye,eye-slash' }} px-1"></i></p>
+      </div>
+      <p class="m-0 col align-self-center">{{object.description}}</p>
+    </div>
+  </div>
+</div>
