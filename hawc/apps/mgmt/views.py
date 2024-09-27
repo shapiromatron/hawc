@@ -1,4 +1,6 @@
-from django.http import HttpRequest
+from django import forms as GenericForms
+from django.db import transaction
+from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import ListView
@@ -7,8 +9,15 @@ from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig, cacheable
-from ..common.htmx import HtmxGetMixin, HtmxViewSet, action, can_edit
-from ..common.views import BaseDetail, BaseFilterList, BaseList, LoginRequiredMixin
+from ..common.htmx import HtmxGetMixin, HtmxViewSet, action, can_edit, can_view
+from ..common.views import (
+    BaseDetail,
+    BaseFilterList,
+    BaseList,
+    BaseUpdate,
+    LoginRequiredMixin,
+    create_object_log,
+)
 from ..myuser.models import HAWCUser
 from ..riskofbias.models import RiskOfBias
 from ..study.models import Study
@@ -64,7 +73,7 @@ class UserTaskList(LoginRequiredMixin, ListView):
             super()
             .get_queryset()
             .owned_by(self.request.user)
-            .filter(status__in=[10, 20])
+            .filter(status__terminal_status=False)
             .order_by("-study__assessment_id", "id")
             .select_related("study__assessment")
         )
@@ -111,7 +120,7 @@ class AssessmentTaskDashboard(BaseList):
         qs = list(context["object_list"])
         context["all_tasks_plot"] = models.Task.barchart(qs)
         context["type_plots"] = [
-            models.Task.barchart(filter(lambda el: el.type == key, qs), title=label)
+            models.Task.barchart(filter(lambda el: el.type.order == key, qs), title=label)
             for key, label in constants.TaskType.choices
         ]
         context["user_plots"] = [
@@ -200,8 +209,173 @@ class TaskViewSet(HtmxViewSet):
         template = self.form_fragment
         data = request.POST if request.method == "POST" else None
         form = forms.TaskForm(data=data, instance=request.item.object)
+
+        if request.method == "POST" and form.is_valid():
+            self.perform_update(request.item, form)
+            template = self.detail_fragment
+            models.Task.objects.progress_next_status(task=request.item.object)
+
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
+
+
+class TaskSetupList(BaseList):
+    parent_model = Assessment
+    model = models.Task
+    filterset_class = filterset.TaskFilterSet
+    template_name = "mgmt/task_setup_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
+        context["type_list"] = self.assessment.task_types.all().order_by("order")
+        context["status_list"] = self.assessment.task_statuses.all().order_by("order")
+        context["trigger_list"] = self.assessment.task_triggers.all().order_by("event")
+        return context
+
+
+class TaskSetupViewSet(HtmxViewSet):
+    actions = {"create", "read", "update", "delete", "up", "down"}
+    parent_model = Assessment
+    form_fragment: str
+    detail_fragment: str
+
+    def get_form(self, data, request) -> GenericForms.ModelForm: ...
+    def setup_name(self) -> str: ...
+
+    @action(permission=can_view)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        return render(request, self.detail_fragment, self.get_context_data())
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        data = request.POST if request.method == "POST" else None
+        form = self.get_form(data, request)
         if request.method == "POST" and form.is_valid():
             self.perform_update(request.item, form)
             template = self.detail_fragment
         context = self.get_context_data(form=form)
         return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def create(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        data = request.POST if request.method == "POST" else None
+        form = self.get_form(data, request, request.item.parent)
+        context = self.get_context_data(form=form)
+        if request.method == "POST" and form.is_valid():
+            self.perform_create(request.item, form)
+            template = self.detail_fragment
+            context.update(object=request.item.object)
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        if request.method == "POST":
+            self.perform_delete(request.item)
+            return self.str_response()
+        form = self.get_form(None, request)
+        context = self.get_context_data(form=form)
+        return render(request, self.form_fragment, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def up(self, request: HttpRequest, *args, **kwargs):
+        assessment = request.item.object.assessment
+        setup_items = self.model.objects.filter(assessment=assessment).order_by("order")
+        if request.method == "POST":
+            item = request.item.object
+            item_swap = setup_items.filter(order__lt=item.order).last()
+            if item_swap:
+                setup_items = self.swap_order(item_swap, item, setup_items)
+        template = "mgmt/fragments/setup_table.html"
+        return render(request, template, {"obj_list": setup_items, "setup": self.setup_name})
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def down(self, request: HttpRequest, *args, **kwargs):
+        assessment = request.item.object.assessment
+        setup_items = self.model.objects.filter(assessment=assessment).order_by("order")
+        if request.method == "POST":
+            item = request.item.object
+            item_swap = setup_items.filter(order__gt=item.order).first()
+            if item_swap:
+                setup_items = self.swap_order(item, item_swap, setup_items)
+        template = "mgmt/fragments/setup_table.html"
+        return render(request, template, {"obj_list": setup_items, "setup": self.setup_name})
+
+    def swap_order(self, item, item_swap, item_list):
+        order = item.order
+        item.order = item_swap.order
+        item_swap.order = order
+        item.save()
+        item_swap.save()
+        return item_list.order_by("order")
+
+
+class TaskTypeViewSet(TaskSetupViewSet):
+    model = models.TaskType
+    form_fragment = "mgmt/fragments/type_form.html"
+    detail_fragment = "mgmt/fragments/type_detail.html"
+
+    def get_form(self, data, request, parent=None) -> GenericForms.ModelForm:
+        return forms.TypeForm(data=data, instance=request.item.object, parent=parent)
+
+    def setup_name(self) -> str:
+        return "type"
+
+
+class TaskStatusViewSet(TaskSetupViewSet):
+    model = models.TaskStatus
+    form_fragment = "mgmt/fragments/status_form.html"
+    detail_fragment = "mgmt/fragments/status_detail.html"
+
+    def get_form(self, data, request, parent=None) -> GenericForms.ModelForm:
+        return forms.StatusForm(data=data, instance=request.item.object, parent=parent)
+
+    def setup_name(self) -> str:
+        return "status"
+
+
+class TaskTriggerViewSet(TaskSetupViewSet):
+    model = models.TaskTrigger
+    form_fragment = "mgmt/fragments/trigger_form.html"
+    detail_fragment = "mgmt/fragments/trigger_detail.html"
+
+    def get_form(self, data, request, parent=None) -> GenericForms.ModelForm:
+        return forms.TriggerForm(data=data, instance=request.item.object, parent=parent)
+
+
+class TaskSetupCopy(BaseUpdate):
+    model = Assessment
+    template_name = "mgmt/task_setup_copy.html"
+    form_class = forms.TaskSetupCopyForm
+    success_message = "Task types, statuses, and triggers have been updated."
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(2, mgmt_dashboard_breadcrumb(self.assessment))
+
+        context["breadcrumbs"].extend(
+            [
+                Breadcrumb(name="Copy"),
+            ]
+        )
+        return context
+
+    def get_form_kwargs(self):
+        kw = super().get_form_kwargs()
+        kw.update(user=self.request.user, assessment=self.assessment)
+        return kw
+
+    @transaction.atomic
+    def form_valid(self, form):
+        form.evaluate()
+        self.send_message()
+        create_object_log(
+            "replace",
+            self.assessment,
+            self.assessment.id,
+            self.request.user.id,
+            "Bulk replaced Mgmt Task setup",
+        )
+        return HttpResponseRedirect(reverse("mgmt:task-setup-list", args=(self.assessment.id,)))

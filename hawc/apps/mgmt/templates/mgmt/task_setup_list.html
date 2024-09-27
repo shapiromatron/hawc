@@ -1,0 +1,92 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+  <div class="d-flex">
+    <h2 class="mb-2">Task Setup</h2>
+    {% if obj_perms.edit_assessment %}
+      <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" href="{% url 'mgmt:task-setup-copy' assessment.pk %}">Copy from existing</a>
+    {% endif %}
+  </div>
+  <p class="text-muted vw75 mt-0 mb-2">
+    These are options to define task workflow within the assessment.
+  </p>
+  <nav class="my-3">
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+      <button class="nav-link active"  data-toggle="tab" data-target="#type-list" type="button" role="tab" aria-controls="nav-type" aria-selected="true">Task Types</button>
+      <button class="nav-link" data-toggle="tab" data-target="#status-list" type="button" role="tab" aria-controls="nav-status" aria-selected="false">Task Statuses</button>
+      <button class="nav-link" data-toggle="tab" data-target="#trigger-list" type="button" role="tab" aria-controls="nav-trigger" aria-selected="false">Task Triggers</button>
+    </div>
+  </nav>
+  <div class="tab-content px-3" id="nav-tabContent">
+
+    <div class="tab-pane fade show active" id="type-list">
+      <table class="table table-sm" id="type">
+        {% bs4_colgroup "20,20,40,20" %}
+        <thead>
+          <th>Type Name</th>
+          <th>Order</th>
+          <th>Description</th>
+          <th>
+            <div class="d-flex">
+              {% if obj_perms.edit_assessment %}
+                <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'mgmt:task-type-htmx' assessment.pk 'create' %}" hx-trigger="click" hx-target="#type-rows" hx-swap="afterbegin" href="/">Create Task Type</a>
+              {% endif %}
+            </div>
+          </th>
+        </thead>
+        {% include "mgmt/fragments/setup_table.html" with obj_list=type_list setup="type" %}
+      </table>
+    </div>
+
+    <div class="tab-pane fade" id="status-list">
+      <table class="table table-sm">
+        {% bs4_colgroup "17,17,16,17,17,16" %}
+        <thead>
+          <th>Status Name</th>
+          <th>Order</th>
+          <th>Color</th>
+          <th>Terminal</th>
+          <th>Description</th>
+          <th>
+            <div class="d-flex">
+              {% if obj_perms.edit_assessment %}
+                <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'mgmt:task-status-htmx' assessment.pk 'create' %}" hx-trigger="click" hx-target="#status-rows" hx-swap="afterbegin" href="/">Create Task Status</a>
+              {% endif %}
+            </div>
+          </th>
+        </thead>
+        {% include "mgmt/fragments/setup_table.html" with obj_list=status_list setup="status" %}
+      </table>
+    </div>
+
+    <div class="tab-pane fade" id="trigger-list">
+      <table class="table table-sm">
+        {% bs4_colgroup "20,20,20,20,20" %}
+        <thead>
+          <th>Task Type</th>
+          <th>Current Status</th>
+          <th>Next Status</th>
+          <th>Event</th>
+          <th>
+            <div class="d-flex">
+              {% if obj_perms.edit_assessment %}
+                <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'mgmt:task-trigger-htmx' assessment.pk 'create' %}" hx-trigger="click" hx-target="#trigger-rows" hx-swap="afterbegin" href="/">Create Task Trigger</a>
+              {% endif %}
+            </div>
+          </th>
+        </thead>
+        <tbody id="trigger-rows">
+          {% for object in trigger_list %}
+            {% include "mgmt/fragments/trigger_detail.html" %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extrajs %}
+  {% if not no_data %}
+    {{ config|json_script:"config" }}
+  {% endif %}
+{% endblock extrajs %}

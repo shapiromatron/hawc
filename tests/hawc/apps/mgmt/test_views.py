@@ -48,7 +48,19 @@ class TestTaskDashboard:
         assert response.status_code == 200
         assertTemplateUsed(response, "mgmt/assessment_details.html")
 
-    def test_htmx(self):
+        # task setup list (type, status, trigger)
+        url = reverse("mgmt:task-setup-list", args=(1,))
+        response = c.get(url)
+        assert response.status_code == 200
+        assertTemplateUsed(response, "mgmt/task_setup_list.html")
+
+        # copy task setup
+        url = reverse("mgmt:task-setup-copy", args=(1,))
+        response = c.get(url)
+        assert response.status_code == 200
+        assertTemplateUsed(response, "mgmt/task_setup_copy.html")
+
+    def test_task_htmx(self):
         c = Client(HTTP_HX_REQUEST="true")
         assert c.login(username="team@hawcproject.org", password="pw") is True
 
@@ -67,6 +79,47 @@ class TestTaskDashboard:
         response = c.post(url, data=dict(status=2))
         assert response.status_code == 200
         assertTemplateUsed(response, "mgmt/fragments/task_detail.html")
+
+    def test_task_setup_htmx(self):
+        # One test for all task setup htmx because they have a generic parent
+        c = Client(HTTP_HX_REQUEST="true")
+        assert c.login(username="team@hawcproject.org", password="pw") is True
+
+        # create - (GET, POST)
+        url = reverse("mgmt:task-type-htmx", args=(3, "create"))
+        response = c.get(url)
+        assert response.status_code == 200
+        assertTemplateUsed(response, "mgmt/fragments/type_form.html")
+
+        # read - GET
+        url = reverse("mgmt:task-type-htmx", args=(3, "read"))
+        response = c.get(url)
+        assert response.status_code == 200
+        assertTemplateUsed(response, "mgmt/fragments/type_detail.html")
+
+        # update - (GET, POST)
+        url = reverse("mgmt:task-type-htmx", args=(3, "update"))
+        response = c.get(url)
+        assert response.status_code == 200
+        assertTemplateUsed(response, "mgmt/fragments/type_form.html")
+
+        # delete - (GET, POST)
+        url = reverse("mgmt:task-type-htmx", args=(3, "delete"))
+        response = c.get(url)
+        assert response.status_code == 200
+        assertTemplateUsed(response, "mgmt/fragments/type_form.html")
+
+        # create - (GET, POST)
+        url = reverse("mgmt:task-type-htmx", args=(3, "up"))
+        response = c.get(url)
+        assert response.status_code == 200
+        assertTemplateUsed(response, "mgmt/fragments/setup_table.html")
+
+        # create - (GET, POST)
+        url = reverse("mgmt:task-type-htmx", args=(3, "down"))
+        response = c.get(url)
+        assert response.status_code == 200
+        assertTemplateUsed(response, "mgmt/fragments/setup_table.html")
 
 
 @pytest.mark.django_db

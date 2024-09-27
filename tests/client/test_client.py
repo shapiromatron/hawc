@@ -1154,6 +1154,22 @@ class TestClient(LiveServerTestCase, TestCase):
         updated_hero = updated_reference.identifiers.get(database=2)
         assert updated_hero.unique_id == "1037739"
 
+    ##############
+    # Mgmt tests #
+    ##############
+
+    def test_mgmt_tasks(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        response = client.mgmt.tasks(self.db_keys.assessment_final)
+        assert isinstance(response, pd.DataFrame)
+
+    def test_mgmt_time_spent(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        response = client.mgmt.tasks(self.db_keys.assessment_final)
+        assert isinstance(response, pd.DataFrame)
+
     ##########################
     # RiskOfBiasClient tests #
     ##########################

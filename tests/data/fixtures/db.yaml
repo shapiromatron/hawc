@@ -11035,7 +11035,7 @@
     description: ' '
     order: 30
     color: '#00CC00'
-    terminal_status: false
+    terminal_status: true
     created: 2025-08-01 04:00:00+00:00
     last_updated: 2025-08-01 04:00:00+00:00
 - model: mgmt.taskstatus
@@ -11047,7 +11047,7 @@
     description: ' '
     order: 40
     color: '#CC3333'
-    terminal_status: false
+    terminal_status: true
     created: 2025-08-01 04:00:00+00:00
     last_updated: 2025-08-01 04:00:00+00:00
 - model: mgmt.tasktrigger
@@ -11103,8 +11103,7 @@
 - model: mgmt.task
   pk: 1
   fields:
-    owner:
-    - team@hawcproject.org
+    owner: 1
     study: 1
     type: 1
     status: 1
@@ -11114,8 +11113,7 @@
 - model: mgmt.task
   pk: 2
   fields:
-    owner:
-    - team@hawcproject.org
+    owner: 1
     study: 1
     type: 2
     status: 1
