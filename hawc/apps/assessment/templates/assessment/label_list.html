@@ -23,13 +23,17 @@
 
 {% block extrajs %}
   <script type="text/javascript">
+    function linkLabel(e) {
+      url = $(this).attr("label_url");
+      window.location = url
+      e.stopPropagation();
+    }
     $(window).ready(function() {
       window.app.HAWCUtils.addScrollHtmx("label-edit-row", "label-row", "label-conf-delete");
-      $(".label").click(function(e) {
-        url = $(this).attr("label_url");
-        window.location = url
-        e.stopPropagation();
-      });
+      $(".label").on("click", linkLabel);
+    });
+    $("body").on("htmx:afterSwap", function(evt) {
+      $(evt.detail.elt).find(".label").first().on("click", linkLabel);
     });
   </script>
 {% endblock %}
