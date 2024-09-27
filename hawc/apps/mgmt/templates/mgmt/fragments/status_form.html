@@ -1,13 +1,13 @@
 <tr hx-target="this" hx-swap="outerHTML" class="status-edit-row">
   <td colspan="6">
-    <form method="post" class="border my-2 p-2 pb-5 edit-form-background form-design">
+    <form method="post" class="border my-2 p-3 pb-3 edit-form-background form-design">
       {% if not form.instance.id %}
         <h3 class="py-2">Create Task Status</h3>
       {% endif %}
 
       {% crispy form %}
-      <div class="d-block container">
-        <div class="float-right">
+      <div class="d-flex">
+        <div class="ml-auto">
           {% if form.instance.id %}
             {% if action == 'delete' %}
               {% include "mgmt/fragments/confirm_delete.html" %}

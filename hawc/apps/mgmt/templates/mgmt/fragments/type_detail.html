@@ -13,7 +13,7 @@
       <button class="btn btn-primary ml-auto" hx-post="{% url 'mgmt:task-type-htmx' object.pk 'down' %}" hx-target="#type-rows" hx-swap="outerHTML">
         <i title="Switch order up" class="fa fa-arrow-down" aria-hidden="true"></i>
       </button>
-      <button class="btn btn-primary ml-auto" hx-post="{% url 'mgmt:task-type-htmx' object.pk 'up' %}" hx-target="#type-rows" hx-swap="outerHTML">
+      <button class="btn btn-primary ml-2" hx-post="{% url 'mgmt:task-type-htmx' object.pk 'up' %}" hx-target="#type-rows" hx-swap="outerHTML">
         <i title="Switch order up" class="fa fa-arrow-up" aria-hidden="true"></i>
       </button>
       <button class="btn btn-light ml-auto" hx-get="{% url 'mgmt:task-type-htmx' object.pk 'update' %}" hx-swap="outerHTML">
