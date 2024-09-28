@@ -5,6 +5,7 @@ import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 
 import BaseVisual from "./BaseVisual";
+import {addLabelAction, addLabelIndicators} from "./common";
 import {TABLEAU_HOSTNAME} from "./constants";
 import TableauDashboard from "./TableauDashboard";
 
@@ -41,13 +42,14 @@ class ExternalWebsite extends BaseVisual {
     addActionsMenu() {
         const actions = [
             "Additional actions",
-            {url: this.data.settings.external_url, text: "View on native site"},
+            {href: this.data.settings.external_url, text: "View on native site"},
         ];
         if (window.isEditable) {
             actions.push(
                 "Visualization editing",
-                {url: this.data.url_update, text: "Update"},
-                {url: this.data.url_delete, text: "Delete"}
+                {href: this.data.url_update, text: "Update"},
+                {href: this.data.url_delete, text: "Delete"},
+                addLabelAction(this.data.label_htmx)
             );
         }
         return HAWCUtils.pageActionsButton(actions);
@@ -55,6 +57,7 @@ class ExternalWebsite extends BaseVisual {
 
     displayAsPage($el, options) {
         var title = $("<h2>").text(this.data.title),
+            labelIndicators = addLabelIndicators(this.data.label_indicators_htmx),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>");
@@ -68,6 +71,7 @@ class ExternalWebsite extends BaseVisual {
         if (!options.visualOnly) {
             var headerRow = $('<div class="d-flex">').append([
                 title,
+                labelIndicators,
                 HAWCUtils.unpublished(this.data.published, window.isEditable),
                 actions,
             ]);

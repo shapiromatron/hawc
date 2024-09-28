@@ -29,9 +29,9 @@
           <div title="{{field.help_text}}">
             {{field.widget}}
             {% if field.errors %}
-              {% crispy_field field 'class' 'custom-select form-sm-field is-invalid' %}
+              {% crispy_field field 'class' 'custom-select form-sm-field is-invalid' 'placeholder' field.help_text %}
             {% else %}
-              {% crispy_field field 'class' 'custom-select form-sm-field' %}
+              {% crispy_field field 'class' 'custom-select form-sm-field' 'placeholder' field.help_text %}
             {% endif %}
           </div>
         {% endif %}

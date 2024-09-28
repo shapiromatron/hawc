@@ -27,7 +27,7 @@ from django.views.generic.edit import CreateView
 from ...services.utils.rasterize import get_styles_svg_definition
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig, cacheable
-from ..common.htmx import HtmxViewSet, action, can_edit, can_view
+from ..common.htmx import HtmxView, HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -912,3 +912,158 @@ def check_published_status(user, published: bool, assessment: models.Assessment)
     """
     if not published and not assessment.user_is_team_member_or_higher(user):
         raise PermissionDenied()
+
+
+class LabelList(BaseList):
+    parent_model = models.Assessment
+    model = models.Label
+    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
+
+    def get_queryset(self):
+        # include root for permission checking
+        self.queryset = models.Label.get_assessment_qs(self.assessment.pk, include_root=True)
+        return super().get_queryset()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # remove root from object list
+        context["object_list"] = context["object_list"][1:]
+        return context
+
+
+class LabeledItemList(BaseFilterList):
+    parent_model = models.Assessment
+    model = models.LabeledItem
+    template_name = "assessment/labeleditem_list.html"
+    filterset_class = filterset.LabeledItemFilterset
+
+    def get_filterset_form_kwargs(self):
+        return dict(
+            main_field="name",
+            appended_fields=["label"],
+        )
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("label")
+            .prefetch_content_objects()
+            .order_by("content_type", "object_id")
+            .distinct("content_type", "object_id")
+        )
+
+
+class LabelViewSet(HtmxViewSet):
+    actions = {"create", "read", "update", "delete"}
+    parent_model = models.Assessment
+    model = models.Label
+    form_fragment = "assessment/fragments/label_edit_row.html"
+    detail_fragment = "assessment/fragments/label_row.html"
+
+    @action(permission=can_view, htmx_only=False)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        return render(request, self.detail_fragment, self.get_context_data())
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def create(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "POST":
+            form = forms.LabelForm(request.POST, assessment=request.item.assessment)
+            if form.is_valid():
+                self.perform_create(request.item, form)
+                template = self.detail_fragment
+        else:
+            form = forms.LabelForm(assessment=request.item.assessment)
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        if request.method == "POST":
+            form = forms.LabelForm(request.POST, instance=request.item.object)
+            if form.is_valid():
+                self.perform_update(request.item, form)
+                template = self.detail_fragment
+        else:
+            form = forms.LabelForm(data=None, instance=request.item.object)
+        context = self.get_context_data(form=form)
+        return render(request, template, context)
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        if request.method == "POST":
+            self.perform_delete(request.item)
+            return self.str_response()
+        form = forms.LabelForm(data=None, instance=request.item.object)
+        return render(request, self.form_fragment, self.get_context_data(form=form))
+
+
+class LabelItem(HtmxView):
+    actions = {"label", "label_indicators"}
+
+    def dispatch(self, request, *args, **kwargs):
+        self.content_type = self.kwargs.get("content_type")
+        self.object_id = self.kwargs.get("object_id")
+
+        try:
+            self.content_object = ContentType.objects.get_for_id(
+                self.content_type
+            ).get_object_for_this_type(pk=self.object_id)
+        except ObjectDoesNotExist as err:
+            raise Http404() from err
+
+        try:
+            self.assessment = self.content_object.get_assessment()
+        except AttributeError as err:
+            raise Http404() from err
+
+        handler = self.get_handler(request)
+        return handler(request, *args, **kwargs)
+
+    def label(self, request: HttpRequest, *args, **kwargs):
+        if not self.assessment.user_can_edit_object(request.user):
+            raise PermissionDenied()
+        context = dict(
+            content_type=self.content_type, object_id=self.object_id, assessment=self.assessment
+        )
+        if request.method == "GET":
+            form = forms.LabelItemForm(
+                data=dict(
+                    labels=models.Label.objects.filter(
+                        items__content_type=self.content_type, items__object_id=self.object_id
+                    )
+                ),
+                content_object=self.content_object,
+                content_type=self.content_type,
+                object_id=self.object_id,
+            )
+        else:
+            form = forms.LabelItemForm(
+                data=request.POST,
+                content_object=self.content_object,
+                content_type=self.content_type,
+                object_id=self.object_id,
+            )
+            if form.is_valid():
+                form.save()
+                context["saved"] = True
+                context["labels"] = models.Label.objects.get_applied(self.content_object)
+        context["form"] = form
+        return render(request, "assessment/components/label_modal_content.html", context)
+
+    def label_indicators(self, request: HttpRequest, *args, **kwargs):
+        if not self.assessment.user_can_view_object(request.user):
+            raise PermissionDenied()
+        labels = models.Label.objects.get_applied(self.content_object)
+        if not self.assessment.user_can_edit_object(request.user):
+            labels = labels.filter(published=True)
+        context = dict(
+            content_type=self.content_type,
+            object_id=self.object_id,
+            assessment=self.assessment,
+            labels=labels,
+            oob=True,
+        )
+        return render(request, "assessment/fragments/label_indicators.html", context)

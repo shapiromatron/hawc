@@ -161,3 +161,7 @@ class DynamicFormWidget(Widget):
 
     class Media:
         js = ["js/udf.js"]
+
+
+class ColorInput(TextInput):
+    input_type = "color"

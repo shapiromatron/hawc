@@ -5,6 +5,7 @@ from django.urls import reverse
 
 from ..common.filterset import (
     ArrowOrderingFilter,
+    AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
     ExpandableFilterForm,
     InlineFilterForm,
@@ -15,6 +16,7 @@ from ..common.helper import new_window_a
 from ..common.models import search_query
 from ..myuser.models import HAWCUser
 from . import models
+from .autocomplete import LabelAutocomplete
 from .constants import PublishedStatus
 
 
@@ -160,6 +162,48 @@ class LogFilterSet(BaseFilterSet):
 
 class EffectTagFilterSet(df.FilterSet):
     name = df.CharFilter(lookup_expr="icontains")
+
+
+class LabeledItemFilterset(BaseFilterSet):
+    name = df.CharFilter(
+        method="filter_title",
+        label="Name",
+        help_text="Filter by name",
+    )
+    label = AutocompleteModelMultipleChoiceFilter(
+        autocomplete_class=LabelAutocomplete,
+        method="filter_labels",
+    )
+
+    class Meta:
+        model = models.LabeledItem
+        form = InlineFilterForm
+        fields = ("name", "label")
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        return queryset.filter(label__assessment=self.assessment)
+
+    def filter_title(self, queryset, name, value):
+        if not value:
+            return queryset
+        return queryset.filter_title(value)
+
+    def filter_labels(self, queryset, name, value):
+        if not value:
+            return queryset
+        return queryset.matching_all_labels(value)
+
+    def create_form(self):
+        form = super().create_form()
+        form.fields["label"].widget.attrs.update({"data-placeholder": "Filter by labels"})
+        form.fields["label"].set_filters(
+            {"assessment_id": self.assessment.id, "published": True}
+            if not self.perms["edit"]
+            else {"assessment_id": self.assessment.id}
+        )
+        form.fields["label"].widget.attrs["size"] = 1
+        return form
 
 
 class AssessmentValueFilterSet(df.FilterSet):
