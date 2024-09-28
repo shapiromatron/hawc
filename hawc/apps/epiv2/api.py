@@ -13,7 +13,7 @@ from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api.utils import get_published_only
 from ..common.helper import FlatExport, try_parse_list_ints
-from ..common.renderers import PandasRenderers
+from ..common.renderers import PandasRenderers, PandasXlsxBinaryRenderer
 from ..common.serializers import UnusedSerializer
 from ..study.models import Study
 from . import exports, models, serializers
@@ -67,6 +67,18 @@ class EpiAssessmentViewSet(BaseAssessmentViewSet):
 
         df = models.Design.objects.study_df(qs)
         return FlatExport.api_response(df=df, filename=f"epi-study-{assessment.id}")
+
+    @action(
+        detail=True,
+        url_path="tabular-export",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=[PandasXlsxBinaryRenderer],
+    )
+    def tabular_export(self, request, pk):
+        assessment: Assessment = self.get_object()
+        published_only = get_published_only(assessment, request)
+        xlsx = exports.tabular_export(assessment.id, published_only)
+        return Response(xlsx)
 
 
 class DesignViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):

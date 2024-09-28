@@ -1,12 +1,15 @@
+from io import BytesIO
+
 import pandas as pd
 from django.db.models import CharField, F, Func, QuerySet, Value
 
 from ..common.exports import Exporter, ModelExport
 from ..common.helper import FlatFileExporter
 from ..common.models import sql_display, sql_format, str_m2m, to_display_array
+from ..common.renderers import format_xlsx, write_worksheet
 from ..riskofbias.models import RiskOfBiasScore
 from ..study.exports import StudyExport
-from . import constants
+from . import constants, models
 
 
 class DesignExport(ModelExport):
@@ -63,6 +66,7 @@ class ChemicalExport(ModelExport):
     def get_value_map(self):
         return {
             "pk": "pk",
+            "design_id": "design_id",
             "name": "name",
             "DTSXID": "dsstox__dtxsid",
             "created": "created",
@@ -74,6 +78,7 @@ class ExposureExport(ModelExport):
     def get_value_map(self):
         return {
             "pk": "pk",
+            "design_id": "design_id",
             "name": "name",
             "measurement_type": "measurement_type_string",
             "biomonitoring_matrix": "biomonitoring_matrix_display",
@@ -113,6 +118,9 @@ class ExposureLevelExport(ModelExport):
     def get_value_map(self):
         return {
             "pk": "pk",
+            "design_id": "design_id",
+            "chemical_id": "chemical_id",
+            "exposure_measurement_id": "exposure_measurement_id",
             "name": "name",
             "sub_population": "sub_population",
             "median": "median",
@@ -147,6 +155,7 @@ class OutcomeExport(ModelExport):
     def get_value_map(self):
         return {
             "pk": "pk",
+            "design_id": "design_id",
             "system": "system_display",
             "effect": "effect",
             "effect_detail": "effect_detail",
@@ -166,6 +175,7 @@ class AdjustmentFactorExport(ModelExport):
     def get_value_map(self):
         return {
             "pk": "pk",
+            "design_id": "design_id",
             "name": "name",
             "description": "description",
             "comments": "comments",
@@ -178,6 +188,10 @@ class DataExtractionExport(ModelExport):
     def get_value_map(self):
         return {
             "pk": "pk",
+            "design_id": "design_id",
+            "outcome_id": "outcome_id",
+            "exposure_level_id": "exposure_level_id",
+            "factors_id": "factors_id",
             "sub_population": "sub_population",
             "outcome_measurement_timing": "outcome_measurement_timing",
             "effect_estimate_type": "effect_estimate_type",
@@ -226,12 +240,22 @@ class EpiV2Exporter(Exporter):
         return [
             StudyExport("study", "design__study"),
             DesignExport("design", "design"),
-            ChemicalExport("chemical", "exposure_level__chemical"),
-            ExposureExport("exposure", "exposure_level__exposure_measurement"),
-            ExposureLevelExport("exposure_level", "exposure_level"),
-            OutcomeExport("outcome", "outcome"),
-            AdjustmentFactorExport("adjustment_factor", "factors"),
-            DataExtractionExport("data_extraction", ""),
+            ChemicalExport("chemical", "exposure_level__chemical", exclude=("design_id",)),
+            ExposureExport(
+                "exposure", "exposure_level__exposure_measurement", exclude=("design_id",)
+            ),
+            ExposureLevelExport(
+                "exposure_level",
+                "exposure_level",
+                exclude=("design_id", "chemical_id", "exposure_measurement_id"),
+            ),
+            OutcomeExport("outcome", "outcome", exclude=("design_id",)),
+            AdjustmentFactorExport("adjustment_factor", "factors", exclude=("design_id",)),
+            DataExtractionExport(
+                "data_extraction",
+                "",
+                exclude=("design_id", "outcome_id", "exposure_level_id", "factors_id"),
+            ),
         ]
 
 
@@ -274,3 +298,92 @@ class EpiFlatComplete(FlatFileExporter):
 
     def build_df(self) -> pd.DataFrame:
         return EpiV2ExporterWithRob().get_df(self.queryset)
+
+
+def tabular_export(assessment_id: int, published_only: bool):
+    class DesignExporter(Exporter):
+        def build_modules(self) -> list[ModelExport]:
+            return [StudyExport("study", "study"), DesignExport("design", "")]
+
+    class ExposureExporter(Exporter):
+        def build_modules(self) -> list[ModelExport]:
+            return [ExposureExport("exposure", "")]
+
+    class ExposureLevelExporter(Exporter):
+        def build_modules(self) -> list[ModelExport]:
+            return [ExposureLevelExport("exposure_level", "")]
+
+    class ChemicalExporter(Exporter):
+        def build_modules(self) -> list[ModelExport]:
+            return [ChemicalExport("chemical", "")]
+
+    class OutcomeExporter(Exporter):
+        def build_modules(self) -> list[ModelExport]:
+            return [OutcomeExport("outcome", "")]
+
+    class AdjustmentFactorExporter(Exporter):
+        def build_modules(self) -> list[ModelExport]:
+            return [AdjustmentFactorExport("adjustment_factor", "")]
+
+    class DataExtractionExporter(Exporter):
+        def build_modules(self) -> list[ModelExport]:
+            return [DataExtractionExport("data_extraction", "")]
+
+    suffix, value = ("__published", True) if published_only else ("_id__gte", 0)
+    df1 = DesignExporter.flat_export(
+        models.Design.objects.filter(
+            study__assessment_id=assessment_id, **{f"study{suffix}": value}
+        ),
+        filename="",
+    ).df
+    df2 = ExposureExporter.flat_export(
+        models.Exposure.objects.filter(
+            design__study__assessment_id=assessment_id, **{f"design__study{suffix}": value}
+        ),
+        filename="",
+    ).df
+    df3 = ExposureLevelExporter.flat_export(
+        models.ExposureLevel.objects.filter(
+            design__study__assessment_id=assessment_id, **{f"design__study{suffix}": value}
+        ),
+        filename="",
+    ).df
+    df4 = ChemicalExporter.flat_export(
+        models.Chemical.objects.filter(
+            design__study__assessment_id=assessment_id, **{f"design__study{suffix}": value}
+        ),
+        filename="",
+    ).df
+    df5 = OutcomeExporter.flat_export(
+        models.Outcome.objects.filter(
+            design__study__assessment_id=assessment_id, **{f"design__study{suffix}": value}
+        ),
+        filename="",
+    ).df
+    df6 = AdjustmentFactorExporter.flat_export(
+        models.AdjustmentFactor.objects.filter(
+            design__study__assessment_id=assessment_id, **{f"design__study{suffix}": value}
+        ),
+        filename="",
+    ).df
+    df7 = DataExtractionExporter.flat_export(
+        models.DataExtraction.objects.filter(
+            design__study__assessment_id=assessment_id, **{f"design__study{suffix}": value}
+        ),
+        filename="",
+    ).df
+
+    f = BytesIO()
+    with pd.ExcelWriter(
+        f, date_format="YYYY-MM-DD", datetime_format="YYYY-MM-DD HH:MM:SS"
+    ) as writer:
+        write_worksheet(writer, df1, "design")
+        write_worksheet(writer, df2, "exposure")
+        write_worksheet(writer, df3, "exposure_level")
+        write_worksheet(writer, df4, "chemical")
+        write_worksheet(writer, df5, "outcome")
+        write_worksheet(writer, df6, "adjustment_factor")
+        write_worksheet(writer, df7, "data_extraction")
+        format_xlsx(writer)
+
+    return f

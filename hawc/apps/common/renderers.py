@@ -152,6 +152,26 @@ class PandasBrowsableAPIRenderer(BrowsableAPIRenderer):
         return data.df.to_json(orient="records", indent=4)
 
 
+class PandasXlsxBinaryRenderer(PandasBaseRenderer):
+    """
+    Renders dataframe as xlsx
+    """
+
+    media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    format = "xlsx"
+
+    def render(self, data: BytesIO, accepted_media_type=None, renderer_context=None):
+        # return error or OPTIONS as JSON
+        status_code = renderer_context["response"].status_code
+        method = renderer_context["request"].method if "request" in renderer_context else None
+        if not status.is_success(status_code) or method == "OPTIONS":
+            if isinstance(data, dict):
+                return json.dumps(data)
+            else:
+                raise ValueError(f"Expecting data as `dict`; got {type(data)}")
+        return data.getvalue()
+
+
 class PandasXlsxRenderer(PandasBaseRenderer):
     """
     Renders dataframe as xlsx
@@ -160,57 +180,54 @@ class PandasXlsxRenderer(PandasBaseRenderer):
     media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     format = "xlsx"
 
-    def _clean_df(self, df: pd.DataFrame):
-        """Clean data frame to remove illegal characters, such as "\x02", inplace.
+    def render_dataframe(self, export: FlatExport, response: Response) -> bytes:
+        response["Content-Disposition"] = f"attachment; filename={slugify(export.filename)}.xlsx"
 
-        Args:
-            df (pd.DataFrame): the input dataframe
-        """
+        f = BytesIO()
+        with pd.ExcelWriter(
+            f, date_format="YYYY-MM-DD", datetime_format="YYYY-MM-DD HH:MM:SS"
+        ) as writer:
+            write_worksheet(writer, export.df, "data")
+            if isinstance(export.metadata, pd.DataFrame):
+                write_worksheet(writer, export.metadata, "metadata")
+            format_xlsx(writer)
+
+        return f.getvalue()
+
+
+def write_worksheet(writer: pd.ExcelWriter, df: pd.DataFrame, name: str):
+    # Remove timezone from datetime objects to make Excel compatible
+    df = df.copy()
+    for col in df.select_dtypes(include="datetimetz").columns:
+        df[col] = df[col].dt.tz_localize(None)
+
+    try:
+        df.to_excel(writer, sheet_name=name, index=False, freeze_panes=(1, 0))
+    except IllegalCharacterError:
+        # Clean data frame to remove illegal characters, such as "\x02", inplace.
         columns: list[str] = df.select_dtypes(include="object").columns.values
         for column in columns:
             if hasattr(df.loc[:, column], "str"):
                 df.loc[:, column] = df.loc[:, column].str.replace(
                     ILLEGAL_CHARACTERS_RE, "", regex=True
                 )
+        df.to_excel(writer, sheet_name=name, index=False, freeze_panes=(1, 0))
 
-    def render_dataframe(self, export: FlatExport, response: Response) -> bytes:
-        response["Content-Disposition"] = f"attachment; filename={slugify(export.filename)}.xlsx"
 
-        # Remove timezone from datetime objects to make Excel compatible
-        df = export.df.copy()
-        for col in df.select_dtypes(include="datetimetz").columns:
-            df[col] = df[col].dt.tz_localize(None)
-
-        f = BytesIO()
-        with pd.ExcelWriter(
-            f, date_format="YYYY-MM-DD", datetime_format="YYYY-MM-DD HH:MM:SS"
-        ) as writer:
-            try:
-                df.to_excel(writer, sheet_name="data", index=False, freeze_panes=(1, 0))
-            except IllegalCharacterError:
-                self._clean_df(df)
-                df.to_excel(writer, sheet_name="data", index=False, freeze_panes=(1, 0))
-
-            if isinstance(export.metadata, pd.DataFrame):
-                export.metadata.to_excel(
-                    writer, sheet_name="metadata", index=False, freeze_panes=(1, 0)
-                )
-
-            # enable filters
-            for ws in writer.book.worksheets:
-                # enable filters
-                ws.auto_filter.ref = ws.dimensions
-                # fill header
-                for row in ws.iter_rows(min_row=1, max_row=1):
-                    for cell in row:
-                        cell.fill = PatternFill("solid", fgColor="1F497D")
-                        cell.font = Font(color="FFFFFF")
-                        cell.alignment = Alignment(horizontal="left")
-                # resize columns
-                for idx in range(1, len(df.columns) + 1):
-                    ws.column_dimensions[get_column_letter(idx)].width = 10
-
-        return f.getvalue()
+def format_xlsx(writer: pd.ExcelWriter):
+    # enable filters
+    for ws in writer.book.worksheets:
+        # enable filters
+        ws.auto_filter.ref = ws.dimensions
+        # fill header
+        for row in ws.iter_rows(min_row=1, max_row=1):
+            for cell in row:
+                cell.fill = PatternFill("solid", fgColor="1F497D")
+                cell.font = Font(color="FFFFFF")
+                cell.alignment = Alignment(horizontal="left")
+        # resize columns
+        for idx in range(1, ws.max_column + 1):
+            ws.column_dimensions[get_column_letter(idx)].width = 10
 
 
 PandasRenderers = [
