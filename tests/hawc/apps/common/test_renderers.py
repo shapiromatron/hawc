@@ -9,6 +9,7 @@ from rest_framework.test import APIRequestFactory
 
 from hawc.apps.common import renderers
 from hawc.apps.common.helper import FlatExport
+from hawc.services.excel import get_writer, write_worksheet
 
 
 @pytest.fixture
@@ -160,3 +161,21 @@ class TestXlsxRenderer:
         )
         # The renderered response should be a JSON string of the passed in data
         assert response == '{"dummy": "data"}'
+
+
+class TestPandasXlsxBinaryRenderer:
+    def test_success(self):
+        resp_obj = Response()
+        assert "Content-Disposition" not in resp_obj
+
+        f, writer = get_writer()
+        with writer:
+            write_worksheet(writer, "foo", pd.DataFrame(data=[[1, 2], [3, 4]], columns=["a", "b"]))
+
+        response = renderers.PandasXlsxBinaryRenderer().render(
+            data=renderers.BinaryXlsxDataFormat(bytes=f, filename="fn"),
+            renderer_context={"response": resp_obj},
+        )
+        df2 = pd.read_excel(BytesIO(response))
+        assert df2.to_dict(orient="records") == [{"a": 1, "b": 2}, {"a": 3, "b": 4}]
+        assert resp_obj["Content-Disposition"] == "attachment; filename=fn.xlsx"
