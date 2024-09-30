@@ -7,7 +7,7 @@ import {NULL_VALUE} from "summary/summary/constants";
 const createSectionRow = function() {
         return {
             key: h.randomString(),
-            name: "",
+            label: "",
             width: 0,
             height: 0,
             border_width: 0,
@@ -22,7 +22,7 @@ const createSectionRow = function() {
     createBoxRow = function() {
         return {
             key: h.randomString(),
-            name: "",
+            label: "",
             width: 0,
             height: 0,
             border_width: 0,
@@ -39,7 +39,7 @@ const createSectionRow = function() {
     createBulletedListRow = function() {
         return {
             key: h.randomString(),
-            name: "",
+            label: "",
             width: 0,
             height: 0,
             border_width: 0,
@@ -56,7 +56,7 @@ const createSectionRow = function() {
     createCardRow = function() {
         return {
             key: h.randomString(),
-            name: "",
+            label: "",
             width: 0,
             height: 0,
             border_width: 0,
@@ -73,12 +73,11 @@ const createSectionRow = function() {
     createArrowRow = function() {
         return {
             key: h.randomString(),
-            dest: "",
             width: 0,
             type: 0,
             color: "",
-            source: NULL_VALUE,
-            destination: NULL_VALUE,
+            src: NULL_VALUE,
+            dst: NULL_VALUE,
         };
     };
 
@@ -150,7 +149,7 @@ class PrismaStore {
 
     @action.bound getArrowOptions() {
         const options = this.settings.boxes.map(value => {
-            return {id: value.key, label: value.name};
+            return {id: value.key, label: value.label};
         });
         options.unshift({id: NULL_VALUE, label: NULL_VALUE});
         return options;
@@ -158,7 +157,7 @@ class PrismaStore {
 
     @action.bound getLinkingOptions(key) {
         const options = this.settings[key].map(value => {
-            return {id: value.key, label: value.name};
+            return {id: value.key, label: value.label};
         });
         options.unshift({id: NULL_VALUE, label: NULL_VALUE});
         return options;

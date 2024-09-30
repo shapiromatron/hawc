@@ -57,8 +57,8 @@ class ArrowsRow extends EditableRow {
 
         return (
             <tr>
-                <td>{row.source}</td>
-                <td>{row.dest}</td>
+                <td>{row.src}</td>
+                <td>{row.dst}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
                     onEdit={() => this.setState({edit: true})}
@@ -75,20 +75,20 @@ class ArrowsRow extends EditableRow {
                         <div className="form-row my-2 mx-2 pad-form">
                             <SelectInput
                                 name={`${key}-source-${index}`}
-                                value={row.source}
+                                value={row.src}
                                 label="Source"
                                 handleSelect={value =>
-                                    changeArraySettings(key, index, "source", value)
+                                    changeArraySettings(key, index, "src", value)
                                 }
                                 multiple={false}
                                 choices={getArrowOptions()}
                             />
                             <SelectInput
                                 name={`${key}-destination-${index}`}
-                                value={row.destination}
+                                value={row.dst}
                                 label="Destination"
                                 handleSelect={value =>
-                                    changeArraySettings(key, index, "destination", value)
+                                    changeArraySettings(key, index, "dst", value)
                                 }
                                 multiple={false}
                                 choices={getArrowOptions()}

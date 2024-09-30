@@ -38,7 +38,7 @@ class PrismaCardsTable extends Component {
                                     row={row}
                                     index={index}
                                     key={index}
-                                    initiallyEditable={row.name == ""}
+                                    initiallyEditable={row.label == ""}
                                 />
                             );
                         })}
@@ -57,7 +57,7 @@ class CardsRow extends EditableRow {
 
         return (
             <tr>
-                <td>{row.name}</td>
+                <td>{row.label}</td>
                 <td>{row.tag}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
@@ -79,10 +79,10 @@ class CardsRow extends EditableRow {
                         <div className="form-row my-2 mx-2 pad-form">
                             <TextInput
                                 name={`${key}-name-${index}`}
-                                value={row.name}
+                                value={row.label}
                                 label="Name"
                                 onChange={e =>
-                                    changeArraySettings(key, index, "name", e.target.value)
+                                    changeArraySettings(key, index, "label", e.target.value)
                                 }
                             />
                             <IntegerInput

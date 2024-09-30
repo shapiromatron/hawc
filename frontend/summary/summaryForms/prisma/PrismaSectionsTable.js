@@ -34,7 +34,7 @@ class PrismaSectionsTable extends Component {
                                     row={row}
                                     index={index}
                                     key={index}
-                                    initiallyEditable={row.name == ""}
+                                    initiallyEditable={row.label == ""}
                                 />
                             );
                         })}
@@ -53,7 +53,7 @@ class SectionsRow extends EditableRow {
 
         return (
             <tr>
-                <td>{row.name}</td>
+                <td>{row.label}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
                     onEdit={() => this.setState({edit: true})}
@@ -70,10 +70,10 @@ class SectionsRow extends EditableRow {
                         <div className="form-row my-2 mx-2 pad-form">
                             <TextInput
                                 name={`${key}-name-${index}`}
-                                value={row.name}
+                                value={row.label}
                                 label="Name"
                                 onChange={e =>
-                                    changeArraySettings(key, index, "name", e.target.value)
+                                    changeArraySettings(key, index, "label", e.target.value)
                                 }
                             />
                             <IntegerInput

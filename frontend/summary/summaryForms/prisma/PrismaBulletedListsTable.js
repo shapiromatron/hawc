@@ -40,7 +40,7 @@ class PrismaBulletedListsTable extends Component {
                                     row={row}
                                     index={index}
                                     key={index}
-                                    initiallyEditable={row.name == ""}
+                                    initiallyEditable={row.label == ""}
                                 />
                             );
                         })}
@@ -59,7 +59,7 @@ class BulletedListsRow extends EditableRow {
 
         return (
             <tr>
-                <td>{row.name}</td>
+                <td>{row.label}</td>
                 <td>{row.box}</td>
                 <td>{row.tag}</td>
                 <MoveRowTd
@@ -82,10 +82,10 @@ class BulletedListsRow extends EditableRow {
                         <div className="form-row my-2 mx-2 pad-form">
                             <TextInput
                                 name={`${key}-name-${index}`}
-                                value={row.name}
+                                value={row.label}
                                 label="Name"
                                 onChange={e =>
-                                    changeArraySettings(key, index, "name", e.target.value)
+                                    changeArraySettings(key, index, "label", e.target.value)
                                 }
                             />
                             <IntegerInput
