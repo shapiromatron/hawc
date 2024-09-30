@@ -607,6 +607,7 @@ class PrismaPlot {
         let diagramSections = [
             {
                 "label": "Records",
+                "key": "Records",
                 "block_layout": "card",
                 "styling": {
                     "width": this.MAX_WIDTH * 2 + this.SPACING_H + 30,
@@ -614,39 +615,48 @@ class PrismaPlot {
                 "blocks": [
                     {
                         "label": "Source 1",
+                        "key": "Source 1",
                         "value": "",
                         "styling": { "text-color": "red", "width": "200" }
                     },
                     {
                         "label": "Source 2",
+                        "key": "Source 2",
                         "value": "",
                     },
                     {
                         "label": "Source 3",
+                        "key": "Source 3",
                         "value": "",
                     },
                     {
                         "label": "Source 4",
+                        "key": "Source 4",
                         "value": "",
                     },
                     {
                         "label": "Source 5",
+                        "key": "Source 5",
                         "value": "",
                     },
                     {
                         "label": "Source 6",
+                        "key": "Source 6",
                         "value": "",
                     },
                     {
                         "label": "Source 7",
+                        "key": "Source 7",
                         "value": "",
                     },
                     {
                         "label": "Source 8",
+                        "key": "Source 8",
                         "value": "",
                     },
                     {
                         "label": "Source 9",
+                        "key": "Source 9",
                         "value": "",
                     },
                     /*
@@ -661,9 +671,11 @@ class PrismaPlot {
             },
             {
                 "label": "TIAB",
+                "key": "TIAB",
                 "blocks": [
                     {
                         "label": "References screened",
+                        "key": "References screened",
                         "tags": [
                             "Included",
                             "Excluded|Manually excluded in Distiller (full-text)",
@@ -677,6 +689,7 @@ class PrismaPlot {
                     },
                     {
                         "label": "References excluded",
+                        "key": "References excluded",
                         "tags": [
                             "Excluded|Manually excluded in SWIFT-Review",
                             "Excluded|Automatically excluded via ML in SWIFT-Active Screener",
@@ -694,10 +707,12 @@ class PrismaPlot {
             },
             {
                 "label": "FT",
+                "key": "FT",
                 "blocks": [
                     {
 
                         "label": "References screened",
+                        "key": "References screened",
                         "tags": [
                             "Included",
                             "Excluded|Manually excluded in Distiller (full-text)",
@@ -708,6 +723,7 @@ class PrismaPlot {
                     },
                     {
                         "label": "References excluded",
+                        "key": "References excluded",
                         "tags": [
                             "Excluded|Manually excluded in Distiller (full-text)|Unable to obtain full-text"
                         ],
@@ -719,6 +735,7 @@ class PrismaPlot {
             },
             {
                 "label": "FT - eligible",
+                "key": "FT - eligible",
                 "styling": {
                     "bg-color": "grey",
                     "text-padding-x": "315",
@@ -729,6 +746,7 @@ class PrismaPlot {
                 "blocks": [
                     {
                         "label": "References screened",
+                        "key": "References screened",
                         "tags": [
                             "Included",
                             "Excluded|Manually excluded in Distiller (full-text)|No data provided",
@@ -749,6 +767,7 @@ class PrismaPlot {
                     },
                     {
                         "label": "References excluded",
+                        "key": "References excluded",
                         "block_layout": "list",
                         "styling": {
                             "height": this.MIN_HEIGHT
@@ -756,6 +775,7 @@ class PrismaPlot {
                         "sub_blocks": [
                             {
                                 "label": "No data provided",
+                                "key": "No data provided",
                                 "tags": [
                                     "Excluded|Manually excluded in Distiller (full-text)|No data provided"
                                 ],
@@ -766,6 +786,7 @@ class PrismaPlot {
                             },
                             {
                                 "label": "No relevant exposure",
+                                "key": "No relevant exposure",
                                 "tags": [
                                     "Excluded|Manually excluded in Distiller (full-text)|No relevant exposure"
                                 ],
@@ -775,6 +796,7 @@ class PrismaPlot {
                             },
                             {
                                 "label": "Wildlife study",
+                                "key": "Wildlife study",
                                 "tags": [
                                     "Excluded|Manually excluded in Distiller (full-text)|Wildlife study"
                                 ],
@@ -791,9 +813,11 @@ class PrismaPlot {
             },
             {
                 "label": "Included studies",
+                "key": "Included studies",
                 "blocks": [
                     {
                         "label": "Results",
+                        "key": "Results",
                         "tags": ["Included"],
                         "count": "unique_sum",
                         "value": 359,
@@ -809,7 +833,7 @@ class PrismaPlot {
         let child;
         let sibling;
         for (let row of diagramSections) {
-            let blockId = `${row.label}`.replace(/ /g, '');
+            let blockId = `${row.key}`.replace(/ /g, '');
             let blockBoxInfo = row.label;
             let sectionStyle = row.styling ?? {};
             if (!parent) {
@@ -827,7 +851,7 @@ class PrismaPlot {
 
             for (let i = 0; i < row.blocks.length; i++) {
                 let col = row.blocks[i];
-                let id = `${row.label}.${col.label}`.replace(/ /g, '');
+                let id = `${row.key}.${col.key}`.replace(/ /g, '');
                 let boxInfo = col.label + ": " + col.value;
                 let blockStyle = col.styling ?? {};
 
