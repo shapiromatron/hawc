@@ -1,8 +1,7 @@
 import * as d3 from "d3";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
-import "d3-arrow";
-import { arrow1 } from "d3-arrow";
+import * as d3Arrow from "d3-arrow";
 
 class PrismaPlot {
     constructor(store, options) {
@@ -302,9 +301,8 @@ class PrismaPlot {
             if (!styling[key]) styling[key] = value;
         }
         let arrowType = "arrow" + styling["arrow-type"];
-
         let d3svg = d3.select("#svgworkspace");
-        let arrow = arrow1().id(id); // TODO: set arrow type based on styling
+        let arrow = d3Arrow[arrowType]().id(id);
         if (arrowhead) {
             arrow.attr("stroke", styling["arrow-color"]).attr("stroke-width", styling["arrow-width"]);
         }
