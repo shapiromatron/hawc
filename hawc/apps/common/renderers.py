@@ -1,5 +1,6 @@
 import json
 from io import BytesIO, StringIO
+from typing import NamedTuple
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -148,6 +149,11 @@ class PandasBrowsableAPIRenderer(BrowsableAPIRenderer):
         return data.df.to_json(orient="records", indent=4)
 
 
+class BinaryXlsxDataFormat(NamedTuple):
+    bytes: BytesIO
+    filename: str
+
+
 class PandasXlsxBinaryRenderer(PandasBaseRenderer):
     """
     Renders dataframe as xlsx
@@ -156,7 +162,7 @@ class PandasXlsxBinaryRenderer(PandasBaseRenderer):
     media_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     format = "xlsx"
 
-    def render(self, data: BytesIO, accepted_media_type=None, renderer_context=None):
+    def render(self, data: BinaryXlsxDataFormat, accepted_media_type=None, renderer_context=None):
         # return error or OPTIONS as JSON
         status_code = renderer_context["response"].status_code
         method = renderer_context["request"].method if "request" in renderer_context else None
@@ -165,7 +171,10 @@ class PandasXlsxBinaryRenderer(PandasBaseRenderer):
                 return json.dumps(data)
             else:
                 raise ValueError(f"Expecting data as `dict`; got {type(data)}")
-        return data.getvalue()
+
+        disposition = f"attachment; filename={slugify(data.filename)}.xlsx"
+        renderer_context["response"]["Content-Disposition"] = disposition
+        return data.bytes.getvalue()
 
 
 class PandasXlsxRenderer(PandasBaseRenderer):
