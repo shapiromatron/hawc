@@ -26,3 +26,11 @@ class TestEndpointFlatDataPivot:
         exporter = exports.EndpointFlatDataPivot(queryset=Endpoint.objects.none())
         df2 = exporter.handle_treatment_period(df)
         assert_series_equal(df2["treatment period"], expected_output)
+
+
+def test_rename_udf_cols():
+    df = pd.DataFrame(
+        data=[[1] * 4], columns=["a", "b b", "b_udfs-content-field-b", "c_udfs-content-field-c"]
+    )
+    df = exports.rename_udf_cols(df)
+    assert df.columns.tolist() == ["a", "b b", "b udf b", "c c"]

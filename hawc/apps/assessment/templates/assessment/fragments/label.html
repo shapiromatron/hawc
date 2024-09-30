@@ -1,0 +1,5 @@
+{% if anchor_tag %}
+  <a class="{% if not big %} tny {% endif %} {{extra_classes}} label m-1" href="{% url 'assessment:labeled-items' assessment.pk %}?label={{label.pk}}" style="background-color: {{label.color}}; color: {{label.text_color}};" title="{{label.description}}">{{label.name}}</a>
+{% else %}
+  <div class="{% if not big %} tny {% endif %} {{extra_classes}} label m-1" label_url="{% url 'assessment:labeled-items' assessment.pk %}?label={{label.pk}}" style="background-color: {{label.color}}; color: {{label.text_color}};" title="{{label.description}}">{{label.name}}</div>
+{% endif %}

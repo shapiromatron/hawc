@@ -1,11 +1,14 @@
 {% extends 'assessment-rooted.html' %}
 
+{% load static %}
+
 {% block extrahead %}
   <meta name="hawc-viz-type" data-viz-type="{{object.get_visual_type_display}}" />
 {% endblock %}
 
 {% block content %}
   <div class='visualization'></div>
+  {% include "assessment/components/label_modal.html" with modal_id="label-modal"%}
 {% endblock %}
 
 {% block extrajs %}
@@ -14,5 +17,6 @@
       window.isEditable = {{obj_perms.edit|lower}};
       summary.Visual.displayAsPage({{object.id}}, $(".visualization"));
     });
+    window.app.HAWCUtils.watchForHtmx('.visualization');
   </script>
 {% endblock %}

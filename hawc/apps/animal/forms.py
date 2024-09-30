@@ -128,7 +128,7 @@ class ExperimentSelectorForm(CopyForm):
         )
 
 
-class AnimalGroupForm(ModelForm):
+class AnimalGroupForm(UDFModelFormMixin, ModelForm):
     class Meta:
         model = models.AnimalGroup
         exclude = ("experiment", "dosing_regime", "generation", "parents")
@@ -166,6 +166,7 @@ class AnimalGroupForm(ModelForm):
         self.fields["siblings"].queryset = models.AnimalGroup.objects.filter(
             experiment=self.instance.experiment
         )
+        self.set_udf_field(self.instance.experiment.study.assessment)
 
     @property
     def helper(self):

@@ -4,12 +4,14 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 
 import $ from "$";
 
+import {addLabelIndicators} from "./common";
 import CrossviewPlot from "./CrossviewPlot";
 import EndpointAggregation from "./EndpointAggregation";
 
 class Crossview extends EndpointAggregation {
     displayAsPage($el, options) {
         var title = $("<h2>").text(this.data.title),
+            labelIndicators = addLabelIndicators(this.data.label_indicators_htmx),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
@@ -24,6 +26,7 @@ class Crossview extends EndpointAggregation {
         if (!options.visualOnly) {
             var headerRow = $('<div class="d-flex">').append([
                 title,
+                labelIndicators,
                 HAWCUtils.unpublished(this.data.published, window.isEditable),
                 actions,
             ]);

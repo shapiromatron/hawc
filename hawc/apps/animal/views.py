@@ -172,7 +172,7 @@ class AnimalGroupCreate(BaseCreate):
         return context
 
 
-class AnimalGroupDetail(BaseDetail):
+class AnimalGroupDetail(UDFDetailMixin, BaseDetail):
     model = models.AnimalGroup
 
     def get_context_data(self, **kwargs):

@@ -62,11 +62,13 @@ class SummaryTableList(BaseFilterList):
         if self.assessment.user_is_team_member_or_higher(self.request.user):
             return dict(
                 main_field="title",
-                appended_fields=["type", "published"],
+                appended_fields=["type", "label", "published"],
             )
         else:
             return dict(
-                main_field="title", appended_fields=["type"], dynamic_fields=["title", "type"]
+                main_field="title",
+                appended_fields=["type", "label"],
+                dynamic_fields=["title", "type", "label"],
             )
 
 
@@ -299,11 +301,13 @@ class VisualizationList(BaseFilterList):
         if self.assessment.user_is_team_member_or_higher(self.request.user):
             return dict(
                 main_field="title",
-                appended_fields=["type", "published"],
+                appended_fields=["type", "label", "published"],
             )
         else:
             return dict(
-                main_field="title", appended_fields=["type"], dynamic_fields=["title", "type"]
+                main_field="title",
+                appended_fields=["type", "label"],
+                dynamic_fields=["title", "type", "label"],
             )
 
     def get_context_data(self, **kwargs):

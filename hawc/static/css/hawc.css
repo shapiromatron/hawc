@@ -49,6 +49,30 @@ input[type="submit"].btn, section button.btn, section input[type="button"].btn, 
     font-weight: normal;
 }
 /* end sidebar */
+.tny {
+    font-size: 0.75rem !important;
+}
+.label {
+    font-weight: bold;
+    width: fit-content;
+    border-radius: 8px 15px 15px 8px;
+    overflow: hidden;
+    font-size: 0.85rem;
+    padding: 0.2rem 1rem 0.2rem 0.4rem;
+    clip-path: polygon(0% 0, calc(100% - 12px) 0, 100% 48%, 100% 52%, calc(100% - 12px) 100%, 0% 100%);
+    cursor: pointer;
+}
+.label:hover{
+    text-decoration: underline;
+}
+
+/* make labels hoverable on {% url 'assessment:labeled-items' %} */
+.clickable:hover:has(.label:hover) {
+    background-color: unset !important;
+}
+.clickable:hover:has(.label:hover) .bg-light {
+    background-color: #f8f9fa !important;
+}
 
 .unpublishedBadge+.actionsMenu, .unpublishedBadge+button.close {
     margin-left: unset !important;
@@ -123,6 +147,19 @@ tfoot > tr > td {
 }
 .dark-link, .dark-link:visited {
     color: #495057;
+}
+.clickable, .clickable .bg-light {
+    transition: background-color 0.20s ease;
+    cursor: pointer;
+}
+.clickable:active {
+    background-color: #e3e4e5 !important;
+}
+.bg-light.clickable:hover, .clickable:hover .bg-light {
+    background-color: #e6e7e8 !important;
+}
+.bg-light.clickable:active, .clickable:active .bg-light {
+    background-color: #d4d5d6 !important;
 }
 .showOptsCaret:hover .optsCaret {
     opacity: 1;
@@ -720,13 +757,20 @@ a.outline-btn:hover, .dropdown.outline-btn:hover, .btn.outline-btn:hover {
     padding: 0.2rem 0.75rem;
 }
 
-div.input-group span.autocompletetextwidget {
-    height: 37.5px;
+div.input-group span.autocompletetextwidget, div.input-group span.autocompleteselectmultiplewidget {
+    height: 38px;
     line-height: 1.7;
+    border-radius: 0px;
+    min-width: 250px;
 }
 
-div.input-group-append select {
+div.input-group-append select, div.input-group-append span.select2 {
     height: 100%;
+}
+
+div.input-group-append input.select2-search__field {
+    font-size: 1rem;
+    height: 38px !important;
 }
 
 /* BMD APPLICATION STYLES */
