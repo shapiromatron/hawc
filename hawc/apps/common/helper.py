@@ -4,6 +4,7 @@ import re
 from collections import defaultdict
 from collections.abc import Callable, Iterable
 from datetime import timedelta
+from io import BytesIO
 from itertools import chain
 from math import inf
 from typing import Any, NamedTuple, TypeVar
@@ -31,6 +32,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError as DRFValidationError
 
+from ...services.excel import get_writer, write_worksheet
 from .middleware import _local_thread
 
 logger = logging.getLogger(__name__)
@@ -331,6 +333,14 @@ class FlatExport(NamedTuple):
     ) -> Response:
         export = cls(df=df, filename=filename, metadata=metadata)
         return Response(export)
+
+    def to_excel(self) -> BytesIO:
+        f, writer = get_writer()
+        with writer:
+            write_worksheet(writer, "data", self.df)
+            if self.metadata is not None:
+                write_worksheet(writer, "metadata", self.metadata)
+        return f
 
 
 class FlatFileExporter:

@@ -1,12 +1,10 @@
-from io import BytesIO
-
 import pandas as pd
 from django.db.models import CharField, F, Func, QuerySet, Value
 
+from ...services.excel import get_writer, write_worksheet
 from ..common.exports import Exporter, ModelExport
 from ..common.helper import FlatFileExporter
 from ..common.models import sql_display, sql_format, str_m2m, to_display_array
-from ..common.renderers import format_xlsx, write_worksheet
 from ..riskofbias.models import RiskOfBiasScore
 from ..study.exports import StudyExport
 from . import constants, models
@@ -373,17 +371,14 @@ def tabular_export(assessment_id: int, published_only: bool):
         filename="",
     ).df
 
-    f = BytesIO()
-    with pd.ExcelWriter(
-        f, date_format="YYYY-MM-DD", datetime_format="YYYY-MM-DD HH:MM:SS"
-    ) as writer:
-        write_worksheet(writer, df1, "design")
-        write_worksheet(writer, df2, "exposure")
-        write_worksheet(writer, df3, "exposure_level")
-        write_worksheet(writer, df4, "chemical")
-        write_worksheet(writer, df5, "outcome")
-        write_worksheet(writer, df6, "adjustment_factor")
-        write_worksheet(writer, df7, "data_extraction")
-        format_xlsx(writer)
+    f, writer = get_writer()
+    with writer:
+        write_worksheet(writer, "design", df1)
+        write_worksheet(writer, "exposure", df2)
+        write_worksheet(writer, "exposure_level", df3)
+        write_worksheet(writer, "chemical", df4)
+        write_worksheet(writer, "outcome", df5)
+        write_worksheet(writer, "adjustment_factor", df6)
+        write_worksheet(writer, "data_extraction", df7)
 
     return f

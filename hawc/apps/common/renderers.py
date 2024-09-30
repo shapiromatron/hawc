@@ -6,10 +6,6 @@ import pandas as pd
 from django.conf import settings
 from django.utils.text import slugify
 from matplotlib.axes import Axes
-from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
-from openpyxl.styles import Alignment, Font, PatternFill
-from openpyxl.utils import get_column_letter
-from openpyxl.utils.exceptions import IllegalCharacterError
 from rest_framework import status
 from rest_framework.renderers import BaseRenderer, BrowsableAPIRenderer
 from rest_framework.response import Response
@@ -182,52 +178,8 @@ class PandasXlsxRenderer(PandasBaseRenderer):
 
     def render_dataframe(self, export: FlatExport, response: Response) -> bytes:
         response["Content-Disposition"] = f"attachment; filename={slugify(export.filename)}.xlsx"
-
-        f = BytesIO()
-        with pd.ExcelWriter(
-            f, date_format="YYYY-MM-DD", datetime_format="YYYY-MM-DD HH:MM:SS"
-        ) as writer:
-            write_worksheet(writer, export.df, "data")
-            if isinstance(export.metadata, pd.DataFrame):
-                write_worksheet(writer, export.metadata, "metadata")
-            format_xlsx(writer)
-
+        f = export.to_excel()
         return f.getvalue()
-
-
-def write_worksheet(writer: pd.ExcelWriter, df: pd.DataFrame, name: str):
-    # Remove timezone from datetime objects to make Excel compatible
-    df = df.copy()
-    for col in df.select_dtypes(include="datetimetz").columns:
-        df[col] = df[col].dt.tz_localize(None)
-
-    try:
-        df.to_excel(writer, sheet_name=name, index=False, freeze_panes=(1, 0))
-    except IllegalCharacterError:
-        # Clean data frame to remove illegal characters, such as "\x02", inplace.
-        columns: list[str] = df.select_dtypes(include="object").columns.values
-        for column in columns:
-            if hasattr(df.loc[:, column], "str"):
-                df.loc[:, column] = df.loc[:, column].str.replace(
-                    ILLEGAL_CHARACTERS_RE, "", regex=True
-                )
-        df.to_excel(writer, sheet_name=name, index=False, freeze_panes=(1, 0))
-
-
-def format_xlsx(writer: pd.ExcelWriter):
-    # enable filters
-    for ws in writer.book.worksheets:
-        # enable filters
-        ws.auto_filter.ref = ws.dimensions
-        # fill header
-        for row in ws.iter_rows(min_row=1, max_row=1):
-            for cell in row:
-                cell.fill = PatternFill("solid", fgColor="1F497D")
-                cell.font = Font(color="FFFFFF")
-                cell.alignment = Alignment(horizontal="left")
-        # resize columns
-        for idx in range(1, ws.max_column + 1):
-            ws.column_dimensions[get_column_letter(idx)].width = 10
 
 
 PandasRenderers = [
