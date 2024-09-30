@@ -33,6 +33,7 @@ const createSectionRow = function() {
             font_color: "",
             text_style: "",
             section: "",
+            box_layout: "card",
             tag: NULL_VALUE,
         };
     },
@@ -87,7 +88,11 @@ const createSectionRow = function() {
         {id: 5, label: 5},
         {id: 10, label: 10},
         {id: 11, label: 11},
-        {id: 13, label: 13},
+        {id: 13, label: 13}
+    ],
+    BOX_LAYOUTS = [
+        {id: "card", label: "Card"},
+        {id: "list", label: "List"}
     ];
 
 class PrismaStore {
@@ -166,6 +171,10 @@ class PrismaStore {
 
     @action.bound getArrowTypes() {
         return ARROW_TYPES;
+    }
+
+    @action.bound getBoxLayouts() {
+        return BOX_LAYOUTS;
     }
 
     @action.bound getLinkingOptions(key) {

@@ -71,6 +71,7 @@ class BoxesRow extends EditableRow {
             changeArraySettings,
             getLinkingOptions,
             getFilterOptions,
+            getBoxLayouts,
         } = this.props.store.subclass;
         return (
             <tr>
@@ -176,6 +177,16 @@ class BoxesRow extends EditableRow {
                                 }
                                 multiple={false}
                                 choices={getFilterOptions()}
+                            />
+                            <SelectInput
+                                name={`${key}-layout-${index}`}
+                                value={row.tag}
+                                label="Layout type for this box"
+                                handleSelect={value =>
+                                    changeArraySettings(key, index, "box_layout", value)
+                                }
+                                multiple={false}
+                                choices={getBoxLayouts()}
                             />
                         </div>
                         <div className="form-row justify-content-center">
