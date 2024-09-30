@@ -704,11 +704,9 @@ class AssessmentValue(models.Model):
         verbose_name_plural = "values"
 
     @property
-    def get_combined_value_type_display(self):
+    def get_combined_value_type_display(self) -> str:
         text = self.get_value_type_display()
-        if self.value_type_qualifier:
-            text = f"{self.value_type_qualifier} " + text
-        return text
+        return f"{self.value_type_qualifier} {text}" if self.value_type_qualifier else text
 
     @property
     def show_cancer_fields(self):
