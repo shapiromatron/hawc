@@ -1,7 +1,10 @@
 import * as d3 from "d3";
+import * as d3Arrow from "d3-arrow";
+import React from "react";
+import ReactDOM from "react-dom";
+import VisualToolbar from "shared/components/VisualToolbar";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
-import * as d3Arrow from "d3-arrow";
 
 class PrismaPlot {
     constructor(store, options) {
@@ -15,12 +18,12 @@ class PrismaPlot {
         this.build_plot();
     }
 
-   makeGroupTextVisible(node) {
+    makeGroupTextVisible(node) {
         for (let child of node.children) {
             child = this.getGroup(child.id);
             this.makeGroupTextVisible(child);
         }
-        this.updateNodeTextAttributes(node, { "display": "inline" });
+        this.updateNodeTextAttributes(node, {display: "inline"});
     }
 
     // should only be vertical adjustments
@@ -37,7 +40,9 @@ class PrismaPlot {
             }
             prevNodeGroup = prevNodeGroup.group.getBBox();
             node.rect.setAttribute("y", prevNodeGroup.y + prevNodeGroup.height + nodeSpacing);
-            this.updateNodeTextAttributes(node, { "y": prevNodeGroup.y + prevNodeGroup.height + nodeSpacing + this.TEXT_OFFSET_Y });
+            this.updateNodeTextAttributes(node, {
+                y: prevNodeGroup.y + prevNodeGroup.height + nodeSpacing + this.TEXT_OFFSET_Y,
+            });
         }
 
         // wrap and push down all immediate text elements
@@ -45,7 +50,8 @@ class PrismaPlot {
         for (let i = 0; i < node.text.length; i++) {
             HAWCUtils.wrapText(node.text[i], width);
             for (let j = i + 1; j < node.text.length; j++) {
-                let previousTextY = node.text[j - 1].getBBox().y + node.text[j - 1].getBBox().height;
+                let previousTextY =
+                    node.text[j - 1].getBBox().y + node.text[j - 1].getBBox().height;
                 node.text[j].setAttribute("y", previousTextY + this.TEXT_OFFSET_Y);
             }
         }
@@ -57,18 +63,27 @@ class PrismaPlot {
                 let prevChildBBox = child.previous.group.getBBox();
                 let prevChildNodeSpacing = parseFloat(child.previous.styling["spacing-vertical"]);
 
-                child.rect.setAttribute("y", prevChildBBox.y + prevChildBBox.height + prevChildNodeSpacing);
-                this.updateNodeTextAttributes(child, { "y": prevChildBBox.y + prevChildBBox.height + prevChildNodeSpacing + this.TEXT_OFFSET_Y });
-            }
-            else if (child.previous) {
+                child.rect.setAttribute(
+                    "y",
+                    prevChildBBox.y + prevChildBBox.height + prevChildNodeSpacing
+                );
+                this.updateNodeTextAttributes(child, {
+                    y:
+                        prevChildBBox.y +
+                        prevChildBBox.height +
+                        prevChildNodeSpacing +
+                        this.TEXT_OFFSET_Y,
+                });
+            } else if (child.previous) {
                 let prevBBox = child.previous.rect.getBBox();
                 child.rect.setAttribute("y", prevBBox.y);
-                this.updateNodeTextAttributes(child, { "y": prevBBox.y + this.TEXT_OFFSET_Y });
-            }
-            else {
+                this.updateNodeTextAttributes(child, {y: prevBBox.y + this.TEXT_OFFSET_Y});
+            } else {
                 let prevChildBBox = node.text[node.text.length - 1].getBBox();
                 child.rect.setAttribute("y", prevChildBBox.y + prevChildBBox.height + 15);
-                this.updateNodeTextAttributes(child, { "y": prevChildBBox.y + prevChildBBox.height + this.TEXT_OFFSET_Y + 15 });
+                this.updateNodeTextAttributes(child, {
+                    y: prevChildBBox.y + prevChildBBox.height + this.TEXT_OFFSET_Y + 15,
+                });
             }
             this.resizeNodes(child);
         }
@@ -76,11 +91,9 @@ class PrismaPlot {
         // rect visual height adjustment
         if (node.rect.getAttribute("fixed-height") == "true") {
             //return node;
-        }
-        else if (Math.floor(node.group.getBBox().height) <= this.MIN_HEIGHT) {
+        } else if (Math.floor(node.group.getBBox().height) <= this.MIN_HEIGHT) {
             node.rect.setAttribute("height", this.MIN_HEIGHT);
-        }
-        else {
+        } else {
             node.rect.setAttribute("height", node.group.getBBox().height + 15);
         }
         return node;
@@ -99,16 +112,16 @@ class PrismaPlot {
         let styling = JSON.parse(group.getAttribute("data-styling"));
         let isVertical = group.getAttribute("is-vertical");
         return {
-            "id": id,
-            "group": group,
-            "rect": rect,
-            "text": text,
-            "styling": styling,
-            "isVertical": (isVertical == "true"),
-            "parent": this.getGroup(parent?.id),
-            "previous": this.getGroup(previous?.id),
-            "children": children
-        }
+            id,
+            group,
+            rect,
+            text,
+            styling,
+            isVertical: isVertical == "true",
+            parent: this.getGroup(parent?.id),
+            previous: this.getGroup(previous?.id),
+            children,
+        };
     }
 
     // update attributes to all text elements within a node
@@ -140,16 +153,14 @@ class PrismaPlot {
         if (styling.width == 0) {
             rect.setAttribute("width", this.MAX_WIDTH);
             rect.setAttribute("fixed-width", false);
-        }
-        else {
+        } else {
             rect.setAttribute("width", styling.width);
             rect.setAttribute("fixed-width", true);
         }
         if (styling.height == 0) {
             rect.setAttribute("height", this.MIN_HEIGHT);
             rect.setAttribute("fixed-height", false);
-        }
-        else {
+        } else {
             rect.setAttribute("height", styling.height);
             rect.setAttribute("fixed-height", true);
         }
@@ -161,11 +172,11 @@ class PrismaPlot {
 
         group.appendChild(rect);
         return {
-            "id": id,
-            "group": group,
-            "rect": rect,
-            "text": text,
-            "styling": styling
+            id,
+            group,
+            rect,
+            text,
+            styling,
         };
     }
 
@@ -180,11 +191,17 @@ class PrismaPlot {
 
         let textElement = document.createElementNS(this.NAMESPACE, "text");
         textElement.setAttribute("data-styling", JSON.stringify(styling));
-        textElement.setAttribute("x", x + this.TEXT_OFFSET_X + parseFloat(styling["text-padding-x"]));
+        textElement.setAttribute(
+            "x",
+            x + this.TEXT_OFFSET_X + parseFloat(styling["text-padding-x"])
+        );
         textElement.setAttribute("y", y + this.TEXT_OFFSET_Y);
         textElement.setAttribute("display", "none");
         textElement.setAttribute("id", id);
-        textElement.setAttribute("font-size", this.TEXT_SIZE + parseFloat(styling["text-size"]) + "em");
+        textElement.setAttribute(
+            "font-size",
+            this.TEXT_SIZE + parseFloat(styling["text-size"]) + "em"
+        );
         textElement.setAttribute("font-weight", styling["text-style"]);
         textElement.style["fill"] = styling["text-color"];
         textElement.innerHTML = text;
@@ -196,8 +213,7 @@ class PrismaPlot {
     addNodeToHTML(node, parent = undefined) {
         if (parent) {
             $(document.getElementById(parent.id)).append(node.group);
-        }
-        else {
+        } else {
             $("#svgworkspace").append(node.group);
         }
         let txtEle = this.addTextToNode(node, node.id + "-text", node.text, node.styling);
@@ -246,52 +262,27 @@ class PrismaPlot {
             let yMidpoint = (node2BBox.y - (node1BBox.y + node1BBox.height)) / 2;
             yMidpoint = node1BBox.y + node1BBox.height + yMidpoint;
 
-            let node1XY = [
-                node1BBox.x + node1BBox.width / 2,
-                node1BBox.y + node1BBox.height
-            ];
-            let node1Midpoint = [
-                node1BBox.x + node1BBox.width / 2,
-                yMidpoint
-            ];
+            let node1XY = [node1BBox.x + node1BBox.width / 2, node1BBox.y + node1BBox.height];
+            let node1Midpoint = [node1BBox.x + node1BBox.width / 2, yMidpoint];
             this.connectPoints(id + "_1", node1XY, node1Midpoint, false, styling);
 
-            let node2Midpoint = [
-                node2BBox.x + node2BBox.width / 2,
-                yMidpoint
-            ];
+            let node2Midpoint = [node2BBox.x + node2BBox.width / 2, yMidpoint];
             this.connectPoints(id + "_2", node1Midpoint, node2Midpoint, false, styling);
 
-            let node2XY = [
-                node2BBox.x + node2BBox.width / 2,
-                node2BBox.y
-            ];
+            let node2XY = [node2BBox.x + node2BBox.width / 2, node2BBox.y];
             this.connectPoints(id + "_3", node2Midpoint, node2XY, true, styling);
-        }
-        else {
+        } else {
             let xMidpoint = (node2BBox.x - (node1BBox.x + node1BBox.width)) / 2;
             xMidpoint = node1BBox.x + node1BBox.width + xMidpoint;
 
-            let node1XY = [
-                node1BBox.x + node1BBox.width,
-                node1BBox.y + node1BBox.height / 2
-            ];
-            let node1Midpoint = [
-                xMidpoint,
-                node1BBox.y + node1BBox.height / 2
-            ];
+            let node1XY = [node1BBox.x + node1BBox.width, node1BBox.y + node1BBox.height / 2];
+            let node1Midpoint = [xMidpoint, node1BBox.y + node1BBox.height / 2];
             this.connectPoints(id + "_1", node1XY, node1Midpoint, false, styling);
 
-            let node2Midpoint = [
-                xMidpoint,
-                node2BBox.y + node2BBox.height / 2
-            ];
+            let node2Midpoint = [xMidpoint, node2BBox.y + node2BBox.height / 2];
             this.connectPoints(id + "_2", node1Midpoint, node2Midpoint, false, styling);
 
-            let node2XY = [
-                node2BBox.x,
-                node2BBox.y + node2BBox.height / 2
-            ];
+            let node2XY = [node2BBox.x, node2BBox.y + node2BBox.height / 2];
             this.connectPoints(id + "_3", node2Midpoint, node2XY, true, styling);
         }
     }
@@ -304,13 +295,15 @@ class PrismaPlot {
         let d3svg = d3.select("#svgworkspace");
         let arrow = d3Arrow[arrowType]().id(id);
         if (arrowhead) {
-            arrow.attr("stroke", styling["arrow-color"]).attr("stroke-width", styling["arrow-width"]);
-        }
-        else {
+            arrow
+                .attr("stroke", styling["arrow-color"])
+                .attr("stroke-width", styling["arrow-width"]);
+        } else {
             arrow.attr("fill", "transparent").attr("stroke", "transparent");
         }
         d3svg.call(arrow);
-        d3svg.append("polyline")
+        d3svg
+            .append("polyline")
             .attr("marker-end", `url(#${id})`)
             .attr("points", [xy1, xy2])
             .attr("stroke", styling["arrow-color"])
@@ -331,7 +324,9 @@ class PrismaPlot {
     createNewVerticalNode(prevNode, id, text, group = false, styling = {}) {
         prevNode = this.getGroup(prevNode.id);
         let prevBBox = prevNode.rect.getBBox();
-        let nodeSpacing = styling["spacing-vertical"] ? parseFloat(styling["spacing-vertical"]) : this.SPACING_V;
+        let nodeSpacing = styling["spacing-vertical"]
+            ? parseFloat(styling["spacing-vertical"])
+            : this.SPACING_V;
         let y = prevBBox.y + prevBBox.height + nodeSpacing;
 
         let verticalNode = this.createRectangleWithText(id, text, prevBBox.x, y, styling);
@@ -349,11 +344,12 @@ class PrismaPlot {
         prevNode = this.getGroup(prevNode.id);
         let prevBBox = prevNode.rect.getBBox();
         let x;
-        let nodeSpacing = styling["spacing-horizontal"] ? parseFloat(styling["spacing-horizontal"]) : this.SPACING_H;
+        let nodeSpacing = styling["spacing-horizontal"]
+            ? parseFloat(styling["spacing-horizontal"])
+            : this.SPACING_H;
         if (prevNode.parent && !group) {
             x = prevNode.parent.rect.getBBox().width + nodeSpacing;
-        }
-        else {
+        } else {
             x = prevBBox.x + prevBBox.width + nodeSpacing;
         }
         let horizontalNode = this.createRectangleWithText(id, text, x, prevBBox.y, styling);
@@ -395,8 +391,8 @@ class PrismaPlot {
     }
 
     nodeOnClick(e) {
-        let id = e.target.parentNode.id.replace(new RegExp("-box" + '$'), '');
-        id = id.replace(new RegExp("-text" + '$'), '');
+        let id = e.target.parentNode.id.replace(new RegExp("-box" + "$"), "");
+        id = id.replace(new RegExp("-text" + "$"), "");
         let node = this.getGroup(id);
         console.log(node);
     }
@@ -406,17 +402,17 @@ class PrismaPlot {
     createCard(parent, text, styling = {}) {
         let cardMinHeight = 70;
         const CARD_DEFAULT = {
-            "width": "100",
+            width: "100",
             "spacing-horizontal": "20",
-            "spacing-vertical": "10"
-        }
+            "spacing-vertical": "10",
+        };
         // first inherit from card default then style default
         for (const [key, value] of Object.entries(CARD_DEFAULT)) {
             if (!styling[key]) styling[key] = value;
         }
 
         let allCards = $(document.getElementById(parent.group.id)).children(".node");
-        let prevNode = (allCards.length > 0) ? allCards[allCards.length - 1] : parent;
+        let prevNode = allCards.length > 0 ? allCards[allCards.length - 1] : parent;
         prevNode = this.getGroup(prevNode.id);
         let id = parent.id + "_" + allCards.length;
 
@@ -424,12 +420,15 @@ class PrismaPlot {
         if (allCards.length > 0) {
             let parentPosition = parent.rect.getBBox().x + parent.rect.getBBox().width;
             let prevCardPosition = prevNode.rect.getBBox().x + prevNode.rect.getBBox().width;
-            let cardPosition = prevCardPosition + parseFloat(styling["spacing-horizontal"]) + parseFloat(styling["width"]);
+            let cardPosition =
+                prevCardPosition +
+                parseFloat(styling["spacing-horizontal"]) +
+                parseFloat(styling["width"]);
 
             if (cardPosition < parentPosition) {
                 return this.createNewHorizontalNode(prevNode, id, text, true, styling);
-            }
-            else { // new row
+            } else {
+                // new row
                 prevNode = allCards[allCards.length - this.cardrowlength];
                 this.cardrowlength = 0;
                 return this.createNewVerticalNode(prevNode, id, text, true, styling);
@@ -454,10 +453,11 @@ class PrismaPlot {
                 let subblockText = this.HTML_BULLET + ` ${blocks[i].label}: ${blocks[i].value}`;
 
                 let txtEle = this.addTextToNode(currentNode, subblockId, subblockText, blockStyle);
-                txtEle.onclick = (e) => { console.log(blocks[i]) };
+                txtEle.onclick = e => {
+                    console.log(blocks[i]);
+                };
             }
-        }
-        else {
+        } else {
             for (let subblock of blocks) {
                 let blockStyle = subblock.styling ?? {};
                 this.createCard(currentNode, subblock.label, blockStyle);
@@ -465,89 +465,28 @@ class PrismaPlot {
         }
     }
 
-    build_plot() {
-        // test data
-        this.dataset = {
-            title: "Prisma Visual",
-            sections: [
-                {
-                    key: "section1key",
-                    name: "Section 1",
-                    width: 250,
-                    height: 100,
-                    border_width: 2,
-                    rx: 40,
-                    ry: 10,
-                    bg_color: "yellow",
-                    border_color: "Black",
-                    font_color: "Black",
-                    text_style: "Left justified",
-                },
-                {
-                    key: "section2key",
-                    name: "Section 2",
-                    width: 550,
-                    height: 100,
-                    border_width: 2,
-                    rx: 40,
-                    ry: 10,
-                    bg_color: "white",
-                    border_color: "Black",
-                    font_color: "Black",
-                    text_style: "Bold",
-                },
-            ],
-            boxes: [{
-                    key: "box1key",
-                    name: "Included References",
-                    width: 200,
-                    height: 60,
-                    border_width: 0,
-                    rx: 20,
-                    ry: 20,
-                    bg_color: "white",
-                    border_color: "black",
-                    font_color: "",
-                    text_style: "",
-                    section: "section1key",
-                    count: 30,
-                },
-                {
-                    key: "box2key",
-                    name: "Included References",
-                    width: 200,
-                    height: 60,
-                    border_width: 0,
-                    rx: 20,
-                    ry: 20,
-                    bg_color: "white",
-                    border_color: "black",
-                    font_color: "",
-                    text_style: "",
-                    section: "section2key",
-                    count: 30,
-                },
-                {
-                    key: "box3key",
-                    name: "Excluded References",
-                    width: 200,
-                    height: 60,
-                    border_width: 0,
-                    rx: 20,
-                    ry: 20,
-                    bg_color: "white",
-                    border_color: "black",
-                    font_color: "",
-                    text_style: "",
-                    section: "section2key",
-                    count: 30,
-                }
-            ],
-            bulleted_lists: [],
-            cards: [],
-            arrows: [],
-        };
+    addResizeAndToolbar() {
+        const nativeSize = {
+                width: this.w + 40,
+                height: this.h + 40,
+            },
+            div = $("<div>")
+                .css({
+                    position: "relative",
+                    display: "block",
+                    top: "-30px",
+                    left: "-3px",
+                })
+                .appendTo(this.plot_div);
 
+        d3.select(this.svg)
+            .attr("preserveAspectRatio", "xMidYMin meet")
+            .attr("viewBox", `0 0 ${nativeSize.width} ${nativeSize.height}`);
+
+        ReactDOM.render(<VisualToolbar svg={this.svg} nativeSize={nativeSize} />, div[0]);
+    }
+
+    build_plot() {
         this.NAMESPACE = "http://www.w3.org/2000/svg";
         this.HTML_BULLET = "&#8226;";
         this.WORKSPACE_START_X = 20; // first box always placed here
@@ -560,10 +499,10 @@ class PrismaPlot {
         this.TEXT_OFFSET_Y = 20;
         this.TEXT_SIZE = 1;
         this.STYLE_DEFAULT = {
-            "x": "0", // +- centered around current box position (moves relevant text as well)
-            "y": "0",
-            "width": "0", // non-0 value for fixed
-            "height": "0",
+            x: "0", // +- centered around current box position (moves relevant text as well)
+            y: "0",
+            width: "0", // non-0 value for fixed
+            height: "0",
             "spacing-horizontal": this.SPACING_H,
             "spacing-vertical": this.SPACING_V,
             "text-padding-x": "0", // +- centered around global text offset values
@@ -572,26 +511,24 @@ class PrismaPlot {
             "text-style": "normal", // or "bold"
             "text-size": "0", // always appends "em" unit, +- centered around global text size
             "bg-color": "white",
-            "stroke": "black", // box border color
+            stroke: "black", // box border color
             "stroke-width": "3", // box border width
-            "rx": "20", // box rounded edge horizontal
-            "ry": "20", // / box rounded edge vertical
+            rx: "20", // box rounded edge horizontal
+            ry: "20", // / box rounded edge vertical
             "arrow-color": "black",
             "arrow-width": "2",
             "arrow-type": "1", // valid: 1,2,3,5,10,11,13
-            "arrow-force-vertical": "false"
-        }
+            "arrow-force-vertical": "false",
+        };
 
-        this.plot_div.empty()
+        this.plot_div.empty();
         this.svg = d3
             .select(this.plot_div[0])
             .append("svg")
             .attr("role", "image")
-            .attr("aria-label", "An exploratory heatmap graphic")
+            .attr("aria-label", "A prisma diagram.")
             .attr("class", "d3")
             .attr("id", "svgworkspace")
-            .attr("width", "100%")
-            .attr("height", "2000")
             .node();
         this.cardrowlength = -1;
         // Examples
@@ -600,62 +537,61 @@ class PrismaPlot {
         // figure one: https://www.bmj.com/content/372/bmj.n71
         // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8958186/figure/cl21230-fig-0003/
 
-
         // NOTE changed sub_block_layout to just block_layout and added as optional to section level
         let diagramSections = [
             {
-                "label": "Records",
-                "key": "Records",
-                "block_layout": "card",
-                "styling": {
-                    "width": this.MAX_WIDTH * 2 + this.SPACING_H + 30,
+                label: "Records",
+                key: "Records",
+                block_layout: "card",
+                styling: {
+                    width: this.MAX_WIDTH * 2 + this.SPACING_H + 30,
                 },
-                "blocks": [
+                blocks: [
                     {
-                        "label": "Source 1",
-                        "key": "Source 1",
-                        "value": "",
-                        "styling": { "text-color": "red", "width": "200" }
+                        label: "Source 1",
+                        key: "Source 1",
+                        value: "",
+                        styling: {"text-color": "red", width: "200"},
                     },
                     {
-                        "label": "Source 2",
-                        "key": "Source 2",
-                        "value": "",
+                        label: "Source 2",
+                        key: "Source 2",
+                        value: "",
                     },
                     {
-                        "label": "Source 3",
-                        "key": "Source 3",
-                        "value": "",
+                        label: "Source 3",
+                        key: "Source 3",
+                        value: "",
                     },
                     {
-                        "label": "Source 4",
-                        "key": "Source 4",
-                        "value": "",
+                        label: "Source 4",
+                        key: "Source 4",
+                        value: "",
                     },
                     {
-                        "label": "Source 5",
-                        "key": "Source 5",
-                        "value": "",
+                        label: "Source 5",
+                        key: "Source 5",
+                        value: "",
                     },
                     {
-                        "label": "Source 6",
-                        "key": "Source 6",
-                        "value": "",
+                        label: "Source 6",
+                        key: "Source 6",
+                        value: "",
                     },
                     {
-                        "label": "Source 7",
-                        "key": "Source 7",
-                        "value": "",
+                        label: "Source 7",
+                        key: "Source 7",
+                        value: "",
                     },
                     {
-                        "label": "Source 8",
-                        "key": "Source 8",
-                        "value": "",
+                        label: "Source 8",
+                        key: "Source 8",
+                        value: "",
                     },
                     {
-                        "label": "Source 9",
-                        "key": "Source 9",
-                        "value": "",
+                        label: "Source 9",
+                        key: "Source 9",
+                        value: "",
                     },
                     /*
                     {
@@ -668,177 +604,177 @@ class PrismaPlot {
                 ],
             },
             {
-                "label": "TIAB",
-                "key": "TIAB",
-                "blocks": [
+                label: "TIAB",
+                key: "TIAB",
+                blocks: [
                     {
-                        "label": "References screened",
-                        "key": "References screened",
-                        "tags": [
+                        label: "References screened",
+                        key: "References screened",
+                        tags: [
                             "Included",
                             "Excluded|Manually excluded in Distiller (full-text)",
                             "Excluded|Manually excluded in SWIFT-Review",
                             "Excluded|Automatically excluded via ML in SWIFT-Active Screener",
                             "Excluded|Manually excluded in Distiller (TIAB)",
                         ],
-                        "count": "unique_sum",
-                        "value": 13725,
-                        "refs": '[...]',
+                        count: "unique_sum",
+                        value: 13725,
+                        refs: "[...]",
                     },
                     {
-                        "label": "References excluded",
-                        "key": "References excluded",
-                        "tags": [
+                        label: "References excluded",
+                        key: "References excluded",
+                        tags: [
                             "Excluded|Manually excluded in SWIFT-Review",
                             "Excluded|Automatically excluded via ML in SWIFT-Active Screener",
                             "Excluded|Manually excluded in Distiller (TIAB)",
                         ],
-                        "count": "unique_sum",
-                        "value": 13189,
-                        "refs": '[...]',
-                        "styling": {
-                            "y": "-30",
-                            "x": "-50",
-                        }
+                        count: "unique_sum",
+                        value: 13189,
+                        refs: "[...]",
+                        styling: {
+                            y: "-30",
+                            x: "-50",
+                        },
                     },
                 ],
             },
             {
-                "label": "FT",
-                "key": "FT",
-                "blocks": [
+                label: "FT",
+                key: "FT",
+                blocks: [
                     {
-
-                        "label": "References screened",
-                        "key": "References screened",
-                        "tags": [
-                            "Included",
-                            "Excluded|Manually excluded in Distiller (full-text)",
-                        ],
-                        "count": "unique_sum",
-                        "value": 541,
-                        "refs": '[...]',
+                        label: "References screened",
+                        key: "References screened",
+                        tags: ["Included", "Excluded|Manually excluded in Distiller (full-text)"],
+                        count: "unique_sum",
+                        value: 541,
+                        refs: "[...]",
                     },
                     {
-                        "label": "References excluded",
-                        "key": "References excluded",
-                        "tags": [
-                            "Excluded|Manually excluded in Distiller (full-text)|Unable to obtain full-text"
+                        label: "References excluded",
+                        key: "References excluded",
+                        tags: [
+                            "Excluded|Manually excluded in Distiller (full-text)|Unable to obtain full-text",
                         ],
-                        "count": "unique_sum",
-                        "value": 32,
-                        "refs": '[...]',
+                        count: "unique_sum",
+                        value: 32,
+                        refs: "[...]",
                     },
                 ],
             },
             {
-                "label": "FT - eligible",
-                "key": "FT - eligible",
-                "styling": {
+                label: "FT - eligible",
+                key: "FT - eligible",
+                styling: {
                     "bg-color": "grey",
                     "text-padding-x": "315",
                     "text-padding-y": "20",
                     "text-size": ".3",
-                    "text-style": "bold"
+                    "text-style": "bold",
                 },
-                "blocks": [
+                blocks: [
                     {
-                        "label": "References screened",
-                        "key": "References screened",
-                        "tags": [
+                        label: "References screened",
+                        key: "References screened",
+                        tags: [
                             "Included",
                             "Excluded|Manually excluded in Distiller (full-text)|No data provided",
                             "Excluded|Manually excluded in Distiller (full-text)|No relevant exposure",
                             "Excluded|Manually excluded in Distiller (full-text)|Wildlife study",
                         ],
-                        "count": "unique_sum",
-                        "value": 509,
-                        "refs": '[...]',
-                        "styling": {
+                        count: "unique_sum",
+                        value: 509,
+                        refs: "[...]",
+                        styling: {
                             "text-color": "white",
                             "bg-color": "green",
-                            "stroke": "blue",
+                            stroke: "blue",
                             "stroke-width": "10",
-                            "rx": "0",
-                            "ry": "0"
+                            rx: "0",
+                            ry: "0",
                         },
                     },
                     {
-                        "label": "References excluded",
-                        "key": "References excluded",
-                        "block_layout": "list",
-                        "styling": {
-                            "height": this.MIN_HEIGHT
+                        label: "References excluded",
+                        key: "References excluded",
+                        block_layout: "list",
+                        styling: {
+                            height: this.MIN_HEIGHT,
                         },
-                        "sub_blocks": [
+                        sub_blocks: [
                             {
-                                "label": "No data provided",
-                                "key": "No data provided",
-                                "tags": [
-                                    "Excluded|Manually excluded in Distiller (full-text)|No data provided"
+                                label: "No data provided",
+                                key: "No data provided",
+                                tags: [
+                                    "Excluded|Manually excluded in Distiller (full-text)|No data provided",
                                 ],
-                                "count": "unique_sum",
-                                "value": 4,
-                                "refs": '[...]',
-                                "styling": { "text-color": "red" }
+                                count: "unique_sum",
+                                value: 4,
+                                refs: "[...]",
+                                styling: {"text-color": "red"},
                             },
                             {
-                                "label": "No relevant exposure",
-                                "key": "No relevant exposure",
-                                "tags": [
-                                    "Excluded|Manually excluded in Distiller (full-text)|No relevant exposure"
+                                label: "No relevant exposure",
+                                key: "No relevant exposure",
+                                tags: [
+                                    "Excluded|Manually excluded in Distiller (full-text)|No relevant exposure",
                                 ],
-                                "count": "unique_sum",
-                                "value": 146,
-                                "refs": '[...]',
+                                count: "unique_sum",
+                                value: 146,
+                                refs: "[...]",
                             },
                             {
-                                "label": "Wildlife study",
-                                "key": "Wildlife study",
-                                "tags": [
-                                    "Excluded|Manually excluded in Distiller (full-text)|Wildlife study"
+                                label: "Wildlife study",
+                                key: "Wildlife study",
+                                tags: [
+                                    "Excluded|Manually excluded in Distiller (full-text)|Wildlife study",
                                 ],
-                                "count": "unique_sum",
-                                "value": 4,
-                                "refs": '[...]',
+                                count: "unique_sum",
+                                value: 4,
+                                refs: "[...]",
                             },
                         ],
-                        "count": "unique_sum",
-                        "value": 150,
-                        "refs": '[...]',
+                        count: "unique_sum",
+                        value: 150,
+                        refs: "[...]",
                     },
                 ],
             },
             {
-                "label": "Included studies",
-                "key": "Included studies",
-                "blocks": [
+                label: "Included studies",
+                key: "Included studies",
+                blocks: [
                     {
-                        "label": "Results",
-                        "key": "Results",
-                        "tags": ["Included"],
-                        "count": "unique_sum",
-                        "value": 359,
-                        "refs": '[...]',
-                    }
+                        label: "Results",
+                        key: "Results",
+                        tags: ["Included"],
+                        count: "unique_sum",
+                        value: 359,
+                        refs: "[...]",
+                    },
                 ],
             },
-        ]
-
+        ];
 
         // parse data structure
         let parent;
         let child;
         let sibling;
         for (let row of diagramSections) {
-            let blockId = `${row.key}`.replace(/ /g, '');
+            let blockId = `${row.key}`.replace(/ /g, "");
             let blockBoxInfo = row.label;
             let sectionStyle = row.styling ?? {};
             if (!parent) {
                 parent = this.initNode(blockId, blockBoxInfo, sectionStyle);
-            }
-            else {
-                parent = this.createNewVerticalNode(parent, blockId, blockBoxInfo, false, sectionStyle);
+            } else {
+                parent = this.createNewVerticalNode(
+                    parent,
+                    blockId,
+                    blockBoxInfo,
+                    false,
+                    sectionStyle
+                );
             }
 
             if (row.block_layout) {
@@ -849,15 +785,14 @@ class PrismaPlot {
 
             for (let i = 0; i < row.blocks.length; i++) {
                 let col = row.blocks[i];
-                let id = `${row.key}.${col.key}`.replace(/ /g, '');
+                let id = `${row.key}.${col.key}`.replace(/ /g, "");
                 let boxInfo = col.label + ": " + col.value;
                 let blockStyle = col.styling ?? {};
 
                 if (i > 0) {
                     let previous = sibling || child;
                     sibling = this.createNewHorizontalNode(previous, id, boxInfo, true, blockStyle);
-                }
-                else {
+                } else {
                     child = this.createChildNode(parent, id, boxInfo, blockStyle);
                     sibling = undefined;
                 }
@@ -875,51 +810,66 @@ class PrismaPlot {
         // NOTE removed "type"
         let connections = [
             {
-                "src": "Records",
-                "dst": "TIAB",
-                "styling": {
-                    "arrow-type": "11"
-                }
+                src: "Records",
+                dst: "TIAB",
+                styling: {
+                    "arrow-type": "11",
+                },
             },
             {
-                "src": "TIAB.References screened",
-                "dst": "TIAB.References excluded",
+                src: "TIAB.References screened",
+                dst: "TIAB.References excluded",
             },
             {
-                "src": "TIAB.References screened",
-                "dst": "FT.References excluded",
-                "styling": {
-                    "arrow-force-vertical": "true"
-                }
+                src: "TIAB.References screened",
+                dst: "FT.References excluded",
+                styling: {
+                    "arrow-force-vertical": "true",
+                },
             },
             {
-                "src": "TIAB.References screened",
-                "dst": "FT.References screened",
-                "styling": {
+                src: "TIAB.References screened",
+                dst: "FT.References screened",
+                styling: {
                     "arrow-color": "blue",
                     "arrow-width": "6",
-                }
+                },
             },
             {
-                "src": "FT.References screened",
-                "dst": "FT - eligible.References screened",
+                src: "FT.References screened",
+                dst: "FT - eligible.References screened",
             },
             {
-                "src": "FT - eligible.References screened",
-                "dst": "FT - eligible.References excluded",
+                src: "FT - eligible.References screened",
+                dst: "FT - eligible.References excluded",
             },
             {
-                "src": "FT - eligible.References screened",
-                "dst": "Included studies.Results",
-            }
-        ]
+                src: "FT - eligible.References screened",
+                dst: "Included studies.Results",
+            },
+        ];
 
         for (let connection of connections) {
-            let srcId = connection.src.replace(/ /g, '');
-            let dstId = connection.dst.replace(/ /g, '');
+            let srcId = connection.src.replace(/ /g, "");
+            let dstId = connection.dst.replace(/ /g, "");
             this.drawConnection(srcId, dstId, connection.styling);
         }
 
+        this.w = 0;
+        this.h = 0;
+        for (let section of diagramSections) {
+            let id = section.key.replace(/ /g, "");
+            let sectionBBox = d3
+                .select(`#${id}`)
+                .node()
+                .getBBox();
+            this.h += sectionBBox.height + this.SPACING_H;
+            if (this.w < sectionBBox.width) {
+                this.w = sectionBBox.width;
+            }
+        }
+
+        this.addResizeAndToolbar();
     }
 }
 

@@ -79,14 +79,15 @@ const createSectionRow = function() {
             src: NULL_VALUE,
             dst: NULL_VALUE,
         };
-    }, ARROW_TYPES = [
-        { id: 1, label: 1 },
-        { id: 2, label: 2 },
-        { id: 3, label: 3 },
-        { id: 5, label: 5 },
-        { id: 10, label: 10 },
-        { id: 11, label: 11 },
-        { id: 13, label: 13 },
+    },
+    ARROW_TYPES = [
+        {id: 1, label: 1},
+        {id: 2, label: 2},
+        {id: 3, label: 3},
+        {id: 5, label: 5},
+        {id: 10, label: 10},
+        {id: 11, label: 11},
+        {id: 13, label: 13},
     ];
 
 class PrismaStore {
