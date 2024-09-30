@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("assessment", "0044_remove_assessmentvalue_study"),
+        ("assessment", "0045_assessment_labels"),
     ]
 
     operations = [
@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
             name="value_type_qualifier",
             field=models.CharField(
                 blank=True,
-                help_text="A custom qualifier that will be displayed with the Value Type. E.g., Adult-based. This value is typically used to clarify when a value has an adjustment applied like an ADAF.",
+                help_text="A optional qualifier displayed with the Value Type. E.g., Adult-based. This value is typically used to clarify when a value has an adjustment applied like an ADAF.",
                 max_length=64,
             ),
         ),
