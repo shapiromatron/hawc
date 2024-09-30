@@ -67,7 +67,7 @@ class ArrowsRow extends EditableRow {
         );
     }
     renderEditRow(row, index) {
-        const {changeArraySettings, getArrowOptions} = this.props.store.subclass;
+        const {changeArraySettings, getArrowOptions, getArrowTypes} = this.props.store.subclass;
         return (
             <tr>
                 <td colSpan="100%">
@@ -109,7 +109,7 @@ class ArrowsRow extends EditableRow {
                                     changeArraySettings(key, index, "type", value)
                                 }
                                 multiple={false}
-                                choices={[{id: 1, label: "test"}]} // TODO: define choices for arrow types
+                                choices={getArrowTypes()}
                             />
                             <TextInput
                                 name={`${key}-color-${index}`}

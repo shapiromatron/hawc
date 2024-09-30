@@ -74,12 +74,20 @@ const createSectionRow = function() {
         return {
             key: h.randomString(),
             width: 0,
-            type: 0,
+            type: 1,
             color: "",
             src: NULL_VALUE,
             dst: NULL_VALUE,
         };
-    };
+    }, ARROW_TYPES = [
+        { id: 1, label: 1 },
+        { id: 2, label: 2 },
+        { id: 3, label: 3 },
+        { id: 5, label: 5 },
+        { id: 10, label: 10 },
+        { id: 11, label: 11 },
+        { id: 13, label: 13 },
+    ];
 
 class PrismaStore {
     constructor(rootStore, data) {
@@ -153,6 +161,10 @@ class PrismaStore {
         });
         options.unshift({id: NULL_VALUE, label: NULL_VALUE});
         return options;
+    }
+
+    @action.bound getArrowTypes() {
+        return ARROW_TYPES;
     }
 
     @action.bound getLinkingOptions(key) {
