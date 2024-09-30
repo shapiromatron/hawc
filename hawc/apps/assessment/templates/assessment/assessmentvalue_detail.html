@@ -17,7 +17,7 @@
     <tbody>
       {% optional_table_row "Evaluation type" object.get_evaluation_type_display %}
       {% optional_table_row "System or health effect basis" object.system %}
-      {% optional_table_row "Value type" object.get_combined_value_type %}
+      {% optional_table_row "Value type" object.get_combined_value_type_display %}
       <tr>
         <th>Value{% if object.adaf %}{% include "common/info_popover.html" with text=adaf_footnote %}{% endif %}</th>
         <td>{{object.value|default:""|e_notation}} {{object.value_unit|default:""}}</td>
