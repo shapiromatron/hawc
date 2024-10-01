@@ -11,7 +11,7 @@ const createSectionRow = function() {
             styling: {
                 width: 0,
                 height: 0,
-                border_width: 0,
+                border_width: 3,
                 rx: 20,
                 ry: 20,
                 bg_color: "#ffffff",
@@ -33,7 +33,7 @@ const createSectionRow = function() {
             styling: {
                 width: 0,
                 height: 0,
-                border_width: 0,
+                border_width: 3,
                 rx: 20,
                 ry: 20,
                 bg_color: "#ffffff",
@@ -76,7 +76,7 @@ const createSectionRow = function() {
             styling: {
                 width: 0,
                 height: 0,
-                border_width: 0,
+                border_width: 3,
                 rx: 20,
                 ry: 20,
                 bg_color: "#ffffff",
@@ -97,7 +97,7 @@ const createSectionRow = function() {
         return {
             key: h.randomString(),
             styling: {
-                width: 0,
+                width: 2,
                 type: 1,
                 color: "",
                 force_vertical: false
