@@ -378,7 +378,7 @@ class IdentifiersManager(BaseManager):
                 (doi_dupes, "DOIs"),
                 (wos_dupes, "WoS IDs"),
             ]:
-                if dupes.shape[0] > 0:
+                if not dupes.empty:
                     error_msg.append(
                         f"The following HERO IDs have duplicate {id_type}: {dupes.HEROID.tolist()}. "
                     )
@@ -777,6 +777,35 @@ class ReferenceQuerySet(models.QuerySet):
     def in_workflow(self, workflow: "Workflow"):
         return self.filter(workflow.reference_filter())
 
+    def with_identifiers(self):
+        Identifiers = apps.get_model("lit", "Identifiers")
+        return self.annotate(
+            pubmed_id=Cast(
+                models.Subquery(
+                    Identifiers.objects.filter(
+                        references=models.OuterRef("id"),
+                        database=constants.ReferenceDatabase.PUBMED,
+                    ).values("unique_id")[:1]
+                ),
+                models.IntegerField(),
+            ),
+            hero_id=Cast(
+                models.Subquery(
+                    Identifiers.objects.filter(
+                        references=models.OuterRef("id"),
+                        database=constants.ReferenceDatabase.HERO,
+                    ).values("unique_id")[:1]
+                ),
+                models.IntegerField(),
+            ),
+            doi=models.Subquery(
+                Identifiers.objects.filter(
+                    references=models.OuterRef("id"),
+                    database=constants.ReferenceDatabase.DOI,
+                ).values("unique_id")[:1]
+            ),
+        )
+
 
 class ReferenceManager(BaseManager):
     assessment_relation = "assessment"
@@ -1045,7 +1074,6 @@ class ReferenceManager(BaseManager):
         return df
 
     def heatmap_dataframe(self, assessment_id: int) -> pd.DataFrame:
-        Identifiers = apps.get_model("lit", "Identifiers")
         ReferenceFilterTag = apps.get_model("lit", "ReferenceFilterTag")
         ReferenceTags = apps.get_model("lit", "ReferenceTags")
 
@@ -1060,26 +1088,9 @@ class ReferenceManager(BaseManager):
             year="year",
             journal="journal",
         )
-        pubmed_qs = models.Subquery(
-            Identifiers.objects.filter(
-                references=models.OuterRef("id"), database=constants.ReferenceDatabase.PUBMED
-            ).values("unique_id")[:1]
-        )
-        hero_qs = models.Subquery(
-            Identifiers.objects.filter(
-                references=models.OuterRef("id"), database=constants.ReferenceDatabase.HERO
-            ).values("unique_id")[:1]
-        )
-        doi_qs = models.Subquery(
-            Identifiers.objects.filter(
-                references=models.OuterRef("id"), database=constants.ReferenceDatabase.DOI
-            ).values("unique_id")[:1]
-        )
         qs = (
             self.filter(assessment_id=assessment_id)
-            .annotate(pubmed_id=Cast(pubmed_qs, models.IntegerField()))
-            .annotate(hero_id=Cast(hero_qs, models.IntegerField()))
-            .annotate(doi=doi_qs)
+            .with_identifiers()
             .values_list(*values.keys())
             .order_by("id")
         )

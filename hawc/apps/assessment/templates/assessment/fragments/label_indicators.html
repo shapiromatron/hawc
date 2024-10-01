@@ -1,0 +1,16 @@
+{% if oob %}
+  <div class="d-flex align-items-center ml-1 pb-3 flex-wrap"
+       id="label-indicators"
+       hx-swap-oob="outerHTML">
+    {% for label in labels %}
+      {% include "assessment/fragments/label.html" with big=True anchor_tag=True %}
+    {% endfor %}
+  </div>
+{% else %}
+  <div
+    id="label-indicators"
+    hx-get="{% label_htmx_url object %}?action=label_indicators"
+    hx-trigger="load"
+    hx-swap="none"
+  ></div>
+{% endif %}

@@ -91,7 +91,7 @@ class AssessmentGrowthSettings(forms.Form):
         for Model, filter_str in Models:
             qs = Model.objects.filter(**{filter_str: assessment.id}).values("id", "created")
             df = pd.DataFrame(qs)
-            if df.shape[0] > 0:
+            if not df.empty:
                 df = (
                     df.rename(columns={"created": "date"})
                     .set_index("date")

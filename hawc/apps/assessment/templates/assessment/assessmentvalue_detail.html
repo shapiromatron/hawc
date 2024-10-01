@@ -17,7 +17,7 @@
     <tbody>
       {% optional_table_row "Evaluation type" object.get_evaluation_type_display %}
       {% optional_table_row "System or health effect basis" object.system %}
-      {% optional_table_row "Value type" object.get_value_type_display %}
+      {% optional_table_row "Value type" object.get_combined_value_type_display %}
       <tr>
         <th>Value{% if object.adaf %}{% include "common/info_popover.html" with text=adaf_footnote %}{% endif %}</th>
         <td>{{object.value|default:""|e_notation}} {{object.value_unit|default:""}}</td>
@@ -41,10 +41,14 @@
         {% optional_table_row "Composite uncertainty factor" object.get_uncertainty_display %}
       {% endif %}
       {% optional_table_row "Species and strain" object.species_studied|default:"" %}
-      {% if object.study %}
+      {% if object.studies.all %}
         <tr>
-          <th>Key Study</th>
-          <td><a href="{{object.study.get_absolute_url}}">{{object.study}}</a></td>
+          <th>Key Studies</th>
+          <td>
+            {% for study in object.studies.all  %}
+              <a class="badge badge-info mr-1" href="{{study.get_absolute_url}}">{{study}}</a>
+            {% endfor %}
+          </td>
         </tr>
       {% endif %}
       {% if object.show_cancer_fields %}

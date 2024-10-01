@@ -12,11 +12,14 @@ const designFormStartup = function(form) {
     exposureFormStartup = function(form) {
         // handle `exposure.measurement_type` change
         $(form)
-            .find("select[name='measurement_type_0']")
+            .find('[data-name="measurement_type"]')
             .change(evt => {
                 // toggle visibility of related fields given change in field
                 const el = evt.target,
-                    row = el.closest("form").querySelector("#row_id_biomonitoring_matrix_2"),
+                    row = el
+                        .closest("form")
+                        .querySelector('[data-name="biomonitoring_matrix"]')
+                        .closest(".form-row"),
                     values = $(el).val();
 
                 _.includes(values, EXPOSURE_BIOMONITORING)

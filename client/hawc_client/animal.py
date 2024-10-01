@@ -146,6 +146,11 @@ class AnimalClient(BaseClient):
             data = self._invert_endpoints(data)
         return data
 
+    def bmds_endpoints(self, assessment_id: int) -> pd.DataFrame:
+        url = f"{self.session.root_url}/ani/api/assessment/{assessment_id}/bmds-export/"
+        response_json = self.session.get(url).json()
+        return pd.DataFrame(response_json)
+
     def metadata(self) -> dict:
         """
         Retrieves field choices for all animal models.

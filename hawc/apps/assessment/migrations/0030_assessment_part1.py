@@ -41,7 +41,7 @@ def set_creator(apps, schema_editor):
         .dropna()
     )
 
-    if df.shape[0] == 0:
+    if df.empty:
         return
 
     df["revision_timestamp"] = df["revision_timestamp"].dt.tz_localize(None)
@@ -87,7 +87,7 @@ def set_public_on(apps, schema_editor):
         .reset_index(drop=True)
     )
 
-    if df.shape[0] == 0:
+    if df.empty:
         return
 
     df.assessment_id = df.assessment_id.astype(int)

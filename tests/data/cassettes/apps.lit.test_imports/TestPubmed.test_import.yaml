@@ -3,7 +3,7 @@ interactions:
     body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=10485824&id=6677511&id=2877511&id=6143560&id=3709451&id=3934796&id=8761421&id=10357793&id=20358181&id=6355494&id=8998951&id=3383337&id=12209194&id=11995694&id=12215663&id=1632818&id=3180084&id=14727734&id=23625783&id=11246142
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
@@ -312,7 +312,8 @@ interactions:
         UI="D051381" MajorTopicYN="N">Rats</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>1986</Year><Month>3</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>1986</Year><Month>3</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>1986</Year><Month>3</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>1986</Year><Month>3</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>1986</Year><Month>3</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">3709451</ArticleId><ArticleId IdType="pmc">PMC1474679</ArticleId><ArticleId
         IdType="doi">10.1289/ehp.8665263</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Nature.
         1965 Sep 11;207(5002):1170-3</Citation><ArticleIdList><ArticleId IdType="pubmed">5882717</ArticleId></ArticleIdList></Reference><Reference><Citation>Nature.
@@ -1766,20 +1767,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:38:19 GMT
+      - Thu, 05 Sep 2024 22:58:26 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C45D975EA9B4500002CDBA9758572.1.1.m_3
+      - D0BD9D8EE5AB4CE5000052EDB30E7CF6.1.1.m_3
       NCBI-SID:
-      - 3FB912BD93073F8F_A7D4SID
+      - 63CEAF308798EDA9_849ESID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=3FB912BD93073F8F_A7D4SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:38:20 GMT
+      - ncbi_sid=63CEAF308798EDA9_849ESID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:26 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:

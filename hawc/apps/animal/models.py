@@ -5,6 +5,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from django.apps import apps
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -21,6 +22,7 @@ from ..common.helper import (
     tryParseInt,
 )
 from ..study.models import Study
+from ..udf.models import ModelUDFContent
 from ..vocab.constants import VocabularyNamespace
 from ..vocab.models import Term
 from . import constants, managers
@@ -233,6 +235,8 @@ class AnimalGroup(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    udfs = GenericRelation(ModelUDFContent, related_query_name="animal_groups")
 
     BREADCRUMB_PARENT = "experiment"
 
@@ -632,6 +636,8 @@ class Endpoint(BaseEndpoint):
         "endpoints to create new endpoints for a study.",
     )
     additional_fields = models.TextField(default="{}")
+
+    udfs = GenericRelation(ModelUDFContent, related_query_name="endpoints")
 
     BREADCRUMB_PARENT = "animal_group"
 

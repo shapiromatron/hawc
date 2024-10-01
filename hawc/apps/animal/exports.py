@@ -3,18 +3,18 @@ from collections import defaultdict
 
 import numpy as np
 import pandas as pd
-from django.db.models import CharField, F
-from django.db.models.functions import Cast
+from django.db.models import Case, CharField, F, FloatField, When
+from django.db.models.functions import Cast, Sqrt
 from django.db.models.lookups import Exact
 from scipy import stats
 
-from ..assessment.models import DoseUnits
 from ..bmd.models import Session
-from ..common.exports import Exporter, ModelExport
-from ..common.helper import FlatFileExporter, cleanHTML
+from ..common.exports import Exporter, ModelExport, clean_html
+from ..common.helper import FlatFileExporter
 from ..common.models import sql_display, sql_format, str_m2m
 from ..materialized.exports import get_final_score_df
 from ..study.exports import StudyExport
+from ..udf.exports import ModelUDFContentExport
 from . import constants, models
 
 
@@ -82,6 +82,19 @@ def maximum_percent_control_change(changes: list):
     return val
 
 
+def rename_udf_cols(df) -> pd.DataFrame:
+    colnames = set(df.columns)
+    match = "_udfs-content-field-"
+
+    def _rename(name) -> str:
+        if match not in name:
+            return name
+        candidate = name.replace(match, " ")
+        return candidate if candidate not in colnames else name.replace(match, " udf ")
+
+    return df.rename(_rename, axis="columns")
+
+
 class ExperimentExport(ModelExport):
     def get_value_map(self):
         return {
@@ -112,7 +125,7 @@ class ExperimentExport(ModelExport):
         # clean html text
         description = self.get_column_name("description")
         if description in df.columns:
-            df.loc[:, description] = df[description].apply(cleanHTML)
+            df.loc[:, description] = clean_html(df[description])
         return df
 
 
@@ -148,7 +161,7 @@ class AnimalGroupExport(ModelExport):
         # clean html text
         comments = self.get_column_name("comments")
         if comments in df.columns:
-            df.loc[:, comments] = df[comments].apply(cleanHTML)
+            df.loc[:, comments] = clean_html(df[comments])
         return df
 
 
@@ -185,7 +198,7 @@ class DosingRegimeExport(ModelExport):
         # clean html text
         description = self.get_column_name("description")
         if description in df.columns:
-            df.loc[:, description] = df[description].apply(cleanHTML)
+            df.loc[:, description] = clean_html(df[description])
         return df
 
 
@@ -259,13 +272,190 @@ class EndpointExport(ModelExport):
         # clean html text
         results_notes = self.get_column_name("results_notes")
         if results_notes in df.columns:
-            df.loc[:, results_notes] = df[results_notes].apply(cleanHTML)
+            df.loc[:, results_notes] = clean_html(df[results_notes])
 
         endpoint_notes = self.get_column_name("endpoint_notes")
-        if results_notes in df.columns:
-            df.loc[:, endpoint_notes] = df[endpoint_notes].apply(cleanHTML)
+        if endpoint_notes in df.columns:
+            df.loc[:, endpoint_notes] = clean_html(df[endpoint_notes])
 
         return df
+
+
+class EndpointBmdsExport(FlatFileExporter):
+    def __init__(self, assessment_id: int, published_only: bool = True):
+        self.filename = f"HAWC-{assessment_id}_bmds_export"
+        self.assessment_id = assessment_id
+        self.published_only = published_only
+
+    def get_dose_groups(self) -> pd.DataFrame:
+        filters = dict(
+            dose_regime__dosed_animals__experiment__study__assessment_id=self.assessment_id
+        )
+        if self.published_only:
+            filters.update(dose_regime__dosed_animals__experiment__study__published=True)
+        qs = (
+            models.DoseGroup.objects.filter(**filters)
+            .values("dose_regime_id", "dose_units__name", "dose_group_id", "dose")
+            .order_by("dose_regime_id", "dose_units_id", "dose_group_id")
+        )
+        return pd.DataFrame(data=qs)
+
+    def get_dichotomous_response(self) -> pd.DataFrame:
+        filters = dict(
+            endpoint__assessment_id=self.assessment_id,
+            endpoint__data_type__in=[
+                constants.DataType.DICHOTOMOUS,
+                constants.DataType.DICHOTOMOUS_CANCER,
+            ],
+            n__gt=0,
+            incidence__isnull=False,
+        )
+        if self.published_only:
+            filters.update(endpoint__animal_group__experiment__study__published=True)
+        qs = (
+            models.EndpointGroup.objects.filter(**filters)
+            .values(
+                "endpoint_id",
+                "dose_group_id",
+                "n",
+                "incidence",
+                dose_regime_id=F("endpoint__animal_group__dosing_regime_id"),
+            )
+            .order_by("endpoint_id", "endpoint__animal_group__dosing_regime_id", "dose_group_id")
+        )
+        return pd.DataFrame(data=qs)
+
+    def get_continuous_response(self) -> pd.DataFrame:
+        filters = dict(
+            endpoint__assessment_id=self.assessment_id,
+            endpoint__data_type=constants.DataType.CONTINUOUS,
+            n__gt=0,
+            response__isnull=False,
+            variance__isnull=False,
+        )
+        if self.published_only:
+            filters.update(endpoint__animal_group__experiment__study__published=True)
+        qs = (
+            models.EndpointGroup.objects.filter(**filters)
+            .annotate(
+                stdev=Case(
+                    When(endpoint__variance_type=constants.VarianceType.SD, then=F("variance")),
+                    When(
+                        endpoint__variance_type=constants.VarianceType.SE,
+                        then=F("variance") * Sqrt(F("n")),
+                    ),
+                    default=None,
+                    output_field=FloatField(),
+                )
+            )
+            .filter(
+                stdev__isnull=False,
+            )
+            .values(
+                "endpoint_id",
+                "dose_group_id",
+                "n",
+                "response",
+                "stdev",
+                dose_regime_id=F("endpoint__animal_group__dosing_regime_id"),
+            )
+            .order_by("endpoint_id", "dose_regime_id", "dose_group_id")
+        )
+        return pd.DataFrame(data=qs)
+
+    def get_dichotomous_datasets(self, doses: pd.DataFrame, responses: pd.DataFrame) -> list[dict]:
+        if responses.empty or doses.empty:
+            return []
+
+        responses_df = (
+            responses[["endpoint_id", "dose_regime_id", "dose_group_id"]]
+            .drop_duplicates()
+            .set_index(["dose_regime_id", "dose_group_id"])
+        )
+
+        doses_df = doses.set_index(["dose_regime_id", "dose_group_id"])
+
+        dose_response_df = (
+            responses_df.merge(doses_df, how="inner", left_index=True, right_index=True)
+            .reset_index()
+            .sort_values(["endpoint_id", "dose_units__name", "dose_group_id"])
+            .drop(columns=["dose_regime_id", "dose_group_id"])
+            .groupby(["endpoint_id", "dose_units__name"])
+            .agg(list)
+            .reset_index()
+            .set_index("endpoint_id")
+            .rename(columns={"dose_units__name": "units", "dose": "doses"})
+        )
+
+        endpoint_dose_response_df = (
+            responses.set_index("endpoint_id")
+            .loc[np.unique(dose_response_df.index.values)]
+            .drop(columns=["dose_regime_id", "dose_group_id"])
+            .groupby(["endpoint_id"])
+            .agg(list)
+            .assign(dtype="D")
+            .reset_index()
+        )
+        results = endpoint_dose_response_df.to_dict(orient="records")
+        for result in results:
+            d = dose_response_df.loc[result["endpoint_id"]]
+            if isinstance(d, pd.Series):
+                d = d.to_frame().T
+            result["doses"] = {d["units"]: d["doses"] for d in d.to_dict(orient="records")}
+
+        return results
+
+    def get_continuous_datasets(self, doses, responses) -> list[dict]:
+        if responses.empty or doses.empty:
+            return []
+
+        responses_df = (
+            responses[["endpoint_id", "dose_regime_id", "dose_group_id"]]
+            .drop_duplicates()
+            .set_index(["dose_regime_id", "dose_group_id"])
+        )
+
+        doses_df = doses.set_index(["dose_regime_id", "dose_group_id"])
+
+        dose_response_df = (
+            responses_df.merge(doses_df, how="inner", left_index=True, right_index=True)
+            .reset_index()
+            .sort_values(["endpoint_id", "dose_units__name", "dose_group_id"])
+            .drop(columns=["dose_regime_id", "dose_group_id"])
+            .groupby(["endpoint_id", "dose_units__name"])
+            .agg(list)
+            .reset_index()
+            .set_index("endpoint_id")
+            .rename(columns={"dose_units__name": "units", "dose": "doses"})
+        )
+
+        endpoint_dose_response_df = (
+            responses.set_index("endpoint_id")
+            .loc[np.unique(dose_response_df.index.values)]
+            .drop(columns=["dose_regime_id", "dose_group_id"])
+            .groupby(["endpoint_id"])
+            .agg(list)
+            .assign(dtype="C")
+            .reset_index()
+        )
+
+        results = endpoint_dose_response_df.to_dict(orient="records")
+
+        for result in results:
+            d = dose_response_df.loc[result["endpoint_id"]]
+            if isinstance(d, pd.Series):
+                d = d.to_frame().T
+            result["doses"] = {d["units"]: d["doses"] for d in d.to_dict(orient="records")}
+
+        return results
+
+    def build_df(self):
+        doses = self.get_dose_groups()
+        responses_c = self.get_continuous_response()
+        responses_d = self.get_dichotomous_response()
+        c_datasets = self.get_continuous_datasets(doses, responses_c)
+        d_datasets = self.get_dichotomous_datasets(doses, responses_d)
+        return pd.DataFrame.from_records(c_datasets + d_datasets)
 
 
 class EndpointGroupExport(ModelExport):
@@ -330,46 +520,27 @@ class EndpointGroupFlatCompleteExporter(Exporter):
                 "endpoint", "", exclude=("expected_adversity_direction", "data_type_display")
             ),
             EndpointGroupExport("endpoint_group", "groups", exclude=("treatment_effect",)),
-            DoseGroupExport(
-                "dose_group", "animal_group__dosing_regime__doses", exclude=("dose_units_id",)
-            ),
         ]
 
 
 class EndpointGroupFlatComplete(FlatFileExporter):
-    def handle_doses(self, df: pd.DataFrame) -> pd.DataFrame:
-        # TODO this is really slow; maybe its the filtering to find matching dose group ids?
-        # solutions: ?, put the burden on SQL w/ Prefetch and Subquery (messy)
-        # long term solutions: group and dose group should be related
-        def _func(group_df: pd.DataFrame) -> pd.DataFrame:
-            # handle case with no dose data
-            if group_df["dose_group-id"].isna().all():
-                return group_df
-
-            # add dose data
-            group_df["doses-" + group_df["dose_group-dose_units_name"]] = group_df[
-                "dose_group-dose"
-            ].tolist()
-
-            # return a df that is dose agnostic
-            return group_df.drop_duplicates(
-                subset=group_df.columns[group_df.columns.str.endswith("-id")].difference(
-                    ["dose_group-id"]
-                )
-            )
-
-        return (
-            df.groupby("endpoint_group-id", group_keys=False, sort=False)
-            .apply(_func)
-            .drop(
-                columns=[
-                    "dose_group-id",
-                    "dose_group-dose_units_name",
-                    "dose_group-dose_group_id",
-                    "dose_group-dose",
-                ]
-            )
-            .reset_index(drop=True)
+    def handle_doses(self, df: pd.DataFrame, assessment_id: int) -> pd.DataFrame:
+        df2 = pd.DataFrame(
+            models.DoseGroup.objects.filter(
+                dose_regime__dosed_animals__experiment__study__assessment_id=assessment_id
+            ).values("dose_regime_id", "dose_units__name", "dose_group_id", "dose")
+        ).pivot(
+            index=["dose_regime_id", "dose_group_id"], columns="dose_units__name", values="dose"
+        )
+        df2.columns = [f"doses-{name}" for name in df2.columns]
+        # cast to Int64; needed all values in a dataframe are None for this field
+        df["dosing_regime-id"] = df["dosing_regime-id"].astype("Int64")
+        df["endpoint_group-dose_group_id"] = df["endpoint_group-dose_group_id"].astype("Int64")
+        return df.merge(
+            df2,
+            left_on=["dosing_regime-id", "endpoint_group-dose_group_id"],
+            right_index=True,
+            how="left",
         )
 
     def handle_stdev(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -423,20 +594,15 @@ class EndpointGroupFlatComplete(FlatFileExporter):
                 "animal_group__experiment__study",
                 "animal_group__dosing_regime",
             )
-            .prefetch_related("groups", "animal_group__dosing_regime__doses")
-            .order_by("id", "groups", "animal_group__dosing_regime__doses")
+            .prefetch_related("groups")
+            .order_by("id", "groups")
         )
-        df = df[
-            pd.isna(df["dose_group-id"])
-            | (df["endpoint_group-dose_group_id"] == df["dose_group-dose_group_id"])
-        ]
         if df.empty:
             return df
         if obj := self.queryset.first():
-            doses = DoseUnits.objects.get_animal_units_names(obj.assessment_id)
+            assessment_id = obj.assessment_id
+            df = self.handle_doses(df, assessment_id)
 
-            df = df.assign(**{f"doses-{d}": None for d in doses})
-            df = self.handle_doses(df)
         df["dosing_regime-dosed_animals"] = df["dosing_regime-dosed_animals"].astype(str)
         df = self.handle_stdev(df)
         df = self.handle_ci(df)
@@ -472,6 +638,11 @@ class EndpointGroupFlatDataPivotExporter(Exporter):
                 "animal_group__experiment__study",
                 include=("id", "short_citation", "study_identifier", "published"),
             ),
+            ModelUDFContentExport(
+                "study_udfs",
+                "animal_group__experiment__study__udfs",
+                include=("content",),
+            ),
             ExperimentExport(
                 "experiment",
                 "animal_group__experiment",
@@ -491,6 +662,11 @@ class EndpointGroupFlatDataPivotExporter(Exporter):
                     "sex_display",
                     "sex_symbol",
                 ),
+            ),
+            ModelUDFContentExport(
+                "animal_group_udfs",
+                "animal_group__udfs",
+                include=("content",),
             ),
             DosingRegimeExport(
                 "dosing_regime",
@@ -524,6 +700,11 @@ class EndpointGroupFlatDataPivotExporter(Exporter):
                     "expected_adversity_direction",
                     "response_units",
                 ),
+            ),
+            ModelUDFContentExport(
+                "endpoint_udfs",
+                "udfs",
+                include=("content",),
             ),
             EndpointGroupExport(
                 "endpoint_group",
@@ -878,6 +1059,9 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
         )
         df = df.drop(
             columns=[
+                "endpoint_udfs-content",
+                "study_udfs-content",
+                "animal_group_udfs-content",
                 "endpoint-observation_time",
                 "dose_group-id",
                 "dose_group-dose_group_id",
@@ -895,6 +1079,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
                 "dosing_regime-route_of_exposure_display",
             ]
         )
+        df = rename_udf_cols(df)
 
         return df
 
@@ -906,6 +1091,11 @@ class EndpointFlatDataPivotExporter(Exporter):
                 "study",
                 "animal_group__experiment__study",
                 include=("id", "short_citation", "study_identifier", "published"),
+            ),
+            ModelUDFContentExport(
+                "study_udfs",
+                "animal_group__experiment__study__udfs",
+                include=("content",),
             ),
             ExperimentExport(
                 "experiment",
@@ -926,6 +1116,11 @@ class EndpointFlatDataPivotExporter(Exporter):
                     "sex_display",
                     "sex_symbol",
                 ),
+            ),
+            ModelUDFContentExport(
+                "animal_group_udfs",
+                "animal_group__udfs",
+                include=("content",),
             ),
             DosingRegimeExport(
                 "dosing_regime",
@@ -959,6 +1154,11 @@ class EndpointFlatDataPivotExporter(Exporter):
                     "expected_adversity_direction",
                     "response_units",
                 ),
+            ),
+            ModelUDFContentExport(
+                "endpoint_udfs",
+                "udfs",
+                include=("content",),
             ),
             EndpointGroupExport(
                 "endpoint_group",
@@ -1163,6 +1363,9 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
         )
         df = df.drop(
             columns=[
+                "study_udfs-content",
+                "animal_group_udfs-content",
+                "endpoint_udfs-content",
                 "endpoint_group-stdev",
                 "percent lower ci",
                 "percent affected",
@@ -1196,6 +1399,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
                 "endpoint-observation_time",
             ]
         )
+        df = rename_udf_cols(df)
 
         return df
 

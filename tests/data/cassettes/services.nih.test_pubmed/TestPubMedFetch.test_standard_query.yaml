@@ -3,7 +3,7 @@ interactions:
     body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=19008416&id=18927361&id=18787170&id=18487186&id=18239126&id=18239125
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
@@ -25,7 +25,7 @@ interactions:
 
         <PubmedArticleSet>
 
-        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">19008416</PMID><DateCompleted><Year>2009</Year><Month>01</Month><Day>05</Day></DateCompleted><DateRevised><Year>2022</Year><Month>04</Month><Day>10</Day></DateRevised><Article
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">19008416</PMID><DateCompleted><Year>2009</Year><Month>01</Month><Day>05</Day></DateCompleted><DateRevised><Year>2024</Year><Month>05</Month><Day>14</Day></DateRevised><Article
         PubModel="Print-Electronic"><Journal><ISSN IssnType="Electronic">1095-9203</ISSN><JournalIssue
         CitedMedium="Internet"><Volume>322</Volume><Issue>5908</Issue><PubDate><Year>2008</Year><Month>Dec</Month><Day>12</Day></PubDate></JournalIssue><Title>Science
         (New York, N.Y.)</Title><ISOAbbreviation>Science</ISOAbbreviation></Journal><ArticleTitle>Genomic
@@ -140,12 +140,13 @@ interactions:
         MajorTopicYN="N">metabolism</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="entrez"><Year>2008</Year><Month>11</Month><Day>15</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="pubmed"><Year>2008</Year><Month>11</Month><Day>15</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="medline"><Year>2009</Year><Month>1</Month><Day>6</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="medline"><Year>2009</Year><Month>1</Month><Day>6</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2009</Year><Month>6</Month><Day>12</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">19008416</ArticleId><ArticleId IdType="mid">NIHMS104414</ArticleId><ArticleId
         IdType="pmc">PMC2684823</ArticleId><ArticleId IdType="doi">10.1126/science.1165395</ArticleId><ArticleId
         IdType="pii">1165395</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Boyer
         LA, et al. Nature. 2006 May 18;441:349.</Citation><ArticleIdList><ArticleId
-        IdType="pubmed">16625203</ArticleId></ArticleIdList></Reference><Reference><Citation>Lee
+        IdType="pubmed">0</ArticleId></ArticleIdList></Reference><Reference><Citation>Lee
         TI, et al. Cell. 2006 Apr 21;125:301.</Citation><ArticleIdList><ArticleId
         IdType="pmc">PMC3773330</ArticleId><ArticleId IdType="pubmed">16630818</ArticleId></ArticleIdList></Reference><Reference><Citation>Sher
         F, et al. Stem Cells. 2008 Aug 7;</Citation></Reference><Reference><Citation>Varambally
@@ -313,7 +314,8 @@ interactions:
         UI="D054875" MajorTopicYN="N">Ubiquitination</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>2008</Year><Month>9</Month><Day>13</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2008</Year><Month>9</Month><Day>26</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2008</Year><Month>9</Month><Day>13</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2008</Year><Month>9</Month><Day>13</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2010</Year><Month>4</Month><Day>5</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">18787170</ArticleId><ArticleId IdType="mid">NIHMS132604</ArticleId><ArticleId
         IdType="pmc">PMC2849753</ArticleId><ArticleId IdType="doi">10.1126/science.1162981</ArticleId><ArticleId
         IdType="pii">321/5895/1499</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Welcker
@@ -347,7 +349,7 @@ interactions:
         IdType="pubmed">15498494</ArticleId></ArticleIdList></Reference><Reference><Citation>Buolamwini
         JK, Addo J, Kamath S, Patil S, Mason D, Ores M. Curr. Cancer Drug Targets.
         2005;5:57.</Citation><ArticleIdList><ArticleId IdType="pubmed">15720190</ArticleId></ArticleIdList></Reference></ReferenceList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
-        Status="MEDLINE" Owner="NLM"><PMID Version="1">18487186</PMID><DateCompleted><Year>2008</Year><Month>05</Month><Day>27</Day></DateCompleted><DateRevised><Year>2021</Year><Month>10</Month><Day>20</Day></DateRevised><Article
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">18487186</PMID><DateCompleted><Year>2008</Year><Month>05</Month><Day>27</Day></DateCompleted><DateRevised><Year>2024</Year><Month>05</Month><Day>11</Day></DateRevised><Article
         PubModel="Print"><Journal><ISSN IssnType="Electronic">1095-9203</ISSN><JournalIssue
         CitedMedium="Internet"><Volume>320</Volume><Issue>5878</Issue><PubDate><Year>2008</Year><Month>May</Month><Day>16</Day></PubDate></JournalIssue><Title>Science
         (New York, N.Y.)</Title><ISOAbbreviation>Science</ISOAbbreviation></Journal><ArticleTitle>Design
@@ -450,7 +452,8 @@ interactions:
         UI="Q000378" MajorTopicYN="Y">metabolism</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>2008</Year><Month>5</Month><Day>20</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2008</Year><Month>5</Month><Day>28</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2008</Year><Month>5</Month><Day>20</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2008</Year><Month>5</Month><Day>20</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2009</Year><Month>11</Month><Day>12</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">18487186</ArticleId><ArticleId IdType="mid">NIHMS142954</ArticleId><ArticleId
         IdType="pmc">PMC2776723</ArticleId><ArticleId IdType="doi">10.1126/science.1152662</ArticleId><ArticleId
         IdType="pii">320/5878/903</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Jordan
@@ -501,7 +504,7 @@ interactions:
         DM, Barker S, Pilz DT, Kennedy C. J Med Genet. 2003;40:24e.</Citation><ArticleIdList><ArticleId
         IdType="pmc">PMC1735401</ArticleId><ArticleId IdType="pubmed">12624153</ArticleId></ArticleIdList></Reference><Reference><Citation>Eccles
         D, Bunyan D, Barker S, Castle B. J Med Genet. 2005;42:e42.</Citation><ArticleIdList><ArticleId
-        IdType="pmc">PMC1736091</ArticleId><ArticleId IdType="pubmed">15994867</ArticleId></ArticleIdList></Reference><Reference><Citation>Houvras
+        IdType="pmc">PMC1736045</ArticleId><ArticleId IdType="pubmed">15863656</ArticleId></ArticleIdList></Reference><Reference><Citation>Houvras
         Y, et al. J Biol Chem. 2000;275:36230.</Citation><ArticleIdList><ArticleId
         IdType="pubmed">10945975</ArticleId></ArticleIdList></Reference><Reference><Citation>Gao
         B, et al. FEBS Lett. 2001;488:179.</Citation><ArticleIdList><ArticleId IdType="pubmed">11163768</ArticleId></ArticleIdList></Reference><Reference><Citation>Dubrovska
@@ -521,7 +524,7 @@ interactions:
         IdType="pubmed">11967538</ArticleId></ArticleIdList></Reference><Reference><Citation>Miralem
         T, Avraham HK. Mol Cell Biol. 2003;23:579.</Citation><ArticleIdList><ArticleId
         IdType="pmc">PMC151527</ArticleId><ArticleId IdType="pubmed">12509456</ArticleId></ArticleIdList></Reference></ReferenceList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
-        Status="MEDLINE" Owner="NLM"><PMID Version="1">18239126</PMID><DateCompleted><Year>2008</Year><Month>02</Month><Day>12</Day></DateCompleted><DateRevised><Year>2022</Year><Month>03</Month><Day>16</Day></DateRevised><Article
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">18239126</PMID><DateCompleted><Year>2008</Year><Month>02</Month><Day>12</Day></DateCompleted><DateRevised><Year>2024</Year><Month>05</Month><Day>03</Day></DateRevised><Article
         PubModel="Print"><Journal><ISSN IssnType="Electronic">1095-9203</ISSN><JournalIssue
         CitedMedium="Internet"><Volume>319</Volume><Issue>5863</Issue><PubDate><Year>2008</Year><Month>Feb</Month><Day>01</Day></PubDate></JournalIssue><Title>Science
         (New York, N.Y.)</Title><ISOAbbreviation>Science</ISOAbbreviation></Journal><ArticleTitle>Cancer
@@ -606,7 +609,8 @@ interactions:
         UI="Q000235" MajorTopicYN="N">genetics</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>2008</Year><Month>2</Month><Day>2</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2008</Year><Month>2</Month><Day>13</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2008</Year><Month>2</Month><Day>2</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2008</Year><Month>2</Month><Day>2</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2010</Year><Month>11</Month><Day>16</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">18239126</ArticleId><ArticleId IdType="mid">NIHMS249937</ArticleId><ArticleId
         IdType="pmc">PMC2981870</ArticleId><ArticleId IdType="doi">10.1126/science.1149200</ArticleId><ArticleId
         IdType="pii">319/5863/620</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Paddison
@@ -620,7 +624,7 @@ interactions:
         TR, et al. Nat Chem Biol. 2006;2:202.</Citation><ArticleIdList><ArticleId
         IdType="pubmed">16474381</ArticleId></ArticleIdList></Reference><Reference><Citation>Sjoblom
         T, et al. Science. 2006;314:268.</Citation><ArticleIdList><ArticleId IdType="pubmed">16959974</ArticleId></ArticleIdList></Reference><Reference><Citation>Wood
-        LD, et al. Science. 2007;318:1108.</Citation><ArticleIdList><ArticleId IdType="pubmed">17932254</ArticleId></ArticleIdList></Reference><Reference><Citation>Dickins
+        LD, et al. Science. 2007;318:1108.</Citation><ArticleIdList><ArticleId IdType="pubmed">0</ArticleId></ArticleIdList></Reference><Reference><Citation>Dickins
         RA, et al. Nat Genet. 2005;37:1289.</Citation><ArticleIdList><ArticleId IdType="pubmed">16200064</ArticleId></ArticleIdList></Reference><Reference><Citation>Smyth
         GK, Speed T. Methods. 2003;31:265.</Citation><ArticleIdList><ArticleId IdType="pubmed">14597310</ArticleId></ArticleIdList></Reference><Reference><Citation>Draviam
         VM, et al. Nat Cell Biol. 2007;9:556.</Citation><ArticleIdList><ArticleId
@@ -697,7 +701,8 @@ interactions:
         UI="D034741" MajorTopicYN="N">RNA, Small Interfering</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>2008</Year><Month>2</Month><Day>2</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2008</Year><Month>2</Month><Day>13</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2008</Year><Month>2</Month><Day>2</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2008</Year><Month>2</Month><Day>2</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2010</Year><Month>11</Month><Day>16</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">18239125</ArticleId><ArticleId IdType="mid">NIHMS249659</ArticleId><ArticleId
         IdType="pmc">PMC2981861</ArticleId><ArticleId IdType="doi">10.1126/science.1149185</ArticleId><ArticleId
         IdType="pii">319/5863/617</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Paddison
@@ -763,20 +768,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:42:32 GMT
+      - Thu, 05 Sep 2024 23:00:58 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C45D975EA9B4500005CE194DBB637.1.1.m_3
+      - D0BD9D8EE5AB4CE5000034EF74BE2F63.1.1.m_3
       NCBI-SID:
-      - 661D7E2F9CB26CCD_EB54SID
+      - 68F994214F7A1C0A_A9BDSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=661D7E2F9CB26CCD_EB54SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:42:33 GMT
+      - ncbi_sid=68F994214F7A1C0A_A9BDSID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 23:00:58 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -784,7 +789,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '8'
+      - '7'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

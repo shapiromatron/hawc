@@ -2,8 +2,7 @@ import numpy as np
 import pandas as pd
 from django.db.models import Q
 
-from ..common.exports import ModelExport
-from ..common.helper import cleanHTML
+from ..common.exports import ModelExport, clean_html
 from ..common.models import sql_display, sql_format, str_m2m
 from ..lit.constants import ReferenceDatabase
 from .constants import CoiReported
@@ -67,5 +66,5 @@ class StudyExport(ModelExport):
         # clean html text
         summary = self.get_column_name("summary")
         if summary in df.columns:
-            df.loc[:, summary] = df[summary].apply(cleanHTML)
+            df.loc[:, summary] = clean_html(df[summary])
         return df

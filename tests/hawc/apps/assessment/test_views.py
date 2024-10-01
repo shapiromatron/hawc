@@ -187,9 +187,9 @@ class TestAttachmentViewSet:
         resp = client.post(
             url,
             {
-                "title": "test",
-                "description": "test",
-                "attachment": SimpleUploadedFile("zzzz.txt", b"test"),
+                "attachment-new-title": "test",
+                "attachment-new-description": "test",
+                "attachment-new-attachment": SimpleUploadedFile("zzzz.txt", b"test"),
             },
             follow=True,
         )
@@ -219,9 +219,9 @@ class TestAttachmentViewSet:
         resp = client.post(
             url,
             {
-                "title": "test2",
-                "description": "test2",
-                "attachment": SimpleUploadedFile("test2.txt", b"test2"),
+                f"attachment-{instance_id}-title": "test2",
+                f"attachment-{instance_id}-description": "test2",
+                f"attachment-{instance_id}-attachment": SimpleUploadedFile("test2.txt", b"test2"),
             },
             follow=True,
         )
@@ -455,6 +455,9 @@ def test_get_200():
         reverse("assessment:content_types"),
         reverse("assessment:close_window"),
         reverse("assessment:clean_study_metrics", args=(main,)),
+        reverse("assessment:bulk-publish", args=(main,)),
+        reverse("assessment:labeled-items", args=(main,)),
+        reverse("assessment:manage-labels", args=(main,)),
         reverse("assessment:bulk-publish", args=(main,)),
     ]
     for url in urls:

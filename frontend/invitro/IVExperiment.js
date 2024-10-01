@@ -42,10 +42,10 @@ class IVExperiment {
         if (window.canEdit) {
             var urls = [
                 "Experiment editing",
-                {url: this.data.url_update, text: "Update"},
-                {url: this.data.url_delete, text: "Delete"},
+                {href: this.data.url_update, text: "Update"},
+                {href: this.data.url_delete, text: "Delete"},
                 "Endpoint editing",
-                {url: this.data.url_create_endpoint, text: "Create endpoint"},
+                {href: this.data.url_create_endpoint, text: "Create endpoint"},
             ];
             el.append(HAWCUtils.pageActionsButton(urls));
         }

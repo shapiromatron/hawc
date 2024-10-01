@@ -64,7 +64,7 @@ class SummaryClient(BaseClient):
         url = f"{self.session.root_url}/summary/api/visual/{visual_id}/"
         self.session.delete(url)
 
-    def get_visual(self, visual_id: int):
+    def get_visual(self, visual_id: int) -> dict:
         """Get a visual.
 
         Args:
@@ -74,7 +74,7 @@ class SummaryClient(BaseClient):
             Response: A response object, which contains the visual if successful.
         """
         url = f"{self.session.root_url}/summary/api/visual/{visual_id}/"
-        return self.session.get(url)
+        return self.session.get(url).json()
 
     def visual_list(self, assessment_id: int) -> pd.DataFrame:
         """
@@ -160,7 +160,7 @@ class SummaryClient(BaseClient):
 
         """
         url = f"{self.session.root_url}/summary/api/data_pivot_query/{datapivot_id}/"
-        return self.session.get(url)
+        return self.session.get(url).json()
 
     def delete_datapivot(self, datapivot_id: int):
         """Delete a data pivot (query).
