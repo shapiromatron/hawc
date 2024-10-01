@@ -7,14 +7,14 @@ import h from "shared/utils/helpers";
 import {NULL_VALUE} from "../../summary/constants";
 
 class PrismaDatastore {
+    // Store that is connected to the Prisma plot
     @observable dataset = null;
     @observable settings = null;
     @observable objects = null;
 
     constructor(settings, dataset) {
         this.settings = settings;
-        this.dataset = dataset;
-        this.objects = settings;
+        this.dataset = dataset; // data needed for reference counts
         this.setup_objects();
     }
 
