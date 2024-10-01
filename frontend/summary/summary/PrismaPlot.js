@@ -219,8 +219,8 @@ class PrismaPlot {
         let txtEle = this.addTextToNode(node, node.id + "-text", node.text, node.styling);
         node.text = txtEle;
 
-        node.rect.onclick = this.nodeOnClick;
-        txtEle.onclick = this.nodeOnClick;
+        node.rect.onclick = this.nodeOnClick.bind(this);
+        txtEle.onclick = this.nodeOnClick.bind(this);
         return node;
     }
 
