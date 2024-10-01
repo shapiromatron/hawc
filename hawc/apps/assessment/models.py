@@ -604,12 +604,17 @@ class AssessmentValue(models.Model):
         choices=constants.ValueType,
         help_text="Type of derived value",
     )
+    value_type_qualifier = models.CharField(
+        blank=True,
+        max_length=64,
+        help_text="A optional qualifier displayed with the Value Type. E.g., Adult-based. This value is typically used to clarify when a value has an adjustment applied like an ADAF.",
+    )
     value = models.FloatField(
         help_text="The derived value (e.g., 2.1E-09)",
     )
     value_unit = models.CharField(verbose_name="Value units", max_length=32)
     adaf = models.BooleanField(
-        verbose_name="Apply ADAF?",
+        verbose_name="ADAF has been applied?",
         default=False,
         help_text="When checked, the ADAF note will appear as a footnote for the value. Add supporting information about ADAF in the comments.",
     )
@@ -697,6 +702,11 @@ class AssessmentValue(models.Model):
 
     class Meta:
         verbose_name_plural = "values"
+
+    @property
+    def get_combined_value_type_display(self) -> str:
+        text = self.get_value_type_display()
+        return f"{self.value_type_qualifier} {text}" if self.value_type_qualifier else text
 
     @property
     def show_cancer_fields(self):

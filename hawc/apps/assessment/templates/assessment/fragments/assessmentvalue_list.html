@@ -21,7 +21,7 @@
         <tr>
           <td><a href="{{object.get_absolute_url}}">{{object.get_evaluation_type_display}}</a></td>
           <td>{{object.system}}</td>
-          <td>{{object.get_value_type_display}}</td>
+          <td>{{object.get_combined_value_type_display}}</td>
           <td>{{object.duration}}</td>
           <td>{{object.value|default:"-"|e_notation}} {{object.value_unit|default:""}}{% if object.adaf %}{% include "common/info_popover.html" with text=adaf_footnote %}{% endif %}</td>
           <td>{{object.pod_type|default:"-"}}</td>
