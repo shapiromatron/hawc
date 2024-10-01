@@ -8,40 +8,44 @@ const createSectionRow = function() {
         return {
             key: h.randomString(),
             label: "",
-            width: 0,
-            height: 0,
-            border_width: 0,
-            rx: 20,
-            ry: 20,
-            bg_color: "#ffffff",
-            border_color: "#000000",
-            font_color: "#000000",
-            bold: false,
-            font_size: 0.0,
-            padding_x: 0,
-            padding_y: 0,
-            x: 0,
-            y: 0,
+            styling: {
+                width: 0,
+                height: 0,
+                border_width: 0,
+                rx: 20,
+                ry: 20,
+                bg_color: "#ffffff",
+                border_color: "#000000",
+                font_color: "#000000",
+                bold: false,
+                font_size: 0.0,
+                padding_x: 0,
+                padding_y: 0,
+                x: 0,
+                y: 0,
+            },
         };
     },
     createBoxRow = function() {
         return {
             key: h.randomString(),
             label: "",
-            width: 0,
-            height: 0,
-            border_width: 0,
-            rx: 20,
-            ry: 20,
-            bg_color: "#ffffff",
-            border_color: "#000000",
-            font_color: "#000000",
-            bold: false,
-            font_size: 0.0,
-            padding_x: 0,
-            padding_y: 0,
-            x: 0,
-            y: 0,
+            styling: {
+                width: 0,
+                height: 0,
+                border_width: 0,
+                rx: 20,
+                ry: 20,
+                bg_color: "#ffffff",
+                border_color: "#000000",
+                font_color: "#000000",
+                bold: false,
+                font_size: 0.0,
+                padding_x: 0,
+                padding_y: 0,
+                x: 0,
+                y: 0,
+            },
             section: "",
             box_layout: "card",
             tag: NULL_VALUE,
@@ -51,14 +55,16 @@ const createSectionRow = function() {
         return {
             key: h.randomString(),
             label: "",
-            width: 0,
-            height: 0,
-            bg_color: "#ffffff",
-            font_color: "#000000",
-            bold: false,
-            font_size: 0.0,
-            padding_x: 0,
-            padding_y: 0,
+            styling: {
+                width: 0,
+                height: 0,
+                bg_color: "#ffffff",
+                font_color: "#000000",
+                bold: false,
+                font_size: 0.0,
+                padding_x: 0,
+                padding_y: 0
+            },
             box: "",
             tag: NULL_VALUE,
         };
@@ -67,20 +73,22 @@ const createSectionRow = function() {
         return {
             key: h.randomString(),
             label: "",
-            width: 0,
-            height: 0,
-            border_width: 0,
-            rx: 20,
-            ry: 20,
-            bg_color: "#ffffff",
-            border_color: "#000000",
-            font_color: "#000000",
-            bold: false,
-            font_size: 0.0,
-            padding_x: 0,
-            padding_y: 0,
-            x: 0,
-            y: 0,
+            styling: {
+                width: 0,
+                height: 0,
+                border_width: 0,
+                rx: 20,
+                ry: 20,
+                bg_color: "#ffffff",
+                border_color: "#000000",
+                font_color: "#000000",
+                bold: false,
+                font_size: 0.0,
+                padding_x: 0,
+                padding_y: 0,
+                x: 0,
+                y: 0,
+            },
             box: "",
             tag: NULL_VALUE,
         };
@@ -88,12 +96,14 @@ const createSectionRow = function() {
     createArrowRow = function() {
         return {
             key: h.randomString(),
-            width: 0,
-            type: 1,
-            color: "",
+            styling: {
+                width: 0,
+                type: 1,
+                color: "",
+                force_vertical: false
+            },
             src: NULL_VALUE,
             dst: NULL_VALUE,
-            force_vertical: false,
         };
     },
     ARROW_TYPES = [
@@ -138,6 +148,10 @@ class PrismaStore {
 
     @action.bound changeArraySettings(arrayKey, index, key, value) {
         this.settings[arrayKey][index][key] = value;
+    }
+
+    @action.bound changeStylingSettings(arrayKey, index, key, value) {
+        this.settings[arrayKey][index]["styling"][key] = value;
     }
 
     @action.bound deleteArrayElement(key, index) {
