@@ -1,7 +1,9 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import CheckboxInput from "shared/components/CheckboxInput";
 import {ActionsTh, EditableRow, MoveRowTd} from "shared/components/EditableRowData";
+import FloatInput from "shared/components/FloatInput";
 import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
@@ -72,6 +74,7 @@ class BulletedListsRow extends EditableRow {
     renderEditRow(row, index) {
         const {
             changeArraySettings,
+            changeStylingSettings,
             getLinkingOptions,
             getFilterOptions,
         } = this.props.store.subclass;
@@ -91,65 +94,67 @@ class BulletedListsRow extends EditableRow {
                             <IntegerInput
                                 name={`${key}-width-${index}`}
                                 onChange={e =>
-                                    changeArraySettings(key, index, "width", e.target.value)
+                                    changeStylingSettings(key, index, "width", e.target.value)
                                 }
                                 label="Width"
-                                value={row.width}
+                                value={row.styling.width}
                             />
                             <IntegerInput
                                 name={`${key}-height-${index}`}
-                                value={row.height}
+                                value={row.styling.height}
                                 label="Height"
                                 onChange={e =>
-                                    changeArraySettings(key, index, "height", e.target.value)
-                                }
-                            />
-                            <IntegerInput
-                                name={`${key}-border-width-${index}`}
-                                value={row.border_width}
-                                label="Border Width"
-                                onChange={e =>
-                                    changeArraySettings(key, index, "border_width", e.target.value)
-                                }
-                            />
-                            <IntegerInput
-                                name={`${key}-rx-${index}`}
-                                value={row.rx}
-                                label="rx"
-                                onChange={e =>
-                                    changeArraySettings(key, index, "rx", e.target.value)
-                                }
-                            />
-                            <IntegerInput
-                                name={`${key}-ry-${index}`}
-                                value={row.ry}
-                                label="ry"
-                                onChange={e =>
-                                    changeArraySettings(key, index, "ry", e.target.value)
+                                    changeStylingSettings(key, index, "height", e.target.value)
                                 }
                             />
                             <TextInput
                                 name={`${key}-bg-color-${index}`}
-                                value={row.bg_color}
+                                value={row.styling.bg_color}
                                 label="Background Color"
                                 onChange={e =>
-                                    changeArraySettings(key, index, "bg_color", e.target.value)
+                                    changeStylingSettings(key, index, "bg_color", e.target.value)
                                 }
-                            />
-                            <TextInput
-                                name={`${key}-border-color-${index}`}
-                                value={row.border_color}
-                                label="Border Color"
-                                onChange={e =>
-                                    changeArraySettings(key, index, "border_color", e.target.value)
-                                }
+                                type="color"
                             />
                             <TextInput
                                 name={`${key}-font-color-${index}`}
-                                value={row.font_color}
+                                value={row.styling.font_color}
                                 label="Font Color"
                                 onChange={e =>
-                                    changeArraySettings(key, index, "font_color", e.target.value)
+                                    changeStylingSettings(key, index, "font_color", e.target.value)
+                                }
+                                type="color"
+                            />
+                            <FloatInput
+                                name={`${key}-font-size-${index}`}
+                                value={row.styling.font_size}
+                                label="Font size"
+                                onChange={e =>
+                                    changeStylingSettings(key, index, "font_size", e.target.value)
+                                }
+                            />
+                            <CheckboxInput
+                                name={`${key}-bold-${index}`}
+                                checked={row.styling.bold}
+                                label="Bold text"
+                                onChange={e =>
+                                    changeStylingSettings(key, index, "bold", e.target.checked)
+                                }
+                            />
+                            <IntegerInput
+                                name={`${key}-padding-x-${index}`}
+                                value={row.styling.padding_x}
+                                label="Padding X"
+                                onChange={e =>
+                                    changeStylingSettings(key, index, "padding_x", e.target.value)
+                                }
+                            />
+                            <IntegerInput
+                                name={`${key}-padding-y-${index}`}
+                                value={row.styling.padding_y}
+                                label="Padding Y"
+                                onChange={e =>
+                                    changeStylingSettings(key, index, "padding_y", e.target.value)
                                 }
                             />
                             <SelectInput

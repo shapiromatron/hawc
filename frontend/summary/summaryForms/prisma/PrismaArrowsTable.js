@@ -5,6 +5,7 @@ import {ActionsTh, EditableRow, MoveRowTd} from "shared/components/EditableRowDa
 import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
+import CheckboxInput from "shared/components/CheckboxInput";
 
 const key = "arrows";
 
@@ -67,7 +68,7 @@ class ArrowsRow extends EditableRow {
         );
     }
     renderEditRow(row, index) {
-        const {changeArraySettings, getArrowOptions, getArrowTypes} = this.props.store.subclass;
+        const {changeArraySettings, changeStylingSettings, getArrowOptions, getArrowTypes} = this.props.store.subclass;
         return (
             <tr>
                 <td colSpan="100%">
@@ -95,28 +96,37 @@ class ArrowsRow extends EditableRow {
                             />
                             <IntegerInput
                                 name={`${key}-width-${index}`}
-                                value={row.width}
+                                value={row.styling.width}
                                 label="Width"
                                 onChange={e =>
-                                    changeArraySettings(key, index, "width", e.target.value)
+                                    changeStylingSettings(key, index, "width", e.target.value)
                                 }
                             />
                             <SelectInput
                                 name={`${key}-type-${index}`}
-                                value={row.type}
+                                value={row.styling.type}
                                 label="Type"
                                 handleSelect={value =>
-                                    changeArraySettings(key, index, "type", value)
+                                    changeStylingSettings(key, index, "type", value)
                                 }
                                 multiple={false}
                                 choices={getArrowTypes()}
                             />
                             <TextInput
                                 name={`${key}-color-${index}`}
-                                value={row.color}
+                                value={row.styling.color}
                                 label="Color"
                                 onChange={e =>
-                                    changeArraySettings(key, index, "color", e.target.value)
+                                    changeStylingSettings(key, index, "color", e.target.value)
+                                }
+                                type="color"
+                            />
+                            <CheckboxInput
+                                name={`${key}-force-vertical-${index}`}
+                                checked={row.styling.force_vertical}
+                                label="Force vertical orientation"
+                                onChange={e =>
+                                    changeStylingSettings(key, index, "force_vertical", e.target.checked)
                                 }
                             />
                         </div>
