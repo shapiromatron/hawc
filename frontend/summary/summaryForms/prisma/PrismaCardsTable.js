@@ -132,6 +132,7 @@ class CardsRow extends EditableRow {
                                 onChange={e =>
                                     changeArraySettings(key, index, "bg_color", e.target.value)
                                 }
+                                type="color"
                             />
                             <TextInput
                                 name={`${key}-border-color-${index}`}
@@ -140,6 +141,7 @@ class CardsRow extends EditableRow {
                                 onChange={e =>
                                     changeArraySettings(key, index, "border_color", e.target.value)
                                 }
+                                type="color"
                             />
                             <TextInput
                                 name={`${key}-font-color-${index}`}
@@ -148,6 +150,7 @@ class CardsRow extends EditableRow {
                                 onChange={e =>
                                     changeArraySettings(key, index, "font_color", e.target.value)
                                 }
+                                type="color"
                             />
                             <SelectInput
                                 name={`${key}-box-${index}`}

@@ -118,6 +118,7 @@ class ArrowsRow extends EditableRow {
                                 onChange={e =>
                                     changeArraySettings(key, index, "color", e.target.value)
                                 }
+                                type="color"
                             />
                         </div>
                         <div className="form-row justify-content-center">

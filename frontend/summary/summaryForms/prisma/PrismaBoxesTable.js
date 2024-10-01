@@ -133,6 +133,7 @@ class BoxesRow extends EditableRow {
                                 onChange={e =>
                                     changeArraySettings(key, index, "bg_color", e.target.value)
                                 }
+                                type="color"
                             />
                             <TextInput
                                 name={`${key}-border-color-${index}`}
@@ -141,6 +142,7 @@ class BoxesRow extends EditableRow {
                                 onChange={e =>
                                     changeArraySettings(key, index, "border_color", e.target.value)
                                 }
+                                type="color"
                             />
                             <TextInput
                                 name={`${key}-font-color-${index}`}
@@ -149,6 +151,7 @@ class BoxesRow extends EditableRow {
                                 onChange={e =>
                                     changeArraySettings(key, index, "font_color", e.target.value)
                                 }
+                                type="color"
                             />
                             <TextInput
                                 name={`${key}-text-style-${index}`}
