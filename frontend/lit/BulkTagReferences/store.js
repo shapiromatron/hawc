@@ -10,7 +10,7 @@ const NULL_VALUE = "---",
         // cast fields to strings for consistency when matching
         _.each(data, row =>
             _.each(row, (value, key) => {
-                row[key] = value == null ? value : value.toString();
+                row[key] = value == null ? value : value.toString().trim();
             })
         );
         return data;
