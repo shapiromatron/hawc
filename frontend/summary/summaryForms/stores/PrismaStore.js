@@ -191,11 +191,13 @@ class PrismaStore {
     }
 
     @action.bound getArrowOptions() {
-        const options = this.settings.boxes.map(value => {
+        const section_options = this.settings.sections.map(value => {
+            return { id: value.key, label: value.label };
+        });
+        const box_options = this.settings.boxes.map(value => {
             return {id: value.key, label: value.label};
         });
-        options.unshift({id: NULL_VALUE, label: NULL_VALUE});
-        return options;
+        return _.flatten([{ id: NULL_VALUE, label: NULL_VALUE }, section_options, box_options]);
     }
 
     @action.bound getArrowTypes() {
