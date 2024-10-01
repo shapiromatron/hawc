@@ -335,6 +335,14 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
+        if self.object.visual_type == constants.VisualType.PRISMA:
+            context.update(
+                config=dict(
+                    id=self.object.id,
+                    data=json.loads(models.Visual.get_prisma_data(self.assessment)),
+                    settings=self.object.settings,
+                )
+            )
         return context
 
     def get_template_names(self):

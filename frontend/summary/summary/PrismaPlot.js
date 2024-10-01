@@ -394,13 +394,12 @@ class PrismaPlot {
         let id = e.target.parentNode.id.replace(new RegExp("-box" + "$"), "");
         id = id.replace(new RegExp("-text" + "$"), "");
         let node = this.getGroup(id);
-        console.log(node);
+        alert(node);
     }
 
     // child node with its own styling defaults
     // also checks if card can fit on row
     createCard(parent, text, styling = {}) {
-        let cardMinHeight = 70;
         const CARD_DEFAULT = {
             width: "100",
             "spacing-horizontal": "20",
@@ -454,7 +453,7 @@ class PrismaPlot {
 
                 let txtEle = this.addTextToNode(currentNode, subblockId, subblockText, blockStyle);
                 txtEle.onclick = e => {
-                    console.log(blocks[i]);
+                    alert(blocks[i]);
                 };
             }
         } else {
@@ -538,14 +537,18 @@ class PrismaPlot {
         // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8958186/figure/cl21230-fig-0003/
 
         // NOTE changed sub_block_layout to just block_layout and added as optional to section level
-        let diagramSections = this.store.getTransformedSettings;
+        let diagramSections = this.store.getDiagramSections();
+
+        // NOTE changed separator from | to .
+        // NOTE removed "type"
+        let connections = this.store.getConnections();
 
         // parse data structure
         let parent;
         let child;
         let sibling;
         for (let row of diagramSections) {
-            let blockId = `${row.key}`.replace(/ /g, "");
+            let blockId = row.key;
             let blockBoxInfo = row.label;
             let sectionStyle = row.styling ?? {};
             if (!parent) {
@@ -565,7 +568,6 @@ class PrismaPlot {
                 this.resizeNodes(parent);
                 continue;
             }
-
             for (let i = 0; i < row.blocks.length; i++) {
                 let col = row.blocks[i];
                 let id = `${row.key}.${col.key}`.replace(/ /g, "");
@@ -589,49 +591,6 @@ class PrismaPlot {
 
         this.applyPostStyling();
 
-        // NOTE changed separator from | to .
-        // NOTE removed "type"
-        let connections = [
-            {
-                src: "Records",
-                dst: "TIAB",
-                styling: {
-                    "arrow-type": "11",
-                },
-            },
-            {
-                src: "TIAB.References screened",
-                dst: "TIAB.References excluded",
-            },
-            {
-                src: "TIAB.References screened",
-                dst: "FT.References excluded",
-                styling: {
-                    "arrow-force-vertical": "true",
-                },
-            },
-            {
-                src: "TIAB.References screened",
-                dst: "FT.References screened",
-                styling: {
-                    "arrow-color": "blue",
-                    "arrow-width": "6",
-                },
-            },
-            {
-                src: "FT.References screened",
-                dst: "FT - eligible.References screened",
-            },
-            {
-                src: "FT - eligible.References screened",
-                dst: "FT - eligible.References excluded",
-            },
-            {
-                src: "FT - eligible.References screened",
-                dst: "Included studies.Results",
-            },
-        ];
-
         for (let connection of connections) {
             let srcId = connection.src.replace(/ /g, "");
             let dstId = connection.dst.replace(/ /g, "");
@@ -641,9 +600,8 @@ class PrismaPlot {
         this.w = 0;
         this.h = 0;
         for (let section of diagramSections) {
-            let id = section.key.replace(/ /g, "");
             let sectionBBox = d3
-                .select(`#${id}`)
+                .select(document.getElementById(section.key))
                 .node()
                 .getBBox();
             this.h += sectionBBox.height + this.SPACING_H;
