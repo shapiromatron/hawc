@@ -58,8 +58,8 @@ class ArrowsRow extends EditableRow {
 
         return (
             <tr>
-                <td>{row.src}</td>
-                <td>{row.dst}</td>
+                <td>{row.src_display}</td>
+                <td>{row.dst_display}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
                     onEdit={() => this.setState({edit: true})}
@@ -83,9 +83,10 @@ class ArrowsRow extends EditableRow {
                                 name={`${key}-source-${index}`}
                                 value={row.src}
                                 label="Source"
-                                handleSelect={value =>
-                                    changeArraySettings(key, index, "src", value)
-                                }
+                                handleSelect={(value, label) => {
+                                    changeArraySettings(key, index, "src", value);
+                                    changeArraySettings(key, index, "src_display", label);
+                                }}
                                 multiple={false}
                                 choices={getArrowOptions()}
                             />
@@ -93,9 +94,10 @@ class ArrowsRow extends EditableRow {
                                 name={`${key}-destination-${index}`}
                                 value={row.dst}
                                 label="Destination"
-                                handleSelect={value =>
-                                    changeArraySettings(key, index, "dst", value)
-                                }
+                                handleSelect={(value, label) => {
+                                    changeArraySettings(key, index, "dst", value);
+                                    changeArraySettings(key, index, "dst_display", label);
+                                }}
                                 multiple={false}
                                 choices={getArrowOptions()}
                             />
@@ -114,7 +116,7 @@ class ArrowsRow extends EditableRow {
                                 handleSelect={value =>
                                     changeStylingSettings(key, index, "type", value)
                                 }
-                                multiple={false}
+                                multiple={true}
                                 choices={getArrowTypes()}
                             />
                             <TextInput

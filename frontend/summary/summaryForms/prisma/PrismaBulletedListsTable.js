@@ -62,8 +62,8 @@ class BulletedListsRow extends EditableRow {
         return (
             <tr>
                 <td>{row.label}</td>
-                <td>{row.box}</td>
-                <td>{row.tag}</td>
+                <td>{row.box_display}</td>
+                <td>{row.tag_display}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
                     onEdit={() => this.setState({edit: true})}
@@ -161,9 +161,10 @@ class BulletedListsRow extends EditableRow {
                                 name={`${key}-box-${index}`}
                                 value={row.box}
                                 label="Box"
-                                handleSelect={value =>
-                                    changeArraySettings(key, index, "box", value)
-                                }
+                                handleSelect={(value, label) => {
+                                    changeArraySettings(key, index, "box", value);
+                                    changeArraySettings(key, index, "box_display", label);
+                                }}
                                 multiple={false}
                                 choices={getBoxOptions("list")}
                             />
@@ -171,9 +172,10 @@ class BulletedListsRow extends EditableRow {
                                 name={`${key}-tag-${index}`}
                                 value={row.tag}
                                 label="Add references related to this tag, search, or import"
-                                handleSelect={value =>
-                                    changeArraySettings(key, index, "tag", value)
-                                }
+                                handleSelect={(value, label) => {
+                                    changeArraySettings(key, index, "tag", value);
+                                    changeArraySettings(key, index, "tag_display", label);
+                                }}
                                 multiple={false}
                                 choices={getFilterOptions()}
                             />

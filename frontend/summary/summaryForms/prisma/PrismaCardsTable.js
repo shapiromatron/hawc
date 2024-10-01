@@ -22,13 +22,15 @@ class PrismaCardsTable extends Component {
                 <h3>Cards</h3>
                 <table className="table table-sm table-striped">
                     <colgroup>
-                        <col width="45%" />
-                        <col width="45%" />
+                        <col width="30%" />
+                        <col width="30%" />
+                        <col width="30%" />
                         <col width="10%" />
                     </colgroup>
                     <thead>
                         <tr>
                             <th>Name</th>
+                            <th>Box</th>
                             <th>Tag</th>
                             <ActionsTh onClickNew={createNewCard} />
                         </tr>
@@ -60,7 +62,8 @@ class CardsRow extends EditableRow {
         return (
             <tr>
                 <td>{row.label}</td>
-                <td>{row.tag}</td>
+                <td>{row.box_display}</td>
+                <td>{row.tag_display}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
                     onEdit={() => this.setState({edit: true})}
@@ -217,9 +220,10 @@ class CardsRow extends EditableRow {
                                 name={`${key}-box-${index}`}
                                 value={row.box}
                                 label="Box"
-                                handleSelect={value =>
-                                    changeArraySettings(key, index, "box", value)
-                                }
+                                handleSelect={(value, label) => {
+                                    changeArraySettings(key, index, "box", value);
+                                    changeArraySettings(key, index, "box_display", label);
+                                }}
                                 multiple={false}
                                 choices={getBoxOptions("card")}
                             />
@@ -227,9 +231,10 @@ class CardsRow extends EditableRow {
                                 name={`${key}-tag-${index}`}
                                 value={row.tag}
                                 label="Add references related to this tag, search, or import"
-                                handleSelect={value =>
-                                    changeArraySettings(key, index, "tag", value)
-                                }
+                                handleSelect={(value, label) => {
+                                    changeArraySettings(key, index, "tag", value);
+                                    changeArraySettings(key, index, "tag_display", label);
+                                }}
                                 multiple={false}
                                 choices={getFilterOptions()}
                             />

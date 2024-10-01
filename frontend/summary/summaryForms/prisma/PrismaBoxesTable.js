@@ -60,7 +60,7 @@ class BoxesRow extends EditableRow {
         return (
             <tr>
                 <td>{row.label}</td>
-                <td>{row.section}</td>
+                <td>{row.section_display}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
                     onEdit={() => this.setState({edit: true})}
@@ -218,9 +218,10 @@ class BoxesRow extends EditableRow {
                                 name={`${key}-section-${index}`}
                                 value={row.section}
                                 label="Section"
-                                handleSelect={value =>
-                                    changeArraySettings(key, index, "section", value)
-                                }
+                                handleSelect={(value, label) => {
+                                    changeArraySettings(key, index, "section", value);
+                                    changeArraySettings(key, index, "section_display", label);
+                                }}
                                 multiple={false}
                                 choices={getLinkingOptions("sections")}
                             />
@@ -228,9 +229,10 @@ class BoxesRow extends EditableRow {
                                 name={`${key}-tag-${index}`}
                                 value={row.tag}
                                 label="Add references related to this tag, search, or import"
-                                handleSelect={value =>
-                                    changeArraySettings(key, index, "tag", value)
-                                }
+                                handleSelect={(value, label) => {
+                                    changeArraySettings(key, index, "tag", value);
+                                    changeArraySettings(key, index, "tag_display", label);
+                                }}
                                 multiple={false}
                                 choices={getFilterOptions()}
                             />
