@@ -46,7 +46,7 @@ const createSectionRow = function() {
                 x: 0,
                 y: 0,
             },
-            section: "",
+            section: NULL_VALUE,
             box_layout: "card",
             tag: NULL_VALUE,
         };
@@ -65,7 +65,7 @@ const createSectionRow = function() {
                 padding_x: 0,
                 padding_y: 0,
             },
-            box: "",
+            box: NULL_VALUE,
             tag: NULL_VALUE,
         };
     },
@@ -89,7 +89,7 @@ const createSectionRow = function() {
                 x: 0,
                 y: 0,
             },
-            box: "",
+            box: NULL_VALUE,
             tag: NULL_VALUE,
         };
     },
@@ -117,7 +117,7 @@ const createSectionRow = function() {
     ],
     BOX_LAYOUTS = [
         {id: "card", label: "Card"},
-        {id: "list", label: "List"},
+        {id: "list", label: "Bulleted List"},
     ];
 
 class PrismaStore {

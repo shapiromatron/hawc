@@ -6,6 +6,7 @@ import {ActionsTh, EditableRow, MoveRowTd} from "shared/components/EditableRowDa
 import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
+import {NULL_VALUE} from "summary/summary/constants";
 
 const key = "arrows";
 
@@ -39,7 +40,7 @@ class PrismaArrowsTable extends Component {
                                     row={row}
                                     index={index}
                                     key={index}
-                                    initiallyEditable={row.source == ""}
+                                    initiallyEditable={row.src == NULL_VALUE}
                                 />
                             );
                         })}
@@ -116,7 +117,7 @@ class ArrowsRow extends EditableRow {
                                 handleSelect={value =>
                                     changeStylingSettings(key, index, "type", value)
                                 }
-                                multiple={true}
+                                multiple={false}
                                 choices={getArrowTypes()}
                             />
                             <TextInput
