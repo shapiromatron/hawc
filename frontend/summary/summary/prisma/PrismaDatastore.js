@@ -70,7 +70,7 @@ class PrismaDatastore {
                         label: "Source 1",
                         key: "Source 1",
                         value: "",
-                        styling: { "text-color": "red", width: "200" },
+                        styling: {"text-color": "red", width: "200"},
                     },
                     {
                         label: "Source 2",
@@ -231,7 +231,7 @@ class PrismaDatastore {
                                 count: "unique_sum",
                                 value: 4,
                                 refs: "[...]",
-                                styling: { "text-color": "red" },
+                                styling: {"text-color": "red"},
                             },
                             {
                                 label: "No relevant exposure",

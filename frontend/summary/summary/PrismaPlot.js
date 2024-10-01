@@ -540,7 +540,6 @@ class PrismaPlot {
         // NOTE changed sub_block_layout to just block_layout and added as optional to section level
         let diagramSections = this.store.getTransformedSettings;
 
-
         // parse data structure
         let parent;
         let child;

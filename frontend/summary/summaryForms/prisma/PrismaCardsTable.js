@@ -1,7 +1,9 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import CheckboxInput from "shared/components/CheckboxInput";
 import {ActionsTh, EditableRow, MoveRowTd} from "shared/components/EditableRowData";
+import FloatInput from "shared/components/FloatInput";
 import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
@@ -151,6 +153,50 @@ class CardsRow extends EditableRow {
                                     changeArraySettings(key, index, "font_color", e.target.value)
                                 }
                                 type="color"
+                            />
+                            <FloatInput
+                                name={`${key}-font-size-${index}`}
+                                value={row.font_size}
+                                label="Font size"
+                                onChange={e =>
+                                    changeArraySettings(key, index, "font_size", e.target.value)
+                                }
+                            />
+                            <CheckboxInput
+                                name={`${key}-bold-${index}`}
+                                checked={row.bold}
+                                label="Bold text"
+                                onChange={e =>
+                                    changeArraySettings(key, index, "bold", e.target.checked)
+                                }
+                            />
+                            <IntegerInput
+                                name={`${key}-padding-x-${index}`}
+                                value={row.padding_x}
+                                label="Padding X"
+                                onChange={e =>
+                                    changeArraySettings(key, index, "padding_x", e.target.value)
+                                }
+                            />
+                            <IntegerInput
+                                name={`${key}-padding-y-${index}`}
+                                value={row.padding_y}
+                                label="Padding Y"
+                                onChange={e =>
+                                    changeArraySettings(key, index, "padding_y", e.target.value)
+                                }
+                            />
+                            <IntegerInput
+                                name={`${key}-x-${index}`}
+                                value={row.x}
+                                label="Adjust X position"
+                                onChange={e => changeArraySettings(key, index, "x", e.target.value)}
+                            />
+                            <IntegerInput
+                                name={`${key}-y-${index}`}
+                                value={row.y}
+                                label="Adjust Y position"
+                                onChange={e => changeArraySettings(key, index, "y", e.target.value)}
                             />
                             <SelectInput
                                 name={`${key}-box-${index}`}
