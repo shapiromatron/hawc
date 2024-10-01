@@ -135,6 +135,11 @@ class PrismaStore {
             bulleted_lists: [],
             cards: [],
             arrows: [],
+            styles: {
+                stroke_radius: 5,
+                stroke_width: 2,
+                stroke_color: "#000000",
+            },
         };
     }
 

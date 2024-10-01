@@ -461,6 +461,7 @@ class PrismaPlot {
     }
 
     build_plot() {
+        const {styles} = this.store.settings;
         this.NAMESPACE = "http://www.w3.org/2000/svg";
         this.HTML_BULLET = "•";
         this.WORKSPACE_START_X = 20; // first box always placed here
@@ -485,10 +486,10 @@ class PrismaPlot {
             "text-style": "normal", // or "bold"
             "text-size": "0", // always appends "em" unit, +- centered around global text size
             "bg-color": "white",
-            stroke: "black", // box border color
-            "stroke-width": "3", // box border width
-            rx: "20", // box rounded edge horizontal
-            ry: "20", // / box rounded edge vertical
+            stroke: styles.stroke_color, // box border color
+            "stroke-width": styles.stroke_width, // box border width
+            rx: styles.stroke_radius, // box rounded edge horizontal
+            ry: styles.stroke_radius, // box rounded edge vertical
             "arrow-color": "black",
             "arrow-width": "2",
             "arrow-type": "1", // valid: 1,2,3,5,10,11,13
