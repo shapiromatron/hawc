@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import * as d3Arrow from "d3-arrow";
+import _ from "lodash";
 import React from "react";
 import ReactDOM from "react-dom";
 import VisualToolbar from "shared/components/VisualToolbar";
@@ -222,32 +223,6 @@ class PrismaPlot {
         node.rect.onclick = this.nodeOnClick.bind(this);
         txtEle.onclick = this.nodeOnClick.bind(this);
         return node;
-    }
-
-    // styling applied after the diagram is draw but before arrows are calculated
-    // general box position, text-padding-y
-    applyPostStyling() {
-        let allNodes = document.getElementsByClassName("node");
-        for (let node of allNodes) {
-            node = this.getGroup(node.id);
-
-            // re-position boxes
-            let nodePadX = JSON.parse(node.styling["x"]);
-            let nodePadY = JSON.parse(node.styling["y"]);
-            node.rect.setAttribute("x", node.rect.getBBox().x + nodePadX);
-            node.rect.setAttribute("y", node.rect.getBBox().y + nodePadY);
-
-            // text padding y styling
-            let textPaddingY = JSON.parse(node.styling["text-padding-y"]);
-            for (let txt of node.text) {
-                let tspanArray = $(document.getElementById(txt.id)).children("tspan");
-                for (let tspan of tspanArray) {
-                    let currentY = parseFloat(tspan.getAttribute("y"));
-                    tspan.setAttribute("x", parseFloat(tspan.getAttribute("x")) + nodePadX);
-                    tspan.setAttribute("y", currentY + nodePadY + parseFloat(textPaddingY));
-                }
-            }
-        }
     }
 
     // https://github.com/HarryStevens/d3-arrow
@@ -487,7 +462,7 @@ class PrismaPlot {
 
     build_plot() {
         this.NAMESPACE = "http://www.w3.org/2000/svg";
-        this.HTML_BULLET = "&#8226;";
+        this.HTML_BULLET = "•";
         this.WORKSPACE_START_X = 20; // first box always placed here
         this.WORKSPACE_START_Y = 20;
         this.MAX_WIDTH = 300; // box dimensions
@@ -590,27 +565,56 @@ class PrismaPlot {
         }
 
         this.applyPostStyling();
+        this.setConnections(connections);
+        this.setOverallDimensions(diagramSections);
+        this.addResizeAndToolbar();
+    }
 
+    applyPostStyling() {
+        // styling applied after the diagram is draw but before arrows are calculated
+        // general box position, text-padding-y
+        let allNodes = document.getElementsByClassName("node");
+        for (let node of allNodes) {
+            node = this.getGroup(node.id);
+
+            // re-position boxes
+            let nodePadX = JSON.parse(node.styling["x"]);
+            let nodePadY = JSON.parse(node.styling["y"]);
+            node.rect.setAttribute("x", node.rect.getBBox().x + nodePadX);
+            node.rect.setAttribute("y", node.rect.getBBox().y + nodePadY);
+
+            // text padding y styling
+            let textPaddingY = JSON.parse(node.styling["text-padding-y"]);
+            for (let txt of node.text) {
+                let tspanArray = $(document.getElementById(txt.id)).children("tspan");
+                for (let tspan of tspanArray) {
+                    let currentY = parseFloat(tspan.getAttribute("y"));
+                    tspan.setAttribute("x", parseFloat(tspan.getAttribute("x")) + nodePadX);
+                    tspan.setAttribute("y", currentY + nodePadY + parseFloat(textPaddingY));
+                }
+            }
+        }
+    }
+
+    setConnections(connections) {
         for (let connection of connections) {
             let srcId = connection.src.replace(/ /g, "");
             let dstId = connection.dst.replace(/ /g, "");
             this.drawConnection(srcId, dstId, connection.styling);
         }
+    }
 
-        this.w = 0;
-        this.h = 0;
-        for (let section of diagramSections) {
-            let sectionBBox = d3
+    setOverallDimensions(sections) {
+        const bbs = sections.map(section =>
+            d3
                 .select(document.getElementById(section.key))
                 .node()
-                .getBBox();
-            this.h += sectionBBox.height + this.SPACING_H;
-            if (this.w < sectionBBox.width) {
-                this.w = sectionBBox.width;
-            }
-        }
+                .getBBox()
+        );
 
-        this.addResizeAndToolbar();
+        this.w = _.max(bbs.map(bb => bb.width));
+        this.h =
+            _.sum(bbs.map(bb => bb.height)) + Math.max(sections.length - 1, 0) * this.SPACING_H;
     }
 }
 
