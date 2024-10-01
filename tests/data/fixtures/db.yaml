@@ -1681,6 +1681,7 @@
     evaluation_type: 1
     system: Urinary
     value_type: 0
+    value_type_qualifier: ''
     value: 1.0
     value_unit: mg/kg/day
     confidence: High
@@ -1708,6 +1709,7 @@
     evaluation_type: 1
     system: Urinary
     value_type: 10
+    value_type_qualifier: ''
     value: 4.0
     value_unit: mg/kg/day
     confidence: Medium High
@@ -1735,6 +1737,7 @@
     evaluation_type: 0
     system: Urinary
     value_type: 30
+    value_type_qualifier: ''
     value: 8.0e-05
     value_unit: mg/kg/day
     confidence: Medium
