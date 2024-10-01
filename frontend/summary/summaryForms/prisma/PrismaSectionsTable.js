@@ -64,7 +64,7 @@ class SectionsRow extends EditableRow {
         );
     }
     renderEditRow(row, index) {
-        const { changeArraySettings, changeStylingSettings} = this.props.store.subclass;
+        const {changeArraySettings, changeStylingSettings} = this.props.store.subclass;
         return (
             <tr>
                 <td colSpan="100%">
@@ -99,7 +99,12 @@ class SectionsRow extends EditableRow {
                                 value={row.styling.border_width}
                                 label="Border Width"
                                 onChange={e =>
-                                    changeStylingSettings(key, index, "border_width", e.target.value)
+                                    changeStylingSettings(
+                                        key,
+                                        index,
+                                        "border_width",
+                                        e.target.value
+                                    )
                                 }
                             />
                             <IntegerInput
@@ -132,7 +137,12 @@ class SectionsRow extends EditableRow {
                                 value={row.styling.border_color}
                                 label="Border Color"
                                 onChange={e =>
-                                    changeStylingSettings(key, index, "border_color", e.target.value)
+                                    changeStylingSettings(
+                                        key,
+                                        index,
+                                        "border_color",
+                                        e.target.value
+                                    )
                                 }
                                 type="color"
                             />
@@ -181,13 +191,17 @@ class SectionsRow extends EditableRow {
                                 name={`${key}-x-${index}`}
                                 value={row.styling.x}
                                 label="Adjust X position"
-                                onChange={e => changeStylingSettings(key, index, "x", e.target.value)}
+                                onChange={e =>
+                                    changeStylingSettings(key, index, "x", e.target.value)
+                                }
                             />
                             <IntegerInput
                                 name={`${key}-y-${index}`}
                                 value={row.styling.y}
                                 label="Adjust Y position"
-                                onChange={e => changeStylingSettings(key, index, "y", e.target.value)}
+                                onChange={e =>
+                                    changeStylingSettings(key, index, "y", e.target.value)
+                                }
                             />
                         </div>
                         <div className="form-row justify-content-center">

@@ -1,11 +1,11 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import CheckboxInput from "shared/components/CheckboxInput";
 import {ActionsTh, EditableRow, MoveRowTd} from "shared/components/EditableRowData";
 import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
-import CheckboxInput from "shared/components/CheckboxInput";
 
 const key = "arrows";
 
@@ -68,7 +68,12 @@ class ArrowsRow extends EditableRow {
         );
     }
     renderEditRow(row, index) {
-        const {changeArraySettings, changeStylingSettings, getArrowOptions, getArrowTypes} = this.props.store.subclass;
+        const {
+            changeArraySettings,
+            changeStylingSettings,
+            getArrowOptions,
+            getArrowTypes,
+        } = this.props.store.subclass;
         return (
             <tr>
                 <td colSpan="100%">
@@ -126,7 +131,12 @@ class ArrowsRow extends EditableRow {
                                 checked={row.styling.force_vertical}
                                 label="Force vertical orientation"
                                 onChange={e =>
-                                    changeStylingSettings(key, index, "force_vertical", e.target.checked)
+                                    changeStylingSettings(
+                                        key,
+                                        index,
+                                        "force_vertical",
+                                        e.target.checked
+                                    )
                                 }
                             />
                         </div>
