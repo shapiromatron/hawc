@@ -7,12 +7,10 @@ const NULL_VALUE = "---",
     formatDataset = data => {
         // add 1-based __index__ attribute to each row; start at 2
         _.each(data, (row, index) => (row.__index__ = index + 2));
-        // cast boolean fields to strings
+        // cast fields to strings for consistency when matching
         _.each(data, row =>
             _.each(row, (value, key) => {
-                if (typeof value === "boolean") {
-                    row[key] = value.toString();
-                }
+                row[key] = value == null ? value : value.toString();
             })
         );
         return data;
@@ -99,11 +97,12 @@ class Store {
     }
     @computed get referenceMap() {
         // map of all references in hawc and their matches
+        // key is cast to string for consistency
         const colType = this.referenceColumnType,
             mapping = colType
                 ? _.chain(this.references)
                       .filter(row => row[colType])
-                      .map(row => [row[colType], row.reference_id])
+                      .map(row => [row[colType].toString(), row.reference_id])
                       .value()
                 : [];
         return new Map(mapping);
