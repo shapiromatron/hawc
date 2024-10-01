@@ -537,18 +537,18 @@ class PrismaPlot {
         // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8958186/figure/cl21230-fig-0003/
 
         // NOTE changed sub_block_layout to just block_layout and added as optional to section level
-        let diagramSections = this.store.getDiagramSections;
+        let diagramSections = this.store.getDiagramSections();
 
         // NOTE changed separator from | to .
         // NOTE removed "type"
-        let connections = this.store.getConnections;
+        let connections = this.store.getConnections();
 
         // parse data structure
         let parent;
         let child;
         let sibling;
         for (let row of diagramSections) {
-            let blockId = `${row.key}`.replace(/ /g, "");
+            let blockId = row.key;
             let blockBoxInfo = row.label;
             let sectionStyle = row.styling ?? {};
             if (!parent) {
@@ -568,7 +568,6 @@ class PrismaPlot {
                 this.resizeNodes(parent);
                 continue;
             }
-
             for (let i = 0; i < row.blocks.length; i++) {
                 let col = row.blocks[i];
                 let id = `${row.key}.${col.key}`.replace(/ /g, "");
@@ -601,9 +600,8 @@ class PrismaPlot {
         this.w = 0;
         this.h = 0;
         for (let section of diagramSections) {
-            let id = section.key.replace(/ /g, "");
             let sectionBBox = d3
-                .select(`#${id}`)
+                .select(document.getElementById(section.key))
                 .node()
                 .getBBox();
             this.h += sectionBBox.height + this.SPACING_H;
