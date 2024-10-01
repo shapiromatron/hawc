@@ -154,7 +154,7 @@ class BinaryXlsxDataFormat(NamedTuple):
     filename: str
 
 
-class PandasXlsxBinaryRenderer(PandasBaseRenderer):
+class XlsxBinaryRenderer(BaseRenderer):
     """
     Renders dataframe as xlsx
     """
