@@ -10,35 +10,18 @@ class PrismaDatastore {
 
     constructor(settings, dataset) {
         this.settings = settings;
-        this.dataset = dataset; // data needed for reference counts
+        this.dataset = dataset;
         this.setup_objects();
         this.modal = new HAWCModal();
     }
 
-    set_counts() {
-        // add reference counts to lists, boxes, and cards
-        // get filter type and id from object
-        // get reference count from search id
-        // get reference count from tag id
-        // set count
-    }
-
-    set_text() {
-        // format the complete text that will go inside each object
-        // add count to the end of text if necessary
-        // TODO; add bullets for lists
-    }
-
-    setup_objects() {
-        this.set_counts();
-        this.set_text();
-    }
+    setup_objects() {}
 
     @computed get settingsHash() {
         return h.hashString(JSON.stringify(this.settings));
     }
 
-    @computed get getTransformedSettings() {
+    @computed get getDiagramSections() {
         return [
             {
                 label: "Records",
@@ -255,6 +238,49 @@ class PrismaDatastore {
                         refs: "[...]",
                     },
                 ],
+            },
+        ];
+    }
+
+    @computed get getConnections() {
+        return [
+            {
+                src: "Records",
+                dst: "TIAB",
+                styling: {
+                    "arrow-type": "11",
+                },
+            },
+            {
+                src: "TIAB.References screened",
+                dst: "TIAB.References excluded",
+            },
+            {
+                src: "TIAB.References screened",
+                dst: "FT.References excluded",
+                styling: {
+                    "arrow-force-vertical": "true",
+                },
+            },
+            {
+                src: "TIAB.References screened",
+                dst: "FT.References screened",
+                styling: {
+                    "arrow-color": "blue",
+                    "arrow-width": "6",
+                },
+            },
+            {
+                src: "FT.References screened",
+                dst: "FT - eligible.References screened",
+            },
+            {
+                src: "FT - eligible.References screened",
+                dst: "FT - eligible.References excluded",
+            },
+            {
+                src: "FT - eligible.References screened",
+                dst: "Included studies.Results",
             },
         ];
     }

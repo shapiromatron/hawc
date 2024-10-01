@@ -537,7 +537,11 @@ class PrismaPlot {
         // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8958186/figure/cl21230-fig-0003/
 
         // NOTE changed sub_block_layout to just block_layout and added as optional to section level
-        let diagramSections = this.store.getTransformedSettings;
+        let diagramSections = this.store.getDiagramSections;
+
+        // NOTE changed separator from | to .
+        // NOTE removed "type"
+        let connections = this.store.getConnections;
 
         // parse data structure
         let parent;
@@ -587,49 +591,6 @@ class PrismaPlot {
         }
 
         this.applyPostStyling();
-
-        // NOTE changed separator from | to .
-        // NOTE removed "type"
-        let connections = [
-            {
-                src: "Records",
-                dst: "TIAB",
-                styling: {
-                    "arrow-type": "11",
-                },
-            },
-            {
-                src: "TIAB.References screened",
-                dst: "TIAB.References excluded",
-            },
-            {
-                src: "TIAB.References screened",
-                dst: "FT.References excluded",
-                styling: {
-                    "arrow-force-vertical": "true",
-                },
-            },
-            {
-                src: "TIAB.References screened",
-                dst: "FT.References screened",
-                styling: {
-                    "arrow-color": "blue",
-                    "arrow-width": "6",
-                },
-            },
-            {
-                src: "FT.References screened",
-                dst: "FT - eligible.References screened",
-            },
-            {
-                src: "FT - eligible.References screened",
-                dst: "FT - eligible.References excluded",
-            },
-            {
-                src: "FT - eligible.References screened",
-                dst: "Included studies.Results",
-            },
-        ];
 
         for (let connection of connections) {
             let srcId = connection.src.replace(/ /g, "");
