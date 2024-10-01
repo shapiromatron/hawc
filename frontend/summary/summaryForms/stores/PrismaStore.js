@@ -63,7 +63,7 @@ const createSectionRow = function() {
                 bold: false,
                 font_size: 0.0,
                 padding_x: 0,
-                padding_y: 0
+                padding_y: 0,
             },
             box: "",
             tag: NULL_VALUE,
@@ -100,7 +100,7 @@ const createSectionRow = function() {
                 width: 2,
                 type: 1,
                 color: "",
-                force_vertical: false
+                force_vertical: false,
             },
             src: NULL_VALUE,
             dst: NULL_VALUE,
@@ -210,6 +210,16 @@ class PrismaStore {
         const options = this.settings[key].map(value => {
             return {id: value.key, label: value.label};
         });
+        options.unshift({id: NULL_VALUE, label: NULL_VALUE});
+        return options;
+    }
+
+    @action.bound getBoxOptions(layout_type) {
+        const options = this.settings.boxes
+            .filter(obj => obj.box_layout == layout_type)
+            .map(value => {
+                return {id: value.key, label: value.label};
+            });
         options.unshift({id: NULL_VALUE, label: NULL_VALUE});
         return options;
     }

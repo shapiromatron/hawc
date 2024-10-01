@@ -72,7 +72,7 @@ class CardsRow extends EditableRow {
         const {
             changeArraySettings,
             changeStylingSettings,
-            getLinkingOptions,
+            getBoxOptions,
             getFilterOptions,
         } = this.props.store.subclass;
         return (
@@ -207,7 +207,7 @@ class CardsRow extends EditableRow {
                                     changeArraySettings(key, index, "box", value)
                                 }
                                 multiple={false}
-                                choices={getLinkingOptions("boxes")}
+                                choices={getBoxOptions("card")}
                             />
                             <SelectInput
                                 name={`${key}-tag-${index}`}
