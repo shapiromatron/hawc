@@ -1,10 +1,6 @@
-import * as d3 from "d3";
-import _ from "lodash";
-import {action, computed, observable, toJS} from "mobx";
+import {computed, observable, toJS} from "mobx";
 import HAWCModal from "shared/utils/HAWCModal";
 import h from "shared/utils/helpers";
-
-import {NULL_VALUE} from "../../summary/constants";
 
 class PrismaDatastore {
     // Store that is connected to the Prisma plot
@@ -16,10 +12,6 @@ class PrismaDatastore {
         this.settings = settings;
         this.dataset = dataset; // data needed for reference counts
         this.setup_objects();
-    }
-
-    initialize() {
-        // further initialization for full store use
         this.modal = new HAWCModal();
     }
 
@@ -46,16 +38,6 @@ class PrismaDatastore {
         return h.hashString(JSON.stringify(this.settings));
     }
 
-    @computed get hasDataset() {
-        // return this.dataset !== null && this.dataset.length > 0;
-        return true;
-    }
-
-    @computed get withinRenderableBounds() {
-        // TODO: ensure that the prisma diagram being generated is of a reasonable size.
-        return true;
-    }
-
     @computed get getTransformedSettings() {
         return [
             {
@@ -70,7 +52,7 @@ class PrismaDatastore {
                         label: "Source 1",
                         key: "Source 1",
                         value: "",
-                        styling: { "text-color": "red", width: "200" },
+                        styling: {"text-color": "red", width: "200"},
                     },
                     {
                         label: "Source 2",
@@ -231,7 +213,7 @@ class PrismaDatastore {
                                 count: "unique_sum",
                                 value: 4,
                                 refs: "[...]",
-                                styling: { "text-color": "red" },
+                                styling: {"text-color": "red"},
                             },
                             {
                                 label: "No relevant exposure",

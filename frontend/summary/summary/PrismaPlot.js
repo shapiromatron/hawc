@@ -394,13 +394,12 @@ class PrismaPlot {
         let id = e.target.parentNode.id.replace(new RegExp("-box" + "$"), "");
         id = id.replace(new RegExp("-text" + "$"), "");
         let node = this.getGroup(id);
-        console.log(node);
+        alert(node);
     }
 
     // child node with its own styling defaults
     // also checks if card can fit on row
     createCard(parent, text, styling = {}) {
-        let cardMinHeight = 70;
         const CARD_DEFAULT = {
             width: "100",
             "spacing-horizontal": "20",
@@ -454,7 +453,7 @@ class PrismaPlot {
 
                 let txtEle = this.addTextToNode(currentNode, subblockId, subblockText, blockStyle);
                 txtEle.onclick = e => {
-                    console.log(blocks[i]);
+                    alert(blocks[i]);
                 };
             }
         } else {
@@ -539,7 +538,6 @@ class PrismaPlot {
 
         // NOTE changed sub_block_layout to just block_layout and added as optional to section level
         let diagramSections = this.store.getTransformedSettings;
-
 
         // parse data structure
         let parent;

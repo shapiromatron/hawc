@@ -5,8 +5,6 @@ import Prisma from "summary/summary/Prisma";
 
 import $ from "$";
 
-import {MissingData, RefreshRequired} from "./common";
-
 @inject("store")
 @observer
 class PreviewPanel extends Component {
@@ -22,21 +20,12 @@ class PreviewPanel extends Component {
     }
 
     render() {
-        const {hasDataset, dataRefreshRequired, settingsHash} = this.props.store.base;
-        let content;
-        if (!hasDataset) {
-            // content = <MissingData />;
-            content = <div id={settingsHash}>{settingsHash}</div>;
-        } else if (dataRefreshRequired) {
-            content = <RefreshRequired />;
-        } else {
-            content = <div id={settingsHash}>{settingsHash}</div>;
-        }
+        const {settingsHash} = this.props.store.base;
         return (
             <div>
                 <legend>Preview</legend>
                 <p className="form-text text-muted">Preview the settings for this visualization.</p>
-                {content}
+                <div id={settingsHash}></div>
             </div>
         );
     }

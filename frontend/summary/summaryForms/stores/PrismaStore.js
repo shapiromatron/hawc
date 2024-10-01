@@ -88,11 +88,11 @@ const createSectionRow = function() {
         {id: 5, label: 5},
         {id: 10, label: 10},
         {id: 11, label: 11},
-        {id: 13, label: 13}
+        {id: 13, label: 13},
     ],
     BOX_LAYOUTS = [
         {id: "card", label: "Card"},
-        {id: "list", label: "List"}
+        {id: "list", label: "List"},
     ];
 
 class PrismaStore {
