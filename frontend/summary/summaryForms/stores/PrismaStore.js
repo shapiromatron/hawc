@@ -99,7 +99,7 @@ const createSectionRow = function() {
             styling: {
                 width: 2,
                 type: 1,
-                color: "",
+                color: "#000000",
                 force_vertical: false,
             },
             src: NULL_VALUE,
@@ -107,13 +107,13 @@ const createSectionRow = function() {
         };
     },
     ARROW_TYPES = [
-        {id: 1, label: "1"},
-        {id: 2, label: "2"},
-        {id: 3, label: "3"},
-        {id: 5, label: "5"},
-        {id: 10, label: "10"},
-        {id: 11, label: "11"},
-        {id: 13, label: "13"},
+        {id: 1, label: "Type 1"},
+        {id: 2, label: "Type 2"},
+        {id: 3, label: "Type 3"},
+        {id: 5, label: "Type 5"},
+        {id: 10, label: "Type 10"},
+        {id: 11, label: "Type 11"},
+        {id: 13, label: "Type 13"},
     ],
     BOX_LAYOUTS = [
         {id: "card", label: "Card"},

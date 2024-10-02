@@ -8,6 +8,11 @@ import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 
 class PrismaPlot {
+    // Examples
+    // https://hero.epa.gov/hero/index.cfm/litflow/viewProject/project_id/2489
+    // https://hawcproject.org/summary/visual/assessment/405/eFigure-1-Reference-Flow-Diagram/
+    // https://www.bmj.com/content/372/bmj.n71
+    // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8958186/figure/cl21230-fig-0003/
     constructor(store, options) {
         this.modal = new HAWCModal();
         this.store = store;
@@ -27,8 +32,8 @@ class PrismaPlot {
         this.updateNodeTextAttributes(node, {display: "inline"});
     }
 
-    // should only be vertical adjustments
     resizeNodes(node) {
+        // should only be vertical adjustments
         node = this.getGroup(node.id);
         this.makeGroupTextVisible(node);
         let nodeSpacing = parseFloat(node.styling["spacing-vertical"]);
@@ -105,13 +110,13 @@ class PrismaPlot {
         if (!group) {
             return undefined;
         }
-        let rect = document.getElementById(id + "-box");
-        let text = $(document.getElementById(group.id)).children("text");
-        let parent = group.parentElement.closest(".node");
-        let previous = document.getElementById(group.getAttribute("previous"));
-        let children = $(document.getElementById(group.id)).children(".node");
-        let styling = JSON.parse(group.getAttribute("data-styling"));
-        let isVertical = group.getAttribute("is-vertical");
+        let rect = document.getElementById(id + "-box"),
+            text = $(document.getElementById(group.id)).children("text"),
+            parent = group.parentElement.closest(".node"),
+            previous = document.getElementById(group.getAttribute("previous")),
+            children = $(document.getElementById(group.id)).children(".node"),
+            styling = JSON.parse(group.getAttribute("data-styling")),
+            isVertical = group.getAttribute("is-vertical");
         return {
             id,
             group,
@@ -125,8 +130,8 @@ class PrismaPlot {
         };
     }
 
-    // update attributes to all text elements within a node
     updateNodeTextAttributes(node, attr = {}) {
+        // update attributes to all text elements within a node
         node = this.getGroup(node.id);
         for (let text of node.text) {
             for (const [key, value] of Object.entries(attr)) {
@@ -135,8 +140,8 @@ class PrismaPlot {
         }
     }
 
-    // return a group with rect and text child elements
     createRectangleWithText(id = "", text = "", x = 0, y = 0, styling = {}) {
+        // return a group with rect and text child elements
         for (const [key, value] of Object.entries(this.STYLE_DEFAULT)) {
             if (!styling[key]) styling[key] = value;
         }
@@ -225,15 +230,16 @@ class PrismaPlot {
         return node;
     }
 
-    // https://github.com/HarryStevens/d3-arrow
-    // https://observablehq.com/d/7759e56ba89ced03
-    drawConnection(id1, id2, styling = {}) {
-        let id = id1 + id2;
-        let node1BBox = this.getGroup(id1).rect.getBBox();
-        let node2BBox = this.getGroup(id2).rect.getBBox();
+    drawConnection(connection) {
+        // https://github.com/HarryStevens/d3-arrow
+        // https://observablehq.com/d/7759e56ba89ced03
+        const id = connection.key,
+            styling = connection.styling,
+            node1BBox = this.getGroup(connection.src).rect.getBBox(),
+            node2BBox = this.getGroup(connection.dst).rect.getBBox();
 
         // same x = vertical
-        if (node1BBox.x == node2BBox.x || styling["arrow-force-vertical"] == "true") {
+        if (node1BBox.x == node2BBox.x || styling["arrow-force-vertical"] == true) {
             let yMidpoint = (node2BBox.y - (node1BBox.y + node1BBox.height)) / 2;
             yMidpoint = node1BBox.y + node1BBox.height + yMidpoint;
 
@@ -314,8 +320,8 @@ class PrismaPlot {
         return this.addNodeToHTML(verticalNode);
     }
 
-    // group nodes if prevNode has a parent
     createNewHorizontalNode(prevNode, id, text, group = false, styling = {}) {
+        // group nodes if prevNode has a parent
         prevNode = this.getGroup(prevNode.id);
         let prevBBox = prevNode.rect.getBBox();
         let x;
@@ -372,9 +378,8 @@ class PrismaPlot {
         alert(node);
     }
 
-    // child node with its own styling defaults
-    // also checks if card can fit on row
     createCard(parent, text, styling = {}) {
+        // child node with its own styling defaults; also checks if card can fit on row
         const CARD_DEFAULT = {
             width: "100",
             "spacing-horizontal": "20",
@@ -412,9 +417,9 @@ class PrismaPlot {
         return this.createChildNode(parent, id, text, styling);
     }
 
-    // helper function for parsing the data structure
-    // handles list/card layouts at the section and block level
     listCardLayout(id, col) {
+        // helper function for parsing the data structure
+        // handles list/card layouts at the section and block level
         let blocks = col.blocks || col.sub_blocks;
         let currentNode = this.getGroup(id);
 
@@ -506,23 +511,12 @@ class PrismaPlot {
             .attr("id", "svgworkspace")
             .node();
         this.cardrowlength = -1;
-        // Examples
-        // Hero litflow diagram: https://hero.epa.gov/hero/index.cfm/litflow/viewProject/project_id/2489
-        // https://hawcproject.org/summary/visual/assessment/405/eFigure-1-Reference-Flow-Diagram/
-        // figure one: https://www.bmj.com/content/372/bmj.n71
-        // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8958186/figure/cl21230-fig-0003/
 
-        // NOTE changed sub_block_layout to just block_layout and added as optional to section level
-        let diagramSections = this.store.getDiagramSections();
-
-        // NOTE changed separator from | to .
-        // NOTE removed "type"
-        let connections = this.store.getConnections();
+        const diagramSections = this.store.getDiagramSections(),
+            connections = this.store.getConnections();
 
         // parse data structure
-        let parent;
-        let child;
-        let sibling;
+        let parent, child, sibling;
         for (let row of diagramSections) {
             let blockId = row.key;
             let blockBoxInfo = row.label;
@@ -598,11 +592,9 @@ class PrismaPlot {
     }
 
     setConnections(connections) {
-        for (let connection of connections) {
-            let srcId = connection.src.replace(/ /g, "");
-            let dstId = connection.dst.replace(/ /g, "");
-            this.drawConnection(srcId, dstId, connection.styling);
-        }
+        connections.forEach(connection => {
+            this.drawConnection(connection);
+        });
     }
 
     setOverallDimensions(sections) {

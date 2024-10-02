@@ -32,7 +32,7 @@ class PrismaDatastore {
     }
 
     getConnections() {
-        return [];
+        return this.settings.arrows;
     }
 }
 

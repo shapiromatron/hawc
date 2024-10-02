@@ -103,7 +103,12 @@ class ArrowsRow extends EditableRow {
                                 value={row.styling.width}
                                 label="Width"
                                 onChange={e =>
-                                    changeStylingSettings(key, index, "width", e.target.value)
+                                    changeStylingSettings(
+                                        key,
+                                        index,
+                                        "width",
+                                        parseInt(e.target.value)
+                                    )
                                 }
                             />
                             <SelectInput
@@ -111,7 +116,7 @@ class ArrowsRow extends EditableRow {
                                 value={row.styling.type}
                                 label="Type"
                                 handleSelect={value =>
-                                    changeStylingSettings(key, index, "type", value)
+                                    changeStylingSettings(key, index, "type", parseInt(value))
                                 }
                                 choices={getArrowTypes()}
                             />
