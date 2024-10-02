@@ -6,6 +6,7 @@ class PrismaDatastore {
         this.settings = settings;
         this.dataset = dataset;
         this.createMaps();
+        this.updateTagMap();
         this.sections = this.getDiagramSections();
         this.setRefs();
         this.settingsHash = h.hashString(JSON.stringify(this.settings));
@@ -64,6 +65,27 @@ class PrismaDatastore {
                 ),
             new Map()
         );
+    }
+
+    updateTagMap() {
+        let index = 0,
+            recursivelyUpdate = () => {
+                let tag = this.dataset.tags[index++],
+                    nextTag = this.dataset.tags[index];
+                while (nextTag && nextTag.depth == tag.depth + 1) {
+                    recursivelyUpdate();
+                    this.maps.tagMap.set(
+                        tag.id,
+                        (this.maps.tagMap.get(tag.id) || new Set()).union(
+                            this.maps.tagMap.get(nextTag.id) || new Set()
+                        )
+                    );
+                    nextTag = this.dataset.tags[index];
+                }
+            };
+        while (index < this.dataset.tags.length) {
+            recursivelyUpdate();
+        }
     }
 
     tag_lookup(tag) {

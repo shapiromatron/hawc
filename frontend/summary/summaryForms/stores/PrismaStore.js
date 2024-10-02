@@ -8,45 +8,15 @@ const createSectionRow = function() {
         return {
             key: h.randomString(),
             label: "",
-            styling: {
-                width: 0,
-                height: 0,
-                border_width: 3,
-                rx: 20,
-                ry: 20,
-                bg_color: "#ffffff",
-                border_color: "#000000",
-                font_color: "#000000",
-                bold: false,
-                font_size: 0.0,
-                padding_x: 0,
-                padding_y: 0,
-                x: 0,
-                y: 0,
-            },
+            styling: null,
         };
     },
     createBoxRow = function() {
         return {
             key: h.randomString(),
             label: "",
-            styling: {
-                width: 0,
-                height: 0,
-                border_width: 3,
-                rx: 20,
-                ry: 20,
-                bg_color: "#ffffff",
-                border_color: "#000000",
-                font_color: "#000000",
-                bold: false,
-                font_size: 0.0,
-                padding_x: 0,
-                padding_y: 0,
-                x: 0,
-                y: 0,
-            },
-            section: "",
+            styling: null,
+            section: NULL_VALUE,
             box_layout: "card",
             count_strategy: "unique_sum",
             count_strategy_block_type: "include",
@@ -65,17 +35,8 @@ const createSectionRow = function() {
         return {
             key: h.randomString(),
             label: "",
-            styling: {
-                width: 0,
-                height: 0,
-                bg_color: "#ffffff",
-                font_color: "#000000",
-                bold: false,
-                font_size: 0.0,
-                padding_x: 0,
-                padding_y: 0,
-            },
-            box: "",
+            styling: null,
+            box: NULL_VALUE,
             tag: NULL_VALUE,
         };
     },
@@ -83,35 +44,15 @@ const createSectionRow = function() {
         return {
             key: h.randomString(),
             label: "",
-            styling: {
-                width: 0,
-                height: 0,
-                border_width: 3,
-                rx: 20,
-                ry: 20,
-                bg_color: "#ffffff",
-                border_color: "#000000",
-                font_color: "#000000",
-                bold: false,
-                font_size: 0.0,
-                padding_x: 0,
-                padding_y: 0,
-                x: 0,
-                y: 0,
-            },
-            box: "",
+            styling: null,
+            box: NULL_VALUE,
             tag: NULL_VALUE,
         };
     },
     createArrowRow = function() {
         return {
             key: h.randomString(),
-            styling: {
-                width: 2,
-                type: 1,
-                color: "#000000",
-                force_vertical: false,
-            },
+            styling: null,
             src: NULL_VALUE,
             dst: NULL_VALUE,
         };
@@ -129,14 +70,11 @@ const createSectionRow = function() {
         {id: "card", label: "Card"},
         {id: "list", label: "List"},
     ],
-    COUNT_STRATEGIES = [
-        {id: "unique_sum", label: "Unique"},
-    ],
+    COUNT_STRATEGIES = [{id: "unique_sum", label: "Unique"}],
     COUNT_STRATEGY_BLOCK_TYPES = [
         {id: "include", label: "Include"},
         {id: "exclude", label: "Exclude"},
     ];
-
 
 class PrismaStore {
     constructor(rootStore, data) {
@@ -157,15 +95,31 @@ class PrismaStore {
                 stroke_radius: 5,
                 stroke_width: 2,
                 stroke_color: "#000000",
+                width: 0,
+                height: 0,
+                border_width: 3,
+                bg_color: "#ffffff",
+                font_color: "#000000",
+                font_size: 0.0,
+                padding_x: 0,
+                padding_y: 0,
+                x: 0,
+                y: 0,
+            },
+            arrow_styles: {
+                arrow_type: 1,
+                stroke_width: 2,
+                stroke_color: "#000000",
+                force_vertical: false,
             },
         };
     }
 
-    getCountStrategies(){
+    getCountStrategies() {
         return COUNT_STRATEGIES;
     }
 
-    getCountStrategyBlockTypes(){
+    getCountStrategyBlockTypes() {
         return COUNT_STRATEGY_BLOCK_TYPES;
     }
 
@@ -182,7 +136,7 @@ class PrismaStore {
     }
 
     @action.bound changeStylingSettings(arrayKey, index, key, value) {
-        this.settings[arrayKey][index]["styling"][key] = value;
+        this.settings[arrayKey][index].styling[key] = value;
     }
 
     @action.bound deleteArrayElement(key, index) {
@@ -201,6 +155,10 @@ class PrismaStore {
 
     @action.bound createNewBoxItem(boxIndex) {
         this.settings.boxes[boxIndex].items.push(createNewBoxItem());
+    }
+
+    @action.bound getBoxLayouts() {
+        return BOX_LAYOUTS;
     }
 
     @action.bound createNewBulletedList() {
@@ -239,10 +197,6 @@ class PrismaStore {
         return ARROW_TYPES;
     }
 
-    @action.bound getBoxLayouts() {
-        return BOX_LAYOUTS;
-    }
-
     @action.bound getLinkingOptions(key) {
         const options = this.settings[key].map(value => {
             return {id: value.key, label: value.label};
@@ -251,14 +205,20 @@ class PrismaStore {
         return options;
     }
 
-    @action.bound getBoxOptions(layout_type) {
-        const options = this.settings.boxes
-            .filter(obj => obj.box_layout == layout_type)
-            .map(value => {
-                return {id: value.key, label: value.label};
-            });
-        options.unshift({id: NULL_VALUE, label: NULL_VALUE});
-        return options;
+    @action.bound toggleStyling(arrayKey, index, checked) {
+        if (checked) {
+            // if checked, add defaults to the styling dict for this object
+            this.settings[arrayKey][index].styling = _.cloneDeep(this.settings.styles);
+        } else {
+            this.settings[arrayKey][index].styling = null;
+        }
+    }
+
+    @action.bound toggleArrowStyling(index, checked) {
+        if (checked) {
+            // if checked, add defaults to the styling dict for this object
+            this.settings.arrows[index].styling = this.settings.arrow_styles;
+        } else this.settings.arrows[index].styling = null;
     }
 
     @computed get sectionMapping() {
