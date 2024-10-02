@@ -16,13 +16,13 @@ class GlobalSettings extends Component {
                     label="Stroke Rounding"
                     name="styles.stroke_radius"
                     value={styles.stroke_radius}
-                    onChange={e => changeSettings(e.target.name, e.target.value)}
+                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
                 />
                 <IntegerInput
                     label="Stroke Width"
                     name="styles.stroke_width"
                     value={styles.stroke_width}
-                    onChange={e => changeSettings(e.target.name, e.target.value)}
+                    onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
                 />
                 <TextInput
                     label="Stroke Color"
