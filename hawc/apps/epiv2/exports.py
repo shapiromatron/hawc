@@ -2,6 +2,7 @@ import pandas as pd
 from django.db.models import CharField, F, Func, QuerySet, Value
 
 from ...tools.excel import get_writer, write_worksheet
+from ..assessment.exports import CommunicationsExport
 from ..common.exports import Exporter, ModelExport
 from ..common.helper import FlatFileExporter
 from ..common.models import sql_display, sql_format, str_m2m, to_display_array
@@ -303,6 +304,20 @@ def tabular_export(assessment_id: int, published_only: bool):
         def build_modules(self) -> list[ModelExport]:
             return [StudyExport("study", "study"), DesignExport("design", "")]
 
+    class DesignCommunicationsExporter(Exporter):
+        def build_modules(self) -> list[ModelExport]:
+            return [
+                StudyExport("study", "study"),
+                CommunicationsExport(
+                    "study-internal_communications",
+                    "study__communications",
+                    [
+                        "message",
+                    ],
+                ),
+                DesignExport("design", ""),
+            ]
+
     class ExposureExporter(Exporter):
         def build_modules(self) -> list[ModelExport]:
             return [ExposureExport("exposure", "")]
@@ -328,7 +343,8 @@ def tabular_export(assessment_id: int, published_only: bool):
             return [DataExtractionExport("data_extraction", "")]
 
     suffix, value = ("__published", True) if published_only else ("_id__gte", 0)
-    df1 = DesignExporter.flat_export(
+    design_exporter = DesignExporter if published_only else DesignCommunicationsExporter
+    df1 = design_exporter.flat_export(
         models.Design.objects.filter(
             study__assessment_id=assessment_id, **{f"study{suffix}": value}
         ),
