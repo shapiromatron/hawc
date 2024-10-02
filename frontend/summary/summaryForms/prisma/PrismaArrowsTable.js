@@ -2,7 +2,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
-import {ActionsTh, EditableRow, MoveRowTd} from "shared/components/EditableRowData";
+import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
@@ -54,7 +54,7 @@ class PrismaArrowsTable extends Component {
 
 @inject("store")
 @observer
-class ArrowsRow extends EditableRow {
+class ArrowsRow extends PrismaEditableRow {
     renderViewRow(row, index) {
         const {deleteArrayElement, arrowMapping} = this.props.store.subclass;
         return (
