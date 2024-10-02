@@ -5,6 +5,7 @@ import CheckboxInput from "shared/components/CheckboxInput";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
+import { PrismaEditableRow } from "./PrismaEditableRow";
 
 const key = "bulleted_lists";
 

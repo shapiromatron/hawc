@@ -7,6 +7,7 @@ import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 import {NULL_VALUE} from "summary/summary/constants";
+import { PrismaEditableRow } from "./PrismaEditableRow";
 
 const key = "arrows";
 
