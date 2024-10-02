@@ -116,7 +116,6 @@ class ArrowsRow extends EditableRow {
                                 handleSelect={value =>
                                     changeStylingSettings(key, index, "type", value)
                                 }
-                                multiple={true}
                                 choices={getArrowTypes()}
                             />
                             <TextInput

@@ -232,7 +232,7 @@ class BoxesRow extends EditableRow {
                                 handleSelect={(value, label) => {
                                     changeArraySettings(key, index, "tag", value);
                                 }}
-                                multiple={false}
+                                multiple={true}
                                 choices={getFilterOptions()}
                             />
                             <SelectInput
