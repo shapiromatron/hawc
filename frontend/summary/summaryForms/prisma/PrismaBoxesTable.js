@@ -70,12 +70,16 @@ class BoxesRow extends EditableRow {
     }
     renderEditRow(row, index) {
         const {
-            changeArraySettings,
-            changeStylingSettings,
-            getLinkingOptions,
-            getFilterOptions,
-            getBoxLayouts,
-        } = this.props.store.subclass;
+                changeArraySettings,
+                changeStylingSettings,
+                getLinkingOptions,
+                getFilterOptions,
+                getBoxLayouts,
+                getCountStrategies,
+                getCountStrategyBlockTypes,
+            } = this.props.store.subclass,
+            isCard = row.box_layout === "card",
+            isList = row.box_layout === "list";
         return (
             <tr>
                 <td colSpan="100%">
@@ -225,18 +229,8 @@ class BoxesRow extends EditableRow {
                                 choices={getLinkingOptions("sections")}
                             />
                             <SelectInput
-                                name={`${key}-tag-${index}`}
-                                value={row.tag}
-                                label="Add references related to this tag, search, or import"
-                                handleSelect={(value, label) => {
-                                    changeArraySettings(key, index, "tag", value);
-                                }}
-                                multiple={true}
-                                choices={getFilterOptions()}
-                            />
-                            <SelectInput
                                 name={`${key}-layout-${index}`}
-                                value={row.tag}
+                                value={row.box_layout}
                                 label="Layout type for this box"
                                 handleSelect={value =>
                                     changeArraySettings(key, index, "box_layout", value)
@@ -244,7 +238,42 @@ class BoxesRow extends EditableRow {
                                 multiple={false}
                                 choices={getBoxLayouts()}
                             />
+                            <SelectInput
+                                name={`${key}-layout-${index}-count_strategy`}
+                                value={row.count_strategy}
+                                label="Reference count strategy"
+                                handleSelect={value =>
+                                    changeArraySettings(key, index, "count_strategy", value)
+                                }
+                                multiple={false}
+                                choices={getCountStrategies()}
+                            />
+                            <SelectInput
+                                name={`${key}-layout-${index}-count_strategy_block_type`}
+                                value={row.count_strategy_block_type}
+                                label="Reference count strategy block type"
+                                handleSelect={value =>
+                                    changeArraySettings(key, index, "count_strategy_block_type", value)
+                                }
+                                multiple={false}
+                                choices={getCountStrategyBlockTypes()}
+                            />
+                            {isCard ? (
+                                <div>
+                                    <SelectInput
+                                        name={`${key}-tag-${index}`}
+                                        value={row.tag}
+                                        label="Add references related to this tag, search, or import"
+                                        handleSelect={(value, label) => {
+                                            changeArraySettings(key, index, "tag", value);
+                                        }}
+                                        multiple={true}
+                                        choices={getFilterOptions()}
+                                    />
+                                </div>
+                            ) : null}
                         </div>
+                        {isList ? <ListTable row={row} index={index} /> : null}
                         <div className="form-row justify-content-center">
                             <button
                                 className="btn btn-primary mx-2 py-2"
@@ -262,6 +291,87 @@ class BoxesRow extends EditableRow {
 }
 PrismaBoxesTable.propTypes = {
     store: PropTypes.object,
+};
+
+@inject("store")
+@observer
+class ListTable extends Component {
+    render() {
+        const {row, index, store} = this.props,
+            {
+                createNewBoxItem,
+                changeSettings,
+                getFilterOptions,
+                deleteArrayElement,
+            } = store.subclass,
+            items = row.items,
+            tagOptions = getFilterOptions();
+
+        return (
+            <div className="form-row">
+                <h4>Bulleted List</h4>
+                <table className="table table-sm table-striped">
+                    <colgroup>
+                        <col width="45%" />
+                        <col width="45%" />
+                        <col width="10%" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Label</th>
+                            <th>Selectors</th>
+                            <ActionsTh onClickNew={() => createNewBoxItem(index)} />
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {items.map((item_row, item_index) => {
+                            return (
+                                <tr key={item_index}>
+                                    <td>
+                                        <TextInput
+                                            name={`box-${index}-list-${item_index}-label`}
+                                            value={item_row.label}
+                                            label=""
+                                            onChange={e =>
+                                                changeSettings(
+                                                    `boxes[${index}].items[${item_index}].label`,
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+                                    </td>
+                                    <td>
+                                        <SelectInput
+                                            name={`box-${index}-list-${item_index}-tags`}
+                                            value={item_row.tags}
+                                            handleSelect={(values, labels) => {
+                                                changeSettings(
+                                                    `boxes[${index}].items[${item_index}].tags`,
+                                                    values
+                                                );
+                                            }}
+                                            multiple={true}
+                                            choices={tagOptions}
+                                        />
+                                    </td>
+                                    <MoveRowTd
+                                        onDelete={() =>
+                                            deleteArrayElement(`boxes[${index}].items`, item_index)
+                                        }
+                                    />
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
+        );
+    }
+}
+ListTable.propTypes = {
+    store: PropTypes.object,
+    index: PropTypes.number,
+    row: PropTypes.object,
 };
 
 export default PrismaBoxesTable;

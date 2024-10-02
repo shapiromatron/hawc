@@ -48,7 +48,17 @@ const createSectionRow = function() {
             },
             section: "",
             box_layout: "card",
-            tag: NULL_VALUE,
+            count_strategy: "unique_sum",
+            count_strategy_block_type: "include",
+            tag: NULL_VALUE, // todo - rename to tags
+            items: [],
+        };
+    },
+    createNewBoxItem = function() {
+        return {
+            key: h.randomString(),
+            label: "",
+            tags: [],
         };
     },
     createBulletedListRow = function() {
@@ -118,7 +128,15 @@ const createSectionRow = function() {
     BOX_LAYOUTS = [
         {id: "card", label: "Card"},
         {id: "list", label: "List"},
+    ],
+    COUNT_STRATEGIES = [
+        {id: "unique_sum", label: "Unique"},
+    ],
+    COUNT_STRATEGY_BLOCK_TYPES = [
+        {id: "include", label: "Include"},
+        {id: "exclude", label: "Exclude"},
     ];
+
 
 class PrismaStore {
     constructor(rootStore, data) {
@@ -143,6 +161,14 @@ class PrismaStore {
         };
     }
 
+    getCountStrategies(){
+        return COUNT_STRATEGIES;
+    }
+
+    getCountStrategyBlockTypes(){
+        return COUNT_STRATEGY_BLOCK_TYPES;
+    }
+
     @action.bound changeSettings(path, value) {
         _.set(this.settings, path, value);
     }
@@ -160,9 +186,9 @@ class PrismaStore {
     }
 
     @action.bound deleteArrayElement(key, index) {
-        const arr = this.settings[key];
+        const arr = _.get(this.settings, key);
         deleteArrayElement(arr, index);
-        this.settings[key] = arr;
+        _.set(this.settings, key, arr);
     }
 
     @action.bound createNewSection() {
@@ -171,6 +197,10 @@ class PrismaStore {
 
     @action.bound createNewBox() {
         this.settings.boxes.push(createBoxRow());
+    }
+
+    @action.bound createNewBoxItem(boxIndex) {
+        this.settings.boxes[boxIndex].items.push(createNewBoxItem());
     }
 
     @action.bound createNewBulletedList() {
