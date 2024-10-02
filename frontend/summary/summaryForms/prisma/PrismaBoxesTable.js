@@ -234,16 +234,6 @@ class BoxesRow extends EditableRow {
                                 multiple={true}
                                 choices={getFilterOptions()}
                             />
-                            <SelectInput
-                                name={`${key}-layout-${index}`}
-                                value={row.tag}
-                                label="Layout type for this box"
-                                handleSelect={value =>
-                                    changeArraySettings(key, index, "box_layout", value)
-                                }
-                                multiple={false}
-                                choices={getBoxLayouts()}
-                            />
                         </div>
                         <div className="form-row justify-content-center">
                             <button
