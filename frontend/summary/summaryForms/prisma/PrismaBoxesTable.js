@@ -60,7 +60,7 @@ class BoxesRow extends EditableRow {
         return (
             <tr>
                 <td>{row.label}</td>
-                <td>{row.section_display}</td>
+                <td>ADD</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
                     onEdit={() => this.setState({edit: true})}
@@ -220,7 +220,6 @@ class BoxesRow extends EditableRow {
                                 label="Section"
                                 handleSelect={(value, label) => {
                                     changeArraySettings(key, index, "section", value);
-                                    changeArraySettings(key, index, "section_display", label);
                                 }}
                                 multiple={false}
                                 choices={getLinkingOptions("sections")}
