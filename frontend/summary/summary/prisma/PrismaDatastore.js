@@ -10,17 +10,25 @@ class PrismaDatastore {
     }
 
     getDiagramSections() {
-        const sections = this.settings.sections
+        const {sections, boxes} = this.settings;
+        return sections
             .filter(section => section.label.length > 0)
             .map(section => {
                 return {
                     label: section.label,
                     key: section.key,
                     block_layout: "card",
-                    blocks: [],
+                    blocks: boxes
+                        .filter(b => b.section === section.key)
+                        .map(b => {
+                            return {
+                                label: b.label,
+                                key: b.key,
+                                value: 123,
+                            };
+                        }),
                 };
             });
-        return sections;
     }
 
     getConnections() {
