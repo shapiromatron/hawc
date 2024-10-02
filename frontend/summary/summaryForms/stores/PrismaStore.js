@@ -91,6 +91,7 @@ class PrismaStore {
                 arrow_type: 1,
                 stroke_width: 2,
                 stroke_color: "#000000",
+                force_vertical: false,
             },
         };
     }

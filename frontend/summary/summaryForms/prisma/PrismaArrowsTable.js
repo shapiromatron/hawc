@@ -105,7 +105,7 @@ class ArrowsRow extends PrismaEditableRow {
                                 checked={row.styling != null}
                                 label="Override default formatting"
                                 onChange={e => {
-                                    toggleArrowStyling(key, index, e.target.checked);
+                                    toggleArrowStyling(index, e.target.checked);
                                     this.setState({edit_styles: e.target.checked});
                                 }}
                             />
@@ -132,26 +132,26 @@ class ArrowsRow extends PrismaEditableRow {
             <div className="form-row">
                 <IntegerInput
                     name={`${key}-width-${index}`}
-                    value={row.styling.width}
+                    value={row.styling.stroke_width}
                     label="Width"
                     onChange={e =>
-                        changeStylingSettings(key, index, "width", parseInt(e.target.value))
+                        changeStylingSettings(key, index, "stroke_width", parseInt(e.target.value))
                     }
                 />
                 <SelectInput
                     name={`${key}-type-${index}`}
-                    value={row.styling.type}
+                    value={row.styling.arrow_type}
                     label="Type"
                     handleSelect={value =>
-                        changeStylingSettings(key, index, "type", parseInt(value))
+                        changeStylingSettings(key, index, "arrow_type", parseInt(value))
                     }
                     choices={getArrowTypes()}
                 />
                 <TextInput
                     name={`${key}-color-${index}`}
-                    value={row.styling.color}
+                    value={row.styling.stroke_color}
                     label="Color"
-                    onChange={e => changeStylingSettings(key, index, "color", e.target.value)}
+                    onChange={e => changeStylingSettings(key, index, "stroke_color", e.target.value)}
                     type="color"
                 />
                 <CheckboxInput
