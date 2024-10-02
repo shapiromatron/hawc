@@ -23,4 +23,4 @@ def test_tabular_export():
     wb = load_workbook(f)
     assert len(wb.sheetnames) == 7
     assert wb["design"].max_row == 3
-    assert wb["design"].max_column == 41
+    assert wb["design"].max_column == 42
