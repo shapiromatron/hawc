@@ -512,7 +512,7 @@ class PrismaPlot {
             .node();
         this.cardrowlength = -1;
 
-        const diagramSections = this.store.getDiagramSections(),
+        const diagramSections = this.store.sections,
             connections = this.store.getConnections();
 
         // parse data structure
