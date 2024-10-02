@@ -161,24 +161,10 @@ class PrismaStore {
         return ARROW_TYPES;
     }
 
-    @action.bound getBoxLayouts() {
-        return BOX_LAYOUTS;
-    }
-
     @action.bound getLinkingOptions(key) {
         const options = this.settings[key].map(value => {
             return {id: value.key, label: value.label};
         });
-        options.unshift({id: NULL_VALUE, label: NULL_VALUE});
-        return options;
-    }
-
-    @action.bound getBoxOptions(layout_type) {
-        const options = this.settings.boxes
-            .filter(obj => obj.box_layout == layout_type)
-            .map(value => {
-                return {id: value.key, label: value.label};
-            });
         options.unshift({id: NULL_VALUE, label: NULL_VALUE});
         return options;
     }

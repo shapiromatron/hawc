@@ -76,7 +76,7 @@ class BulletedListsRow extends EditableRow {
         const {
             changeArraySettings,
             toggleStyling,
-            getBoxOptions,
+            getLinkingOptions,
             getFilterOptions,
         } = this.props.store.subclass;
         return (
@@ -101,7 +101,7 @@ class BulletedListsRow extends EditableRow {
                                     changeArraySettings(key, index, "box_display", label);
                                 }}
                                 multiple={false}
-                                choices={getBoxOptions("list")}
+                                choices={getLinkingOptions("boxes")}
                             />
                             <SelectInput
                                 name={`${key}-tag-${index}`}

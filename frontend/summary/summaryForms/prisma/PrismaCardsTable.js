@@ -78,7 +78,7 @@ class CardsRow extends PrismaEditableRow {
         const {
             changeArraySettings,
             toggleStyling,
-            getBoxOptions,
+            getLinkingOptions,
             getFilterOptions,
         } = this.props.store.subclass;
         return (
@@ -103,7 +103,7 @@ class CardsRow extends PrismaEditableRow {
                                     changeArraySettings(key, index, "box_display", label);
                                 }}
                                 multiple={false}
-                                choices={getBoxOptions("card")}
+                                choices={getLinkingOptions("boxes")}
                             />
                             <SelectInput
                                 name={`${key}-tag-${index}`}
