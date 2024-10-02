@@ -56,8 +56,8 @@ class PrismaPlot {
         for (let i = 0; i < node.text.length; i++) {
             HAWCUtils.wrapText(node.text[i], width);
             for (let j = i + 1; j < node.text.length; j++) {
-                let previousTextY =
-                    node.text[j - 1].getBBox().y + node.text[j - 1].getBBox().height;
+                let bb = node.text[j - 1].getBBox(),
+                    previousTextY = bb.y + bb.height;
                 node.text[j].setAttribute("y", previousTextY + this.TEXT_OFFSET_Y);
             }
         }
@@ -66,8 +66,8 @@ class PrismaPlot {
         for (let child of node.children) {
             child = this.getGroup(child.id);
             if (child.isVertical) {
-                let prevChildBBox = child.previous.group.getBBox();
-                let prevChildNodeSpacing = parseFloat(child.previous.styling["spacing-vertical"]);
+                let prevChildBBox = child.previous.group.getBBox(),
+                    prevChildNodeSpacing = parseFloat(child.previous.styling["spacing-vertical"]);
 
                 child.rect.setAttribute(
                     "y",
