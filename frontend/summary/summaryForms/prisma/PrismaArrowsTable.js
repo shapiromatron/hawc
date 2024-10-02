@@ -41,6 +41,7 @@ class PrismaArrowsTable extends Component {
                                     index={index}
                                     key={index}
                                     initiallyEditable={row.src == NULL_VALUE}
+                                    editStyles={row.styling != null}
                                 />
                             );
                         })}
@@ -70,9 +71,8 @@ class ArrowsRow extends EditableRow {
     renderEditRow(row, index) {
         const {
             changeArraySettings,
-            changeStylingSettings,
+            toggleArrowStyling,
             getArrowOptions,
-            getArrowTypes,
         } = this.props.store.subclass;
         return (
             <tr>
@@ -99,50 +99,16 @@ class ArrowsRow extends EditableRow {
                                 multiple={false}
                                 choices={getArrowOptions()}
                             />
-                            <IntegerInput
-                                name={`${key}-width-${index}`}
-                                value={row.styling.width}
-                                label="Width"
-                                onChange={e =>
-                                    changeStylingSettings(
-                                        key,
-                                        index,
-                                        "width",
-                                        parseInt(e.target.value)
-                                    )
-                                }
-                            />
-                            <SelectInput
-                                name={`${key}-type-${index}`}
-                                value={row.styling.type}
-                                label="Type"
-                                handleSelect={value =>
-                                    changeStylingSettings(key, index, "type", parseInt(value))
-                                }
-                                choices={getArrowTypes()}
-                            />
-                            <TextInput
-                                name={`${key}-color-${index}`}
-                                value={row.styling.color}
-                                label="Color"
-                                onChange={e =>
-                                    changeStylingSettings(key, index, "color", e.target.value)
-                                }
-                                type="color"
-                            />
                             <CheckboxInput
-                                name={`${key}-force-vertical-${index}`}
-                                checked={row.styling.force_vertical}
-                                label="Force vertical orientation"
-                                onChange={e =>
-                                    changeStylingSettings(
-                                        key,
-                                        index,
-                                        "force_vertical",
-                                        e.target.checked
-                                    )
-                                }
+                                name={`${key}-toggle-styling-${index}`}
+                                checked={row.styling != null}
+                                label="Override default formatting"
+                                onChange={e => {
+                                    toggleArrowStyling(key, index, e.target.checked);
+                                    this.setState({edit_styles: e.target.checked});
+                                }}
                             />
+                            {this.state.edit_styles && this.renderStyleOptions(key, row, index)}
                         </div>
                         <div className="form-row justify-content-center">
                             <button
@@ -156,6 +122,46 @@ class ArrowsRow extends EditableRow {
                     </div>
                 </td>
             </tr>
+        );
+    }
+
+    renderStyleOptions(key, row, index) {
+        const {changeStylingSettings, getArrowTypes} = this.props.store.subclass;
+        return (
+            <div className="form-row">
+                <IntegerInput
+                    name={`${key}-width-${index}`}
+                    value={row.styling.width}
+                    label="Width"
+                    onChange={e =>
+                        changeStylingSettings(key, index, "width", parseInt(e.target.value))
+                    }
+                />
+                <SelectInput
+                    name={`${key}-type-${index}`}
+                    value={row.styling.type}
+                    label="Type"
+                    handleSelect={value =>
+                        changeStylingSettings(key, index, "type", parseInt(value))
+                    }
+                    choices={getArrowTypes()}
+                />
+                <TextInput
+                    name={`${key}-color-${index}`}
+                    value={row.styling.color}
+                    label="Color"
+                    onChange={e => changeStylingSettings(key, index, "color", e.target.value)}
+                    type="color"
+                />
+                <CheckboxInput
+                    name={`${key}-force-vertical-${index}`}
+                    checked={row.styling.force_vertical}
+                    label="Force vertical orientation"
+                    onChange={e =>
+                        changeStylingSettings(key, index, "force_vertical", e.target.checked)
+                    }
+                />
+            </div>
         );
     }
 }

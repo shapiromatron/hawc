@@ -91,7 +91,7 @@ class PrismaStore {
                 arrow_type: 1,
                 stroke_width: 2,
                 stroke_color: "#000000",
-            }
+            },
         };
     }
 
@@ -187,16 +187,14 @@ class PrismaStore {
         if (checked) {
             // if checked, add defaults to the styling dict for this object
             this.settings[arrayKey][index].styling = this.settings.styles;
-        }
-        else this.settings[arrayKey][index].styling = null;
+        } else this.settings[arrayKey][index].styling = null;
     }
 
     @action.bound toggleArrowStyling(index, checked) {
         if (checked) {
             // if checked, add defaults to the styling dict for this object
             this.settings.arrows[index].styling = this.settings.arrow_styles;
-        }
-        else this.settings.arrows[index].styling = null;
+        } else this.settings.arrows[index].styling = null;
     }
 
     @computed get sectionMapping() {

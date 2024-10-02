@@ -43,6 +43,7 @@ class PrismaBulletedListsTable extends Component {
                                     index={index}
                                     key={index}
                                     initiallyEditable={row.label == ""}
+                                    editStyles={row.styling != null}
                                 />
                             );
                         })}
@@ -74,7 +75,7 @@ class BulletedListsRow extends EditableRow {
     renderEditRow(row, index) {
         const {
             changeArraySettings,
-            changeStylingSettings,
+            toggleStyling,
             getBoxOptions,
             getFilterOptions,
         } = this.props.store.subclass;
@@ -89,72 +90,6 @@ class BulletedListsRow extends EditableRow {
                                 label="Name"
                                 onChange={e =>
                                     changeArraySettings(key, index, "label", e.target.value)
-                                }
-                            />
-                            <IntegerInput
-                                name={`${key}-width-${index}`}
-                                onChange={e =>
-                                    changeStylingSettings(key, index, "width", e.target.value)
-                                }
-                                label="Width"
-                                value={row.styling.width}
-                            />
-                            <IntegerInput
-                                name={`${key}-height-${index}`}
-                                value={row.styling.height}
-                                label="Height"
-                                onChange={e =>
-                                    changeStylingSettings(key, index, "height", e.target.value)
-                                }
-                            />
-                            <TextInput
-                                name={`${key}-bg-color-${index}`}
-                                value={row.styling.bg_color}
-                                label="Background Color"
-                                onChange={e =>
-                                    changeStylingSettings(key, index, "bg_color", e.target.value)
-                                }
-                                type="color"
-                            />
-                            <TextInput
-                                name={`${key}-font-color-${index}`}
-                                value={row.styling.font_color}
-                                label="Font Color"
-                                onChange={e =>
-                                    changeStylingSettings(key, index, "font_color", e.target.value)
-                                }
-                                type="color"
-                            />
-                            <FloatInput
-                                name={`${key}-font-size-${index}`}
-                                value={row.styling.font_size}
-                                label="Font size"
-                                onChange={e =>
-                                    changeStylingSettings(key, index, "font_size", e.target.value)
-                                }
-                            />
-                            <CheckboxInput
-                                name={`${key}-bold-${index}`}
-                                checked={row.styling.bold}
-                                label="Bold text"
-                                onChange={e =>
-                                    changeStylingSettings(key, index, "bold", e.target.checked)
-                                }
-                            />
-                            <IntegerInput
-                                name={`${key}-padding-x-${index}`}
-                                value={row.styling.padding_x}
-                                label="Padding X"
-                                onChange={e =>
-                                    changeStylingSettings(key, index, "padding_x", e.target.value)
-                                }
-                            />
-                            <IntegerInput
-                                name={`${key}-padding-y-${index}`}
-                                value={row.styling.padding_y}
-                                label="Padding Y"
-                                onChange={e =>
-                                    changeStylingSettings(key, index, "padding_y", e.target.value)
                                 }
                             />
                             <SelectInput
@@ -178,6 +113,16 @@ class BulletedListsRow extends EditableRow {
                                 multiple={false}
                                 choices={getFilterOptions()}
                             />
+                            <CheckboxInput
+                                name={`${key}-toggle-styling-${index}`}
+                                checked={row.styling != null}
+                                label="Override default formatting"
+                                onChange={e => {
+                                    toggleStyling(key, index, e.target.checked);
+                                    this.setState({edit_styles: e.target.checked});
+                                }}
+                            />
+                            {this.state.edit_styles && this.renderStyleOptions(key, row, index)}
                         </div>
                         <div className="form-row justify-content-center">
                             <button

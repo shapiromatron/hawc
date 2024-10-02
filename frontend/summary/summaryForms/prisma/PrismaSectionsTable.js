@@ -4,6 +4,7 @@ import React, {Component} from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import TextInput from "shared/components/TextInput";
+
 import {PrismaEditableRow} from "./PrismaEditableRow";
 
 const key = "sections";
@@ -82,11 +83,10 @@ class SectionsRow extends PrismaEditableRow {
                                 name={`${key}-toggle-styling-${index}`}
                                 checked={row.styling != null}
                                 label="Override default formatting"
-                                onChange={(e) => {
+                                onChange={e => {
                                     toggleStyling(key, index, e.target.checked);
-                                    this.setState({edit_styles: e.target.checked})
-                                }
-                                }
+                                    this.setState({edit_styles: e.target.checked});
+                                }}
                             />
                             {this.state.edit_styles && this.renderStyleOptions(key, row, index)}
                         </div>
