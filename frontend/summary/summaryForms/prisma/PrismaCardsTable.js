@@ -233,7 +233,6 @@ class CardsRow extends EditableRow {
                                 label="Add references related to this tag, search, or import"
                                 handleSelect={(value, label) => {
                                     changeArraySettings(key, index, "tag", value);
-                                    changeArraySettings(key, index, "tag_display", label);
                                 }}
                                 multiple={false}
                                 choices={getFilterOptions()}

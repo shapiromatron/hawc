@@ -99,7 +99,7 @@ const createSectionRow = function() {
             styling: {
                 width: 2,
                 type: 1,
-                color: "",
+                color: "#000000",
                 force_vertical: false,
             },
             src: NULL_VALUE,
@@ -107,13 +107,13 @@ const createSectionRow = function() {
         };
     },
     ARROW_TYPES = [
-        {id: 1, label: "1"},
-        {id: 2, label: "2"},
-        {id: 3, label: "3"},
-        {id: 5, label: "5"},
-        {id: 10, label: "10"},
-        {id: 11, label: "11"},
-        {id: 13, label: "13"},
+        {id: 1, label: "Type 1"},
+        {id: 2, label: "Type 2"},
+        {id: 3, label: "Type 3"},
+        {id: 5, label: "Type 5"},
+        {id: 10, label: "Type 10"},
+        {id: 11, label: "Type 11"},
+        {id: 13, label: "Type 13"},
     ],
     BOX_LAYOUTS = [
         {id: "card", label: "Card"},
@@ -135,6 +135,11 @@ class PrismaStore {
             bulleted_lists: [],
             cards: [],
             arrows: [],
+            styles: {
+                stroke_radius: 5,
+                stroke_width: 2,
+                stroke_color: "#000000",
+            },
         };
     }
 
@@ -224,6 +229,19 @@ class PrismaStore {
             });
         options.unshift({id: NULL_VALUE, label: NULL_VALUE});
         return options;
+    }
+
+    @computed get sectionMapping() {
+        const mapping = {};
+        this.settings.sections.forEach(section => (mapping[section.key] = section.label));
+        return mapping;
+    }
+
+    @computed get arrowMapping() {
+        const mapping = {};
+        this.settings.sections.forEach(section => (mapping[section.key] = section.label));
+        this.settings.boxes.forEach(section => (mapping[section.key] = section.label));
+        return mapping;
     }
 
     @computed get settingsHash() {

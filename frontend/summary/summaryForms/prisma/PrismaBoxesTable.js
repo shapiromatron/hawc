@@ -55,12 +55,12 @@ class PrismaBoxesTable extends Component {
 @observer
 class BoxesRow extends EditableRow {
     renderViewRow(row, index) {
-        const {deleteArrayElement} = this.props.store.subclass;
+        const {deleteArrayElement, sectionMapping} = this.props.store.subclass;
 
         return (
             <tr>
                 <td>{row.label}</td>
-                <td>{row.section_display}</td>
+                <td>{sectionMapping[row.section]}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
                     onEdit={() => this.setState({edit: true})}
@@ -220,7 +220,6 @@ class BoxesRow extends EditableRow {
                                 label="Section"
                                 handleSelect={(value, label) => {
                                     changeArraySettings(key, index, "section", value);
-                                    changeArraySettings(key, index, "section_display", label);
                                 }}
                                 multiple={false}
                                 choices={getLinkingOptions("sections")}
@@ -231,9 +230,8 @@ class BoxesRow extends EditableRow {
                                 label="Add references related to this tag, search, or import"
                                 handleSelect={(value, label) => {
                                     changeArraySettings(key, index, "tag", value);
-                                    changeArraySettings(key, index, "tag_display", label);
                                 }}
-                                multiple={false}
+                                multiple={true}
                                 choices={getFilterOptions()}
                             />
                             <SelectInput

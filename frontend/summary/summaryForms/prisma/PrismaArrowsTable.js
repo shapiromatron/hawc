@@ -55,12 +55,11 @@ class PrismaArrowsTable extends Component {
 @observer
 class ArrowsRow extends EditableRow {
     renderViewRow(row, index) {
-        const {deleteArrayElement} = this.props.store.subclass;
-
+        const {deleteArrayElement, arrowMapping} = this.props.store.subclass;
         return (
             <tr>
-                <td>{row.src_display}</td>
-                <td>{row.dst_display}</td>
+                <td>{arrowMapping[row.src]}</td>
+                <td>{arrowMapping[row.dst]}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
                     onEdit={() => this.setState({edit: true})}
@@ -86,7 +85,6 @@ class ArrowsRow extends EditableRow {
                                 label="Source"
                                 handleSelect={(value, label) => {
                                     changeArraySettings(key, index, "src", value);
-                                    changeArraySettings(key, index, "src_display", label);
                                 }}
                                 multiple={false}
                                 choices={getArrowOptions()}
@@ -97,7 +95,6 @@ class ArrowsRow extends EditableRow {
                                 label="Destination"
                                 handleSelect={(value, label) => {
                                     changeArraySettings(key, index, "dst", value);
-                                    changeArraySettings(key, index, "dst_display", label);
                                 }}
                                 multiple={false}
                                 choices={getArrowOptions()}
@@ -107,7 +104,12 @@ class ArrowsRow extends EditableRow {
                                 value={row.styling.width}
                                 label="Width"
                                 onChange={e =>
-                                    changeStylingSettings(key, index, "width", e.target.value)
+                                    changeStylingSettings(
+                                        key,
+                                        index,
+                                        "width",
+                                        parseInt(e.target.value)
+                                    )
                                 }
                             />
                             <SelectInput
@@ -115,9 +117,8 @@ class ArrowsRow extends EditableRow {
                                 value={row.styling.type}
                                 label="Type"
                                 handleSelect={value =>
-                                    changeStylingSettings(key, index, "type", value)
+                                    changeStylingSettings(key, index, "type", parseInt(value))
                                 }
-                                multiple={false}
                                 choices={getArrowTypes()}
                             />
                             <TextInput
