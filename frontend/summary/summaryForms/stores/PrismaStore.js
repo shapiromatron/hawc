@@ -231,6 +231,19 @@ class PrismaStore {
         return options;
     }
 
+    @computed get sectionMapping() {
+        const mapping = {};
+        this.settings.sections.forEach(section => (mapping[section.key] = section.label));
+        return mapping;
+    }
+
+    @computed get arrowMapping() {
+        const mapping = {};
+        this.settings.sections.forEach(section => (mapping[section.key] = section.label));
+        this.settings.boxes.forEach(section => (mapping[section.key] = section.label));
+        return mapping;
+    }
+
     @computed get settingsHash() {
         return h.hashString(JSON.stringify(this.settings));
     }

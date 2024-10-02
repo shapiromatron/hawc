@@ -55,12 +55,12 @@ class PrismaBoxesTable extends Component {
 @observer
 class BoxesRow extends EditableRow {
     renderViewRow(row, index) {
-        const {deleteArrayElement} = this.props.store.subclass;
+        const {deleteArrayElement, sectionMapping} = this.props.store.subclass;
 
         return (
             <tr>
                 <td>{row.label}</td>
-                <td>ADD</td>
+                <td>{sectionMapping[row.section]}</td>
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
                     onEdit={() => this.setState({edit: true})}
