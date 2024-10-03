@@ -58,6 +58,8 @@
           {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epi-data' text='Complete Export' help_text="Complete epidemiology export, where each row is an individual result associated with a health outcome." %}
           {% url 'epiv2:api:assessment-study-export' assessment.pk as the_url %}
           {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epi-study-design' text='Study Summary' help_text="Epidemiology study summary, where each row is a study. Columns with multiple values are pipe \"|\" delimited." %}
+          {% url 'epiv2:api:assessment-tabular-export' assessment.pk as the_url %}
+          {% include "assessment/fragments/downloads_select.html" with link=the_url disabled_format=True format="xlsx" name='tabular-export' text='Tabular Export' help_text="Relational database export (xlsx only); one worksheet per table, one row per item." %}
         {% endif %}
       </div>
     {% endif %}

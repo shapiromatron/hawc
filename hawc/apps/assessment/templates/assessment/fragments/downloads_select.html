@@ -6,7 +6,7 @@
         <div class="input-group-prepend">
           <a class="btn btn-primary" type="button" id="{{name}}-url" href="{{link}}?format={{format}}{% if allow_unpublished %}&unpublished=false{% endif %}{% if reference_long %}&export_format=wide{% endif %}"><i class="fa fa-download" aria-hidden="true"></i>&nbsp;Download</a>
         </div>
-        <select id="{{name}}" class="custom-select" required>
+        <select id="{{name}}" class="custom-select" required {% if disabled_format %} disabled {% endif %}>
           <option selected value="xlsx">xlsx</option>
           <option value="csv">csv</option>
           <option value="tsv">tsv</option>
