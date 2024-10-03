@@ -42,7 +42,7 @@ class PrismaSectionsTable extends Component {
                                     index={index}
                                     key={index}
                                     initiallyEditable={row.label == ""}
-                                    editStyles={row.styling != null}
+                                    editStyles={row.use_style_overrides}
                                 />
                             );
                         })}
@@ -92,7 +92,7 @@ class SectionsRow extends PrismaEditableRow {
                             />
                             <CheckboxInput
                                 name={`${key}-toggle-styling-${index}`}
-                                checked={row.styling != null}
+                                checked={row.use_style_overrides}
                                 label="Override default formatting"
                                 onChange={e => {
                                     toggleStyling(key, index, e.target.checked);
