@@ -311,9 +311,7 @@ def tabular_export(assessment_id: int, published_only: bool):
                 CommunicationsExport(
                     "study-internal_communications",
                     "study__communications",
-                    [
-                        "message",
-                    ],
+                    ("message",),
                 ),
                 DesignExport("design", ""),
             ]
