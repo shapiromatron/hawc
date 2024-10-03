@@ -31,24 +31,6 @@ const createSectionRow = function() {
             tags: [],
         };
     },
-    createBulletedListRow = function() {
-        return {
-            key: h.randomString(),
-            label: "",
-            styling: null,
-            box: NULL_VALUE,
-            tag: NULL_VALUE,
-        };
-    },
-    createCardRow = function() {
-        return {
-            key: h.randomString(),
-            label: "",
-            styling: null,
-            box: NULL_VALUE,
-            tag: NULL_VALUE,
-        };
-    },
     createArrowRow = function() {
         return {
             key: h.randomString(),
@@ -158,14 +140,6 @@ class PrismaStore {
 
     @action.bound getBoxLayouts() {
         return BOX_LAYOUTS;
-    }
-
-    @action.bound createNewBulletedList() {
-        this.settings.bulleted_lists.push(createBulletedListRow());
-    }
-
-    @action.bound createNewCard() {
-        this.settings.cards.push(createCardRow());
     }
 
     @action.bound createNewArrow() {
