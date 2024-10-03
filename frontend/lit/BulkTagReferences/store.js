@@ -7,7 +7,8 @@ const NULL_VALUE = "---",
     formatDataset = data => {
         // add 1-based __index__ attribute to each row; start at 2
         _.each(data, (row, index) => (row.__index__ = index + 2));
-        // cast fields to strings for consistency when matching
+        // cast fields to strings when matching
+        // (Excel can be ambiguous w/ numeric information stored as strings in some cases)
         _.each(data, row =>
             _.each(row, (value, key) => {
                 row[key] = value == null ? value : value.toString().trim();
@@ -97,7 +98,7 @@ class Store {
     }
     @computed get referenceMap() {
         // map of all references in hawc and their matches
-        // key is cast to string for consistency
+        // reference IDs are cast to strings (see Excel comment above)
         const colType = this.referenceColumnType,
             mapping = colType
                 ? _.chain(this.references)
