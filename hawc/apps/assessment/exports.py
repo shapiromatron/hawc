@@ -1,6 +1,6 @@
 from django.contrib.postgres.aggregates import ArrayAgg
 
-from ..common.exports import Exporter, ModelExport
+from ..common.exports import Exporter, ModelExport, clean_html
 from ..common.models import sql_display, str_m2m
 from . import constants
 
@@ -121,4 +121,8 @@ class CommunicationsExport(ModelExport):
         }
 
     def prepare_df(self, df):
+        message = self.get_column_name("message")
+        if message in df.columns:
+            df.loc[:, message] = clean_html(df[message])
+
         return self.format_time(df)
