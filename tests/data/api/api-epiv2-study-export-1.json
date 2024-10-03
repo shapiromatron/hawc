@@ -7,11 +7,18 @@
     "chemical_name": "PFDA|PFNA",
     "countries": "Denmark|Taiwan",
     "design_source": "General population",
+    "design_summary": "Birth cohort in Faroe Islands with follow-up at 5 and 7 years|Case-control study of asthma in children",
+    "exposure_measurement_type": "Biomonitoring",
     "exposure_name": "child serum|child serum age 5|maternal serum",
+    "exposure_route": "Unknown/Total",
     "full_citation": "Foo et al. 2010",
     "outcome_effect": "Asthma|Vaccine response",
     "outcome_endpoint": "Asthma within previous year|Diphtheria antibody concentrations|Tetanus antibody concentrations",
     "outcome_system": "Immune",
+    "participant_n": [
+      456,
+      587
+    ],
     "short_citation": "Foo et al.",
     "study_design": "Case-control|Cohort",
     "study_id": 1
