@@ -448,9 +448,7 @@ class PrismaPlot {
                 let subblockText = this.HTML_BULLET + ` ${blocks[i].label}: ${blocks[i].value}`;
 
                 let txtEle = this.addTextToNode(currentNode, subblockId, subblockText, blockStyle);
-                txtEle.onclick = e => {
-                    alert(blocks[i]);
-                };
+                txtEle.onclick = this.nodeOnClick.bind(this);
             }
         } else {
             for (let subblock of blocks) {
