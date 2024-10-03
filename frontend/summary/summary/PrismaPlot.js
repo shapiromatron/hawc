@@ -234,9 +234,14 @@ class PrismaPlot {
         // https://github.com/HarryStevens/d3-arrow
         // https://observablehq.com/d/7759e56ba89ced03
         const id = connection.key,
-            styling = connection.styling,
+            styling = _.clone(this.store.settings.styles),
             node1BBox = this.getGroup(connection.src).rect.getBBox(),
             node2BBox = this.getGroup(connection.dst).rect.getBBox();
+
+        // add overrides (TODO - this isn't working yet, to fix)
+        if (connection.styling) {
+            _.merge(styling, connection.styling);
+        }
 
         // same x = vertical
         if (node1BBox.x == node2BBox.x || styling["arrow-force-vertical"] == true) {
