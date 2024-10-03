@@ -598,16 +598,20 @@ class PrismaPlot {
     }
 
     setOverallDimensions(sections) {
+        if (sections.length === 0) {
+            this.w = 10;
+            this.h = 10;
+            return;
+        }
         const bbs = sections.map(section =>
-            d3
-                .select(document.getElementById(section.key))
-                .node()
-                .getBBox()
-        );
-
+                d3
+                    .select(document.getElementById(section.key))
+                    .node()
+                    .getBBox()
+            ),
+            hPadding = Math.max(sections.length - 1, 0) * this.SPACING_H;
         this.w = _.max(bbs.map(bb => bb.width));
-        this.h =
-            _.sum(bbs.map(bb => bb.height)) + Math.max(sections.length - 1, 0) * this.SPACING_H;
+        this.h = _.sum(bbs.map(bb => bb.height)) + hPadding;
     }
 }
 
