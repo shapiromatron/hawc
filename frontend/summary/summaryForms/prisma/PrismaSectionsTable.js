@@ -2,7 +2,12 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
-import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
+import {
+    ActionsTh,
+    moveArrayElementDown,
+    moveArrayElementUp,
+    MoveRowTd,
+} from "shared/components/EditableRowData";
 import TextInput from "shared/components/TextInput";
 
 import {PrismaEditableRow} from "./PrismaEditableRow";
@@ -37,7 +42,7 @@ class PrismaSectionsTable extends Component {
                                     index={index}
                                     key={index}
                                     initiallyEditable={row.label == ""}
-                                    editStyles={row.styling != null}
+                                    editStyles={row.use_style_overrides}
                                 />
                             );
                         })}
@@ -60,6 +65,12 @@ class SectionsRow extends PrismaEditableRow {
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
                     onEdit={() => this.setState({edit: true})}
+                    onMoveUp={() =>
+                        moveArrayElementUp(this.props.store.subclass.settings[key], index)
+                    }
+                    onMoveDown={() =>
+                        moveArrayElementDown(this.props.store.subclass.settings[key], index)
+                    }
                 />
             </tr>
         );
@@ -81,14 +92,16 @@ class SectionsRow extends PrismaEditableRow {
                             />
                             <CheckboxInput
                                 name={`${key}-toggle-styling-${index}`}
-                                checked={row.styling != null}
+                                checked={row.use_style_overrides}
                                 label="Override default formatting"
                                 onChange={e => {
                                     toggleStyling(key, index, e.target.checked);
                                     this.setState({edit_styles: e.target.checked});
                                 }}
                             />
-                            {this.state.edit_styles && this.renderStyleOptions(key, row, index)}
+                            {this.state.edit_styles
+                                ? this.renderStyleOptions(key, row, index)
+                                : null}
                         </div>
                         <div className="form-row justify-content-center">
                             <button

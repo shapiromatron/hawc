@@ -2,12 +2,18 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
-import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
+import {
+    ActionsTh,
+    moveArrayElementDown,
+    moveArrayElementUp,
+    MoveRowTd,
+} from "shared/components/EditableRowData";
 import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 import {NULL_VALUE} from "summary/summary/constants";
-import { PrismaEditableRow } from "./PrismaEditableRow";
+
+import {PrismaEditableRow} from "./PrismaEditableRow";
 
 const key = "arrows";
 
@@ -42,7 +48,7 @@ class PrismaArrowsTable extends Component {
                                     index={index}
                                     key={index}
                                     initiallyEditable={row.src == NULL_VALUE}
-                                    editStyles={row.styling != null}
+                                    editStyles={row.use_style_overrides}
                                 />
                             );
                         })}
@@ -65,6 +71,12 @@ class ArrowsRow extends PrismaEditableRow {
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
                     onEdit={() => this.setState({edit: true})}
+                    onMoveUp={() =>
+                        moveArrayElementUp(this.props.store.subclass.settings[key], index)
+                    }
+                    onMoveDown={() =>
+                        moveArrayElementDown(this.props.store.subclass.settings[key], index)
+                    }
                 />
             </tr>
         );
@@ -102,7 +114,7 @@ class ArrowsRow extends PrismaEditableRow {
                             />
                             <CheckboxInput
                                 name={`${key}-toggle-styling-${index}`}
-                                checked={row.styling != null}
+                                checked={row.use_style_overrides}
                                 label="Override default formatting"
                                 onChange={e => {
                                     toggleArrowStyling(index, e.target.checked);
@@ -151,7 +163,9 @@ class ArrowsRow extends PrismaEditableRow {
                     name={`${key}-color-${index}`}
                     value={row.styling.stroke_color}
                     label="Color"
-                    onChange={e => changeStylingSettings(key, index, "stroke_color", e.target.value)}
+                    onChange={e =>
+                        changeStylingSettings(key, index, "stroke_color", e.target.value)
+                    }
                     type="color"
                 />
                 <CheckboxInput

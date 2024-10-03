@@ -8,6 +8,7 @@ const createSectionRow = function() {
         return {
             key: h.randomString(),
             label: "",
+            use_style_overrides: false,
             styling: null,
         };
     },
@@ -15,36 +16,27 @@ const createSectionRow = function() {
         return {
             key: h.randomString(),
             label: "",
+            use_style_overrides: false,
             styling: null,
             section: NULL_VALUE,
             box_layout: "card",
-            count: "unique_sum",
-            tag: [],
-            include: [],
-            exclude: [],
+            count_strategy: "unique_sum",
+            count_strategy_block_type: "include",
+            tag: NULL_VALUE, // todo - rename to tags
+            items: [],
         };
     },
-    createBulletedListRow = function() {
+    createNewBoxItem = function() {
         return {
             key: h.randomString(),
             label: "",
-            styling: null,
-            box: NULL_VALUE,
-            tag: NULL_VALUE,
-        };
-    },
-    createCardRow = function() {
-        return {
-            key: h.randomString(),
-            label: "",
-            styling: null,
-            box: NULL_VALUE,
-            tag: NULL_VALUE,
+            tags: [],
         };
     },
     createArrowRow = function() {
         return {
             key: h.randomString(),
+            use_style_overrides: false,
             styling: null,
             src: NULL_VALUE,
             dst: NULL_VALUE,
@@ -58,6 +50,15 @@ const createSectionRow = function() {
         {id: 10, label: "Type 10"},
         {id: 11, label: "Type 11"},
         {id: 13, label: "Type 13"},
+    ],
+    BOX_LAYOUTS = [
+        {id: "card", label: "Card"},
+        {id: "list", label: "List"},
+    ],
+    COUNT_STRATEGIES = [{id: "unique_sum", label: "Unique"}],
+    COUNT_STRATEGY_BLOCK_TYPES = [
+        {id: "include", label: "Include"},
+        {id: "exclude", label: "Exclude"},
     ];
 
 class PrismaStore {
@@ -72,8 +73,6 @@ class PrismaStore {
             title: "Prisma Visual",
             sections: [],
             boxes: [],
-            bulleted_lists: [],
-            cards: [],
             arrows: [],
             styles: {
                 stroke_radius: 5,
@@ -98,6 +97,14 @@ class PrismaStore {
         };
     }
 
+    getCountStrategies() {
+        return COUNT_STRATEGIES;
+    }
+
+    getCountStrategyBlockTypes() {
+        return COUNT_STRATEGY_BLOCK_TYPES;
+    }
+
     @action.bound changeSettings(path, value) {
         _.set(this.settings, path, value);
     }
@@ -115,9 +122,9 @@ class PrismaStore {
     }
 
     @action.bound deleteArrayElement(key, index) {
-        const arr = this.settings[key];
+        const arr = _.get(this.settings, key);
         deleteArrayElement(arr, index);
-        this.settings[key] = arr;
+        _.set(this.settings, key, arr);
     }
 
     @action.bound createNewSection() {
@@ -128,12 +135,12 @@ class PrismaStore {
         this.settings.boxes.push(createBoxRow());
     }
 
-    @action.bound createNewBulletedList() {
-        this.settings.bulleted_lists.push(createBulletedListRow());
+    @action.bound createNewBoxItem(boxIndex) {
+        this.settings.boxes[boxIndex].items.push(createNewBoxItem());
     }
 
-    @action.bound createNewCard() {
-        this.settings.cards.push(createCardRow());
+    @action.bound getBoxLayouts() {
+        return BOX_LAYOUTS;
     }
 
     @action.bound createNewArrow() {
@@ -181,17 +188,19 @@ class PrismaStore {
     }
 
     @action.bound toggleStyling(arrayKey, index, checked) {
-        if (checked) {
-            // if checked, add defaults to the styling dict for this object
-            this.settings[arrayKey][index].styling = this.settings.styles;
-        } else this.settings[arrayKey][index].styling = null;
+        if (checked && this.settings[arrayKey][index].styling == null) {
+            // if checked for the first time, add defaults to the styling dict for this object
+            this.settings[arrayKey][index].styling = _.cloneDeep(this.settings.styles);
+        }
+        this.settings[arrayKey][index].use_style_overrides = checked;
     }
 
     @action.bound toggleArrowStyling(index, checked) {
-        if (checked) {
-            // if checked, add defaults to the styling dict for this object
-            this.settings.arrows[index].styling = this.settings.arrow_styles;
-        } else this.settings.arrows[index].styling = null;
+        if (checked && this.settings.arrows[index].styling == null) {
+            // if checked for the first time, add defaults to the styling dict for this arrow
+            this.settings.arrows[index].styling = _.cloneDeep(this.settings.arrow_styles);
+        }
+        this.settings.arrows[index].use_style_overrides = checked;
     }
 
     @computed get sectionMapping() {
