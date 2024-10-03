@@ -20,7 +20,7 @@ class PrismaEditableRow extends EditableRow {
                     label="Width"
                     value={row.styling.width}
                 />
-                {/* <IntegerInput
+                <IntegerInput
                     name={`${key}-height-${index}`}
                     value={row.styling.height}
                     label="Height"
@@ -93,7 +93,7 @@ class PrismaEditableRow extends EditableRow {
                     name={`${key}-y-${index}`}
                     value={row.styling.y}
                     label="Adjust Y position"
-                    onChange={e => changeStylingSettings(key, index, "y", e.target.value)} */}
+                    onChange={e => changeStylingSettings(key, index, "y", e.target.value)}
                 />
             </div>
         );
