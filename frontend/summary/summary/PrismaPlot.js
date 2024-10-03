@@ -379,12 +379,15 @@ class PrismaPlot {
         let refs = this.getRefs(id)
         // fetch html from url
         const detailEl = document.getElementById(`${this.store.settingsHash}-detail-section`);
+            // detailHeader = document.getElementById(`${this.store.settingsHash}-detail-header`);
         detailEl.innerText = "Loading...";
         const formData = new FormData();
         formData.append("ids", refs.join(","));
+        // TODO: change detail header to the text of the clicked node
         fetch(this.store.dataset.url, h.fetchPostForm(this.options.csrf, formData))
             .then(resp => resp.text())
             .then(html => (detailEl.innerHTML = html));
+
     }
 
     getRefs(id) {

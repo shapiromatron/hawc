@@ -41,10 +41,11 @@ class PrismaComponent extends Component {
 
         return (
             <div className="row py-3">
-            <div id={id} className="col-lg-6">
+            <div id={id} className="col-lg-8">
                 <Loading />
             </div>
-            <div className="col-lg-6">
+            <div className="col-lg-4">
+                <h3 id={`${id}-detail-header`}></h3>
                 <div id={`${id}-detail-section`}></div>
             </div>
             </div>
