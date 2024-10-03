@@ -55,6 +55,27 @@ const NAMESPACE = "http://www.w3.org/2000/svg",
         id = id.replace(new RegExp("-text" + "$"), "");
         let node = getGroup(id);
         alert(node);
+    },
+    connectPoints = function(svg, STYLE_DEFAULT, id, xy1, xy2, arrowhead = true, styling = {}) {
+        for (const [key, value] of Object.entries(STYLE_DEFAULT)) {
+            if (!styling[key]) styling[key] = value;
+        }
+        let arrowType = "arrow" + styling["arrow-type"];
+        let arrow = d3Arrow[arrowType]().id(id);
+        if (arrowhead) {
+            arrow
+                .attr("stroke", styling["arrow-color"])
+                .attr("stroke-width", styling["arrow-width"]);
+        } else {
+            arrow.attr("fill", "transparent").attr("stroke", "transparent");
+        }
+        d3.select(svg).call(arrow);
+        d3.select(svg)
+            .append("polyline")
+            .attr("marker-end", `url(#${id})`)
+            .attr("points", [xy1, xy2])
+            .attr("stroke", styling["arrow-color"])
+            .attr("stroke-width", styling["arrow-width"]);
     };
 
 class PrismaPlot {
@@ -249,63 +270,35 @@ class PrismaPlot {
         const id = connection.key,
             styling = _.clone(this.store.settings.styles),
             node1BBox = getGroup(connection.src).rect.getBBox(),
-            node2BBox = getGroup(connection.dst).rect.getBBox();
+            node2BBox = getGroup(connection.dst).rect.getBBox(),
+            svg = this.svg,
+            DEF = this.STYLE_DEFAULT;
 
         // add overrides (TODO - this isn't working yet, to fix)
         if (connection.styling) {
             _.merge(styling, connection.styling);
         }
 
+        let xMidpoint, yMidpoint, node1XY, node1Midpoint, node2Midpoint, node2XY;
         // same x = vertical
         if (node1BBox.x == node2BBox.x || styling["arrow-force-vertical"] == true) {
-            let yMidpoint = (node2BBox.y - (node1BBox.y + node1BBox.height)) / 2;
+            yMidpoint = (node2BBox.y - (node1BBox.y + node1BBox.height)) / 2;
             yMidpoint = node1BBox.y + node1BBox.height + yMidpoint;
-
-            let node1XY = [node1BBox.x + node1BBox.width / 2, node1BBox.y + node1BBox.height];
-            let node1Midpoint = [node1BBox.x + node1BBox.width / 2, yMidpoint];
-            this.connectPoints(id + "_1", node1XY, node1Midpoint, false, styling);
-
-            let node2Midpoint = [node2BBox.x + node2BBox.width / 2, yMidpoint];
-            this.connectPoints(id + "_2", node1Midpoint, node2Midpoint, false, styling);
-
-            let node2XY = [node2BBox.x + node2BBox.width / 2, node2BBox.y];
-            this.connectPoints(id + "_3", node2Midpoint, node2XY, true, styling);
+            node1XY = [node1BBox.x + node1BBox.width / 2, node1BBox.y + node1BBox.height];
+            node1Midpoint = [node1BBox.x + node1BBox.width / 2, yMidpoint];
+            node2Midpoint = [node2BBox.x + node2BBox.width / 2, yMidpoint];
+            node2XY = [node2BBox.x + node2BBox.width / 2, node2BBox.y];
         } else {
-            let xMidpoint = (node2BBox.x - (node1BBox.x + node1BBox.width)) / 2;
+            xMidpoint = (node2BBox.x - (node1BBox.x + node1BBox.width)) / 2;
             xMidpoint = node1BBox.x + node1BBox.width + xMidpoint;
-
-            let node1XY = [node1BBox.x + node1BBox.width, node1BBox.y + node1BBox.height / 2];
-            let node1Midpoint = [xMidpoint, node1BBox.y + node1BBox.height / 2];
-            this.connectPoints(id + "_1", node1XY, node1Midpoint, false, styling);
-
-            let node2Midpoint = [xMidpoint, node2BBox.y + node2BBox.height / 2];
-            this.connectPoints(id + "_2", node1Midpoint, node2Midpoint, false, styling);
-
-            let node2XY = [node2BBox.x, node2BBox.y + node2BBox.height / 2];
-            this.connectPoints(id + "_3", node2Midpoint, node2XY, true, styling);
+            node1XY = [node1BBox.x + node1BBox.width, node1BBox.y + node1BBox.height / 2];
+            node1Midpoint = [xMidpoint, node1BBox.y + node1BBox.height / 2];
+            node2Midpoint = [xMidpoint, node2BBox.y + node2BBox.height / 2];
+            node2XY = [node2BBox.x, node2BBox.y + node2BBox.height / 2];
         }
-    }
-
-    connectPoints(id, xy1, xy2, arrowhead = true, styling = {}) {
-        for (const [key, value] of Object.entries(this.STYLE_DEFAULT)) {
-            if (!styling[key]) styling[key] = value;
-        }
-        let arrowType = "arrow" + styling["arrow-type"];
-        let arrow = d3Arrow[arrowType]().id(id);
-        if (arrowhead) {
-            arrow
-                .attr("stroke", styling["arrow-color"])
-                .attr("stroke-width", styling["arrow-width"]);
-        } else {
-            arrow.attr("fill", "transparent").attr("stroke", "transparent");
-        }
-        d3.select(this.svg).call(arrow);
-        d3.select(this.svg)
-            .append("polyline")
-            .attr("marker-end", `url(#${id})`)
-            .attr("points", [xy1, xy2])
-            .attr("stroke", styling["arrow-color"])
-            .attr("stroke-width", styling["arrow-width"]);
+        connectPoints(svg, DEF, id + "_1", node1XY, node1Midpoint, false, styling);
+        connectPoints(svg, DEF, id + "_2", node1Midpoint, node2Midpoint, false, styling);
+        connectPoints(svg, DEF, id + "_3", node2Midpoint, node2XY, true, styling);
     }
 
     createNewVerticalNode(prevNode, id, text, group = false, styling = {}) {
