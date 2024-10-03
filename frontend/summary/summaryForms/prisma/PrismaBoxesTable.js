@@ -2,7 +2,12 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
-import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
+import {
+    ActionsTh,
+    moveArrayElementDown,
+    moveArrayElementUp,
+    MoveRowTd,
+} from "shared/components/EditableRowData";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 
@@ -65,6 +70,12 @@ class BoxesRow extends PrismaEditableRow {
                 <MoveRowTd
                     onDelete={() => deleteArrayElement(key, index)}
                     onEdit={() => this.setState({edit: true})}
+                    onMoveUp={() =>
+                        moveArrayElementUp(this.props.store.subclass.settings[key], index)
+                    }
+                    onMoveDown={() =>
+                        moveArrayElementDown(this.props.store.subclass.settings[key], index)
+                    }
                 />
             </tr>
         );

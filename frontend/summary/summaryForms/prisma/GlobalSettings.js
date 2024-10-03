@@ -1,9 +1,9 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import FloatInput from "shared/components/FloatInput";
 import IntegerInput from "shared/components/IntegerInput";
 import TextInput from "shared/components/TextInput";
-import FloatInput from "shared/components/FloatInput";
 
 @inject("store")
 @observer
