@@ -1,4 +1,5 @@
 import pandas as pd
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import (
     CharField,
     F,
@@ -56,6 +57,7 @@ class DesignManager(BaseManager):
         df1 = study_qs.flat_df()
         df2 = pd.DataFrame(
             data=study_qs.annotate(
+                design_summary=str_m2m("designs__summary"),
                 designs__source_display=sql_display("designs__source", constants.Source),
                 designs__study_design_display=sql_display(
                     "designs__study_design", constants.StudyDesign
@@ -71,8 +73,19 @@ class DesignManager(BaseManager):
                     function="array_to_string",
                     output_field=CharField(max_length=256),
                 ),
+                participant_n=ArrayAgg("designs__participant_n", distinct=True),
                 chemical_name=str_m2m("designs__chemicals__name"),
                 exposure_name=str_m2m("designs__exposures__name"),
+                exposure_measurement_type=Func(
+                    F("designs__exposures__measurement_type"),
+                    Value("|"),
+                    Value(""),
+                    function="array_to_string",
+                    output_field=CharField(max_length=256),
+                ),
+                exposure_route=sql_display(
+                    "designs__exposures__exposure_route", constants.ExposureRoute
+                ),
                 design_source=str_m2m("designs__source_display"),
                 study_design=str_m2m("designs__study_design_display"),
                 outcome_system=str_m2m("designs__outcomes__system_display"),
@@ -80,24 +93,32 @@ class DesignManager(BaseManager):
                 outcome_endpoint=str_m2m("designs__outcomes__endpoint"),
             ).values_list(
                 "id",
+                "design_summary",
                 "study_design",
                 "countries",
                 "design_source",
                 "age_profile",
+                "participant_n",
                 "chemical_name",
                 "exposure_name",
+                "exposure_measurement_type",
+                "exposure_route",
                 "outcome_system",
                 "outcome_effect",
                 "outcome_endpoint",
             ),
             columns=[
                 "study_id",
+                "design_summary",
                 "study_design",
                 "countries",
                 "design_source",
                 "age_profile",
+                "participant_n",
                 "chemical_name",
                 "exposure_name",
+                "exposure_measurement_type",
+                "exposure_route",
                 "outcome_system",
                 "outcome_effect",
                 "outcome_endpoint",
