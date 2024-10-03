@@ -6,6 +6,7 @@ import ReactDOM from "react-dom";
 import VisualToolbar from "shared/components/VisualToolbar";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
+import h from "shared/utils/helpers";
 
 class PrismaPlot {
     // Examples
@@ -29,7 +30,7 @@ class PrismaPlot {
             child = this.getGroup(child.id);
             this.makeGroupTextVisible(child);
         }
-        this.updateNodeTextAttributes(node, {display: "inline"});
+        this.updateNodeTextAttributes(node, { display: "inline" });
     }
 
     resizeNodes(node) {
@@ -83,7 +84,7 @@ class PrismaPlot {
             } else if (child.previous) {
                 let prevBBox = child.previous.rect.getBBox();
                 child.rect.setAttribute("y", prevBBox.y);
-                this.updateNodeTextAttributes(child, {y: prevBBox.y + this.TEXT_OFFSET_Y});
+                this.updateNodeTextAttributes(child, { y: prevBBox.y + this.TEXT_OFFSET_Y });
             } else {
                 let prevChildBBox = node.text[node.text.length - 1].getBBox();
                 child.rect.setAttribute("y", prevChildBBox.y + prevChildBBox.height + 15);
@@ -374,8 +375,21 @@ class PrismaPlot {
     nodeOnClick(e) {
         let id = e.target.parentNode.id.replace(new RegExp("-box" + "$"), "");
         id = id.replace(new RegExp("-text" + "$"), "");
-        let node = this.getGroup(id);
-        alert(node);
+        // use id to get reference id list
+        let refs = this.getRefs(id)
+        // fetch html from url
+        const detailEl = document.getElementById(`${this.store.settingsHash}-detail-section`);
+        detailEl.innerText = "Loading...";
+        const formData = new FormData();
+        formData.append("ids", refs.join(","));
+        fetch(this.store.dataset.url, h.fetchPostForm(this.options.csrf, formData))
+            .then(resp => resp.text())
+            .then(html => (detailEl.innerHTML = html));
+    }
+
+    getRefs(id) {
+        // TODO: right now we use hard coded IDs. We want to get all the refs from the given object/its children
+        return [3, 4, 5];
     }
 
     createCard(parent, text, styling = {}) {
@@ -446,9 +460,9 @@ class PrismaPlot {
 
     addResizeAndToolbar() {
         const nativeSize = {
-                width: this.w + 40,
-                height: this.h + 40,
-            },
+            width: this.w + 40,
+            height: this.h + 40,
+        },
             div = $("<div>")
                 .css({
                     position: "relative",
@@ -466,7 +480,7 @@ class PrismaPlot {
     }
 
     build_plot() {
-        const {styles} = this.store.settings;
+        const { styles } = this.store.settings;
         this.NAMESPACE = "http://www.w3.org/2000/svg";
         this.HTML_BULLET = "•";
         this.WORKSPACE_START_X = 20; // first box always placed here
