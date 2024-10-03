@@ -97,7 +97,6 @@ class PrismaStore {
                 stroke_color: "#000000",
                 width: 0,
                 height: 0,
-                border_width: 3,
                 bg_color: "#ffffff",
                 font_color: "#000000",
                 font_size: 0.0,

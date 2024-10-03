@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import IntegerInput from "shared/components/IntegerInput";
 import TextInput from "shared/components/TextInput";
+import FloatInput from "shared/components/FloatInput";
 
 @inject("store")
 @observer
@@ -30,6 +31,38 @@ class GlobalSettings extends Component {
                     value={styles.stroke_color}
                     onChange={e => changeSettings(e.target.name, e.target.value)}
                     type="color"
+                />
+                <TextInput
+                    name={"styles.bg_color"}
+                    value={styles.bg_color}
+                    label="Background Color"
+                    onChange={e => changeSettings(e.target.name, e.target.value)}
+                    type="color"
+                />
+                <TextInput
+                    name={"styles.font_color"}
+                    value={styles.font_color}
+                    label="Font Color"
+                    onChange={e => changeSettings(e.target.name, e.target.value)}
+                    type="color"
+                />
+                <FloatInput
+                    name={"styles.font_size"}
+                    value={styles.font_size}
+                    label="Font size"
+                    onChange={e => changeSettings(e.target.name, e.target.value)}
+                />
+                <IntegerInput
+                    name={"styles.padding_x"}
+                    value={styles.padding_x}
+                    label="Padding X"
+                    onChange={e => changeSettings(e.target.name, e.target.value)}
+                />
+                <IntegerInput
+                    name={"styles.padding_y"}
+                    value={styles.padding_y}
+                    label="Padding Y"
+                    onChange={e => changeSettings(e.target.name, e.target.value)}
                 />
             </div>
         );

@@ -28,10 +28,10 @@ class PrismaEditableRow extends EditableRow {
                 />
                 <IntegerInput
                     name={`${key}-border-width-${index}`}
-                    value={row.styling.border_width}
-                    label="Border Width"
+                    value={row.styling.stroke_width}
+                    label="Stroke Width"
                     onChange={e =>
-                        changeStylingSettings(key, index, "border_width", e.target.value)
+                        changeStylingSettings(key, index, "stroke_width", e.target.value)
                     }
                 />
                 <IntegerInput
@@ -43,19 +43,19 @@ class PrismaEditableRow extends EditableRow {
                     }
                 />
                 <TextInput
+                    name={`${key}-stroke-color-${index}`}
+                    value={row.styling.stroke_color}
+                    label="Stroke Color"
+                    onChange={e =>
+                        changeStylingSettings(key, index, "stroke_color", e.target.value)
+                    }
+                    type="color"
+                />
+                <TextInput
                     name={`${key}-bg-color-${index}`}
                     value={row.styling.bg_color}
                     label="Background Color"
                     onChange={e => changeStylingSettings(key, index, "bg_color", e.target.value)}
-                    type="color"
-                />
-                <TextInput
-                    name={`${key}-border-color-${index}`}
-                    value={row.styling.border_color}
-                    label="Border Color"
-                    onChange={e =>
-                        changeStylingSettings(key, index, "border_color", e.target.value)
-                    }
                     type="color"
                 />
                 <TextInput
