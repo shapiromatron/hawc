@@ -1,6 +1,6 @@
 from django.contrib.postgres.aggregates import ArrayAgg
 
-from ..common.exports import Exporter, ModelExport
+from ..common.exports import Exporter, ModelExport, clean_html
 from ..common.models import sql_display, str_m2m
 from . import constants
 
@@ -108,3 +108,21 @@ class AssessmentExporter(Exporter):
             AssessmentDetailExport("assessment_detail", "assessment__details"),
             AssessmentValueExport("assessment_value", ""),
         ]
+
+
+class CommunicationsExport(ModelExport):
+    def get_value_map(self) -> dict:
+        return {
+            "id": "id",
+            "message": "message",
+            "object_id": "object_id",
+            "created": "created",
+            "last_updated": "last_updated",
+        }
+
+    def prepare_df(self, df):
+        message = self.get_column_name("message")
+        if message in df.columns:
+            df.loc[:, message] = clean_html(df[message])
+
+        return self.format_time(df)
