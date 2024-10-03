@@ -118,6 +118,8 @@ class Study(Reference):
 
     udfs = GenericRelation(ModelUDFContent, related_query_name="studies")
 
+    communications = GenericRelation(Communication, related_query_name="study_communications")
+
     BREADCRUMB_PARENT = "assessment"
 
     class Meta:
