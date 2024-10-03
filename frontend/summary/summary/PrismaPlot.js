@@ -71,7 +71,13 @@ class PrismaPlot {
 
     render(div) {
         this.plot_div = $(div);
-        this.build_plot();
+        this.setDefaults();
+        this.buildRootSvg();
+        this.buildSections();
+        this.applyPostStyling();
+        this.buildConnections();
+        this.setOverallDimensions();
+        this.addResizeAndToolbar();
     }
 
     resizeNodes(node) {
@@ -458,38 +464,7 @@ class PrismaPlot {
         ReactDOM.render(<VisualToolbar svg={this.svg} nativeSize={nativeSize} />, div[0]);
     }
 
-    build_plot() {
-        const {styles, arrow_styles} = this.store.settings;
-        this.MAX_WIDTH = 300; // box dimensions
-        this.MIN_HEIGHT = 100;
-        this.SPACING_V = 100; // distance between boxes
-        this.SPACING_H = 120;
-        this.TEXT_OFFSET_X = 10;
-        this.TEXT_OFFSET_Y = 20;
-        this.TEXT_SIZE = 1;
-        this.STYLE_DEFAULT = {
-            x: "0", // +- centered around current box position (moves relevant text as well)
-            y: "0",
-            width: "0", // non-0 value for fixed
-            height: "0",
-            "spacing-horizontal": this.SPACING_H,
-            "spacing-vertical": this.SPACING_V,
-            "text-padding-x": "0", // +- centered around global text offset values
-            "text-padding-y": "0",
-            "text-color": "black",
-            "text-style": "normal", // or "bold"
-            "text-size": "0", // always appends "em" unit, +- centered around global text size
-            "bg-color": "white",
-            stroke: styles.stroke_color, // box border color
-            "stroke-width": styles.stroke_width, // box border width
-            rx: styles.stroke_radius, // box rounded edge horizontal
-            ry: styles.stroke_radius, // box rounded edge vertical
-            "arrow-color": arrow_styles["stroke_color"],
-            "arrow-width": arrow_styles["stroke_width"],
-            "arrow-type": arrow_styles["arrow_type"],
-            "arrow-force-vertical": arrow_styles["force_vertical"],
-        };
-
+    buildRootSvg() {
         this.plot_div.empty();
         this.svg = d3
             .select(this.plot_div[0])
@@ -499,10 +474,10 @@ class PrismaPlot {
             .attr("class", "d3")
             .attr("id", "svg-root")
             .node();
-        this.cardrowlength = -1;
+    }
 
-        const diagramSections = this.store.sections,
-            connections = this.store.getConnections();
+    buildSections() {
+        const diagramSections = this.store.sections;
 
         // parse data structure
         let parent, child, sibling;
@@ -554,13 +529,46 @@ class PrismaPlot {
             }
             this.resizeNodes(parent);
         }
+    }
 
-        this.applyPostStyling();
-        connections.forEach(connection => {
+    buildConnections() {
+        this.store.getConnections().forEach(connection => {
             this.drawConnection(connection);
         });
-        this.setOverallDimensions(diagramSections);
-        this.addResizeAndToolbar();
+    }
+
+    setDefaults() {
+        const {styles, arrow_styles} = this.store.settings;
+        this.MAX_WIDTH = 300; // box dimensions
+        this.MIN_HEIGHT = 100;
+        this.SPACING_V = 100; // distance between boxes
+        this.SPACING_H = 120;
+        this.TEXT_OFFSET_X = 10;
+        this.TEXT_OFFSET_Y = 20;
+        this.TEXT_SIZE = 1;
+        this.STYLE_DEFAULT = {
+            x: "0", // +- centered around current box position (moves relevant text as well)
+            y: "0",
+            width: "0", // non-0 value for fixed
+            height: "0",
+            "spacing-horizontal": this.SPACING_H,
+            "spacing-vertical": this.SPACING_V,
+            "text-padding-x": "0", // +- centered around global text offset values
+            "text-padding-y": "0",
+            "text-color": "black",
+            "text-style": "normal", // or "bold"
+            "text-size": "0", // always appends "em" unit, +- centered around global text size
+            "bg-color": "white",
+            stroke: styles.stroke_color, // box border color
+            "stroke-width": styles.stroke_width, // box border width
+            rx: styles.stroke_radius, // box rounded edge horizontal
+            ry: styles.stroke_radius, // box rounded edge vertical
+            "arrow-color": arrow_styles["stroke_color"],
+            "arrow-width": arrow_styles["stroke_width"],
+            "arrow-type": arrow_styles["arrow_type"],
+            "arrow-force-vertical": arrow_styles["force_vertical"],
+        };
+        this.cardrowlength = -1;
     }
 
     applyPostStyling() {
@@ -589,7 +597,8 @@ class PrismaPlot {
         }
     }
 
-    setOverallDimensions(sections) {
+    setOverallDimensions() {
+        const {sections} = this.store;
         if (sections.length === 0) {
             this.w = 10;
             this.h = 10;
