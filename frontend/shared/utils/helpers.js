@@ -257,6 +257,7 @@ const helpers = {
     getTextContrastColor(hex) {
         /* Returns white or black based on best contrast for given background color
            Based on W3C guidelines: https://www.w3.org/TR/UNDERSTANDING-WCAG20/visual-audio-contrast-contrast.html
+           https://stackoverflow.com/a/41491220/906385
          */
         let {r, b, g} = d3.rgb(hex);
         if (r > 255 || r < 0) throw `RGB values must be between 0 and 255. R value was ${r}.`;
@@ -267,7 +268,7 @@ const helpers = {
             g_component = g <= 0.03928 ? g / 12.92 : ((g + 0.055) / 1.055) ** 2.4,
             b_component = b <= 0.03928 ? b / 12.92 : ((b + 0.055) / 1.055) ** 2.4,
             luminance = 0.2126 * r_component + 0.7152 * g_component + 0.0722 * b_component;
-        return luminance > Math.sqrt(1.05 * 0.05) - 0.05 ? "#000000" : "#ffffff";
+        return luminance < 0.179 ? "#ffffff" : "#000000";
     },
     randomString(length = 15) {
         return Array(length)

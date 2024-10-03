@@ -467,6 +467,11 @@ class InlineRadioChoiceField(forms.ChoiceField):
     crispy_field_class = cfb.InlineRadios
 
 
+class ColorField(forms.CharField):
+    widget = widgets.ColorInput
+    default_validators = [validators.ColorValidator()]
+
+
 class PydanticValidator:
     """JSON field validator that uses a pydantic model."""
 

@@ -143,6 +143,12 @@ class NumericTextValidator(RegexValidator):
     message = "Must be number-like, including {<,≤,≥,>,LOD,LOQ} (ex: 3.4, 1.2E-5, < LOD)"
 
 
+class ColorValidator(RegexValidator):
+    regex = r"^#[A-Fa-f0-9]{6}$"
+    flags = re.IGNORECASE
+    message = "Must be in #rrggbb hexadecimal format."
+
+
 class FlatJSON:
     """A JSON based-field where all key and values are strings."""
 

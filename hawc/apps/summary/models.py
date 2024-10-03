@@ -3,6 +3,7 @@ import logging
 import os
 
 import pandas as pd
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -21,7 +22,7 @@ from ...tools.tables.set import StudyEvaluationTable
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.constants import EpiVersion, RobName
-from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
+from ..assessment.models import Assessment, BaseEndpoint, DoseUnits, LabeledItem
 from ..common.helper import (
     FlatExport,
     PydanticToDjangoError,
@@ -70,6 +71,7 @@ class SummaryTable(models.Model):
         help_text="For assessments marked for public viewing, mark table to be viewable by public",
     )
     caption = models.TextField(blank=True, validators=[validate_html_tags, validate_hyperlinks])
+    labels = GenericRelation(LabeledItem, related_query_name="summary_tables")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -228,6 +230,7 @@ class Visual(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+    labels = GenericRelation(LabeledItem, related_query_name="visuals")
 
     BREADCRUMB_PARENT = "assessment"
 
@@ -617,6 +620,13 @@ class DataPivot(models.Model):
         else:
             return self.datapivotquery.visual_type
 
+    @property
+    def visible_labels(self):
+        if hasattr(self, "datapivotupload"):
+            return self.datapivotupload.visible_upload_labels
+        else:
+            return self.datapivotquery.visible_query_labels
+
     def get_visual_type_display(self):
         return self.visual_type
 
@@ -640,6 +650,7 @@ class DataPivotUpload(DataPivot):
         max_length=64,
         blank=True,
     )
+    labels = GenericRelation(LabeledItem, related_query_name="datapivot_uploads")
 
     @property
     def visual_type(self):
@@ -682,6 +693,7 @@ class DataPivotQuery(DataPivot):
         "creating one plot similar, but not identical, dose-units.",
     )
     prefilters = models.JSONField(default=dict)
+    labels = GenericRelation(LabeledItem, related_query_name="datapivot_queries")
 
     def clean(self):
         count = self.get_queryset().count()

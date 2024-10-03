@@ -1,6 +1,7 @@
 from pathlib import Path
 from textwrap import dedent
 
+from crispy_forms import layout as cfl
 from django import forms
 from django.conf import settings
 from django.contrib import admin
@@ -207,6 +208,10 @@ class AssessmentValueForm(forms.ModelForm):
             "evidence": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="evidence"
             ),
+            "value_type_qualifier": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete,
+                field="value_type_qualifier",
+            ),
             "value_unit": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="value_unit"
             ),
@@ -266,7 +271,9 @@ class AssessmentValueForm(forms.ModelForm):
 
         helper.set_textarea_height(("comments", "basis", "extra"), 3)
         helper.add_row("evaluation_type", 2, "col-md-6")
-        helper.add_row("value_type", 4, "col-md-3")
+        helper.add_row(
+            "value_type", 5, ["col-md-3", "col-md-3", "col-md-2", "col-md-2", "col-md-2"]
+        )
         helper.add_row("confidence", 3, "col-md-4")
         helper.add_row("pod_type", 4, "col-md-3")
         helper.add_row("species_studied", 3, "col-md-4")
@@ -675,3 +682,127 @@ class DatasetForm(forms.ModelForm):
         model = models.Dataset
         fields = ("name", "description", "published")
         field_classes = {"description": QuillField}
+
+
+class LabelForm(forms.ModelForm):
+    parent = forms.ModelChoiceField(None, empty_label=None)
+
+    class Meta:
+        model = models.Label
+        fields = ["name", "description", "parent", "color", "published"]
+
+    def __init__(self, *args, **kwargs):
+        assessment = kwargs.pop("assessment", None)
+        prefix = f"label-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
+        if assessment:
+            self.instance.assessment = assessment
+        if self.instance.pk is not None:
+            self.fields["parent"].initial = self.instance.get_parent()
+        self.fields["parent"].queryset = self.get_parent_queryset()
+        self.fields["parent"].label_from_instance = lambda label: label.get_nested_name()
+        self.fields["description"].widget.attrs["rows"] = 2
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("name", "published", css_class="col-md-3"),
+                cfl.Column("color", css_class="col-md-1"),
+                cfl.Column("description", css_class="col"),
+                cfl.Column("parent", css_class="col-md-2"),
+            ),
+        )
+        return helper
+
+    def get_parent_queryset(self):
+        root = models.Label.get_assessment_root(self.instance.assessment.pk)
+        queryset = models.Label.get_tree(root)
+        if self.instance.pk is not None:
+            queryset = queryset.exclude(
+                path__startswith=self.instance.path, depth__gte=self.instance.depth
+            )
+        return queryset
+
+    def clean(self):
+        cleaned_data = super().clean()
+        parent_conflict_msg = "Cannot be published: parent label is unpublished."
+        descendant_conflict_msg = "Cannot be unpublished: child label is published."
+        # if published changed, check parent and subtree published status
+        if "published" in self.changed_data:
+            if cleaned_data["published"] and not cleaned_data["parent"].published:
+                self.add_error("published", parent_conflict_msg)
+            elif not cleaned_data["published"] and self.instance.pk is not None:
+                descendants = self.instance.get_descendants()
+                if any(_.published for _ in descendants):
+                    self.add_error("published", descendant_conflict_msg)
+        # else if parent changed, check parent published status
+        elif "parent" in self.changed_data:
+            if cleaned_data["published"] and not cleaned_data["parent"].published:
+                self.add_error("parent", parent_conflict_msg)
+        return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if commit:
+            parent = self.cleaned_data["parent"]
+            # handle new instance
+            if instance.pk is None:
+                instance = models.Label.create_tag(
+                    assessment_id=instance.assessment.pk, parent_id=parent.pk, instance=instance
+                )
+            # handle existing instance
+            else:
+                instance.save()
+                if "parent" in self.changed_data:
+                    instance.move(parent, pos="last-child")
+            self.save_m2m()
+        return instance
+
+
+class LabelItemForm(forms.Form):
+    labels = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=models.Label.objects.all(),
+        label="Labels",
+        help_text="Select label(s) to apply.",
+    )
+
+    def __init__(self, *args, **kwargs):
+        content_object = kwargs.pop("content_object", None)
+        self.content_type = kwargs.pop("content_type")
+        self.object_id = kwargs.pop("object_id")
+        super().__init__(*args, **kwargs)
+        labels = models.Label.get_assessment_qs(content_object.get_assessment().pk)
+        self.fields["labels"].queryset = labels
+        self.fields["labels"].label_from_instance = lambda label: label.get_nested_name()
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        return helper
+
+    @transaction.atomic
+    def save(self):
+        qs = models.LabeledItem.objects.filter(
+            content_type_id=self.content_type, object_id=self.object_id
+        )
+        existing = set(qs.values_list("label_id", flat=True))
+        next = set(label.id for label in self.cleaned_data["labels"])
+
+        deletes = existing - next
+        if deletes:
+            qs.filter(label_id__in=deletes).delete()
+
+        creates = next - existing
+        if creates:
+            labels = [
+                models.LabeledItem(
+                    label_id=label_id, content_type_id=self.content_type, object_id=self.object_id
+                )
+                for label_id in creates
+            ]
+            models.LabeledItem.objects.bulk_create(labels)

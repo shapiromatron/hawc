@@ -1681,6 +1681,7 @@
     evaluation_type: 1
     system: Urinary
     value_type: 0
+    value_type_qualifier: ''
     value: 1.0
     value_unit: mg/kg/day
     confidence: High
@@ -1708,6 +1709,7 @@
     evaluation_type: 1
     system: Urinary
     value_type: 10
+    value_type_qualifier: ''
     value: 4.0
     value_unit: mg/kg/day
     confidence: Medium High
@@ -1735,6 +1737,7 @@
     evaluation_type: 0
     system: Urinary
     value_type: 30
+    value_type_qualifier: ''
     value: 8.0e-05
     value_unit: mg/kg/day
     confidence: Medium
@@ -2094,6 +2097,34 @@
     - assessment
     object_id: 1
     created: 2024-03-13 11:30:01.123456+00:00
+- model: assessment.label
+  pk: 1
+  fields:
+    name: "assessment-1"
+    path: "0001"
+    depth: 1
+    numchild: 1
+    description: ""
+    color: "#4d8055"
+    assessment: 1
+    published: True
+    text_color: "#FFFFFF"
+    created: 2024-09-16 11:30:01.123456+00:00
+    last_updated: 2024-09-16 11:30:01.123456+00:00
+- model: assessment.label
+  pk: 2
+  fields:
+    name: "Label"
+    path: "00010001"
+    depth: 2
+    numchild: 0
+    description: "Description!"
+    color: "#4d8055"
+    assessment: 1
+    published: True
+    text_color: "#FFFFFF"
+    created: 2024-09-16 11:30:01.123456+00:00
+    last_updated: 2024-09-16 11:30:01.123456+00:00
 - model: lit.literatureassessment
   pk: 1
   fields:

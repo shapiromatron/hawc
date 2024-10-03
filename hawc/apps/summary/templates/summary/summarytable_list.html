@@ -19,16 +19,23 @@
 
   {% if object_list.exists %}
     <table class="table table-sm table-striped">
-      {% bs4_colgroup '40,20,20,20' %}
+      {% bs4_colgroup '50,20,15,15' %}
       {% bs4_thead 'Title,Table Type,Created,Modified' %}
       <tbody>
         {% for object in object_list %}
           <tr>
-            <td><a href="{{object.get_absolute_url}}">{{object.title}}</a>
-              {% if obj_perms.edit and not object.published %}
-                <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
-              {% endif %}
-              {% debug_badge object.id %}
+            <td>
+              <div>
+                {% debug_badge object.id %}
+                <a href="{{object.get_absolute_url}}">{{object.title}}</a>
+                {% if obj_perms.edit and not object.published %}<i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>{% endif %}
+              </div>
+              <div class="d-flex flex-wrap">
+                {% for labeled_item in object.visible_labels %}
+                  {% include "assessment/fragments/label.html" with label=labeled_item.label anchor_tag=True %}
+                {% endfor %}
+              </div>
+              {% if object.caption %}<div class='text-muted' title="{{visual.caption|striptags|safe}}">{{object.caption|striptags|truncatewords:20|safe}}</div>{% endif %}
             </td>
             <td>{{object.get_table_type_display}}</td>
             <td>{{object.created|date:"Y-m-d" }}</td>

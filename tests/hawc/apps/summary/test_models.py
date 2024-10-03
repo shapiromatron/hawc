@@ -54,7 +54,7 @@ class TestVisual:
         obj = models.Visual.objects.filter(visual_type=constants.VisualType.ROB_HEATMAP).first()
         df = obj.data_df(use_settings=True)
         assert isinstance(df, pd.DataFrame)
-        assert df.shape[0] > 0
+        assert not df.empty
 
 
 @pytest.mark.django_db
