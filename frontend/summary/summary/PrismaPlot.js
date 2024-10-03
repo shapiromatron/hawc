@@ -7,105 +7,10 @@ import VisualToolbar from "shared/components/VisualToolbar";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 
-class PrismaPlot {
-    // Examples
-    // https://hero.epa.gov/hero/index.cfm/litflow/viewProject/project_id/2489
-    // https://hawcproject.org/summary/visual/assessment/405/eFigure-1-Reference-Flow-Diagram/
-    // https://www.bmj.com/content/372/bmj.n71
-    // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8958186/figure/cl21230-fig-0003/
-    constructor(store, options) {
-        this.modal = new HAWCModal();
-        this.store = store;
-        this.options = options;
-    }
-
-    render(div) {
-        this.plot_div = $(div);
-        this.build_plot();
-    }
-
-    makeGroupTextVisible(node) {
-        for (let child of node.children) {
-            child = this.getGroup(child.id);
-            this.makeGroupTextVisible(child);
-        }
-        this.updateNodeTextAttributes(node, {display: "inline"});
-    }
-
-    resizeNodes(node) {
-        // should only be vertical adjustments
-        node = this.getGroup(node.id);
-        this.makeGroupTextVisible(node);
-        let nodeSpacing = parseFloat(node.styling["spacing-vertical"]);
-
-        // adjust position of vertical nodes when the previous node is part of a separate group
-        if (node.isVertical && !node.parent) {
-            let prevNodeGroup = node.previous;
-            while (prevNodeGroup.parent) {
-                prevNodeGroup = prevNodeGroup.parent;
-            }
-            prevNodeGroup = prevNodeGroup.group.getBBox();
-            node.rect.setAttribute("y", prevNodeGroup.y + prevNodeGroup.height + nodeSpacing);
-            this.updateNodeTextAttributes(node, {
-                y: prevNodeGroup.y + prevNodeGroup.height + nodeSpacing + this.TEXT_OFFSET_Y,
-            });
-        }
-
-        // wrap and push down all immediate text elements
-        let width = node.rect.getBBox().width - parseFloat(node.styling["text-padding-x"]) - 5;
-        for (let i = 0; i < node.text.length; i++) {
-            HAWCUtils.wrapText(node.text[i], width);
-            for (let j = i + 1; j < node.text.length; j++) {
-                let bb = node.text[j - 1].getBBox(),
-                    previousTextY = bb.y + bb.height;
-                node.text[j].setAttribute("y", previousTextY + this.TEXT_OFFSET_Y);
-            }
-        }
-
-        // push children down
-        for (let child of node.children) {
-            child = this.getGroup(child.id);
-            if (child.isVertical) {
-                let prevChildBBox = child.previous.group.getBBox(),
-                    prevChildNodeSpacing = parseFloat(child.previous.styling["spacing-vertical"]);
-
-                child.rect.setAttribute(
-                    "y",
-                    prevChildBBox.y + prevChildBBox.height + prevChildNodeSpacing
-                );
-                this.updateNodeTextAttributes(child, {
-                    y:
-                        prevChildBBox.y +
-                        prevChildBBox.height +
-                        prevChildNodeSpacing +
-                        this.TEXT_OFFSET_Y,
-                });
-            } else if (child.previous) {
-                let prevBBox = child.previous.rect.getBBox();
-                child.rect.setAttribute("y", prevBBox.y);
-                this.updateNodeTextAttributes(child, {y: prevBBox.y + this.TEXT_OFFSET_Y});
-            } else {
-                let prevChildBBox = node.text[node.text.length - 1].getBBox();
-                child.rect.setAttribute("y", prevChildBBox.y + prevChildBBox.height + 15);
-                this.updateNodeTextAttributes(child, {
-                    y: prevChildBBox.y + prevChildBBox.height + this.TEXT_OFFSET_Y + 15,
-                });
-            }
-            this.resizeNodes(child);
-        }
-
-        // rect visual height adjustment
-        if (node.rect.getAttribute("fixed-height") == "true") {
-            //return node;
-        } else if (Math.floor(node.group.getBBox().height) <= this.MIN_HEIGHT) {
-            node.rect.setAttribute("height", this.MIN_HEIGHT);
-        } else {
-            node.rect.setAttribute("height", node.group.getBBox().height + 15);
-        }
-        return node;
-    }
-
-    getGroup(id) {
+const NAMESPACE = "http://www.w3.org/2000/svg",
+    WORKSPACE_START_X = 20,
+    WORKSPACE_START_Y = 20,
+    getGroup = function(id) {
         let group = document.getElementById(id);
         if (!group) {
             return undefined;
@@ -124,20 +29,122 @@ class PrismaPlot {
             text,
             styling,
             isVertical: isVertical == "true",
-            parent: this.getGroup(parent?.id),
-            previous: this.getGroup(previous?.id),
+            parent: getGroup(parent?.id),
+            previous: getGroup(previous?.id),
             children,
         };
-    }
-
-    updateNodeTextAttributes(node, attr = {}) {
+    },
+    updateNodeTextAttributes = function(node, attr = {}) {
         // update attributes to all text elements within a node
-        node = this.getGroup(node.id);
+        node = getGroup(node.id);
         for (let text of node.text) {
             for (const [key, value] of Object.entries(attr)) {
                 text.setAttribute(key, value);
             }
         }
+    },
+    makeGroupTextVisible = function(node) {
+        for (let child of node.children) {
+            child = getGroup(child.id);
+            makeGroupTextVisible(child);
+        }
+        updateNodeTextAttributes(node, {display: "inline"});
+    },
+    nodeOnClick = function(e) {
+        let id = e.target.parentNode.id.replace(new RegExp("-box" + "$"), "");
+        id = id.replace(new RegExp("-text" + "$"), "");
+        let node = getGroup(id);
+        alert(node);
+    };
+
+class PrismaPlot {
+    // Examples
+    // https://hero.epa.gov/hero/index.cfm/litflow/viewProject/project_id/2489
+    // https://hawcproject.org/summary/visual/assessment/405/eFigure-1-Reference-Flow-Diagram/
+    // https://www.bmj.com/content/372/bmj.n71
+    // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8958186/figure/cl21230-fig-0003/
+    constructor(store, options) {
+        this.modal = new HAWCModal();
+        this.store = store;
+        this.options = options;
+    }
+
+    render(div) {
+        this.plot_div = $(div);
+        this.build_plot();
+    }
+
+    resizeNodes(node) {
+        // should only be vertical adjustments
+        node = getGroup(node.id);
+        makeGroupTextVisible(node);
+        let nodeSpacing = parseFloat(node.styling["spacing-vertical"]);
+
+        // adjust position of vertical nodes when the previous node is part of a separate group
+        if (node.isVertical && !node.parent) {
+            let prevNodeGroup = node.previous;
+            while (prevNodeGroup.parent) {
+                prevNodeGroup = prevNodeGroup.parent;
+            }
+            prevNodeGroup = prevNodeGroup.group.getBBox();
+            node.rect.setAttribute("y", prevNodeGroup.y + prevNodeGroup.height + nodeSpacing);
+            updateNodeTextAttributes(node, {
+                y: prevNodeGroup.y + prevNodeGroup.height + nodeSpacing + this.TEXT_OFFSET_Y,
+            });
+        }
+
+        // wrap and push down all immediate text elements
+        let width = node.rect.getBBox().width - parseFloat(node.styling["text-padding-x"]) - 5;
+        for (let i = 0; i < node.text.length; i++) {
+            HAWCUtils.wrapText(node.text[i], width);
+            for (let j = i + 1; j < node.text.length; j++) {
+                let bb = node.text[j - 1].getBBox(),
+                    previousTextY = bb.y + bb.height;
+                node.text[j].setAttribute("y", previousTextY + this.TEXT_OFFSET_Y);
+            }
+        }
+
+        // push children down
+        for (let child of node.children) {
+            child = getGroup(child.id);
+            if (child.isVertical) {
+                let prevChildBBox = child.previous.group.getBBox(),
+                    prevChildNodeSpacing = parseFloat(child.previous.styling["spacing-vertical"]);
+
+                child.rect.setAttribute(
+                    "y",
+                    prevChildBBox.y + prevChildBBox.height + prevChildNodeSpacing
+                );
+                updateNodeTextAttributes(child, {
+                    y:
+                        prevChildBBox.y +
+                        prevChildBBox.height +
+                        prevChildNodeSpacing +
+                        this.TEXT_OFFSET_Y,
+                });
+            } else if (child.previous) {
+                let prevBBox = child.previous.rect.getBBox();
+                child.rect.setAttribute("y", prevBBox.y);
+                updateNodeTextAttributes(child, {y: prevBBox.y + this.TEXT_OFFSET_Y});
+            } else {
+                let prevChildBBox = node.text[node.text.length - 1].getBBox();
+                child.rect.setAttribute("y", prevChildBBox.y + prevChildBBox.height + 15);
+                updateNodeTextAttributes(child, {
+                    y: prevChildBBox.y + prevChildBBox.height + this.TEXT_OFFSET_Y + 15,
+                });
+            }
+            this.resizeNodes(child);
+        }
+
+        // rect visual height adjustment
+        if (node.rect.getAttribute("fixed-height") == "true") {
+            //return node;
+        } else if (Math.floor(node.group.getBBox().height) <= this.MIN_HEIGHT) {
+            node.rect.setAttribute("height", this.MIN_HEIGHT);
+        } else {
+            node.rect.setAttribute("height", node.group.getBBox().height + 15);
+        }
+        return node;
     }
 
     createRectangleWithText(id = "", text = "", x = 0, y = 0, styling = {}) {
@@ -146,12 +153,12 @@ class PrismaPlot {
             if (!styling[key]) styling[key] = value;
         }
 
-        let group = document.createElementNS(this.NAMESPACE, "g");
+        let group = document.createElementNS(NAMESPACE, "g");
         group.setAttribute("id", id);
         group.setAttribute("class", "node");
         group.setAttribute("data-styling", JSON.stringify(styling));
 
-        let rect = document.createElementNS(this.NAMESPACE, "rect");
+        let rect = document.createElementNS(NAMESPACE, "rect");
         rect.setAttribute("x", x);
         rect.setAttribute("y", y);
         rect.setAttribute("class", "node-rect");
@@ -191,11 +198,11 @@ class PrismaPlot {
             if (!styling[key]) styling[key] = value;
         }
 
-        node = this.getGroup(node.id);
+        node = getGroup(node.id);
         let x = node.rect.getBBox().x;
         let y = node.rect.getBBox().y;
 
-        let textElement = document.createElementNS(this.NAMESPACE, "text");
+        let textElement = document.createElementNS(NAMESPACE, "text");
         textElement.setAttribute("data-styling", JSON.stringify(styling));
         textElement.setAttribute(
             "x",
@@ -218,15 +225,15 @@ class PrismaPlot {
 
     addNodeToHTML(node, parent = undefined) {
         if (parent) {
-            $(document.getElementById(parent.id)).append(node.group);
+            document.getElementById(parent.id).append(node.group);
         } else {
-            $("#svgworkspace").append(node.group);
+            this.svg.append(node.group);
         }
         let txtEle = this.addTextToNode(node, node.id + "-text", node.text, node.styling);
         node.text = txtEle;
 
-        node.rect.onclick = this.nodeOnClick.bind(this);
-        txtEle.onclick = this.nodeOnClick.bind(this);
+        node.rect.onclick = nodeOnClick.bind(this);
+        txtEle.onclick = nodeOnClick.bind(this);
         return node;
     }
 
@@ -235,8 +242,8 @@ class PrismaPlot {
         // https://observablehq.com/d/7759e56ba89ced03
         const id = connection.key,
             styling = _.clone(this.store.settings.styles),
-            node1BBox = this.getGroup(connection.src).rect.getBBox(),
-            node2BBox = this.getGroup(connection.dst).rect.getBBox();
+            node1BBox = getGroup(connection.src).rect.getBBox(),
+            node2BBox = getGroup(connection.dst).rect.getBBox();
 
         // add overrides (TODO - this isn't working yet, to fix)
         if (connection.styling) {
@@ -278,7 +285,6 @@ class PrismaPlot {
             if (!styling[key]) styling[key] = value;
         }
         let arrowType = "arrow" + styling["arrow-type"];
-        let d3svg = d3.select("#svgworkspace");
         let arrow = d3Arrow[arrowType]().id(id);
         if (arrowhead) {
             arrow
@@ -287,8 +293,8 @@ class PrismaPlot {
         } else {
             arrow.attr("fill", "transparent").attr("stroke", "transparent");
         }
-        d3svg.call(arrow);
-        d3svg
+        d3.select(this.svg).call(arrow);
+        d3.select(this.svg)
             .append("polyline")
             .attr("marker-end", `url(#${id})`)
             .attr("points", [xy1, xy2])
@@ -296,19 +302,8 @@ class PrismaPlot {
             .attr("stroke-width", styling["arrow-width"]);
     }
 
-    initNode(id, text, styling = {}) {
-        let initialNode = this.createRectangleWithText(
-            id,
-            text,
-            this.WORKSPACE_START_X,
-            this.WORKSPACE_START_Y,
-            styling
-        );
-        return this.addNodeToHTML(initialNode);
-    }
-
     createNewVerticalNode(prevNode, id, text, group = false, styling = {}) {
-        prevNode = this.getGroup(prevNode.id);
+        prevNode = getGroup(prevNode.id);
         let prevBBox = prevNode.rect.getBBox();
         let nodeSpacing = styling["spacing-vertical"]
             ? parseFloat(styling["spacing-vertical"])
@@ -327,7 +322,7 @@ class PrismaPlot {
 
     createNewHorizontalNode(prevNode, id, text, group = false, styling = {}) {
         // group nodes if prevNode has a parent
-        prevNode = this.getGroup(prevNode.id);
+        prevNode = getGroup(prevNode.id);
         let prevBBox = prevNode.rect.getBBox();
         let x;
         let nodeSpacing = styling["spacing-horizontal"]
@@ -349,38 +344,29 @@ class PrismaPlot {
                     let parentAdjustedWidth = parent.group.getBBox().width + 15;
                     parent.rect.setAttribute("width", parentAdjustedWidth);
                 }
-                parent = this.getGroup(parent.id).parent;
+                parent = getGroup(parent.id).parent;
             }
         }
         return horizontalNode;
     }
 
     createChildNode(parent, id, text, styling = {}) {
-        let pad = 15;
-        let parentBBox = parent.rect.getBBox();
-
-        let childAdjustedY = parentBBox.y + pad;
-        let childAdjustedX = parentBBox.x + pad;
-        let child = this.createRectangleWithText(id, text, childAdjustedX, childAdjustedY, styling);
-
-        let currentParent = parent;
+        let pad = 15,
+            parentBBox = parent.rect.getBBox(),
+            childAdjustedY = parentBBox.y + pad,
+            childAdjustedX = parentBBox.x + pad,
+            child = this.createRectangleWithText(id, text, childAdjustedX, childAdjustedY, styling),
+            currentParent = parent;
         while (currentParent) {
             if (currentParent.styling["width"] == "0") {
                 parentBBox = currentParent.rect.getBBox();
                 let parentAdjustedWidth = parentBBox.width + pad * 2;
                 currentParent.rect.setAttribute("width", parentAdjustedWidth);
             }
-            currentParent = this.getGroup(currentParent.id).parent;
+            currentParent = getGroup(currentParent.id).parent;
         }
 
         return this.addNodeToHTML(child, parent);
-    }
-
-    nodeOnClick(e) {
-        let id = e.target.parentNode.id.replace(new RegExp("-box" + "$"), "");
-        id = id.replace(new RegExp("-text" + "$"), "");
-        let node = this.getGroup(id);
-        alert(node);
     }
 
     createCard(parent, text, styling = {}) {
@@ -395,19 +381,19 @@ class PrismaPlot {
             if (!styling[key]) styling[key] = value;
         }
 
-        let allCards = $(document.getElementById(parent.group.id)).children(".node");
-        let prevNode = allCards.length > 0 ? allCards[allCards.length - 1] : parent;
-        prevNode = this.getGroup(prevNode.id);
-        let id = parent.id + "_" + allCards.length;
+        let allCards = $(document.getElementById(parent.group.id)).children(".node"),
+            prevNode = allCards.length > 0 ? allCards[allCards.length - 1] : parent,
+            id = parent.id + "_" + allCards.length;
+        prevNode = getGroup(prevNode.id);
 
         this.cardrowlength++;
         if (allCards.length > 0) {
-            let parentPosition = parent.rect.getBBox().x + parent.rect.getBBox().width;
-            let prevCardPosition = prevNode.rect.getBBox().x + prevNode.rect.getBBox().width;
-            let cardPosition =
-                prevCardPosition +
-                parseFloat(styling["spacing-horizontal"]) +
-                parseFloat(styling["width"]);
+            let parentPosition = parent.rect.getBBox().x + parent.rect.getBBox().width,
+                prevCardPosition = prevNode.rect.getBBox().x + prevNode.rect.getBBox().width,
+                cardPosition =
+                    prevCardPosition +
+                    parseFloat(styling["spacing-horizontal"]) +
+                    parseFloat(styling["width"]);
 
             if (cardPosition < parentPosition) {
                 return this.createNewHorizontalNode(prevNode, id, text, true, styling);
@@ -422,19 +408,21 @@ class PrismaPlot {
         return this.createChildNode(parent, id, text, styling);
     }
 
-    listCardLayout(id, col) {
+    drawBox(id, col) {
         // helper function for parsing the data structure
         // handles list/card layouts at the section and block level
-        let blocks = col.blocks || col.sub_blocks;
-        let currentNode = this.getGroup(id);
+        let blocks = col.blocks || col.sub_blocks,
+            currentNode = getGroup(id);
 
         if (col.block_layout == "list") {
             for (let i = 0; i < blocks.length; i++) {
-                let blockStyle = blocks[i].styling ?? {};
-                if (!blockStyle["text-padding-x"]) blockStyle["text-padding-x"] = "5";
+                let blockStyle = blocks[i].styling ?? {},
+                    subblockId = currentNode.id + "-text_" + i,
+                    subblockText = `• ${blocks[i].label}: ${blocks[i].value}`;
 
-                let subblockId = currentNode.id + "-text_" + i;
-                let subblockText = this.HTML_BULLET + ` ${blocks[i].label}: ${blocks[i].value}`;
+                if (!blockStyle["text-padding-x"]) {
+                    blockStyle["text-padding-x"] = "5";
+                }
 
                 let txtEle = this.addTextToNode(currentNode, subblockId, subblockText, blockStyle);
                 txtEle.onclick = e => {
@@ -471,11 +459,7 @@ class PrismaPlot {
     }
 
     build_plot() {
-        const {styles} = this.store.settings;
-        this.NAMESPACE = "http://www.w3.org/2000/svg";
-        this.HTML_BULLET = "•";
-        this.WORKSPACE_START_X = 20; // first box always placed here
-        this.WORKSPACE_START_Y = 20;
+        const {styles, arrow_styles} = this.store.settings;
         this.MAX_WIDTH = 300; // box dimensions
         this.MIN_HEIGHT = 100;
         this.SPACING_V = 100; // distance between boxes
@@ -500,10 +484,10 @@ class PrismaPlot {
             "stroke-width": styles.stroke_width, // box border width
             rx: styles.stroke_radius, // box rounded edge horizontal
             ry: styles.stroke_radius, // box rounded edge vertical
-            "arrow-color": "black",
-            "arrow-width": "2",
-            "arrow-type": "1", // valid: 1,2,3,5,10,11,13
-            "arrow-force-vertical": "false",
+            "arrow-color": arrow_styles["stroke_color"],
+            "arrow-width": arrow_styles["stroke_width"],
+            "arrow-type": arrow_styles["arrow_type"],
+            "arrow-force-vertical": arrow_styles["force_vertical"],
         };
 
         this.plot_div.empty();
@@ -511,9 +495,9 @@ class PrismaPlot {
             .select(this.plot_div[0])
             .append("svg")
             .attr("role", "image")
-            .attr("aria-label", "A prisma diagram.")
+            .attr("aria-label", "A PRISMA diagram.")
             .attr("class", "d3")
-            .attr("id", "svgworkspace")
+            .attr("id", "svg-root")
             .node();
         this.cardrowlength = -1;
 
@@ -522,12 +506,20 @@ class PrismaPlot {
 
         // parse data structure
         let parent, child, sibling;
-        for (let row of diagramSections) {
-            let blockId = row.key;
-            let blockBoxInfo = row.label;
-            let sectionStyle = row.styling ?? {};
+        for (let section of diagramSections) {
+            let blockId = section.key,
+                blockBoxInfo = section.label,
+                sectionStyle = section.styling ?? {};
+
             if (!parent) {
-                parent = this.initNode(blockId, blockBoxInfo, sectionStyle);
+                let initialNode = this.createRectangleWithText(
+                    blockId,
+                    blockBoxInfo,
+                    WORKSPACE_START_X,
+                    WORKSPACE_START_Y,
+                    sectionStyle
+                );
+                parent = this.addNodeToHTML(initialNode);
             } else {
                 parent = this.createNewVerticalNode(
                     parent,
@@ -537,17 +529,16 @@ class PrismaPlot {
                     sectionStyle
                 );
             }
-
-            if (row.block_layout) {
-                this.listCardLayout(blockId, row);
+            if (section.block_layout) {
+                this.drawBox(blockId, section);
                 this.resizeNodes(parent);
                 continue;
             }
-            for (let i = 0; i < row.blocks.length; i++) {
-                let col = row.blocks[i];
-                let id = `${row.key}.${col.key}`.replace(/ /g, "");
-                let boxInfo = col.label + ": " + col.value;
-                let blockStyle = col.styling ?? {};
+            for (let i = 0; i < section.blocks.length; i++) {
+                let box = section.blocks[i],
+                    id = box.key,
+                    boxInfo = `${box.label}: ${box.value}`,
+                    blockStyle = box.styling ?? {};
 
                 if (i > 0) {
                     let previous = sibling || child;
@@ -557,15 +548,17 @@ class PrismaPlot {
                     sibling = undefined;
                 }
 
-                if (col.sub_blocks) {
-                    this.listCardLayout(id, col);
+                if (box.sub_blocks) {
+                    this.drawBox(id, box);
                 }
             }
             this.resizeNodes(parent);
         }
 
         this.applyPostStyling();
-        this.setConnections(connections);
+        connections.forEach(connection => {
+            this.drawConnection(connection);
+        });
         this.setOverallDimensions(diagramSections);
         this.addResizeAndToolbar();
     }
@@ -575,7 +568,7 @@ class PrismaPlot {
         // general box position, text-padding-y
         let allNodes = document.getElementsByClassName("node");
         for (let node of allNodes) {
-            node = this.getGroup(node.id);
+            node = getGroup(node.id);
 
             // re-position boxes
             let nodePadX = JSON.parse(node.styling["x"]);
@@ -594,12 +587,6 @@ class PrismaPlot {
                 }
             }
         }
-    }
-
-    setConnections(connections) {
-        connections.forEach(connection => {
-            this.drawConnection(connection);
-        });
     }
 
     setOverallDimensions(sections) {
