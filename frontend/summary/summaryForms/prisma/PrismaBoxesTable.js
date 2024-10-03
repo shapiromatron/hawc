@@ -75,6 +75,8 @@ class BoxesRow extends PrismaEditableRow {
             toggleStyling,
             getLinkingOptions,
             getFilterOptions,
+            getCountOptions,
+            getBlockOptions,
         } = this.props.store.subclass;
         return (
             <tr>
@@ -100,7 +102,17 @@ class BoxesRow extends PrismaEditableRow {
                                 choices={getLinkingOptions("sections")}
                             />
                             <SelectInput
-                                name={`${key}-tag-${index}`}
+                                name={`${key}-count-${index}`}
+                                value={row.count}
+                                label="Count strategy"
+                                handleSelect={(value, label) => {
+                                    changeArraySettings(key, index, "count", value);
+                                }}
+                                multiple={false}
+                                choices={getCountOptions()}
+                            />
+                            {row.count == "unique_sum"?<SelectInput
+                                name={`${key}-count-tag-${index}`}
                                 value={row.tag}
                                 label="Add references related to this tag, search, or import"
                                 handleSelect={(value, label) => {
@@ -108,7 +120,27 @@ class BoxesRow extends PrismaEditableRow {
                                 }}
                                 multiple={true}
                                 choices={getFilterOptions()}
+                            />:null}
+                            {row.count && row.count != "unique_sum"?<><SelectInput
+                                name={`${key}-count-include-${index}`}
+                                value={row.include}
+                                label="Included blocks"
+                                handleSelect={(value, label) => {
+                                    changeArraySettings(key, index, "include", value);
+                                }}
+                                multiple={true}
+                                choices={getBlockOptions(row)}
                             />
+                            <SelectInput
+                                name={`${key}-count-exclude-${index}`}
+                                value={row.exclude}
+                                label="Excluded blocks"
+                                handleSelect={(value, label) => {
+                                    changeArraySettings(key, index, "exclude", value);
+                                }}
+                                multiple={true}
+                                choices={getBlockOptions(row)}
+                            /></>:null}
                             <CheckboxInput
                                 name={`${key}-toggle-styling-${index}`}
                                 checked={row.styling != null}

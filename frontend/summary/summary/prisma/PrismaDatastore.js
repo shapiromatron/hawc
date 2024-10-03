@@ -29,8 +29,9 @@ class PrismaDatastore {
                                 label: b.label,
                                 key: b.key,
                                 tags: b.tag,
-                                count: "unique_sum",
-                                value: 123,
+                                count: b.count,
+                                include: b.include,
+                                exclude: b.exclude,
                             };
                         }),
                 };
@@ -127,26 +128,32 @@ class PrismaDatastore {
         return refs;
     }
 
-    section_lookup(label) {
-        // find section by label
-        return this.sections.find(s => s.label == label);
+    section_lookup(key) {
+        // find section by key
+        return this.sections.find(s => s.key == key);
+    }
+    
+    blocks_lookup(sectionKey,blockKeys) {
+        // find blocks by section key and block keys
+        return this.section_lookup(sectionKey).blocks.filter(b=>blockKeys.includes(b.key))
     }
 
-    block_sum(blocks) {
+    block_sum(include,exclude) {
         // compile a set of reference ids given
         // blocks to include and blocks to exclude.
         let total = new Set();
-        for (const block of blocks) {
-            if (block.type == "include") {
-                total = total.union(block.refs);
-            } else if (block.type == "exclude") {
-                total = total.difference(block.refs);
-            }
+        for (const block of include) {
+            total = total.union(block.refs);
+        }
+        for (const block of exclude) {
+            total = total.difference(block.refs);
         }
         return total;
     }
 
     setRefs() {
+        const skipped = [];
+
         for (const section of this.sections) {
             for (const block of section.blocks) {
                 // set the reference ids and reference id count
@@ -161,20 +168,24 @@ class PrismaDatastore {
                         block_tags.push(...(sub_block.tags || []));
                     }
                 }
-                if (block.count == null) {
-                    continue;
-                } else if (block.count == "unique_sum") {
+                if (block.count == "unique_sum") {
                     // perform "unique_sum" count
                     block_tags.push(...(block.tags || []));
                     block.refs = this.unique_sum(block_tags);
                     block.value = block.refs.size;
-                } else {
-                    // perform count based on blocks in other section
-                    let prev_section = this.section_lookup(block.count);
-                    block.refs = this.block_sum(prev_section.blocks);
-                    block.value = block.refs.size;
+                } else if (block.count != null) {
+                    // perform counts based on other blocks
+                    // after these block counts have been computed
+                    skipped.push(block)
                 }
             }
+        }
+        for(const block of skipped) {
+            // perform count based on other blocks
+            let include = this.blocks_lookup(block.count,block.include),
+                exclude = this.blocks_lookup(block.count,block.exclude);
+            block.refs = this.block_sum(include, exclude);
+            block.value = block.refs.size;
         }
     }
 }

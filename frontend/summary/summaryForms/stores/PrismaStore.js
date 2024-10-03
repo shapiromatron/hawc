@@ -18,7 +18,10 @@ const createSectionRow = function() {
             styling: null,
             section: NULL_VALUE,
             box_layout: "card",
-            tag: NULL_VALUE,
+            count: "unique_sum",
+            tag: [],
+            include: [],
+            exclude: [],
         };
     },
     createBulletedListRow = function() {
@@ -137,6 +140,14 @@ class PrismaStore {
         this.settings.arrows.push(createArrowRow());
     }
 
+    @action.bound getCountOptions() {
+        return [{id: "unique_sum", label: "Unique sum"}].concat(this.settings.sections.map(s=>({id:s.key,label:s.label})))
+    }
+
+    @action.bound getBlockOptions(block) {
+        return this.settings.boxes.filter(b=>b.section == block.count && b.count == "unique_sum").map(b=>({id:b.key,label:b.label}))
+    }
+
     @action.bound getFilterOptions() {
         const tag_options = this.data.tags.map(tag => {
                 return {id: "tag_" + tag.id, label: `TAG | ${tag.nested_name}`};
@@ -185,7 +196,7 @@ class PrismaStore {
 
     @computed get sectionMapping() {
         const mapping = {};
-        this.settings.sections.forEach(section => (mapping[section.key] = section.label));
+        _.forEach(this.settings.sections,section => (mapping[section.key] = section.label));
         return mapping;
     }
 
