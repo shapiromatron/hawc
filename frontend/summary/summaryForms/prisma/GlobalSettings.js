@@ -1,11 +1,11 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import CheckboxInput from "shared/components/CheckboxInput";
 import FloatInput from "shared/components/FloatInput";
 import IntegerInput from "shared/components/IntegerInput";
-import TextInput from "shared/components/TextInput";
 import SelectInput from "shared/components/SelectInput";
-import CheckboxInput from "shared/components/CheckboxInput";
+import TextInput from "shared/components/TextInput";
 
 @inject("store")
 @observer
