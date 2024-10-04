@@ -365,8 +365,20 @@ class Visual(models.Model):
                         ),
                         HeatmapDataset(
                             type="Epi",
+                            name="Epidemiology evidence map (including unpublished HAWC data)",
+                            url=reverse("epiv2:api:assessment-study-export", args=(assessment.id,))
+                            + "?unpublished=true",
+                        ),
+                        HeatmapDataset(
+                            type="Epi",
                             name="Epidemiology data extractions",
                             url=reverse("epiv2:api:assessment-export", args=(assessment.id,)),
+                        ),
+                        HeatmapDataset(
+                            type="Epi",
+                            name="Epidemiology data extractions (including unpublished HAWC data)",
+                            url=reverse("epiv2:api:assessment-export", args=(assessment.id,))
+                            + "?unpublished=true",
                         ),
                     ]
                 )

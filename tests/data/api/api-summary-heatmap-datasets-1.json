@@ -41,9 +41,19 @@
       "url": "/epidemiology/api/assessment/1/study-export/"
     },
     {
+      "name": "Epidemiology evidence map (including unpublished HAWC data)",
+      "type": "Epi",
+      "url": "/epidemiology/api/assessment/1/study-export/?unpublished=true"
+    },
+    {
       "name": "Epidemiology data extractions",
       "type": "Epi",
       "url": "/epidemiology/api/assessment/1/export/"
+    },
+    {
+      "name": "Epidemiology data extractions (including unpublished HAWC data)",
+      "type": "Epi",
+      "url": "/epidemiology/api/assessment/1/export/?unpublished=true"
     },
     {
       "name": "Dataset: iris flowers",
