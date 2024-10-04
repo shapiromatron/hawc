@@ -21,7 +21,7 @@ const createSectionRow = function() {
             section: NULL_VALUE,
             box_layout: "card",
             count_strategy: "unique_sum",
-            tag: NULL_VALUE, // todo - rename to tags
+            count_filters: [],
             count_include: [],
             count_exclude: [],
             items: [],
@@ -31,7 +31,7 @@ const createSectionRow = function() {
         return {
             key: h.randomString(),
             label: "",
-            tags: [],
+            count_filters: [],
         };
     },
     createArrowRow = function() {
@@ -147,14 +147,14 @@ class PrismaStore {
             .map(b => ({id: b.key, label: b.label}));
     }
 
-    @action.bound getFilterOptions() {
+    @action.bound getCountFilters() {
         const tag_options = this.data.tags.map(tag => {
                 return {id: "tag_" + tag.id, label: `TAG | ${tag.nested_name}`};
             }),
             search_options = this.data.searches.map(search => {
                 return {id: "search_" + search.id, label: `SEARCH/IMPORT | ${search.title}`};
             });
-        return _.flatten([{id: NULL_VALUE, label: NULL_VALUE}, tag_options, search_options]);
+        return tag_options.concat(search_options);
     }
 
     @action.bound getArrowOptions() {
