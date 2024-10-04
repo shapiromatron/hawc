@@ -87,8 +87,6 @@ class BoxesRow extends PrismaEditableRow {
                 getFilterOptions,
                 getBoxLayouts,
                 toggleStyling,
-                getCountStrategies,
-                getCountStrategyBlockTypes,
             } = this.props.store.subclass,
             isCard = row.box_layout === "card",
             isList = row.box_layout === "list";
@@ -125,39 +123,24 @@ class BoxesRow extends PrismaEditableRow {
                                 multiple={false}
                                 choices={getBoxLayouts()}
                             />
-                            <SelectInput
-                                name={`${key}-layout-${index}-count_strategy`}
-                                value={row.count_strategy}
-                                label="Reference count strategy"
-                                handleSelect={value =>
-                                    changeArraySettings(key, index, "count_strategy", value)
-                                }
-                                multiple={false}
-                                choices={getCountStrategies()}
-                            />
-                            <SelectInput
-                                name={`${key}-layout-${index}-count_strategy_block_type`}
-                                value={row.count_strategy_block_type}
-                                label="Reference count strategy block type"
-                                handleSelect={value =>
-                                    changeArraySettings(
-                                        key,
-                                        index,
-                                        "count_strategy_block_type",
-                                        value
-                                    )
-                                }
-                                multiple={false}
-                                choices={getCountStrategyBlockTypes()}
-                            />
                             {isCard ? (
                                 <div>
                                     <SelectInput
-                                        name={`${key}-tag-${index}`}
-                                        value={row.tag}
-                                        label="Add references related to this tag, search, or import"
+                                        name={`${key}-count_include-${index}`}
+                                        value={row.count_include}
+                                        label="Add references related to this tag, search, or import to include"
                                         handleSelect={(value, label) => {
-                                            changeArraySettings(key, index, "tag", value);
+                                            changeArraySettings(key, index, "count_include", value);
+                                        }}
+                                        multiple={true}
+                                        choices={getFilterOptions()}
+                                    />
+                                    <SelectInput
+                                        name={`${key}-count_exclude-${index}`}
+                                        value={row.count_exclude}
+                                        label="Add references related to this tag, search, or import to exclude"
+                                        handleSelect={(value, label) => {
+                                            changeArraySettings(key, index, "count_exclude", value);
                                         }}
                                         multiple={true}
                                         choices={getFilterOptions()}

@@ -21,8 +21,8 @@ class SelectInput extends Component {
     }
 
     handleSelect(e) {
-        let value = e.target.value;
-        let label = e.target.selectedOptions[0].textContent;
+        let value = null,
+            label = null;
         if (this.props.multiple) {
             value = _.chain(e.target.options)
                 .filter(o => o.selected)
@@ -32,6 +32,9 @@ class SelectInput extends Component {
                 .filter(o => o.selected)
                 .map(o => o.textContent)
                 .value();
+        } else {
+            value = e.target.value;
+            label = e.target.selectedOptions[0].textContent;
         }
         this.props.handleSelect(value, label);
     }

@@ -20,8 +20,8 @@ const createSectionRow = function() {
             styling: null,
             section: NULL_VALUE,
             box_layout: "card",
-            count_strategy: "unique_sum",
-            count_strategy_block_type: "include",
+            count_include: [],
+            count_exclude: [],
             tag: NULL_VALUE, // todo - rename to tags
             items: [],
         };
@@ -54,11 +54,6 @@ const createSectionRow = function() {
     BOX_LAYOUTS = [
         {id: "card", label: "Card"},
         {id: "list", label: "List"},
-    ],
-    COUNT_STRATEGIES = [{id: "unique_sum", label: "Unique"}],
-    COUNT_STRATEGY_BLOCK_TYPES = [
-        {id: "include", label: "Include"},
-        {id: "exclude", label: "Exclude"},
     ];
 
 class PrismaStore {
@@ -95,14 +90,6 @@ class PrismaStore {
                 force_vertical: false,
             },
         };
-    }
-
-    getCountStrategies() {
-        return COUNT_STRATEGIES;
-    }
-
-    getCountStrategyBlockTypes() {
-        return COUNT_STRATEGY_BLOCK_TYPES;
     }
 
     @action.bound changeSettings(path, value) {
@@ -145,6 +132,14 @@ class PrismaStore {
 
     @action.bound createNewArrow() {
         this.settings.arrows.push(createArrowRow());
+    }
+
+    @action.bound getCountOptions() {
+        return [{id: "unique_sum", label: "Unique sum"}].concat(this.settings.sections.map(s=>({id:s.key,label:s.label})))
+    }
+
+    @action.bound getBlockOptions(block) {
+        return this.settings.boxes.filter(b=>b.section == block.count && b.count == "unique_sum").map(b=>({id:b.key,label:b.label}))
     }
 
     @action.bound getFilterOptions() {
@@ -197,7 +192,7 @@ class PrismaStore {
 
     @computed get sectionMapping() {
         const mapping = {};
-        this.settings.sections.forEach(section => (mapping[section.key] = section.label));
+        _.forEach(this.settings.sections,section => (mapping[section.key] = section.label));
         return mapping;
     }
 
