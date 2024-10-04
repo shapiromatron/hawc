@@ -58,14 +58,11 @@ class DesignManager(BaseManager):
         df2 = pd.DataFrame(
             data=study_qs.annotate(
                 design_summary=str_m2m("designs__summary"),
-                designs__source_display=sql_display("designs__source", constants.Source),
-                designs__study_design_display=sql_display(
-                    "designs__study_design", constants.StudyDesign
-                ),
-                designs__outcomes__system_display=sql_display(
-                    "designs__outcomes__system", constants.HealthOutcomeSystem
-                ),
+                _designs__study_design=sql_display("designs__study_design", constants.StudyDesign),
+                study_design=str_m2m("_designs__study_design"),
                 countries=str_m2m("designs__countries__name"),
+                _design_source=sql_display("designs__source", constants.Source),
+                design_source=str_m2m("_design_source"),
                 age_profile=Func(
                     F("designs__age_profile"),
                     Value("|"),
@@ -73,22 +70,32 @@ class DesignManager(BaseManager):
                     function="array_to_string",
                     output_field=CharField(max_length=256),
                 ),
-                participant_n=ArrayAgg("designs__participant_n", distinct=True),
+                _participant_n=ArrayAgg("designs__participant_n", distinct=True),
+                participant_n=Func(
+                    F("_participant_n"),
+                    Value("|"),
+                    Value(""),
+                    function="array_to_string",
+                    output_field=CharField(max_length=256),
+                ),
                 chemical_name=str_m2m("designs__chemicals__name"),
                 exposure_name=str_m2m("designs__exposures__name"),
-                exposure_measurement_type=Func(
+                _exposure_measurement_type=Func(
                     F("designs__exposures__measurement_type"),
                     Value("|"),
                     Value(""),
                     function="array_to_string",
                     output_field=CharField(max_length=256),
                 ),
-                exposure_route=sql_display(
+                exposure_measurement_type=str_m2m("_exposure_measurement_type"),
+                _exposure_route=sql_display(
                     "designs__exposures__exposure_route", constants.ExposureRoute
                 ),
-                design_source=str_m2m("designs__source_display"),
-                study_design=str_m2m("designs__study_design_display"),
-                outcome_system=str_m2m("designs__outcomes__system_display"),
+                exposure_route=str_m2m("_exposure_route"),
+                _outcomes__system=sql_display(
+                    "designs__outcomes__system", constants.HealthOutcomeSystem
+                ),
+                outcome_system=str_m2m("_outcomes__system"),
                 outcome_effect=str_m2m("designs__outcomes__effect"),
                 outcome_endpoint=str_m2m("designs__outcomes__endpoint"),
             ).values_list(

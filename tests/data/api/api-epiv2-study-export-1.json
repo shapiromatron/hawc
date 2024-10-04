@@ -15,10 +15,7 @@
     "outcome_effect": "Asthma|Vaccine response",
     "outcome_endpoint": "Asthma within previous year|Diphtheria antibody concentrations|Tetanus antibody concentrations",
     "outcome_system": "Immune",
-    "participant_n": [
-      456,
-      587
-    ],
+    "participant_n": "456|587",
     "short_citation": "Foo et al.",
     "study_design": "Case-control|Cohort",
     "study_id": 1
