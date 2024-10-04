@@ -30,9 +30,9 @@ class PrismaArrowsTable extends Component {
                 <h3>Arrows</h3>
                 <table className="table table-sm table-striped">
                     <colgroup>
-                        <col width="45%" />
-                        <col width="45%" />
-                        <col width="10%" />
+                        <col width="50%" />
+                        <col width="35%" />
+                        <col width="15%" />
                     </colgroup>
                     <thead>
                         <tr>
@@ -162,7 +162,7 @@ class ArrowsRow extends PrismaEditableRow {
                             }
                         />,
                         <SelectInput
-                        key={`${key}-type-${index}`}
+                            key={`${key}-type-${index}`}
                             name={`${key}-type-${index}`}
                             value={row.styling.arrow_type}
                             label="Type"

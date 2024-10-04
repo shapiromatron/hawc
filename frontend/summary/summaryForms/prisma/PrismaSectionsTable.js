@@ -25,8 +25,8 @@ class PrismaSectionsTable extends Component {
                 <h3>Sections</h3>
                 <table className="table table-sm table-striped">
                     <colgroup>
-                        <col width="90%" />
-                        <col width="10%" />
+                        <col width="85%" />
+                        <col width="15%" />
                     </colgroup>
                     <thead>
                         <tr>

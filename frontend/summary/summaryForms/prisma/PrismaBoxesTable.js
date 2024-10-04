@@ -27,9 +27,9 @@ class PrismaBoxesTable extends Component {
                 <h3>Boxes</h3>
                 <table className="table table-sm table-striped">
                     <colgroup>
-                        <col width="45%" />
-                        <col width="45%" />
-                        <col width="10%" />
+                        <col width="50%" />
+                        <col width="35%" />
+                        <col width="15%" />
                     </colgroup>
                     <thead>
                         <tr>
