@@ -84,7 +84,7 @@ class BoxesRow extends PrismaEditableRow {
         const {
                 changeArraySettings,
                 getLinkingOptions,
-                getFilterOptions,
+                getCountFilters,
                 getBoxLayouts,
                 toggleStyling,
                 getCountBlocks,
@@ -139,14 +139,19 @@ class BoxesRow extends PrismaEditableRow {
                                     />
                                     {row.count_strategy == "unique_sum" ? (
                                         <SelectInput
-                                            name={`${key}-count-tag-${index}`}
-                                            value={row.tag}
+                                            name={`${key}-count_filters-${index}`}
+                                            value={row.count_filters}
                                             label="Add references related to this tag, search, or import"
                                             handleSelect={(value, label) => {
-                                                changeArraySettings(key, index, "tag", value);
+                                                changeArraySettings(
+                                                    key,
+                                                    index,
+                                                    "count_filters",
+                                                    value
+                                                );
                                             }}
                                             multiple={true}
-                                            choices={getFilterOptions()}
+                                            choices={getCountFilters()}
                                         />
                                     ) : null}
                                     {row.count_strategy && row.count_strategy != "unique_sum" ? (
@@ -224,11 +229,10 @@ class ListTable extends Component {
             {
                 createNewBoxItem,
                 changeSettings,
-                getFilterOptions,
+                getCountFilters,
                 deleteArrayElement,
             } = store.subclass,
-            items = row.items,
-            tagOptions = getFilterOptions();
+            items = row.items;
 
         return (
             <div className="form-row">
@@ -265,16 +269,16 @@ class ListTable extends Component {
                                     </td>
                                     <td>
                                         <SelectInput
-                                            name={`box-${index}-list-${item_index}-tags`}
-                                            value={item_row.tags}
+                                            name={`box-${index}-list-${item_index}-count_filters`}
+                                            value={item_row.count_filters}
                                             handleSelect={(values, labels) => {
                                                 changeSettings(
-                                                    `boxes[${index}].items[${item_index}].tags`,
+                                                    `boxes[${index}].items[${item_index}].count_filters`,
                                                     values
                                                 );
                                             }}
                                             multiple={true}
-                                            choices={tagOptions}
+                                            choices={getCountFilters()}
                                         />
                                     </td>
                                     <MoveRowTd

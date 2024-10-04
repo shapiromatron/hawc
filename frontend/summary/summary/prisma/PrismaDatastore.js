@@ -6,8 +6,7 @@ class PrismaDatastore {
         this.settings = settings;
         this.dataset = dataset;
         this.options = options;
-        this.createMaps();
-        this.updateTagMap();
+        this.createFilterMaps();
         this.sections = this.getDiagramSections();
         this.setRefs();
         this.settingsHash = h.hashString(JSON.stringify(this.settings));
@@ -28,15 +27,15 @@ class PrismaDatastore {
                             return {
                                 label: b.label,
                                 key: b.key,
-                                tags: b.tag,
-                                count_strategy: b.count_strategy,
                                 box_layout: b.box_layout,
-                                items: b.items,
+                                count_strategy: b.count_strategy,
+                                count_filters: b.count_filters,
                                 count_include: b.count_include,
                                 count_exclude: b.count_exclude,
                                 styling: b.use_style_overrides
                                     ? this.mapStyling(b.styling)
                                     : this.mapStyling(this.settings.box_styles),
+                                items: b.items,
                             };
                         }),
                     ...(section.use_style_overrides && {styling: this.mapStyling(section.styling)}),
@@ -80,12 +79,12 @@ class PrismaDatastore {
         return this.settings.arrows;
     }
 
-    createMaps() {
-        this.maps = {};
+    createFilterMaps() {
+        this.filterMaps = {};
 
         // for each reference-tag pair we are adding the reference id
         // to the set associated with the tag id in our tag map
-        this.maps.tagMap = this.dataset.reference_tag_pairs.reduce(
+        this.filterMaps.tagMap = this.dataset.reference_tag_pairs.reduce(
             (map, pair) =>
                 map.set(
                     pair.tag_id,
@@ -95,9 +94,10 @@ class PrismaDatastore {
                 ),
             new Map()
         );
+        this.updateTagMap();
         // for each reference-search pair we are adding the reference id
         // to the set associated with the search id in our search map
-        this.maps.searchMap = this.dataset.reference_search_pairs.reduce(
+        this.filterMaps.searchMap = this.dataset.reference_search_pairs.reduce(
             (map, pair) =>
                 map.set(
                     pair.search_id,
@@ -121,10 +121,10 @@ class PrismaDatastore {
                     // update the child map through recursion
                     recursivelyUpdate();
                     // add the updated child map to the parent map
-                    this.maps.tagMap.set(
+                    this.filterMaps.tagMap.set(
                         tag.id,
-                        (this.maps.tagMap.get(tag.id) || new Set()).union(
-                            this.maps.tagMap.get(nextTag.id) || new Set()
+                        (this.filterMaps.tagMap.get(tag.id) || new Set()).union(
+                            this.filterMaps.tagMap.get(nextTag.id) || new Set()
                         )
                     );
                     // move on to the next child candidate
@@ -137,50 +137,54 @@ class PrismaDatastore {
         }
     }
 
-    tag_lookup(tag) {
-        // the "tag" identifiers have the form "{type}_{id}",
+    filter_lookup(filter) {
+        // filter identifiers have the form "{type}_{id}",
         // where "type" can be tag or search
         // this function splits the identifier and uses the metadata
         // to retrieve the set of reference ids associated with it
         // from the relevant map
-        let [type, id] = tag.split("_");
+        let [type, id] = filter.split("_");
         if (type == "tag") {
             // possibility of set operations so always return set
-            return this.maps.tagMap.get(Number(id)) || new Set();
+            return this.filterMaps.tagMap.get(Number(id)) || new Set();
         } else if (type == "search") {
             // possibility of set operations so always return set
-            return this.maps.searchMap.get(Number(id)) || new Set();
+            return this.filterMaps.searchMap.get(Number(id)) || new Set();
         } else {
             return new Set();
         }
     }
 
-    unique_sum(tags) {
+    unique_sum(filters) {
         // perform union operations on all the reference ids
-        // associated with each tag in tags, thus performing
+        // associated with each filter in filters, thus performing
         // a "unique_sum"
         let refs = new Set();
-        for (const tag of tags) {
-            refs = refs.union(this.tag_lookup(tag));
+        for (const filter of filters) {
+            refs = refs.union(this.filter_lookup(filter));
         }
         return refs;
     }
 
-    section_lookup(label) {
+    section_lookup(key) {
         // find section by label
-        return this.sections.find(s => s.label == label);
+        return this.sections.find(s => s.key == key);
     }
 
-    block_sum(blocks) {
+    blocks_lookup(sectionKey, blockKeys) {
+        // find blocks by section key and block keys
+        return this.section_lookup(sectionKey).blocks.filter(b => blockKeys.includes(b.key));
+    }
+
+    block_sum(include, exclude) {
         // compile a set of reference ids given
         // blocks to include and blocks to exclude.
         let total = new Set();
-        for (const block of blocks) {
-            if (block.type == "include") {
-                total = total.union(block.refs);
-            } else if (block.type == "exclude") {
-                total = total.difference(block.refs);
-            }
+        for (const block of include) {
+            total = total.union(block.refs);
+        }
+        for (const block of exclude) {
+            total = total.difference(block.refs);
         }
         return total;
     }
@@ -195,20 +199,20 @@ class PrismaDatastore {
             for (const block of section.blocks) {
                 // set the reference ids and reference id count
                 // on each block in each section
-                if (block.block_layout == "list") {
+                if (block.box_layout == "list") {
                     // if there are sub blocks include them in
                     // "unique_sum" calculation
-                    let block_tags = [];
+                    let block_filters = [];
                     for (const item of block.items) {
-                        item.refs = this.unique_sum(item.tags);
+                        item.refs = this.unique_sum(item.count_filters);
                         item.value = item.refs.size;
-                        block_tags.push(...item.tags);
+                        block_filters.push(...item.count_filters);
                     }
-                    block.refs = this.unique_sum(block_tags);
+                    block.refs = this.unique_sum(block_filters);
                     block.value = block.refs.size;
                 } else if (block.count_strategy == "unique_sum") {
                     // perform "unique_sum" count
-                    block.refs = this.unique_sum(block.tags);
+                    block.refs = this.unique_sum(block.count_filters);
                     block.value = block.refs.size;
                 } else if (block.count_strategy != null) {
                     // perform counts based on other blocks

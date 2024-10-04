@@ -21,8 +21,7 @@ const createSectionRow = function() {
             section: NULL_VALUE,
             box_layout: "card",
             count_strategy: "unique_sum",
-            count_strategy_block_type: "include",
-            tag: NULL_VALUE, // todo - rename to tags
+            count_filters: [],
             count_include: [],
             count_exclude: [],
             items: [],
@@ -32,7 +31,7 @@ const createSectionRow = function() {
         return {
             key: h.randomString(),
             label: "",
-            tags: [],
+            count_filters: [],
         };
     },
     createArrowRow = function() {
@@ -56,11 +55,6 @@ const createSectionRow = function() {
     BOX_LAYOUTS = [
         {id: "card", label: "Card"},
         {id: "list", label: "List"},
-    ],
-    COUNT_STRATEGIES = [{id: "unique_sum", label: "Unique"}],
-    COUNT_STRATEGY_BLOCK_TYPES = [
-        {id: "include", label: "Include"},
-        {id: "exclude", label: "Exclude"},
     ];
 
 class PrismaStore {
@@ -111,14 +105,6 @@ class PrismaStore {
                 force_vertical: false,
             },
         };
-    }
-
-    getCountStrategies() {
-        return COUNT_STRATEGIES;
-    }
-
-    getCountStrategyBlockTypes() {
-        return COUNT_STRATEGY_BLOCK_TYPES;
     }
 
     @action.bound changeSettings(path, value) {
@@ -175,14 +161,14 @@ class PrismaStore {
             .map(b => ({id: b.key, label: b.label}));
     }
 
-    @action.bound getFilterOptions() {
+    @action.bound getCountFilters() {
         const tag_options = this.data.tags.map(tag => {
                 return {id: "tag_" + tag.id, label: `TAG | ${tag.nested_name}`};
             }),
             search_options = this.data.searches.map(search => {
                 return {id: "search_" + search.id, label: `SEARCH/IMPORT | ${search.title}`};
             });
-        return _.flatten([{id: NULL_VALUE, label: NULL_VALUE}, tag_options, search_options]);
+        return tag_options.concat(search_options);
     }
 
     @action.bound getArrowOptions() {
