@@ -51,17 +51,13 @@ const NAMESPACE = "http://www.w3.org/2000/svg",
         }
         updateNodeTextAttributes(node, {display: "inline"});
     },
-    nodeOnClick = function(e, plot, item) {
+    nodeOnClick = function(e, plot, refs) {
         e.stopPropagation();
-        // use id to get reference id list
-        let refs = item.refs;
-        // fetch html from url
         const detailEl = document.getElementById(`${plot.store.settingsHash}-detail-section`),
             formData = new FormData();
         detailEl.innerText = "Loading...";
         formData.append("ids", Array(...refs).join(","));
         // TODO: change detail header to the text of the clicked node
-        // TODO: implement for cards, not lists
         fetch(plot.store.dataset.url, h.fetchPostForm(plot.store.getCsrfToken(), formData))
             .then(resp => resp.text())
             .then(html => (detailEl.innerHTML = html));
@@ -259,7 +255,10 @@ class PrismaPlot {
         return textElement;
     }
 
-    addNodeToHTML(node, parent = undefined) {
+    addNodeToHTML(node, opts) {
+        const parent = opts.parent,
+            refs = opts.refs;
+
         if (parent) {
             document.getElementById(parent.id).append(node.group);
         } else {
@@ -267,7 +266,10 @@ class PrismaPlot {
         }
         let txtEle = this.addTextToNode(node, node.id + "-text", node.text, node.styling),
             handleClick = e => {
-                nodeOnClick(e, this, node);
+                // only handle click events if references are passed
+                if (refs) {
+                    nodeOnClick(e, this, refs);
+                }
             };
         node.text = txtEle;
         node.rect.onclick = handleClick;
@@ -325,12 +327,12 @@ class PrismaPlot {
         verticalNode.group.setAttribute("is-vertical", true);
 
         if (group) {
-            return this.addNodeToHTML(verticalNode, prevNode.parent);
+            return this.addNodeToHTML(verticalNode, {parent: prevNode.parent}); //add refs
         }
-        return this.addNodeToHTML(verticalNode);
+        return this.addNodeToHTML(verticalNode, {parent: undefined}); //add refs
     }
 
-    createNewHorizontalNode(prevNode, id, text, group = false, styling = {}) {
+    createNewHorizontalNode(prevNode, id, text, group = false, styling = {}, opts = {}) {
         // group nodes if prevNode has a parent
         prevNode = getGroup(prevNode.id);
         let prevBBox = prevNode.rect.getBBox();
@@ -345,7 +347,10 @@ class PrismaPlot {
         }
         let horizontalNode = this.createRectangleWithText(id, text, x, prevBBox.y, styling);
         horizontalNode.group.setAttribute("previous", prevNode.id);
-        horizontalNode = this.addNodeToHTML(horizontalNode, prevNode.parent);
+        horizontalNode = this.addNodeToHTML(horizontalNode, {
+            parent: prevNode.parent,
+            refs: opts.refs,
+        });
 
         if (group) {
             let parent = prevNode.parent;
@@ -360,7 +365,7 @@ class PrismaPlot {
         return horizontalNode;
     }
 
-    createChildNode(parent, id, text, styling = {}) {
+    createChildNode(parent, id, text, styling = {}, opts = {}) {
         let pad = 15,
             parentBBox = parent.rect.getBBox(),
             childAdjustedY = parentBBox.y + pad,
@@ -376,7 +381,7 @@ class PrismaPlot {
             currentParent = getGroup(currentParent.id).parent;
         }
 
-        return this.addNodeToHTML(child, parent);
+        return this.addNodeToHTML(child, {parent, refs: opts.refs}); //add refs
     }
 
     drawList(node, col) {
@@ -395,7 +400,7 @@ class PrismaPlot {
 
             let txtEle = this.addTextToNode(node, subblockId, subblockText, blockStyle);
             txtEle.onclick = e => {
-                nodeOnClick(e, this, item);
+                nodeOnClick(e, this, item.refs);
             };
         });
     }
@@ -449,7 +454,7 @@ class PrismaPlot {
                     WORKSPACE_START_Y,
                     sectionStyle
                 );
-                parent = this.addNodeToHTML(initialNode);
+                parent = this.addNodeToHTML(initialNode, {parent: undefined, refs: undefined});
             } else {
                 parent = this.createNewVerticalNode(
                     parent,
@@ -477,11 +482,12 @@ class PrismaPlot {
                     id,
                     boxInfo,
                     true,
-                    blockStyle
+                    blockStyle,
+                    {refs: block.refs}
                 );
                 lastHorizontalNode = node;
             } else {
-                node = this.createChildNode(parent, id, boxInfo, blockStyle);
+                node = this.createChildNode(parent, id, boxInfo, blockStyle, {refs: block.refs});
                 lastHorizontalNode = node;
             }
             this.drawList(node, block);
