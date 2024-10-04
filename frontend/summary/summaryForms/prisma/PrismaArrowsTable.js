@@ -48,7 +48,7 @@ class PrismaArrowsTable extends Component {
                                     index={index}
                                     key={index}
                                     initiallyEditable={row.src == NULL_VALUE}
-                                    editStyles={row.styling != null}
+                                    editStyles={row.use_style_overrides}
                                 />
                             );
                         })}
@@ -114,7 +114,7 @@ class ArrowsRow extends PrismaEditableRow {
                             />
                             <CheckboxInput
                                 name={`${key}-toggle-styling-${index}`}
-                                checked={row.styling != null}
+                                checked={row.use_style_overrides}
                                 label="Override default formatting"
                                 onChange={e => {
                                     toggleArrowStyling(index, e.target.checked);

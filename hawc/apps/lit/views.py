@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404, render
 from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 
 from ..assessment.constants import AssessmentViewPermissions
@@ -1235,6 +1236,7 @@ class WorkflowViewSet(HtmxViewSet):
         return render(request, self.form_fragment, context)
 
 
+@method_decorator(csrf_exempt, name="dispatch")  # TODO - remove
 class AssessmentInteractive(HtmxView):
     actions = {"venn_reference_list"}
 

@@ -46,7 +46,7 @@ class PrismaBoxesTable extends Component {
                                     index={index}
                                     key={index}
                                     initiallyEditable={row.label == ""}
-                                    editStyles={row.styling != null}
+                                    editStyles={row.use_style_overrides}
                                 />
                             );
                         })}
@@ -166,7 +166,7 @@ class BoxesRow extends PrismaEditableRow {
                             ) : null}
                             <CheckboxInput
                                 name={`${key}-toggle-styling-${index}`}
-                                checked={row.styling != null}
+                                checked={row.use_style_overrides}
                                 label="Override default styling"
                                 onChange={e => {
                                     toggleStyling(key, index, e.target.checked);

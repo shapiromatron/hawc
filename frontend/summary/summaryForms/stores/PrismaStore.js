@@ -8,6 +8,7 @@ const createSectionRow = function() {
         return {
             key: h.randomString(),
             label: "",
+            use_style_overrides: false,
             styling: null,
         };
     },
@@ -15,6 +16,7 @@ const createSectionRow = function() {
         return {
             key: h.randomString(),
             label: "",
+            use_style_overrides: false,
             styling: null,
             section: NULL_VALUE,
             box_layout: "card",
@@ -34,6 +36,7 @@ const createSectionRow = function() {
     createArrowRow = function() {
         return {
             key: h.randomString(),
+            use_style_overrides: false,
             styling: null,
             src: NULL_VALUE,
             dst: NULL_VALUE,
@@ -70,8 +73,6 @@ class PrismaStore {
             title: "Prisma Visual",
             sections: [],
             boxes: [],
-            bulleted_lists: [],
-            cards: [],
             arrows: [],
             styles: {
                 stroke_radius: 5,
@@ -179,19 +180,19 @@ class PrismaStore {
     }
 
     @action.bound toggleStyling(arrayKey, index, checked) {
-        if (checked) {
-            // if checked, add defaults to the styling dict for this object
+        if (checked && this.settings[arrayKey][index].styling == null) {
+            // if checked for the first time, add defaults to the styling dict for this object
             this.settings[arrayKey][index].styling = _.cloneDeep(this.settings.styles);
-        } else {
-            this.settings[arrayKey][index].styling = null;
         }
+        this.settings[arrayKey][index].use_style_overrides = checked;
     }
 
     @action.bound toggleArrowStyling(index, checked) {
-        if (checked) {
-            // if checked, add defaults to the styling dict for this object
-            this.settings.arrows[index].styling = this.settings.arrow_styles;
-        } else this.settings.arrows[index].styling = null;
+        if (checked && this.settings.arrows[index].styling == null) {
+            // if checked for the first time, add defaults to the styling dict for this arrow
+            this.settings.arrows[index].styling = _.cloneDeep(this.settings.arrow_styles);
+        }
+        this.settings.arrows[index].use_style_overrides = checked;
     }
 
     @computed get sectionMapping() {

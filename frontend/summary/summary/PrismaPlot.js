@@ -6,6 +6,7 @@ import ReactDOM from "react-dom";
 import VisualToolbar from "shared/components/VisualToolbar";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
+import h from "shared/utils/helpers";
 
 const NAMESPACE = "http://www.w3.org/2000/svg",
     WORKSPACE_START_X = 20,
@@ -50,11 +51,21 @@ const NAMESPACE = "http://www.w3.org/2000/svg",
         }
         updateNodeTextAttributes(node, {display: "inline"});
     },
-    nodeOnClick = function(e) {
-        let id = e.target.parentNode.id.replace(new RegExp("-box" + "$"), "");
-        id = id.replace(new RegExp("-text" + "$"), "");
-        let node = getGroup(id);
-        alert(node);
+    nodeOnClick = function(e, plot, item) {
+        e.stopPropagation();
+        // use id to get reference id list
+        let refs = item.refs;
+        // fetch html from url
+        const detailEl = document.getElementById(`${plot.store.settingsHash}-detail-section`),
+            formData = new FormData();
+        detailEl.innerText = "Loading...";
+        formData.append("ids", Array(...refs).join(","));
+        // TODO: change detail header to the text of the clicked node
+        // TODO: change on csrf
+        // TODO: implement for cards, not lists
+        fetch(plot.store.dataset.url, h.fetchPostForm("csrf", formData))
+            .then(resp => resp.text())
+            .then(html => (detailEl.innerHTML = html));
     },
     connectPoints = function(svg, STYLE_DEFAULT, id, xy1, xy2, arrowhead = true, styling = {}) {
         for (const [key, value] of Object.entries(STYLE_DEFAULT)) {
@@ -255,11 +266,13 @@ class PrismaPlot {
         } else {
             this.svg.append(node.group);
         }
-        let txtEle = this.addTextToNode(node, node.id + "-text", node.text, node.styling);
+        let txtEle = this.addTextToNode(node, node.id + "-text", node.text, node.styling),
+            handleClick = e => {
+                nodeOnClick(e, this, node);
+            };
         node.text = txtEle;
-
-        node.rect.onclick = nodeOnClick.bind(this);
-        txtEle.onclick = nodeOnClick.bind(this);
+        node.rect.onclick = handleClick;
+        txtEle.onclick = handleClick;
         return node;
     }
 
@@ -367,45 +380,6 @@ class PrismaPlot {
         return this.addNodeToHTML(child, parent);
     }
 
-    createCard(parent, text, styling = {}) {
-        // child node with its own styling defaults; also checks if card can fit on row
-        const CARD_DEFAULT = {
-            width: "100",
-            "spacing-horizontal": "20",
-            "spacing-vertical": "10",
-        };
-        // first inherit from card default then style default
-        for (const [key, value] of Object.entries(CARD_DEFAULT)) {
-            if (!styling[key]) styling[key] = value;
-        }
-
-        let allCards = $(document.getElementById(parent.group.id)).children(".node"),
-            prevNode = allCards.length > 0 ? allCards[allCards.length - 1] : parent,
-            id = parent.id + "_" + allCards.length;
-        prevNode = getGroup(prevNode.id);
-
-        this.cardrowlength++;
-        if (allCards.length > 0) {
-            let parentPosition = parent.rect.getBBox().x + parent.rect.getBBox().width,
-                prevCardPosition = prevNode.rect.getBBox().x + prevNode.rect.getBBox().width,
-                cardPosition =
-                    prevCardPosition +
-                    parseFloat(styling["spacing-horizontal"]) +
-                    parseFloat(styling["width"]);
-
-            if (cardPosition < parentPosition) {
-                return this.createNewHorizontalNode(prevNode, id, text, true, styling);
-            } else {
-                // new row
-                prevNode = allCards[allCards.length - this.cardrowlength];
-                this.cardrowlength = 0;
-                return this.createNewVerticalNode(prevNode, id, text, true, styling);
-            }
-        }
-        this.cardrowlength = 0;
-        return this.createChildNode(parent, id, text, styling);
-    }
-
     drawList(node, col) {
         // helper function for parsing the data structure
         // handles list/card layouts at the section and block level
@@ -422,7 +396,7 @@ class PrismaPlot {
 
             let txtEle = this.addTextToNode(node, subblockId, subblockText, blockStyle);
             txtEle.onclick = e => {
-                alert(item);
+                nodeOnClick(e, this, item);
             };
         });
     }
@@ -492,20 +466,24 @@ class PrismaPlot {
     }
 
     drawBlocks(parent, section) {
-        let node, child, sibling;
+        let node, lastHorizontalNode;
         _.each(section.blocks, (block, j) => {
             let id = block.key,
                 boxInfo = `${block.label}: ${block.value}`,
                 blockStyle = block.styling ?? {};
 
             if (j > 0) {
-                let previous = sibling || child;
-                node = this.createNewHorizontalNode(previous, id, boxInfo, true, blockStyle);
-                sibling = node;
+                node = this.createNewHorizontalNode(
+                    lastHorizontalNode,
+                    id,
+                    boxInfo,
+                    true,
+                    blockStyle
+                );
+                lastHorizontalNode = node;
             } else {
                 node = this.createChildNode(parent, id, boxInfo, blockStyle);
-                child = node;
-                sibling = undefined;
+                lastHorizontalNode = node;
             }
             this.drawList(node, block);
         });

@@ -15,7 +15,10 @@ class PreviewPanel extends Component {
             <div>
                 <legend>Preview</legend>
                 <p className="form-text text-muted">Preview the settings for this visualization.</p>
-                {startupPrismaAppRender(null, settings, data, {asComponent: true})}
+                {startupPrismaAppRender(null, settings, data, {
+                    asComponent: true,
+                    csrf: this.props.store.base.config.csrf,
+                })}
             </div>
         );
     }
