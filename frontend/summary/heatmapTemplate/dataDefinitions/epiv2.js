@@ -28,6 +28,11 @@ const ESD = {
             "Exposure Measurement Type",
             "exposure_measurement_type"
         ),
+        exposureBiomonitoringMatrix: defineProps(
+            "exposureBiomonitoringMatrix",
+            "Exposure Biomonitoring Matrix",
+            "exposure_biomonitoring_matrix"
+        ),
         exposureRoute: defineProps("exposureRoute", "Exposure Route", "exposure_route"),
         outcomeSystem: defineProps("outcomeSystem", "Systems", "outcome_system"),
         outcomeEffect: defineProps("outcomeEffect", "Effects", "outcome_effect"),
@@ -43,6 +48,9 @@ const ESD = {
             chemicalName: defineAxis(ESD.chemicalName, {delimiter: "|"}),
             exposureName: defineAxis(ESD.exposureName, {delimiter: "|"}),
             exposureMeasurementType: defineAxis(ESD.exposureMeasurementType, {delimiter: "|"}),
+            exposureBiomonitoringMatrix: defineAxis(ESD.exposureBiomonitoringMatrix, {
+                delimiter: "|",
+            }),
             exposureRoute: defineAxis(ESD.exposureRoute, {delimiter: "|"}),
             outcomeSystem: defineAxis(ESD.outcomeSystem, {delimiter: "|"}),
             outcomeEffect: defineAxis(ESD.outcomeEffect, {delimiter: "|"}),
@@ -63,6 +71,9 @@ const ESD = {
             chemicalName: defineFilter(ESD.chemicalName, {delimiter: "|"}),
             exposureName: defineFilter(ESD.exposureName, {delimiter: "|"}),
             exposureMeasurementType: defineFilter(ESD.exposureMeasurementType, {delimiter: "|"}),
+            exposureBiomonitoringMatrix: defineFilter(ESD.exposureBiomonitoringMatrix, {
+                delimiter: "|",
+            }),
             exposureRoute: defineFilter(ESD.exposureRoute, {delimiter: "|"}),
             outcomeSystem: defineFilter(ESD.outcomeSystem, {delimiter: "|"}),
             outcomeEffect: defineFilter(ESD.outcomeEffect, {delimiter: "|"}),
@@ -80,6 +91,9 @@ const ESD = {
             chemicalName: defineTable(ESD.chemicalName, {delimiter: "|"}),
             exposureName: defineTable(ESD.exposureName, {delimiter: "|"}),
             exposureMeasurementType: defineTable(ESD.exposureMeasurementType, {delimiter: "|"}),
+            exposureBiomonitoringMatrix: defineTable(ESD.exposureBiomonitoringMatrix, {
+                delimiter: "|",
+            }),
             exposureRoute: defineTable(ESD.exposureRoute, {delimiter: "|"}),
             outcomeSystem: defineTable(ESD.outcomeSystem, {delimiter: "|"}),
             outcomeEffect: defineTable(ESD.outcomeEffect, {delimiter: "|"}),
