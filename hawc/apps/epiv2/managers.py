@@ -46,13 +46,13 @@ class DesignManager(BaseManager):
         return DesignQuerySet(self.model, using=self._db)
 
     def study_df(self, study_qs: QuerySet) -> pd.DataFrame:
-        """Returns a data frame, one row per study in study queryset
+        """Returns a data frame, one row per design in study queryset.
 
         Args:
             study_qs (QuerySet): A study queryset of studies
 
         Returns:
-            pd.DataFrame: _description_
+            pd.DataFrame: A dataframe, one row per study design.
         """
         df1 = study_qs.flat_df()
         df2 = pd.DataFrame(
