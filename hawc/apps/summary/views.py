@@ -429,8 +429,6 @@ class VisualizationCreate(BaseCreate):
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
-            constants.VisualType.PLOTLY,
-            constants.VisualType.PRISMA,
         }:
             return "summary/visual_form_django.html"
         return super().get_template_names()
@@ -532,8 +530,6 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
-            constants.VisualType.PLOTLY,
-            constants.VisualType.PRISMA,
         }:
             return "summary/visual_form_django.html"
         return super().get_template_names()
