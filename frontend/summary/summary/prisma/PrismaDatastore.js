@@ -21,7 +21,6 @@ class PrismaDatastore {
                 return {
                     label: section.label,
                     key: section.key,
-                    block_layout: "list",
                     blocks: boxes
                         .filter(b => b.section === section.key)
                         .map(b => {
@@ -29,8 +28,9 @@ class PrismaDatastore {
                                 label: b.label,
                                 key: b.key,
                                 tags: b.tag,
-                                count: "unique_sum",
-                                value: 123,
+                                count_strategy: b.count_strategy,
+                                box_layout: b.box_layout,
+                                items: b.items,
                             };
                         }),
                 };
@@ -152,25 +152,25 @@ class PrismaDatastore {
                 // set the reference ids and reference id count
                 // on each block in each section
                 let block_tags = [];
-                if (block.sub_blocks) {
+                if (block.items) {
                     // if there are sub blocks include them in
                     // "unique_sum" calculation
-                    for (const sub_block of block.sub_blocks) {
-                        sub_block.refs = this.unique_sum(sub_block.tags);
-                        sub_block.value = sub_block.refs.size;
-                        block_tags.push(...(sub_block.tags || []));
+                    for (const item of block.items) {
+                        item.refs = this.unique_sum(item.tags);
+                        item.value = item.refs.size;
+                        block_tags.push(...(item.tags || []));
                     }
                 }
-                if (block.count == null) {
+                if (block.count_strategy == null) {
                     continue;
-                } else if (block.count == "unique_sum") {
+                } else if (block.count_strategy == "unique_sum") {
                     // perform "unique_sum" count
                     block_tags.push(...(block.tags || []));
                     block.refs = this.unique_sum(block_tags);
                     block.value = block.refs.size;
                 } else {
                     // perform count based on blocks in other section
-                    let prev_section = this.section_lookup(block.count);
+                    let prev_section = this.section_lookup(block.count_strategy);
                     block.refs = this.block_sum(prev_section.blocks);
                     block.value = block.refs.size;
                 }

@@ -230,7 +230,6 @@ class PrismaPlot {
         let y = node.rect.getBBox().y;
 
         let textElement = document.createElementNS(NAMESPACE, "text");
-        textElement.setAttribute("data-styling", JSON.stringify(styling));
         textElement.setAttribute(
             "x",
             x + this.TEXT_OFFSET_X + parseFloat(styling["text-padding-x"])
@@ -407,33 +406,25 @@ class PrismaPlot {
         return this.createChildNode(parent, id, text, styling);
     }
 
-    drawBox(id, col) {
+    drawList(node, col) {
         // helper function for parsing the data structure
         // handles list/card layouts at the section and block level
-        let blocks = col.blocks || col.sub_blocks,
-            currentNode = getGroup(id);
-
-        if (col.block_layout == "list") {
-            for (let i = 0; i < blocks.length; i++) {
-                let blockStyle = blocks[i].styling ?? {},
-                    subblockId = currentNode.id + "-text_" + i,
-                    subblockText = `• ${blocks[i].label}: ${blocks[i].value}`;
-
-                if (!blockStyle["text-padding-x"]) {
-                    blockStyle["text-padding-x"] = "5";
-                }
-
-                let txtEle = this.addTextToNode(currentNode, subblockId, subblockText, blockStyle);
-                txtEle.onclick = e => {
-                    alert(blocks[i]);
-                };
-            }
-        } else {
-            for (let subblock of blocks) {
-                let blockStyle = subblock.styling ?? {};
-                this.createCard(currentNode, subblock.label, blockStyle);
-            }
+        if (col.box_layout !== "list") {
+            return;
         }
+
+        _.each(col.items, (item, i) => {
+            let blockStyle = {},
+                subblockId = item.key,
+                subblockText = `• ${item.label}: ${item.value}`;
+
+            blockStyle["text-padding-x"] = blockStyle["text-padding-x"] || 5;
+
+            let txtEle = this.addTextToNode(node, subblockId, subblockText, blockStyle);
+            txtEle.onclick = e => {
+                alert(item);
+            };
+        });
     }
 
     addResizeAndToolbar() {
@@ -471,10 +462,8 @@ class PrismaPlot {
 
     buildSections() {
         const diagramSections = this.store.sections;
-
-        // parse data structure
-        let parent, child, sibling;
-        for (let section of diagramSections) {
+        let parent = null;
+        _.each(diagramSections, section => {
             let blockId = section.key,
                 blockBoxInfo = section.label,
                 sectionStyle = section.styling ?? {};
@@ -497,31 +486,29 @@ class PrismaPlot {
                     sectionStyle
                 );
             }
-            if (section.block_layout) {
-                this.drawBox(blockId, section);
-                this.resizeNodes(parent);
-                continue;
-            }
-            for (let i = 0; i < section.blocks.length; i++) {
-                let box = section.blocks[i],
-                    id = box.key,
-                    boxInfo = `${box.label}: ${box.value}`,
-                    blockStyle = box.styling ?? {};
-
-                if (i > 0) {
-                    let previous = sibling || child;
-                    sibling = this.createNewHorizontalNode(previous, id, boxInfo, true, blockStyle);
-                } else {
-                    child = this.createChildNode(parent, id, boxInfo, blockStyle);
-                    sibling = undefined;
-                }
-
-                if (box.sub_blocks) {
-                    this.drawBox(id, box);
-                }
-            }
+            this.drawBlocks(parent, section);
             this.resizeNodes(parent);
-        }
+        });
+    }
+
+    drawBlocks(parent, section) {
+        let node, child, sibling;
+        _.each(section.blocks, (block, j) => {
+            let id = block.key,
+                boxInfo = `${block.label}: ${block.value}`,
+                blockStyle = block.styling ?? {};
+
+            if (j > 0) {
+                let previous = sibling || child;
+                node = this.createNewHorizontalNode(previous, id, boxInfo, true, blockStyle);
+                sibling = node;
+            } else {
+                node = this.createChildNode(parent, id, boxInfo, blockStyle);
+                child = node;
+                sibling = undefined;
+            }
+            this.drawList(node, block);
+        });
     }
 
     buildConnections() {
@@ -538,7 +525,7 @@ class PrismaPlot {
         this.SPACING_H = 120;
         this.TEXT_OFFSET_X = 10;
         this.TEXT_OFFSET_Y = 20;
-        this.TEXT_SIZE = 1;
+        this.TEXT_SIZE = 1.1;
         this.STYLE_DEFAULT = {
             x: "0", // +- centered around current box position (moves relevant text as well)
             y: "0",
