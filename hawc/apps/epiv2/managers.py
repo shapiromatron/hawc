@@ -88,6 +88,12 @@ class DesignManager(BaseManager):
                     output_field=CharField(max_length=256),
                 ),
                 exposure_measurement_type=str_m2m("_exposure_measurement_type"),
+                _exposure_biomonitoring_matrix=sql_display(
+                    "designs__exposures__biomonitoring_matrix",
+                    constants.BiomonitoringMatrix,
+                    default="",
+                ),
+                exposure_biomonitoring_matrix=str_m2m("_exposure_biomonitoring_matrix"),
                 _exposure_route=sql_display(
                     "designs__exposures__exposure_route", constants.ExposureRoute
                 ),
@@ -109,6 +115,7 @@ class DesignManager(BaseManager):
                 "chemical_name",
                 "exposure_name",
                 "exposure_measurement_type",
+                "exposure_biomonitoring_matrix",
                 "exposure_route",
                 "outcome_system",
                 "outcome_effect",
@@ -125,6 +132,7 @@ class DesignManager(BaseManager):
                 "chemical_name",
                 "exposure_name",
                 "exposure_measurement_type",
+                "exposure_biomonitoring_matrix",
                 "exposure_route",
                 "outcome_system",
                 "outcome_effect",

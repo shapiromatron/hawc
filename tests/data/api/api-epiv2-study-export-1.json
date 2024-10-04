@@ -8,6 +8,7 @@
     "countries": "Denmark|Taiwan",
     "design_source": "General population",
     "design_summary": "Birth cohort in Faroe Islands with follow-up at 5 and 7 years|Case-control study of asthma in children",
+    "exposure_biomonitoring_matrix": "Blood (portion: Serum)",
     "exposure_measurement_type": "Biomonitoring",
     "exposure_name": "child serum|child serum age 5|maternal serum",
     "exposure_route": "Unknown/Total",
