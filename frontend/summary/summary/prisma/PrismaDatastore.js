@@ -32,6 +32,8 @@ class PrismaDatastore {
                                 count_strategy: b.count_strategy,
                                 box_layout: b.box_layout,
                                 items: b.items,
+                                count_include: b.count_include,
+                                count_exclude: b.count_exclude,
                             };
                         }),
                 };
@@ -147,40 +149,45 @@ class PrismaDatastore {
         return total;
     }
 
+    getCsrfToken() {
+        return this.options.csrf;
+    }
+
     setRefs() {
+        const skipped = [];
         for (const section of this.sections) {
             for (const block of section.blocks) {
                 // set the reference ids and reference id count
                 // on each block in each section
-                let block_tags = [];
-                if (block.items) {
+                if (block.block_layout == "list") {
                     // if there are sub blocks include them in
                     // "unique_sum" calculation
+                    let block_tags = [];
                     for (const item of block.items) {
                         item.refs = this.unique_sum(item.tags);
                         item.value = item.refs.size;
-                        block_tags.push(...(item.tags || []));
+                        block_tags.push(...item.tags);
                     }
-                }
-                if (block.count_strategy == null) {
-                    continue;
-                } else if (block.count_strategy == "unique_sum") {
-                    // perform "unique_sum" count
-                    block_tags.push(...(block.tags || []));
                     block.refs = this.unique_sum(block_tags);
                     block.value = block.refs.size;
-                } else {
-                    // perform count based on blocks in other section
-                    let prev_section = this.section_lookup(block.count_strategy);
-                    block.refs = this.block_sum(prev_section.blocks);
+                } else if (block.count_strategy == "unique_sum") {
+                    // perform "unique_sum" count
+                    block.refs = this.unique_sum(block.tags);
                     block.value = block.refs.size;
+                } else if (block.count_strategy != null) {
+                    // perform counts based on other blocks
+                    // after these block counts have been computed
+                    skipped.push(block);
                 }
             }
         }
-    }
-
-    getCsrfToken() {
-        return this.options.csrf;
+        for (const block of skipped) {
+            // perform count based on other blocks
+            let include = this.blocks_lookup(block.count_strategy, block.count_include),
+                exclude = this.blocks_lookup(block.count_strategy, block.count_exclude);
+            block.refs = this.block_sum(include, exclude);
+            block.value = block.refs.size;
+        }
     }
 }
 

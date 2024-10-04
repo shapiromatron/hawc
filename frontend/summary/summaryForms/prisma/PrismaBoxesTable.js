@@ -87,8 +87,8 @@ class BoxesRow extends PrismaEditableRow {
                 getFilterOptions,
                 getBoxLayouts,
                 toggleStyling,
+                getCountBlocks,
                 getCountStrategies,
-                getCountStrategyBlockTypes,
             } = this.props.store.subclass,
             isCard = row.box_layout === "card",
             isList = row.box_layout === "list";
@@ -125,44 +125,65 @@ class BoxesRow extends PrismaEditableRow {
                                 multiple={false}
                                 choices={getBoxLayouts()}
                             />
-                            <SelectInput
-                                name={`${key}-layout-${index}-count_strategy`}
-                                value={row.count_strategy}
-                                label="Reference count strategy"
-                                handleSelect={value =>
-                                    changeArraySettings(key, index, "count_strategy", value)
-                                }
-                                multiple={false}
-                                choices={getCountStrategies()}
-                            />
-                            <SelectInput
-                                name={`${key}-layout-${index}-count_strategy_block_type`}
-                                value={row.count_strategy_block_type}
-                                label="Reference count strategy block type"
-                                handleSelect={value =>
-                                    changeArraySettings(
-                                        key,
-                                        index,
-                                        "count_strategy_block_type",
-                                        value
-                                    )
-                                }
-                                multiple={false}
-                                choices={getCountStrategyBlockTypes()}
-                            />
                             {isCard ? (
-                                <div>
+                                <>
                                     <SelectInput
-                                        name={`${key}-tag-${index}`}
-                                        value={row.tag}
-                                        label="Add references related to this tag, search, or import"
-                                        handleSelect={(value, label) => {
-                                            changeArraySettings(key, index, "tag", value);
-                                        }}
-                                        multiple={true}
-                                        choices={getFilterOptions()}
+                                        name={`${key}-layout-${index}-count_strategy`}
+                                        value={row.count_strategy}
+                                        label="Reference count strategy"
+                                        handleSelect={value =>
+                                            changeArraySettings(key, index, "count_strategy", value)
+                                        }
+                                        multiple={false}
+                                        choices={getCountStrategies()}
                                     />
-                                </div>
+                                    {row.count_strategy == "unique_sum" ? (
+                                        <SelectInput
+                                            name={`${key}-count-tag-${index}`}
+                                            value={row.tag}
+                                            label="Add references related to this tag, search, or import"
+                                            handleSelect={(value, label) => {
+                                                changeArraySettings(key, index, "tag", value);
+                                            }}
+                                            multiple={true}
+                                            choices={getFilterOptions()}
+                                        />
+                                    ) : null}
+                                    {row.count_strategy && row.count_strategy != "unique_sum" ? (
+                                        <>
+                                            <SelectInput
+                                                name={`${key}-count_include-${index}`}
+                                                value={row.count_include}
+                                                label="Included blocks"
+                                                handleSelect={(value, label) => {
+                                                    changeArraySettings(
+                                                        key,
+                                                        index,
+                                                        "count_include",
+                                                        value
+                                                    );
+                                                }}
+                                                multiple={true}
+                                                choices={getCountBlocks(row)}
+                                            />
+                                            <SelectInput
+                                                name={`${key}-count_exclude-${index}`}
+                                                value={row.count_exclude}
+                                                label="Excluded blocks"
+                                                handleSelect={(value, label) => {
+                                                    changeArraySettings(
+                                                        key,
+                                                        index,
+                                                        "count_exclude",
+                                                        value
+                                                    );
+                                                }}
+                                                multiple={true}
+                                                choices={getCountBlocks(row)}
+                                            />
+                                        </>
+                                    ) : null}
+                                </>
                             ) : null}
                             <CheckboxInput
                                 name={`${key}-toggle-styling-${index}`}
