@@ -421,10 +421,7 @@ class VisualizationCreate(BaseCreate):
 
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
-        if (
-            visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
-            and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
-        ):
+        if visual_type in [] and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
             raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
@@ -432,6 +429,8 @@ class VisualizationCreate(BaseCreate):
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
+            constants.VisualType.PLOTLY,
+            constants.VisualType.PRISMA,
         }:
             return "summary/visual_form_django.html"
         return super().get_template_names()
@@ -525,10 +524,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
 
     def get_template_names(self):
         visual_type = self.object.visual_type
-        if (
-            visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
-            and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
-        ):
+        if visual_type in [] and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
             raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
@@ -536,6 +532,8 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
+            constants.VisualType.PLOTLY,
+            constants.VisualType.PRISMA,
         }:
             return "summary/visual_form_django.html"
         return super().get_template_names()
