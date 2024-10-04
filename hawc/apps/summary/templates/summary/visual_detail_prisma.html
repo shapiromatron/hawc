@@ -27,7 +27,7 @@
       window.isEditable = {{obj_perms.edit|lower}};
       const config = JSON.parse(document.getElementById('config').textContent),
             el = document.getElementById('visualization');
-      summary.startupPrismaAppRender(el, config.settings, config.data, {});
+      summary.startupPrismaAppRender(el, config.settings, config.data, {csrf: "{{ csrf_token }}"});
     });
   </script>
 {% endblock %}

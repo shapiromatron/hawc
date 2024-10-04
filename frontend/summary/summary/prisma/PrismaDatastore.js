@@ -2,9 +2,10 @@ import HAWCModal from "shared/utils/HAWCModal";
 import h from "shared/utils/helpers";
 
 class PrismaDatastore {
-    constructor(settings, dataset) {
+    constructor(settings, dataset, options) {
         this.settings = settings;
         this.dataset = dataset;
+        this.options = options;
         this.createMaps();
         this.updateTagMap();
         this.sections = this.getDiagramSections();
@@ -176,6 +177,10 @@ class PrismaDatastore {
                 }
             }
         }
+    }
+
+    getCsrfToken() {
+        return this.options.csrf;
     }
 }
 

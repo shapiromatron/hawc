@@ -61,9 +61,8 @@ const NAMESPACE = "http://www.w3.org/2000/svg",
         detailEl.innerText = "Loading...";
         formData.append("ids", Array(...refs).join(","));
         // TODO: change detail header to the text of the clicked node
-        // TODO: change on csrf
         // TODO: implement for cards, not lists
-        fetch(plot.store.dataset.url, h.fetchPostForm("csrf", formData))
+        fetch(plot.store.dataset.url, h.fetchPostForm(plot.store.getCsrfToken(), formData))
             .then(resp => resp.text())
             .then(html => (detailEl.innerHTML = html));
     },
