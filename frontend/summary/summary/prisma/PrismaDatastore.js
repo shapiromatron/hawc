@@ -1,5 +1,7 @@
+import _ from "lodash";
 import HAWCModal from "shared/utils/HAWCModal";
 import h from "shared/utils/helpers";
+import {NULL_VALUE} from "summary/summary/constants";
 
 class PrismaDatastore {
     constructor(settings, dataset, options) {
@@ -62,21 +64,20 @@ class PrismaDatastore {
         };
     }
 
-    mapArrowStyling(styling) {
-        return {
-            "arrow-color": styling["stroke_color"],
-            "arrow-width": styling["stroke_width"],
-            "arrow-type": styling["arrow_type"],
-            "arrow-force-vertical": styling["force_vertical"],
-        };
-    }
-
     getConnections() {
-        this.settings.arrows.forEach(a => {
-            if (a.use_style_overrides) a.styling = this.mapArrowStyling(a.styling);
-            else delete a.styling;
-        });
-        return this.settings.arrows;
+        return _.cloneDeep(this.settings.arrows)
+            .filter(a => a.src !== NULL_VALUE && a.dst !== NULL_VALUE)
+            .map(a => {
+                a.styling = a.use_style_overrides
+                    ? {
+                          "arrow-color": a.styling["stroke_color"],
+                          "arrow-width": a.styling["stroke_width"],
+                          "arrow-type": a.styling["arrow_type"],
+                          "arrow-force-vertical": a.styling["force_vertical"],
+                      }
+                    : undefined;
+                return a;
+            });
     }
 
     createFilterMaps() {

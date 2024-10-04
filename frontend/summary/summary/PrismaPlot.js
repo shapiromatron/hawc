@@ -66,11 +66,12 @@ const NAMESPACE = "http://www.w3.org/2000/svg",
         for (const [key, value] of Object.entries(STYLE_DEFAULT)) {
             if (!styling[key]) styling[key] = value;
         }
-        let arrowType = "arrow" + styling["arrow-type"];
-        let arrow = d3Arrow[arrowType]().id(id);
+        let arrowType = "arrow" + styling["arrow-type"],
+            arrow = d3Arrow[arrowType]().id(id);
         if (arrowhead) {
             arrow
                 .attr("stroke", styling["arrow-color"])
+                .attr("fill", styling["arrow-color"])
                 .attr("stroke-width", styling["arrow-width"]);
         } else {
             arrow.attr("fill", "transparent").attr("stroke", "transparent");
