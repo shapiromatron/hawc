@@ -341,7 +341,10 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
                     id=self.object.id,
                     data=json.loads(models.Visual.get_prisma_data(self.assessment)),
                     settings=self.object.settings,
-                )
+                ),
+                options=dict(
+                    csrf=get_token(self.request),
+                ),
             )
         return context
 
