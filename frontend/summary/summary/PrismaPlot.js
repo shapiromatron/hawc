@@ -6,6 +6,7 @@ import ReactDOM from "react-dom";
 import VisualToolbar from "shared/components/VisualToolbar";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
+import h from "shared/utils/helpers";
 
 class PrismaPlot {
     // Examples
@@ -374,8 +375,23 @@ class PrismaPlot {
     nodeOnClick(e) {
         let id = e.target.parentNode.id.replace(new RegExp("-box" + "$"), "");
         id = id.replace(new RegExp("-text" + "$"), "");
-        let node = this.getGroup(id);
-        alert(node);
+        // use id to get reference id list
+        let refs = this.getRefs(id);
+        // fetch html from url
+        const detailEl = document.getElementById(`${this.store.settingsHash}-detail-section`);
+        // detailHeader = document.getElementById(`${this.store.settingsHash}-detail-header`);
+        detailEl.innerText = "Loading...";
+        const formData = new FormData();
+        formData.append("ids", refs.join(","));
+        // TODO: change detail header to the text of the clicked node
+        fetch(this.store.dataset.url, h.fetchPostForm(this.options.csrf, formData))
+            .then(resp => resp.text())
+            .then(html => (detailEl.innerHTML = html));
+    }
+
+    getRefs(id) {
+        // TODO: right now we use hard coded IDs. We want to get all the refs from the given object/its children
+        return [6, 7, 8, 12];
     }
 
     createCard(parent, text, styling = {}) {
@@ -432,9 +448,7 @@ class PrismaPlot {
                 let subblockText = this.HTML_BULLET + ` ${blocks[i].label}: ${blocks[i].value}`;
 
                 let txtEle = this.addTextToNode(currentNode, subblockId, subblockText, blockStyle);
-                txtEle.onclick = e => {
-                    alert(blocks[i]);
-                };
+                txtEle.onclick = this.nodeOnClick.bind(this);
             }
         } else {
             for (let subblock of blocks) {

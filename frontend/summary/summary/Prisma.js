@@ -40,8 +40,14 @@ class PrismaComponent extends Component {
             id = store.settingsHash;
 
         return (
-            <div id={id}>
-                <Loading />
+            <div className="row py-3">
+                <div id={id} className="col-lg-8">
+                    <Loading />
+                </div>
+                <div className="col-lg-4">
+                    <h3 id={`${id}-detail-header`}></h3>
+                    <div id={`${id}-detail-section`}></div>
+                </div>
             </div>
         );
     }

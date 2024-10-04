@@ -1,11 +1,11 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import CheckboxInput from "shared/components/CheckboxInput";
 import FloatInput from "shared/components/FloatInput";
 import IntegerInput from "shared/components/IntegerInput";
-import TextInput from "shared/components/TextInput";
 import SelectInput from "shared/components/SelectInput";
-import CheckboxInput from "shared/components/CheckboxInput";
+import TextInput from "shared/components/TextInput";
 
 @inject("store")
 @observer
@@ -16,6 +16,7 @@ class GlobalSettings extends Component {
         return (
             <div className="my-2 p-2 pb-3">
                 <h3>Default Style Settings</h3>
+                <h4>Section and Box Settings</h4>
                 <div className="form-row my-2 mx-2 pad-form">
                     <IntegerInput
                         label="Stroke Rounding"
@@ -68,6 +69,9 @@ class GlobalSettings extends Component {
                         label="Padding Y"
                         onChange={e => changeSettings(e.target.name, e.target.value)}
                     />
+                </div>
+                <h4>Arrow Settings</h4>
+                <div className="form-row my-2 mx-2 pad-form">
                     <IntegerInput
                         name={"arrow_styles.stroke_width"}
                         value={arrow_styles.stroke_width}
