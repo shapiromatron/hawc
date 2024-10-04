@@ -130,21 +130,25 @@ class PrismaDatastore {
         return refs;
     }
 
-    section_lookup(label) {
+    section_lookup(key) {
         // find section by label
-        return this.sections.find(s => s.label == label);
+        return this.sections.find(s => s.key == key);
     }
 
-    block_sum(blocks) {
+    blocks_lookup(sectionKey, blockKeys) {
+        // find blocks by section key and block keys
+        return this.section_lookup(sectionKey).blocks.filter(b => blockKeys.includes(b.key));
+    }
+
+    block_sum(include, exclude) {
         // compile a set of reference ids given
         // blocks to include and blocks to exclude.
         let total = new Set();
-        for (const block of blocks) {
-            if (block.type == "include") {
-                total = total.union(block.refs);
-            } else if (block.type == "exclude") {
-                total = total.difference(block.refs);
-            }
+        for (const block of include) {
+            total = total.union(block.refs);
+        }
+        for (const block of exclude) {
+            total = total.difference(block.refs);
         }
         return total;
     }
