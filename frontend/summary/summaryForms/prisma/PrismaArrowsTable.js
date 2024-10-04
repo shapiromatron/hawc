@@ -11,6 +11,7 @@ import {
 import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
+import wrapRow from "shared/components/WrapRow";
 import {NULL_VALUE} from "summary/summary/constants";
 
 import {PrismaEditableRow} from "./PrismaEditableRow";
@@ -87,38 +88,44 @@ class ArrowsRow extends PrismaEditableRow {
             <tr>
                 <td colSpan="100%">
                     <div className="border my-2 p-2 pb-3 edit-form-background ">
-                        <div className="form-row my-2 mx-2 pad-form">
-                            <SelectInput
-                                name={`${key}-source-${index}`}
-                                value={row.src}
-                                label="Source"
-                                handleSelect={(value, label) => {
-                                    changeArraySettings(key, index, "src", value);
-                                }}
-                                multiple={false}
-                                choices={getArrowOptions()}
-                            />
-                            <SelectInput
-                                name={`${key}-destination-${index}`}
-                                value={row.dst}
-                                label="Destination"
-                                handleSelect={(value, label) => {
-                                    changeArraySettings(key, index, "dst", value);
-                                }}
-                                multiple={false}
-                                choices={getArrowOptions()}
-                            />
-                            <CheckboxInput
-                                name={`${key}-toggle-styling-${index}`}
-                                checked={row.use_style_overrides}
-                                label="Override default formatting"
-                                onChange={e => {
-                                    toggleStyling(key, index, e.target.checked);
-                                    this.setState({edit_styles: e.target.checked});
-                                }}
-                            />
-                            {this.state.edit_styles && this.renderStyleOptions(key, row, index)}
-                        </div>
+                        {wrapRow(
+                            [
+                                <SelectInput
+                                    key={`${key}-source-${index}`}
+                                    name={`${key}-source-${index}`}
+                                    value={row.src}
+                                    label="Source"
+                                    handleSelect={(value, label) => {
+                                        changeArraySettings(key, index, "src", value);
+                                    }}
+                                    multiple={false}
+                                    choices={getArrowOptions()}
+                                />,
+                                <SelectInput
+                                    key={`${key}-source-${index}`}
+                                    name={`${key}-destination-${index}`}
+                                    value={row.dst}
+                                    label="Destination"
+                                    handleSelect={(value, label) => {
+                                        changeArraySettings(key, index, "dst", value);
+                                    }}
+                                    multiple={false}
+                                    choices={getArrowOptions()}
+                                />,
+                                <CheckboxInput
+                                    key={`${key}-source-${index}`}
+                                    name={`${key}-toggle-styling-${index}`}
+                                    checked={row.use_style_overrides}
+                                    label="Override default formatting"
+                                    onChange={e => {
+                                        toggleStyling(key, index, e.target.checked);
+                                        this.setState({edit_styles: e.target.checked});
+                                    }}
+                                />,
+                            ],
+                            "form-row my-2 mx-2 pad-form"
+                        )}
+                        {this.state.edit_styles && this.renderStyleOptions(key, row, index)}
                         <div className="form-row justify-content-center">
                             <button
                                 className="btn btn-primary mx-2 py-2"
@@ -137,42 +144,61 @@ class ArrowsRow extends PrismaEditableRow {
     renderStyleOptions(key, row, index) {
         const {changeStylingSettings, getArrowTypes} = this.props.store.subclass;
         return (
-            <div className="form-row">
-                <IntegerInput
-                    name={`${key}-width-${index}`}
-                    value={row.styling.stroke_width}
-                    label="Width"
-                    onChange={e =>
-                        changeStylingSettings(key, index, "stroke_width", parseInt(e.target.value))
-                    }
-                />
-                <SelectInput
-                    name={`${key}-type-${index}`}
-                    value={row.styling.arrow_type}
-                    label="Type"
-                    handleSelect={value =>
-                        changeStylingSettings(key, index, "arrow_type", parseInt(value))
-                    }
-                    choices={getArrowTypes()}
-                />
-                <TextInput
-                    name={`${key}-color-${index}`}
-                    value={row.styling.stroke_color}
-                    label="Color"
-                    onChange={e =>
-                        changeStylingSettings(key, index, "stroke_color", e.target.value)
-                    }
-                    type="color"
-                />
-                <CheckboxInput
-                    name={`${key}-force-vertical-${index}`}
-                    checked={row.styling.force_vertical}
-                    label="Force vertical orientation"
-                    onChange={e =>
-                        changeStylingSettings(key, index, "force_vertical", e.target.checked)
-                    }
-                />
-            </div>
+            <>
+                {wrapRow(
+                    [
+                        <IntegerInput
+                            key={`${key}-width-${index}`}
+                            name={`${key}-width-${index}`}
+                            value={row.styling.stroke_width}
+                            label="Width"
+                            onChange={e =>
+                                changeStylingSettings(
+                                    key,
+                                    index,
+                                    "stroke_width",
+                                    parseInt(e.target.value)
+                                )
+                            }
+                        />,
+                        <SelectInput
+                        key={`${key}-type-${index}`}
+                            name={`${key}-type-${index}`}
+                            value={row.styling.arrow_type}
+                            label="Type"
+                            handleSelect={value =>
+                                changeStylingSettings(key, index, "arrow_type", parseInt(value))
+                            }
+                            choices={getArrowTypes()}
+                        />,
+                        <TextInput
+                            key={`${key}-color-${index}`}
+                            name={`${key}-color-${index}`}
+                            value={row.styling.stroke_color}
+                            label="Color"
+                            onChange={e =>
+                                changeStylingSettings(key, index, "stroke_color", e.target.value)
+                            }
+                            type="color"
+                        />,
+                        <CheckboxInput
+                            key={`${key}-force-vertical-${index}`}
+                            name={`${key}-force-vertical-${index}`}
+                            checked={row.styling.force_vertical}
+                            label="Force vertical orientation"
+                            onChange={e =>
+                                changeStylingSettings(
+                                    key,
+                                    index,
+                                    "force_vertical",
+                                    e.target.checked
+                                )
+                            }
+                        />,
+                    ],
+                    "form-row my-2 mx-2 pad-form"
+                )}
+            </>
         );
     }
 }

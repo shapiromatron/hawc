@@ -13,7 +13,7 @@ class PrismaEditableRow extends EditableRow {
     renderStyleOptions(key, row, index) {
         const {changeStylingSettings} = this.props.store.subclass;
         return (
-            <div>
+            <>
                 {wrapRow(
                     [
                         <IntegerInput
@@ -153,7 +153,7 @@ class PrismaEditableRow extends EditableRow {
                     ],
                     "form-row"
                 )}
-            </div>
+            </>
         );
     }
 }
