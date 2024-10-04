@@ -34,7 +34,9 @@ class PrismaDatastore {
                                 items: b.items,
                                 count_include: b.count_include,
                                 count_exclude: b.count_exclude,
-                                ...(b.use_style_overrides && {styling: this.mapStyling(b.styling)}),
+                                styling: b.use_style_overrides
+                                    ? this.mapStyling(b.styling)
+                                    : this.mapStyling(this.settings.box_styles),
                             };
                         }),
                     ...(section.use_style_overrides && {styling: this.mapStyling(section.styling)}),

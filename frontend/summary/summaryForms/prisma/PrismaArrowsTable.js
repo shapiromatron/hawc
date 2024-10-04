@@ -82,11 +82,7 @@ class ArrowsRow extends PrismaEditableRow {
         );
     }
     renderEditRow(row, index) {
-        const {
-            changeArraySettings,
-            toggleArrowStyling,
-            getArrowOptions,
-        } = this.props.store.subclass;
+        const {changeArraySettings, toggleStyling, getArrowOptions} = this.props.store.subclass;
         return (
             <tr>
                 <td colSpan="100%">
@@ -117,7 +113,7 @@ class ArrowsRow extends PrismaEditableRow {
                                 checked={row.use_style_overrides}
                                 label="Override default formatting"
                                 onChange={e => {
-                                    toggleArrowStyling(index, e.target.checked);
+                                    toggleStyling(key, index, e.target.checked);
                                     this.setState({edit_styles: e.target.checked});
                                 }}
                             />
