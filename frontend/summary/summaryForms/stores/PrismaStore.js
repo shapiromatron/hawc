@@ -229,6 +229,13 @@ class PrismaStore {
     @computed get settingsHash() {
         return h.hashString(JSON.stringify(this.settings));
     }
+
+    // active tab
+    @observable activeTab = 0;
+    @action.bound changeActiveTab(index) {
+        this.activeTab = index;
+        return true;
+    }
 }
 
 export default PrismaStore;

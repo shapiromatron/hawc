@@ -10,17 +10,18 @@ import PrismaDataTab from "./PrismaDataTab";
 @observer
 class SettingsPanel extends Component {
     render() {
+        const {store} = this.props;
         return (
-            <Tabs>
+            <Tabs selectedIndex={store.activeTab} onSelect={store.changeActiveTab}>
                 <TabList>
-                    <Tab>Overall</Tab>
                     <Tab>Flowchart</Tab>
+                    <Tab>Styling</Tab>
                 </TabList>
                 <TabPanel>
-                    <GlobalSettings />
+                    <PrismaDataTab />
                 </TabPanel>
                 <TabPanel>
-                    <PrismaDataTab />
+                    <GlobalSettings />
                 </TabPanel>
             </Tabs>
         );
