@@ -516,12 +516,12 @@ class PrismaPlot {
             height: "0",
             "spacing-horizontal": this.SPACING_H,
             "spacing-vertical": this.SPACING_V,
-            "text-padding-x": "0", // +- centered around global text offset values
-            "text-padding-y": "0",
-            "text-color": "black",
+            "text-padding-x": styles.padding_x, // +- centered around global text offset values
+            "text-padding-y": styles.padding_y,
+            "text-color": styles.font_color,
             "text-style": "normal", // or "bold"
-            "text-size": "0", // always appends "em" unit, +- centered around global text size
-            "bg-color": "white",
+            "text-size": styles.font_size, // always appends "em" unit, +- centered around global text size
+            "bg-color": styles.bg_color,
             stroke: styles.stroke_color, // box border color
             "stroke-width": styles.stroke_width, // box border width
             rx: styles.stroke_radius, // box rounded edge horizontal

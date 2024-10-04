@@ -34,13 +34,48 @@ class PrismaDatastore {
                                 items: b.items,
                                 count_include: b.count_include,
                                 count_exclude: b.count_exclude,
+                                ...(b.use_style_overrides) && {styling: this.mapStyling(b.styling)},
                             };
                         }),
+                    ...(section.use_style_overrides) && {styling: this.mapStyling(section.styling)},
                 };
             });
     }
 
+    mapStyling(styling) {
+        return {
+            x: styling.x,
+            y: styling.y,
+            width: styling.width,
+            height: styling.height,
+            "text-padding-x": styling.padding_x,
+            "text-padding-y": styling.padding_y,
+            "text-color": styling.font_color,
+            "text-style": "normal",
+            "text-size": styling.font_size,
+            "bg-color": styling.bg_color,
+            stroke: styling.stroke_color,
+            "stroke-width": styling.stroke_width,
+            rx: styling.stroke_radius,
+            ry: styling.stroke_radius,
+        };
+    }
+
+    mapArrowStyling(styling) {
+        return {
+            "arrow-color": styling["stroke_color"],
+            "arrow-width": styling["stroke_width"],
+            "arrow-type": styling["arrow_type"],
+            "arrow-force-vertical": styling["force_vertical"],
+        }
+    }
+
     getConnections() {
+        this.settings.arrows.forEach((a) => {
+            if (a.use_style_overrides)
+                a.styling = this.mapArrowStyling(a.styling);
+            else delete a.styling;
+        });
         return this.settings.arrows;
     }
 
