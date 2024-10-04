@@ -29,9 +29,9 @@ class PrismaDatastore {
                                 label: b.label,
                                 key: b.key,
                                 tags: b.tag,
-                                count: b.count,
-                                include: b.include,
-                                exclude: b.exclude,
+                                count_strategy: b.count_strategy,
+                                count_include: b.count_include,
+                                count_exclude: b.count_exclude,
                             };
                         }),
                 };
@@ -158,22 +158,23 @@ class PrismaDatastore {
             for (const block of section.blocks) {
                 // set the reference ids and reference id count
                 // on each block in each section
-                let block_tags = [];
-                if (block.sub_blocks) {
+                if (block.block_layout == "list") {
                     // if there are sub blocks include them in
                     // "unique_sum" calculation
+                    let block_tags = [];
                     for (const sub_block of block.sub_blocks) {
                         sub_block.refs = this.unique_sum(sub_block.tags);
                         sub_block.value = sub_block.refs.size;
-                        block_tags.push(...(sub_block.tags || []));
+                        block_tags.push(...(sub_block.tags));
                     }
-                }
-                if (block.count == "unique_sum") {
-                    // perform "unique_sum" count
-                    block_tags.push(...(block.tags || []));
                     block.refs = this.unique_sum(block_tags);
                     block.value = block.refs.size;
-                } else if (block.count != null) {
+                }
+                else if (block.count_strategy == "unique_sum") {
+                    // perform "unique_sum" count
+                    block.refs = this.unique_sum(block.tags);
+                    block.value = block.refs.size;
+                } else if (block.count_strategy != null) {
                     // perform counts based on other blocks
                     // after these block counts have been computed
                     skipped.push(block)
@@ -182,8 +183,8 @@ class PrismaDatastore {
         }
         for(const block of skipped) {
             // perform count based on other blocks
-            let include = this.blocks_lookup(block.count,block.include),
-                exclude = this.blocks_lookup(block.count,block.exclude);
+            let include = this.blocks_lookup(block.count_strategy,block.count_include),
+                exclude = this.blocks_lookup(block.count_strategy,block.count_exclude);
             block.refs = this.block_sum(include, exclude);
             block.value = block.refs.size;
         }

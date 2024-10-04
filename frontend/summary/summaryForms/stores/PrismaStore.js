@@ -20,9 +20,10 @@ const createSectionRow = function() {
             styling: null,
             section: NULL_VALUE,
             box_layout: "card",
+            count_strategy: "unique_sum",
             count_include: [],
             count_exclude: [],
-            tag: NULL_VALUE, // todo - rename to tags
+            tag: [], // todo - rename to tags
             items: [],
         };
     },
@@ -134,12 +135,12 @@ class PrismaStore {
         this.settings.arrows.push(createArrowRow());
     }
 
-    @action.bound getCountOptions() {
+    @action.bound getCountStrategies() {
         return [{id: "unique_sum", label: "Unique sum"}].concat(this.settings.sections.map(s=>({id:s.key,label:s.label})))
     }
 
-    @action.bound getBlockOptions(block) {
-        return this.settings.boxes.filter(b=>b.section == block.count && b.count == "unique_sum").map(b=>({id:b.key,label:b.label}))
+    @action.bound getCountBlocks(block) {
+        return this.settings.boxes.filter(b=>b.section == block.count_strategy && b.count_strategy == "unique_sum").map(b=>({id:b.key,label:b.label}))
     }
 
     @action.bound getFilterOptions() {
