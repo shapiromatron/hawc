@@ -20,8 +20,8 @@ const createSectionRow = function() {
             styling: null,
             section: NULL_VALUE,
             box_layout: "card",
-            count_strategy: "unique_sum",
-            count_strategy_block_type: "include",
+            count_include: [],
+            count_exclude: [],
             tag: NULL_VALUE, // todo - rename to tags
             items: [],
         };
@@ -54,11 +54,6 @@ const createSectionRow = function() {
     BOX_LAYOUTS = [
         {id: "card", label: "Card"},
         {id: "list", label: "List"},
-    ],
-    COUNT_STRATEGIES = [{id: "unique_sum", label: "Unique"}],
-    COUNT_STRATEGY_BLOCK_TYPES = [
-        {id: "include", label: "Include"},
-        {id: "exclude", label: "Exclude"},
     ];
 
 class PrismaStore {
@@ -95,14 +90,6 @@ class PrismaStore {
                 force_vertical: false,
             },
         };
-    }
-
-    getCountStrategies() {
-        return COUNT_STRATEGIES;
-    }
-
-    getCountStrategyBlockTypes() {
-        return COUNT_STRATEGY_BLOCK_TYPES;
     }
 
     @action.bound changeSettings(path, value) {
