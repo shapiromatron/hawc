@@ -34,10 +34,10 @@ class PrismaDatastore {
                                 items: b.items,
                                 count_include: b.count_include,
                                 count_exclude: b.count_exclude,
-                                ...(b.use_style_overrides) && {styling: this.mapStyling(b.styling)},
+                                ...(b.use_style_overrides && {styling: this.mapStyling(b.styling)}),
                             };
                         }),
-                    ...(section.use_style_overrides) && {styling: this.mapStyling(section.styling)},
+                    ...(section.use_style_overrides && {styling: this.mapStyling(section.styling)}),
                 };
             });
     }
@@ -67,13 +67,12 @@ class PrismaDatastore {
             "arrow-width": styling["stroke_width"],
             "arrow-type": styling["arrow_type"],
             "arrow-force-vertical": styling["force_vertical"],
-        }
+        };
     }
 
     getConnections() {
-        this.settings.arrows.forEach((a) => {
-            if (a.use_style_overrides)
-                a.styling = this.mapArrowStyling(a.styling);
+        this.settings.arrows.forEach(a => {
+            if (a.use_style_overrides) a.styling = this.mapArrowStyling(a.styling);
             else delete a.styling;
         });
         return this.settings.arrows;
