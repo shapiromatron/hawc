@@ -10310,6 +10310,166 @@
     created: 2023-11-15 14:25:27.528283+00:00
     last_updated: 2023-11-15 14:25:27.528283+00:00
     endpoints: []
+- model: summary.visual
+  pk: 16
+  fields:
+    title: prisma visual
+    slug: prisma-visual
+    assessment: 2
+    visual_type: 9
+    evidence_type: 3
+    dose_units: null
+    settings:
+      boxes:
+      - key: c4280af3264c519
+        items: []
+        label: Imported from Pubmed
+        section: fa615c164559d51
+        styling: null
+        box_layout: card
+        count_exclude: []
+        count_filters:
+        - search_5
+        count_include: []
+        count_strategy: unique_sum
+        use_style_overrides: false
+      - key: c0de1f0c3eb141e
+        items: []
+        label: Manually imported
+        section: fa615c164559d51
+        styling: null
+        box_layout: card
+        count_exclude: []
+        count_filters:
+        - search_2
+        count_include: []
+        count_strategy: unique_sum
+        use_style_overrides: false
+      - key: deb3038ff530e06
+        items:
+        - key: 7a8d974ca098055
+          label: ''
+          count_filters: []
+        label: Excluded
+        section: ebe5c95e5a97047
+        styling:
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+          bg_color: '#f3afaf'
+          font_size: 0
+          padding_x: 0
+          padding_y: 0
+          font_color: '#000000'
+          stroke_color: '#000000'
+          stroke_width: 2
+          stroke_radius: 5
+        box_layout: card
+        count_exclude: []
+        count_filters:
+        - tag_15
+        count_include: []
+        count_strategy: unique_sum
+        use_style_overrides: true
+      - key: fd099bf9c8e14f0
+        items:
+        - key: 887bcfb7cc54708
+          label: Human Study
+          count_filters:
+          - tag_12
+        - key: 0998c8c2797ef02
+          label: Animal Study
+          count_filters:
+          - tag_13
+        - key: 5c98ba05392394f
+          label: Mechanistic Study
+          count_filters:
+          - tag_14
+        label: Included
+        section: ebe5c95e5a97047
+        styling:
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+          bg_color: '#aff3b4'
+          font_size: 0
+          padding_x: 0
+          padding_y: 0
+          font_color: '#000000'
+          stroke_color: '#000000'
+          stroke_width: 2
+          stroke_radius: 5
+        box_layout: list
+        count_exclude: []
+        count_filters: []
+        count_include: []
+        count_strategy: unique_sum
+        use_style_overrides: true
+      title: Prisma Visual
+      arrows:
+      - dst: ebe5c95e5a97047
+        key: 7a2e35857534abe
+        src: fa615c164559d51
+        styling: null
+        use_style_overrides: false
+      - dst: fd099bf9c8e14f0
+        key: 69704e59e70938e
+        src: deb3038ff530e06
+        styling:
+          arrow_type: 11
+          stroke_color: '#febd4d'
+          stroke_width: 5
+          force_vertical: false
+        use_style_overrides: true
+      styles:
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+        bg_color: '#ffffff'
+        font_size: 0
+        padding_x: 0
+        padding_y: 0
+        font_color: '#000000'
+        stroke_color: '#000000'
+        stroke_width: 2
+        stroke_radius: 5
+      sections:
+      - key: fa615c164559d51
+        label: All references
+        styling: null
+        use_style_overrides: false
+      - key: ebe5c95e5a97047
+        label: Screening
+        styling: null
+        use_style_overrides: false
+      box_styles:
+        x: 0
+        y: 0
+        width: 0
+        height: 0
+        bg_color: '#afe8f3'
+        font_size: 0
+        padding_x: 0
+        padding_y: 0
+        font_color: '#000000'
+        stroke_color: '#000000'
+        stroke_width: 2
+        stroke_radius: 5
+      arrow_styles:
+        arrow_type: 1
+        stroke_color: '#000000'
+        stroke_width: 2
+        force_vertical: false
+    caption: ''
+    published: true
+    prefilters: {}
+    image: ''
+    created: 2024-10-04 20:03:17.634955+00:00
+    last_updated: 2024-10-04 20:07:33.868117+00:00
+    endpoints: []
 - model: summary.datapivot
   pk: 1
   fields:
