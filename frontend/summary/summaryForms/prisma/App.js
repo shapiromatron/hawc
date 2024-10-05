@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import FormActions from "shared/components/FormActions";
+import UnderDevelopment from "shared/components/UnderDevelopment";
 
 import OverallPanel from "./OverallPanel";
 import PreviewPanel from "./PreviewPanel";
@@ -20,13 +21,7 @@ class App extends Component {
 
         return (
             <div>
-                <div className="alert alert-warning">
-                    The Prisma feature is under active development. It is not yet stable, and there
-                    may be breaking changes in the future.{" "}
-                    <a href="/contact/">
-                        Please contact us with any issues or suggestions for improvement.
-                    </a>
-                </div>
+                <UnderDevelopment />
                 <Tabs onSelect={handleTabSelection}>
                     <TabList>
                         <Tab>Overall</Tab>
