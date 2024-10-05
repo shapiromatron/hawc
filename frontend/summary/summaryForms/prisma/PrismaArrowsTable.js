@@ -112,16 +112,19 @@ class ArrowsRow extends PrismaEditableRow {
                                     multiple={false}
                                     choices={getArrowOptions()}
                                 />,
-                                <CheckboxInput
-                                    key={`${key}-source-${index}`}
-                                    name={`${key}-toggle-styling-${index}`}
-                                    checked={row.use_style_overrides}
-                                    label="Override default formatting"
-                                    onChange={e => {
-                                        toggleStyling(key, index, e.target.checked);
-                                        this.setState({edit_styles: e.target.checked});
-                                    }}
-                                />,
+                                <div key="toggle-style">
+                                    <p className="mb-3">&nbsp;</p>
+                                    <CheckboxInput
+                                        key={`${key}-source-${index}`}
+                                        name={`${key}-toggle-styling-${index}`}
+                                        checked={row.use_style_overrides}
+                                        label="Override default formatting"
+                                        onChange={e => {
+                                            toggleStyling(key, index, e.target.checked);
+                                            this.setState({edit_styles: e.target.checked});
+                                        }}
+                                    />
+                                </div>,
                             ],
                             "form-row my-2 mx-2 pad-form"
                         )}
@@ -181,20 +184,23 @@ class ArrowsRow extends PrismaEditableRow {
                             }
                             type="color"
                         />,
-                        <CheckboxInput
-                            key={`${key}-force-vertical-${index}`}
-                            name={`${key}-force-vertical-${index}`}
-                            checked={row.styling.force_vertical}
-                            label="Force vertical orientation"
-                            onChange={e =>
-                                changeStylingSettings(
-                                    key,
-                                    index,
-                                    "force_vertical",
-                                    e.target.checked
-                                )
-                            }
-                        />,
+                        <div key="force-vertical">
+                            <p className="mb-3">&nbsp;</p>
+                            <CheckboxInput
+                                key={`${key}-force-vertical-${index}`}
+                                name={`${key}-force-vertical-${index}`}
+                                checked={row.styling.force_vertical}
+                                label="Force vertical orientation"
+                                onChange={e =>
+                                    changeStylingSettings(
+                                        key,
+                                        index,
+                                        "force_vertical",
+                                        e.target.checked
+                                    )
+                                }
+                            />
+                        </div>,
                     ],
                     "form-row my-2 mx-2 pad-form"
                 )}

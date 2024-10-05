@@ -9,6 +9,7 @@ import {
     MoveRowTd,
 } from "shared/components/EditableRowData";
 import TextInput from "shared/components/TextInput";
+import wrapRow from "shared/components/WrapRow";
 
 import {PrismaEditableRow} from "./PrismaEditableRow";
 
@@ -82,23 +83,28 @@ class SectionsRow extends PrismaEditableRow {
                 <td colSpan="100%">
                     <div className="border my-2 p-2 pb-3 edit-form-background ">
                         <div className="form-row my-2 mx-2 pad-form">
-                            <TextInput
-                                name={`${key}-name-${index}`}
-                                value={row.label}
-                                label="Name"
-                                onChange={e =>
-                                    changeArraySettings(key, index, "label", e.target.value)
-                                }
-                            />
-                            <CheckboxInput
-                                name={`${key}-toggle-styling-${index}`}
-                                checked={row.use_style_overrides}
-                                label="Override default formatting"
-                                onChange={e => {
-                                    toggleStyling(key, index, e.target.checked);
-                                    this.setState({edit_styles: e.target.checked});
-                                }}
-                            />
+                            <div className="col-6">
+                                <TextInput
+                                    name={`${key}-name-${index}`}
+                                    value={row.label}
+                                    label="Name"
+                                    onChange={e =>
+                                        changeArraySettings(key, index, "label", e.target.value)
+                                    }
+                                />
+                            </div>
+                            <div className="col-6">
+                                <p className="mb-3">&nbsp;</p>
+                                <CheckboxInput
+                                    name={`${key}-toggle-styling-${index}`}
+                                    checked={row.use_style_overrides}
+                                    label="Override default formatting"
+                                    onChange={e => {
+                                        toggleStyling(key, index, e.target.checked);
+                                        this.setState({edit_styles: e.target.checked});
+                                    }}
+                                />
+                            </div>
                             {this.state.edit_styles
                                 ? this.renderStyleOptions(key, row, index)
                                 : null}

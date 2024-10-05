@@ -10,6 +10,7 @@ import {
 } from "shared/components/EditableRowData";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
+import wrapRow from "shared/components/WrapRow";
 
 import {PrismaEditableRow} from "./PrismaEditableRow";
 
@@ -95,113 +96,140 @@ class BoxesRow extends PrismaEditableRow {
         return (
             <tr>
                 <td colSpan="100%">
-                    <div className="border my-2 p-2 pb-3 edit-form-background ">
-                        <div className="form-row my-2 mx-2 pad-form">
-                            <TextInput
-                                name={`${key}-name-${index}`}
-                                value={row.label}
-                                label="Name"
-                                onChange={e =>
-                                    changeArraySettings(key, index, "label", e.target.value)
-                                }
-                            />
-                            <SelectInput
-                                name={`${key}-section-${index}`}
-                                value={row.section}
-                                label="Section"
-                                handleSelect={(value, label) => {
-                                    changeArraySettings(key, index, "section", value);
-                                }}
-                                multiple={false}
-                                choices={getLinkingOptions("sections")}
-                            />
-                            <SelectInput
-                                name={`${key}-layout-${index}`}
-                                value={row.box_layout}
-                                label="Layout type for this box"
-                                handleSelect={value =>
-                                    changeArraySettings(key, index, "box_layout", value)
-                                }
-                                multiple={false}
-                                choices={getBoxLayouts()}
-                            />
+                    <div className="border p-3 pb-3 edit-form-background pad-form">
+                        {wrapRow(
+                            [
+                                <TextInput
+                                    key={1}
+                                    name={`${key}-name-${index}`}
+                                    value={row.label}
+                                    label="Name"
+                                    onChange={e =>
+                                        changeArraySettings(key, index, "label", e.target.value)
+                                    }
+                                />,
+                                <SelectInput
+                                    key={2}
+                                    name={`${key}-section-${index}`}
+                                    value={row.section}
+                                    label="Section"
+                                    handleSelect={(value, label) => {
+                                        changeArraySettings(key, index, "section", value);
+                                    }}
+                                    multiple={false}
+                                    choices={getLinkingOptions("sections")}
+                                />,
+                                <SelectInput
+                                    key={3}
+                                    name={`${key}-layout-${index}`}
+                                    value={row.box_layout}
+                                    label="Layout type for this box"
+                                    handleSelect={value =>
+                                        changeArraySettings(key, index, "box_layout", value)
+                                    }
+                                    multiple={false}
+                                    choices={getBoxLayouts()}
+                                />,
+                            ],
+                            "form-row",
+                            "col-md-4"
+                        )}
+                        <div className="form-row">
                             {isCard ? (
                                 <>
-                                    <SelectInput
-                                        name={`${key}-layout-${index}-count_strategy`}
-                                        value={row.count_strategy}
-                                        label="Reference count strategy"
-                                        handleSelect={value =>
-                                            changeArraySettings(key, index, "count_strategy", value)
-                                        }
-                                        multiple={false}
-                                        choices={getCountStrategies()}
-                                    />
-                                    {row.count_strategy == "unique_sum" ? (
+                                    <div className="col-md-4">
                                         <SelectInput
-                                            name={`${key}-count_filters-${index}`}
-                                            value={row.count_filters}
-                                            label="Add references related to this tag, search, or import"
-                                            handleSelect={(value, label) => {
+                                            name={`${key}-layout-${index}-count_strategy`}
+                                            value={row.count_strategy}
+                                            label="Reference count strategy"
+                                            handleSelect={value =>
                                                 changeArraySettings(
                                                     key,
                                                     index,
-                                                    "count_filters",
+                                                    "count_strategy",
                                                     value
-                                                );
-                                            }}
-                                            multiple={true}
-                                            choices={getCountFilters()}
+                                                )
+                                            }
+                                            multiple={false}
+                                            choices={getCountStrategies()}
                                         />
+                                    </div>
+                                    {row.count_strategy == "unique_sum" ? (
+                                        <div className="col-md-8">
+                                            <SelectInput
+                                                name={`${key}-count_filters-${index}`}
+                                                value={row.count_filters}
+                                                label="Add references related to this tag, search, or import"
+                                                handleSelect={(value, label) => {
+                                                    changeArraySettings(
+                                                        key,
+                                                        index,
+                                                        "count_filters",
+                                                        value
+                                                    );
+                                                }}
+                                                multiple={true}
+                                                choices={getCountFilters()}
+                                            />
+                                        </div>
                                     ) : null}
                                     {row.count_strategy && row.count_strategy != "unique_sum" ? (
                                         <>
-                                            <SelectInput
-                                                name={`${key}-count_include-${index}`}
-                                                value={row.count_include}
-                                                label="Included blocks"
-                                                handleSelect={(value, label) => {
-                                                    changeArraySettings(
-                                                        key,
-                                                        index,
-                                                        "count_include",
-                                                        value
-                                                    );
-                                                }}
-                                                multiple={true}
-                                                choices={getCountBlocks(row)}
-                                            />
-                                            <SelectInput
-                                                name={`${key}-count_exclude-${index}`}
-                                                value={row.count_exclude}
-                                                label="Excluded blocks"
-                                                handleSelect={(value, label) => {
-                                                    changeArraySettings(
-                                                        key,
-                                                        index,
-                                                        "count_exclude",
-                                                        value
-                                                    );
-                                                }}
-                                                multiple={true}
-                                                choices={getCountBlocks(row)}
-                                            />
+                                            {" "}
+                                            <div className="col-md-4">
+                                                <SelectInput
+                                                    name={`${key}-count_include-${index}`}
+                                                    value={row.count_include}
+                                                    label="Included blocks"
+                                                    handleSelect={(value, label) => {
+                                                        changeArraySettings(
+                                                            key,
+                                                            index,
+                                                            "count_include",
+                                                            value
+                                                        );
+                                                    }}
+                                                    multiple={true}
+                                                    choices={getCountBlocks(row)}
+                                                />
+                                            </div>
+                                            <div className="col-md-4">
+                                                <SelectInput
+                                                    name={`${key}-count_exclude-${index}`}
+                                                    value={row.count_exclude}
+                                                    label="Excluded blocks"
+                                                    handleSelect={(value, label) => {
+                                                        changeArraySettings(
+                                                            key,
+                                                            index,
+                                                            "count_exclude",
+                                                            value
+                                                        );
+                                                    }}
+                                                    multiple={true}
+                                                    choices={getCountBlocks(row)}
+                                                />
+                                            </div>
                                         </>
                                     ) : null}
                                 </>
                             ) : null}
-                            <CheckboxInput
-                                name={`${key}-toggle-styling-${index}`}
-                                checked={row.use_style_overrides}
-                                label="Override default styling"
-                                onChange={e => {
-                                    toggleStyling(key, index, e.target.checked);
-                                    this.setState({edit_styles: e.target.checked});
-                                }}
-                            />
-                            {this.state.edit_styles && this.renderStyleOptions(key, row, index)}
                         </div>
                         {isList ? <ListTable row={row} index={index} /> : null}
+                        <div className="form-row">
+                            <div className="col-md-4">
+                                <CheckboxInput
+                                    name={`${key}-toggle-styling-${index}`}
+                                    checked={row.use_style_overrides}
+                                    label="Override default styling"
+                                    onChange={e => {
+                                        toggleStyling(key, index, e.target.checked);
+                                        this.setState({edit_styles: e.target.checked});
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        {this.state.edit_styles && this.renderStyleOptions(key, row, index)}
                         <div className="form-row justify-content-center">
                             <button
                                 className="btn btn-primary mx-2 py-2"
