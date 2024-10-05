@@ -99,7 +99,7 @@ class ArrowsRow extends PrismaEditableRow {
                                         changeArraySettings(key, index, "src", value);
                                     }}
                                     multiple={false}
-                                    choices={getArrowOptions()}
+                                    choices={getArrowOptions}
                                 />,
                                 <SelectInput
                                     key={`${key}-source-${index}`}
@@ -110,7 +110,7 @@ class ArrowsRow extends PrismaEditableRow {
                                         changeArraySettings(key, index, "dst", value);
                                     }}
                                     multiple={false}
-                                    choices={getArrowOptions()}
+                                    choices={getArrowOptions}
                                 />,
                                 <div key="toggle-style">
                                     <p className="mb-3">&nbsp;</p>
@@ -172,7 +172,7 @@ class ArrowsRow extends PrismaEditableRow {
                             handleSelect={value =>
                                 changeStylingSettings(key, index, "arrow_type", parseInt(value))
                             }
-                            choices={getArrowTypes()}
+                            choices={getArrowTypes}
                         />,
                         <TextInput
                             key={`${key}-color-${index}`}

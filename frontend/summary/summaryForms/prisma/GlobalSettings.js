@@ -160,7 +160,7 @@ class GlobalSettings extends Component {
                             handleSelect={value =>
                                 changeSettings("arrow_styles.arrow_type", parseInt(value))
                             }
-                            choices={getArrowTypes()}
+                            choices={getArrowTypes}
                         />,
                         <TextInput
                             key={"arrow_styles.stroke_color"}

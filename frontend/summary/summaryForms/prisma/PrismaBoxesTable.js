@@ -84,7 +84,7 @@ class BoxesRow extends PrismaEditableRow {
     renderEditRow(row, index) {
         const {
                 changeArraySettings,
-                getLinkingOptions,
+                getSectionOptions,
                 getCountFilters,
                 getBoxLayouts,
                 toggleStyling,
@@ -117,7 +117,7 @@ class BoxesRow extends PrismaEditableRow {
                                         changeArraySettings(key, index, "section", value);
                                     }}
                                     multiple={false}
-                                    choices={getLinkingOptions("sections")}
+                                    choices={getSectionOptions}
                                 />,
                                 <SelectInput
                                     key={3}
@@ -128,7 +128,7 @@ class BoxesRow extends PrismaEditableRow {
                                         changeArraySettings(key, index, "box_layout", value)
                                     }
                                     multiple={false}
-                                    choices={getBoxLayouts()}
+                                    choices={getBoxLayouts}
                                 />,
                             ],
                             "form-row",
@@ -151,7 +151,7 @@ class BoxesRow extends PrismaEditableRow {
                                                 )
                                             }
                                             multiple={false}
-                                            choices={getCountStrategies()}
+                                            choices={getCountStrategies}
                                         />
                                     </div>
                                     {row.count_strategy == "unique_sum" ? (
@@ -169,7 +169,7 @@ class BoxesRow extends PrismaEditableRow {
                                                     );
                                                 }}
                                                 multiple={true}
-                                                choices={getCountFilters()}
+                                                choices={getCountFilters}
                                             />
                                         </div>
                                     ) : null}
@@ -306,7 +306,7 @@ class ListTable extends Component {
                                                 );
                                             }}
                                             multiple={true}
-                                            choices={getCountFilters()}
+                                            choices={getCountFilters}
                                         />
                                     </td>
                                     <MoveRowTd

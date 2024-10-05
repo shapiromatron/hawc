@@ -12,13 +12,13 @@ const createSectionRow = function() {
             styling: null,
         };
     },
-    createBoxRow = function() {
+    createBoxRow = function(firstSection) {
         return {
             key: h.randomString(),
             label: "",
             use_style_overrides: false,
             styling: null,
-            section: NULL_VALUE,
+            section: firstSection || NULL_VALUE,
             box_layout: "card",
             count_strategy: "unique_sum",
             count_filters: [],
@@ -34,13 +34,13 @@ const createSectionRow = function() {
             count_filters: [],
         };
     },
-    createArrowRow = function() {
+    createArrowRow = function(firstSection) {
         return {
             key: h.randomString(),
             use_style_overrides: false,
             styling: null,
-            src: NULL_VALUE,
-            dst: NULL_VALUE,
+            src: firstSection || NULL_VALUE,
+            dst: firstSection || NULL_VALUE,
         };
     },
     ARROW_TYPES = [
@@ -134,22 +134,24 @@ class PrismaStore {
     }
 
     @action.bound createNewBox() {
-        this.settings.boxes.push(createBoxRow());
+        const firstSection = this.settings.sections[0].key;
+        this.settings.boxes.push(createBoxRow(firstSection));
     }
 
     @action.bound createNewBoxItem(boxIndex) {
         this.settings.boxes[boxIndex].items.push(createNewBoxItem());
     }
 
-    @action.bound getBoxLayouts() {
+    @computed get getBoxLayouts() {
         return BOX_LAYOUTS;
     }
 
     @action.bound createNewArrow() {
-        this.settings.arrows.push(createArrowRow());
+        const firstSection = this.settings.sections[0].key;
+        this.settings.arrows.push(createArrowRow(firstSection));
     }
 
-    @action.bound getCountStrategies() {
+    @computed get getCountStrategies() {
         return [{id: "unique_sum", label: "Unique sum"}].concat(
             this.settings.sections.map(s => ({id: s.key, label: s.label}))
         );
@@ -161,7 +163,7 @@ class PrismaStore {
             .map(b => ({id: b.key, label: b.label}));
     }
 
-    @action.bound getCountFilters() {
+    @computed get getCountFilters() {
         const tag_options = this.data.tags.map(tag => {
                 return {id: "tag_" + tag.id, label: `TAG | ${tag.nested_name}`};
             }),
@@ -171,26 +173,29 @@ class PrismaStore {
         return tag_options.concat(search_options);
     }
 
-    @action.bound getArrowOptions() {
-        const section_options = this.settings.sections.map(value => {
-            return {id: value.key, label: value.label};
+    @computed get getArrowOptions() {
+        const opts = [];
+        this.settings.sections.forEach(section => {
+            opts.push({id: section.key, label: section.label});
+            opts.push(
+                this.settings.boxes
+                    .filter(b => b.section === section.key)
+                    .map(b => {
+                        return {id: b.key, label: `${section.label} ➤ ${b.label}`};
+                    })
+            );
         });
-        const box_options = this.settings.boxes.map(value => {
-            return {id: value.key, label: value.label};
-        });
-        return _.flatten([{id: NULL_VALUE, label: NULL_VALUE}, section_options, box_options]);
+        return _.flatten(opts);
     }
 
-    @action.bound getArrowTypes() {
+    @computed get getArrowTypes() {
         return ARROW_TYPES;
     }
 
-    @action.bound getLinkingOptions(key) {
-        const options = this.settings[key].map(value => {
+    @computed get getSectionOptions() {
+        return this.settings.sections.map(value => {
             return {id: value.key, label: value.label};
         });
-        options.unshift({id: NULL_VALUE, label: NULL_VALUE});
-        return options;
     }
 
     @action.bound toggleStyling(arrayKey, index, checked) {

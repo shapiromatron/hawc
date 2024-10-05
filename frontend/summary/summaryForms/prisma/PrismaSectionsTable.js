@@ -9,7 +9,6 @@ import {
     MoveRowTd,
 } from "shared/components/EditableRowData";
 import TextInput from "shared/components/TextInput";
-import wrapRow from "shared/components/WrapRow";
 
 import {PrismaEditableRow} from "./PrismaEditableRow";
 
