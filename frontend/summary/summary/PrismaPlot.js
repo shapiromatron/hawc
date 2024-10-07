@@ -240,7 +240,7 @@ class PrismaPlot {
         );
         textElement.setAttribute("y", y + this.TEXT_OFFSET_Y);
         textElement.setAttribute("display", "none");
-        textElement.setAttribute('class', 'cursor-pointer');
+        textElement.setAttribute("class", "cursor-pointer");
         textElement.setAttribute("id", id);
         textElement.setAttribute(
             "font-size",
@@ -312,7 +312,7 @@ class PrismaPlot {
         let prevBBox = prevNode.rect.getBBox();
         let nodeSpacing = styling["spacing-vertical"]
             ? parseFloat(styling["spacing-vertical"])
-            : this.SPACING_V;
+            : this.STYLE_DEFAULT["spacing-vertical"];
         let y = prevBBox.y + prevBBox.height + nodeSpacing;
 
         let verticalNode = this.createRectangleWithText(id, text, prevBBox.x, y, styling);
@@ -332,7 +332,8 @@ class PrismaPlot {
         let x;
         let nodeSpacing = styling["spacing-horizontal"]
             ? parseFloat(styling["spacing-horizontal"])
-            : this.SPACING_H;
+            : parseFloat(this.STYLE_DEFAULT["spacing-horizontal"]);
+
         if (prevNode.parent && !group) {
             x = prevNode.parent.rect.getBBox().width + nodeSpacing;
         } else {
@@ -497,8 +498,6 @@ class PrismaPlot {
         const {styles} = this.store.settings;
         this.MAX_WIDTH = 300; // box dimensions
         this.MIN_HEIGHT = 100;
-        this.SPACING_V = 100; // distance between boxes
-        this.SPACING_H = 120;
         this.TEXT_OFFSET_X = 10;
         this.TEXT_OFFSET_Y = 20;
         this.TEXT_SIZE = 1.1;
@@ -507,8 +506,8 @@ class PrismaPlot {
             y: "0",
             width: "0", // non-0 value for fixed
             height: "0",
-            "spacing-horizontal": this.SPACING_H,
-            "spacing-vertical": this.SPACING_V,
+            "spacing-horizontal": styles.spacing_x,
+            "spacing-vertical": styles.spacing_y,
             "text-padding-x": styles.section.padding_x, // +- centered around global text offset values
             "text-padding-y": styles.section.padding_y,
             "text-color": styles.section.font_color,
@@ -562,9 +561,9 @@ class PrismaPlot {
                     .node()
                     .getBBox()
             ),
-            hPadding = Math.max(sections.length - 1, 0) * this.SPACING_H;
+            vPadding = Math.max(sections.length - 1, 0) * this.STYLE_DEFAULT["spacing-vertical"];
         this.w = _.max(bbs.map(bb => bb.width));
-        this.h = _.sum(bbs.map(bb => bb.height)) + hPadding;
+        this.h = _.sum(bbs.map(bb => bb.height)) + vPadding;
     }
 }
 

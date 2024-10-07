@@ -10454,6 +10454,8 @@
           stroke_color: '#000000'
           stroke_width: 2
           force_vertical: false
+        spacing_x: 30
+        spacing_y: 50
       sections:
       - key: fa615c164559d51
         label: All references

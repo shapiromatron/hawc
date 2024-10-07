@@ -70,6 +70,8 @@ class PrismaStore {
             boxes: [],
             arrows: [],
             styles: {
+                spacing_x: 30,
+                spacing_y: 50,
                 box: {
                     stroke_radius: 5,
                     stroke_width: 2,
@@ -90,7 +92,7 @@ class PrismaStore {
                     stroke_color: "#000000",
                     width: 0,
                     height: 0,
-                    bg_color: "#ffffff",
+                    bg_color: "#efefef",
                     font_color: "#000000",
                     font_size: 0.0,
                     padding_x: 0,

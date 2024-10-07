@@ -185,6 +185,26 @@ class GlobalSettings extends Component {
                     ],
                     "form-row my-2 mx-2 pad-form"
                 )}
+                <h4>Figure Settings</h4>
+                {wrapRow(
+                    [
+                        <IntegerInput
+                            key={"styles.spacing_y"}
+                            name={"styles.spacing_y"}
+                            value={styles.spacing_y}
+                            label="Y spacing"
+                            onChange={e => changeSettings(e.target.name, e.target.value)}
+                        />,
+                        <IntegerInput
+                            key={"styles.spacing_x"}
+                            name={"styles.spacing_x"}
+                            value={styles.spacing_x}
+                            label="X spacing"
+                            onChange={e => changeSettings(e.target.name, e.target.value)}
+                        />,
+                    ],
+                    "form-row my-2 mx-2 pad-form"
+                )}
             </div>
         );
     }
