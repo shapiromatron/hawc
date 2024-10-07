@@ -95,9 +95,9 @@ class ArrowsRow extends PrismaEditableRow {
                                     name={`${key}-source-${index}`}
                                     value={row.src}
                                     label="Source"
-                                    handleSelect={(value, label) => {
-                                        changeArraySettings(key, index, "src", value);
-                                    }}
+                                    handleSelect={value =>
+                                        changeArraySettings(key, index, "src", value)
+                                    }
                                     multiple={false}
                                     choices={getArrowOptions}
                                 />,
@@ -106,9 +106,9 @@ class ArrowsRow extends PrismaEditableRow {
                                     name={`${key}-destination-${index}`}
                                     value={row.dst}
                                     label="Destination"
-                                    handleSelect={(value, label) => {
-                                        changeArraySettings(key, index, "dst", value);
-                                    }}
+                                    handleSelect={value =>
+                                        changeArraySettings(key, index, "dst", value)
+                                    }
                                     multiple={false}
                                     choices={getArrowOptions}
                                 />,

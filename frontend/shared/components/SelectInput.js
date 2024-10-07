@@ -22,18 +22,13 @@ class SelectInput extends Component {
 
     handleSelect(e) {
         let value = e.target.value;
-        let label = e.target.selectedOptions[0].textContent;
         if (this.props.multiple) {
             value = _.chain(e.target.options)
                 .filter(o => o.selected)
                 .map(o => o.value)
                 .value();
-            label = _.chain(e.target.options)
-                .filter(o => o.selected)
-                .map(o => o.textContent)
-                .value();
         }
-        this.props.handleSelect(value, label);
+        this.props.handleSelect(value);
     }
 
     renderField(fieldClass, fieldId) {

@@ -113,7 +113,7 @@ class BoxesRow extends PrismaEditableRow {
                                     name={`${key}-section-${index}`}
                                     value={row.section}
                                     label="Section"
-                                    handleSelect={(value, label) => {
+                                    handleSelect={value => {
                                         changeArraySettings(key, index, "section", value);
                                     }}
                                     multiple={false}
@@ -160,7 +160,7 @@ class BoxesRow extends PrismaEditableRow {
                                                 name={`${key}-count_filters-${index}`}
                                                 value={row.count_filters}
                                                 label="Add references related to this tag, search, or import"
-                                                handleSelect={(value, label) => {
+                                                handleSelect={value => {
                                                     changeArraySettings(
                                                         key,
                                                         index,
@@ -175,13 +175,12 @@ class BoxesRow extends PrismaEditableRow {
                                     ) : null}
                                     {row.count_strategy && row.count_strategy != "unique_sum" ? (
                                         <>
-                                            {" "}
                                             <div className="col-md-4">
                                                 <SelectInput
                                                     name={`${key}-count_include-${index}`}
                                                     value={row.count_include}
                                                     label="Included blocks"
-                                                    handleSelect={(value, label) => {
+                                                    handleSelect={value => {
                                                         changeArraySettings(
                                                             key,
                                                             index,
@@ -198,7 +197,7 @@ class BoxesRow extends PrismaEditableRow {
                                                     name={`${key}-count_exclude-${index}`}
                                                     value={row.count_exclude}
                                                     label="Excluded blocks"
-                                                    handleSelect={(value, label) => {
+                                                    handleSelect={value => {
                                                         changeArraySettings(
                                                             key,
                                                             index,
@@ -299,7 +298,7 @@ class ListTable extends Component {
                                         <SelectInput
                                             name={`box-${index}-list-${item_index}-count_filters`}
                                             value={item_row.count_filters}
-                                            handleSelect={(values, labels) => {
+                                            handleSelect={values => {
                                                 changeSettings(
                                                     `boxes[${index}].items[${item_index}].count_filters`,
                                                     values
