@@ -232,6 +232,10 @@ class PrismaDatastore {
             block.value = block.refs.size;
         }
     }
+
+    getReferenceDetailId(){
+        return `${this.settingsHash}-prisma-reference-list`;
+    }
 }
 
 export default PrismaDatastore;

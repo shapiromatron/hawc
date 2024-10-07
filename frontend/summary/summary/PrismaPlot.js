@@ -53,12 +53,15 @@ const NAMESPACE = "http://www.w3.org/2000/svg",
     },
     nodeOnClick = function(e, plot, refs) {
         e.stopPropagation();
-        const detailEl = document.getElementById(`${plot.store.settingsHash}-detail-section`),
+
+        const {store} = plot,
+            datasetUrl = store.dataset.reference_detail_url,
+            csrfToken = store.getCsrfToken(),
+            detailEl = document.getElementById(store.getReferenceDetailId()),
             formData = new FormData();
         detailEl.innerText = "Loading...";
         formData.append("ids", Array(...refs).join(","));
-        // TODO: change detail header to the text of the clicked node
-        fetch(plot.store.dataset.url, h.fetchPostForm(plot.store.getCsrfToken(), formData))
+        fetch(datasetUrl, h.fetchPostForm(csrfToken, formData))
             .then(resp => resp.text())
             .then(html => (detailEl.innerHTML = html));
     },

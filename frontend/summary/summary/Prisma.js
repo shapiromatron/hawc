@@ -44,10 +44,7 @@ class PrismaComponent extends Component {
                 <div id={id} className="col-lg-8">
                     <Loading />
                 </div>
-                <div className="col-lg-4">
-                    <h3 id={`${id}-detail-header`}></h3>
-                    <div id={`${id}-detail-section`}></div>
-                </div>
+                <div id={`${id}-prisma-reference-list`} className="col-lg-4"></div>
             </div>
         );
     }
