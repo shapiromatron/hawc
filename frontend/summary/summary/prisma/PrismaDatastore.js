@@ -3,30 +3,30 @@ import HAWCModal from "shared/utils/HAWCModal";
 import h from "shared/utils/helpers";
 import {NULL_VALUE} from "summary/summary/constants";
 
-const mapStyling = function(styling) {
+const mapStyles = function(styles) {
         return {
-            x: styling.x,
-            y: styling.y,
-            width: styling.width,
-            height: styling.height,
-            "text-padding-x": styling.padding_x,
-            "text-padding-y": styling.padding_y,
-            "text-color": "#000000",
-            "text-style": "normal",
-            "text-size": styling.font_size,
-            "bg-color": styling.bg_color,
-            stroke: styling.border_color,
-            "stroke-width": styling.border_width,
-            rx: styling.border_radius,
-            ry: styling.border_radius,
+            x: styles.x,
+            y: styles.y,
+            width: styles.width,
+            height: styles.height,
+            "text-padding-x": styles.padding_x,
+            "text-padding-y": styles.padding_y,
+            "text-color": "#styles",
+            "text-style": "styles",
+            "text-size": styles.font_size,
+            "bg-color": styles.bg_color,
+            stroke: styles.border_color,
+            "stroke-width": styles.border_width,
+            rx: styles.border_radius,
+            ry: styles.border_radius,
         };
     },
-    mapArrowStyles = function(styling) {
+    mapArrowStyles = function(styles) {
         return {
-            "arrow-color": styling["color"],
-            "arrow-width": styling["width"],
-            "arrow-type": styling["arrow_type"],
-            "arrow-force-vertical": styling["force_vertical"],
+            "arrow-color": styles["color"],
+            "arrow-width": styles["width"],
+            "arrow-type": styles["arrow_type"],
+            "arrow-force-vertical": styles["force_vertical"],
         };
     };
 
@@ -61,12 +61,12 @@ class PrismaDatastore {
                                 count_filters: b.count_filters,
                                 count_include: b.count_include,
                                 count_exclude: b.count_exclude,
-                                styling: mapStyling(b.use_style_overrides ? b.styling : styles.box),
+                                styles: mapStyles(b.use_style_overrides ? b.styles : styles.box),
                                 items: b.items,
                             };
                         }),
-                    styling: mapStyling(
-                        section.use_style_overrides ? section.styling : styles.section
+                    styles: mapStyles(
+                        section.use_style_overrides ? section.styles : styles.section
                     ),
                 };
             });
@@ -77,7 +77,7 @@ class PrismaDatastore {
         return _.cloneDeep(arrows)
             .filter(a => a.src !== NULL_VALUE && a.dst !== NULL_VALUE)
             .map(a => {
-                a.styling = mapArrowStyles(a.use_style_overrides ? a.styling : styles.arrow);
+                a.styles = mapArrowStyles(a.use_style_overrides ? a.styles : styles.arrow);
                 return a;
             });
     }

@@ -9,7 +9,7 @@ const createSectionRow = function() {
             key: h.randomString(),
             label: "",
             use_style_overrides: false,
-            styling: null,
+            styles: null,
         };
     },
     createBoxRow = function(firstSection) {
@@ -17,7 +17,7 @@ const createSectionRow = function() {
             key: h.randomString(),
             label: "",
             use_style_overrides: false,
-            styling: null,
+            styles: null,
             section: firstSection || NULL_VALUE,
             box_layout: "card",
             count_strategy: "unique_sum",
@@ -38,7 +38,7 @@ const createSectionRow = function() {
         return {
             key: h.randomString(),
             use_style_overrides: false,
-            styling: null,
+            styles: null,
             src: firstSection || NULL_VALUE,
             dst: firstSection || NULL_VALUE,
         };
@@ -121,7 +121,7 @@ class PrismaStore {
     }
 
     @action.bound changeStylingSettings(arrayKey, index, key, value) {
-        this.settings[arrayKey][index].styling[key] = value;
+        this.settings[arrayKey][index].styles[key] = value;
     }
 
     @action.bound deleteArrayElement(key, index) {
@@ -201,17 +201,17 @@ class PrismaStore {
 
     @action.bound toggleStyling(arrayKey, index, checked) {
         const {styles} = this.settings;
-        if (checked && this.settings[arrayKey][index].styling == null) {
+        if (checked && this.settings[arrayKey][index].styles == null) {
             // if checked for the first time, add defaults to the styling dict for this object
             switch (arrayKey) {
                 case "sections":
-                    this.settings[arrayKey][index].styling = _.cloneDeep(styles.section);
+                    this.settings[arrayKey][index].styles = _.cloneDeep(styles.section);
                     break;
                 case "boxes":
-                    this.settings[arrayKey][index].styling = _.cloneDeep(styles.box);
+                    this.settings[arrayKey][index].styles = _.cloneDeep(styles.box);
                     break;
                 case "arrows":
-                    this.settings[arrayKey][index].styling = _.cloneDeep(styles.arrow);
+                    this.settings[arrayKey][index].styles = _.cloneDeep(styles.arrow);
                     break;
             }
         }

@@ -286,7 +286,7 @@ class PrismaPlot {
             node1BBox = getGroup(connection.src).rect.getBBox(),
             node2BBox = getGroup(connection.dst).rect.getBBox(),
             svg = this.svg,
-            styling = connection.styling;
+            styling = connection.styles;
 
         let xMidpoint, yMidpoint, node1XY, node1Midpoint, node2Midpoint, node2XY;
         // same x = vertical
@@ -441,7 +441,7 @@ class PrismaPlot {
         _.each(diagramSections, section => {
             let blockId = section.key,
                 blockBoxInfo = section.label,
-                sectionStyle = section.styling ?? {};
+                sectionStyle = section.styles ?? {};
 
             if (!parent) {
                 let initialNode = this.createRectangleWithText(
@@ -471,7 +471,7 @@ class PrismaPlot {
         _.each(section.blocks, (block, j) => {
             let id = block.key,
                 boxInfo = `${block.label}: ${block.value}`,
-                blockStyle = block.styling ?? {};
+                blockStyle = block.styles ?? {};
 
             if (j > 0) {
                 node = this.createNewHorizontalNode(

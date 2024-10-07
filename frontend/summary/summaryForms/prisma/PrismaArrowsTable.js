@@ -153,21 +153,16 @@ class ArrowsRow extends PrismaEditableRow {
                         <IntegerInput
                             key={`${key}-width-${index}`}
                             name={`${key}-width-${index}`}
-                            value={row.styling.width}
+                            value={row.styles.width}
                             label="Width"
                             onChange={e =>
-                                changeStylingSettings(
-                                    key,
-                                    index,
-                                    "width",
-                                    parseInt(e.target.value)
-                                )
+                                changeStylingSettings(key, index, "width", parseInt(e.target.value))
                             }
                         />,
                         <SelectInput
                             key={`${key}-type-${index}`}
                             name={`${key}-type-${index}`}
-                            value={row.styling.arrow_type}
+                            value={row.styles.arrow_type}
                             label="Type"
                             handleSelect={value =>
                                 changeStylingSettings(key, index, "arrow_type", parseInt(value))
@@ -177,7 +172,7 @@ class ArrowsRow extends PrismaEditableRow {
                         <TextInput
                             key={`${key}-color-${index}`}
                             name={`${key}-color-${index}`}
-                            value={row.styling.color}
+                            value={row.styles.color}
                             label="Color"
                             onChange={e =>
                                 changeStylingSettings(key, index, "color", e.target.value)
@@ -189,7 +184,7 @@ class ArrowsRow extends PrismaEditableRow {
                             <CheckboxInput
                                 key={`${key}-force-vertical-${index}`}
                                 name={`${key}-force-vertical-${index}`}
-                                checked={row.styling.force_vertical}
+                                checked={row.styles.force_vertical}
                                 label="Force vertical orientation"
                                 onChange={e =>
                                     changeStylingSettings(

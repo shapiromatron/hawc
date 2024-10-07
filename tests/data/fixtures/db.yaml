@@ -10325,7 +10325,7 @@
         items: []
         label: Imported from Pubmed
         section: fa615c164559d51
-        styling: null
+        styles: null
         box_layout: card
         count_exclude: []
         count_filters:
@@ -10337,7 +10337,7 @@
         items: []
         label: Manually imported
         section: fa615c164559d51
-        styling: null
+        styles: null
         box_layout: card
         count_exclude: []
         count_filters:
@@ -10352,7 +10352,7 @@
           count_filters: []
         label: Excluded
         section: ebe5c95e5a97047
-        styling:
+        styles:
           x: 0
           y: 0
           width: 0
@@ -10387,7 +10387,7 @@
           - tag_14
         label: Included
         section: ebe5c95e5a97047
-        styling:
+        styles:
           x: 0
           y: 0
           width: 0
@@ -10409,12 +10409,12 @@
       - dst: ebe5c95e5a97047
         key: 7a2e35857534abe
         src: fa615c164559d51
-        styling: null
+        styles: null
         use_style_overrides: false
       - dst: fd099bf9c8e14f0
         key: 69704e59e70938e
         src: deb3038ff530e06
-        styling:
+        styles:
           arrow_type: 11
           color: '#febd4d'
           width: 5
@@ -10455,11 +10455,11 @@
       sections:
       - key: fa615c164559d51
         label: All references
-        styling: null
+        styles: null
         use_style_overrides: false
       - key: ebe5c95e5a97047
         label: Screening
-        styling: null
+        styles: null
         use_style_overrides: false
     caption: ''
     published: true

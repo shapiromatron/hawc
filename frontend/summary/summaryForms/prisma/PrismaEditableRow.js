@@ -23,13 +23,13 @@ class PrismaEditableRow extends EditableRow {
                                 changeStylingSettings(key, index, "width", parseInt(e.target.value))
                             }
                             label="Width"
-                            value={row.styling.width}
+                            value={row.styles.width}
                             helpText="Set the width of this element. When 0 is entered, this will be calculated automatically"
                         />,
                         <IntegerInput
                             key={`${key}-height-${index}`}
                             name={`${key}-height-${index}`}
-                            value={row.styling.height}
+                            value={row.styles.height}
                             label="Height"
                             onChange={e =>
                                 changeStylingSettings(
@@ -44,7 +44,7 @@ class PrismaEditableRow extends EditableRow {
                         <IntegerInput
                             key={`${key}-border_radius-${index}`}
                             name={`${key}-border_radius-${index}`}
-                            value={row.styling.border_radius}
+                            value={row.styles.border_radius}
                             label="Border Rounding"
                             onChange={e =>
                                 changeStylingSettings(
@@ -59,7 +59,7 @@ class PrismaEditableRow extends EditableRow {
                         <IntegerInput
                             key={`${key}-border_width-${index}`}
                             name={`${key}-border_width-${index}`}
-                            value={row.styling.border_width}
+                            value={row.styles.border_width}
                             label="Border Width"
                             onChange={e =>
                                 changeStylingSettings(
@@ -74,7 +74,7 @@ class PrismaEditableRow extends EditableRow {
                         <TextInput
                             key={`${key}-border_color-${index}`}
                             name={`${key}-border_color-${index}`}
-                            value={row.styling.border_color}
+                            value={row.styles.border_color}
                             label="Border Color"
                             onChange={e =>
                                 changeStylingSettings(key, index, "border_color", e.target.value)
@@ -85,7 +85,7 @@ class PrismaEditableRow extends EditableRow {
                         <TextInput
                             key={`${key}-bg-color-${index}`}
                             name={`${key}-bg-color-${index}`}
-                            value={row.styling.bg_color}
+                            value={row.styles.bg_color}
                             label="Background Color"
                             onChange={e =>
                                 changeStylingSettings(key, index, "bg_color", e.target.value)
@@ -95,7 +95,7 @@ class PrismaEditableRow extends EditableRow {
                         <IntegerInput
                             key={`${key}-padding-x-${index}`}
                             name={`${key}-padding-x-${index}`}
-                            value={row.styling.padding_x}
+                            value={row.styles.padding_x}
                             label="Text Padding (X axis)"
                             onChange={e =>
                                 changeStylingSettings(
@@ -110,7 +110,7 @@ class PrismaEditableRow extends EditableRow {
                         <IntegerInput
                             key={`${key}-padding-y-${index}`}
                             name={`${key}-padding-y-${index}`}
-                            value={row.styling.padding_y}
+                            value={row.styles.padding_y}
                             label="Text Padding (Y axis)"
                             onChange={e =>
                                 changeStylingSettings(
@@ -125,7 +125,7 @@ class PrismaEditableRow extends EditableRow {
                         <IntegerInput
                             key={`${key}-x-${index}`}
                             name={`${key}-x-${index}`}
-                            value={row.styling.x}
+                            value={row.styles.x}
                             label="Adjust X position"
                             onChange={e =>
                                 changeStylingSettings(key, index, "x", parseInt(e.target.value))
@@ -134,7 +134,7 @@ class PrismaEditableRow extends EditableRow {
                         <IntegerInput
                             key={`${key}-y-${index}`}
                             name={`${key}-y-${index}`}
-                            value={row.styling.y}
+                            value={row.styles.y}
                             label="Adjust Y position"
                             onChange={e =>
                                 changeStylingSettings(key, index, "y", parseInt(e.target.value))
