@@ -11,7 +11,7 @@ const mapStyling = function(styling) {
             height: styling.height,
             "text-padding-x": styling.padding_x,
             "text-padding-y": styling.padding_y,
-            "text-color": styling.font_color,
+            "text-color": "#000000",
             "text-style": "normal",
             "text-size": styling.font_size,
             "bg-color": styling.bg_color,

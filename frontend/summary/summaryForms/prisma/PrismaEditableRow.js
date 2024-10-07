@@ -92,16 +92,6 @@ class PrismaEditableRow extends EditableRow {
                             }
                             type="color"
                         />,
-                        <TextInput
-                            key={`${key}-font-color-${index}`}
-                            name={`${key}-font-color-${index}`}
-                            value={row.styling.font_color}
-                            label="Font Color"
-                            onChange={e =>
-                                changeStylingSettings(key, index, "font_color", e.target.value)
-                            }
-                            type="color"
-                        />,
                         <IntegerInput
                             key={`${key}-padding-x-${index}`}
                             name={`${key}-padding-x-${index}`}

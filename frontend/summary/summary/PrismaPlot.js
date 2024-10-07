@@ -513,7 +513,7 @@ class PrismaPlot {
             "spacing-vertical": styles.spacing_y,
             "text-padding-x": styles.section.padding_x, // +- centered around global text offset values
             "text-padding-y": styles.section.padding_y,
-            "text-color": styles.section.font_color,
+            "text-color": "#000000",
             "text-style": "normal", // or "bold"
             "text-size": styles.section.font_size, // always appends "em" unit, +- centered around global text size
             "bg-color": styles.section.bg_color,

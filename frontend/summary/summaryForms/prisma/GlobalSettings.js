@@ -57,14 +57,6 @@ class GlobalSettings extends Component {
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             type="color"
                         />,
-                        <TextInput
-                            key={"styles.section.font_color"}
-                            name={"styles.section.font_color"}
-                            value={styles.section.font_color}
-                            label="Font Color"
-                            onChange={e => changeSettings(e.target.name, e.target.value)}
-                            type="color"
-                        />,
                         <IntegerInput
                             key={"styles.section.padding_x"}
                             name={"styles.section.padding_x"}
@@ -117,14 +109,6 @@ class GlobalSettings extends Component {
                             name={"styles.box.bg_color"}
                             value={styles.box.bg_color}
                             label="Background Color"
-                            onChange={e => changeSettings(e.target.name, e.target.value)}
-                            type="color"
-                        />,
-                        <TextInput
-                            key={"styles.box.font_color"}
-                            name={"styles.box.font_color"}
-                            value={styles.box.font_color}
-                            label="Font Color"
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             type="color"
                         />,

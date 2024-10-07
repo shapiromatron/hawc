@@ -10361,7 +10361,6 @@
           font_size: 0
           padding_x: 0
           padding_y: 0
-          font_color: '#000000'
           stroke_color: '#000000'
           stroke_width: 2
           stroke_radius: 5
@@ -10397,7 +10396,6 @@
           font_size: 0
           padding_x: 0
           padding_y: 0
-          font_color: '#000000'
           stroke_color: '#000000'
           stroke_width: 2
           stroke_radius: 5
@@ -10432,7 +10430,6 @@
           font_size: 0
           padding_x: 0
           padding_y: 0
-          font_color: '#000000'
           stroke_color: '#000000'
           stroke_width: 2
           stroke_radius: 5
@@ -10445,7 +10442,6 @@
           font_size: 0
           padding_x: 0
           padding_y: 0
-          font_color: '#000000'
           stroke_color: '#000000'
           stroke_width: 2
           stroke_radius: 5
