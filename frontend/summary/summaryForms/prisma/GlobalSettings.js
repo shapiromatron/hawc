@@ -16,6 +16,8 @@ class GlobalSettings extends Component {
         return (
             <div className="my-2 p-2 pb-3">
                 <h3>Default Style Settings</h3>
+                <p class='text-muted'>Configure overall styling for all visual components. You can manually configure any individual component overrides, but these are the default settings for all items in the visualization.
+                </p>
                 <h4>Section Settings</h4>
                 {wrapRow(
                     [
