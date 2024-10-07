@@ -4,7 +4,50 @@ import {deleteArrayElement} from "shared/components/EditableRowData";
 import h from "shared/utils/helpers";
 import {NULL_VALUE} from "summary/summary/constants";
 
-const createSectionRow = function() {
+const _getDefaultSettings = function() {
+        return {
+            sections: [],
+            boxes: [],
+            arrows: [],
+            styles: {
+                spacing_x: 30,
+                spacing_y: 50,
+                box: {
+                    border_radius: 5,
+                    border_width: 2,
+                    border_color: "#000000",
+                    width: 0,
+                    height: 0,
+                    bg_color: "#ffffff",
+                    font_size: 0.0,
+                    padding_x: 0,
+                    padding_y: 0,
+                    x: 0,
+                    y: 0,
+                },
+                section: {
+                    border_radius: 5,
+                    border_width: 3,
+                    border_color: "#000000",
+                    width: 0,
+                    height: 0,
+                    bg_color: "#efefef",
+                    font_size: 0.0,
+                    padding_x: 0,
+                    padding_y: 0,
+                    x: 0,
+                    y: 0,
+                },
+                arrow: {
+                    arrow_type: 1,
+                    width: 2,
+                    color: "#000000",
+                    force_vertical: false,
+                },
+            },
+        };
+    },
+    createSectionRow = function() {
         return {
             key: h.randomString(),
             label: "",
@@ -65,47 +108,7 @@ class PrismaStore {
     @observable settings = null;
 
     getDefaultSettings() {
-        return {
-            sections: [],
-            boxes: [],
-            arrows: [],
-            styles: {
-                spacing_x: 30,
-                spacing_y: 50,
-                box: {
-                    border_radius: 5,
-                    border_width: 2,
-                    border_color: "#000000",
-                    width: 0,
-                    height: 0,
-                    bg_color: "#ffffff",
-                    font_size: 0.0,
-                    padding_x: 0,
-                    padding_y: 0,
-                    x: 0,
-                    y: 0,
-                },
-                section: {
-                    border_radius: 5,
-                    border_width: 3,
-                    border_color: "#000000",
-                    width: 0,
-                    height: 0,
-                    bg_color: "#efefef",
-                    font_size: 0.0,
-                    padding_x: 0,
-                    padding_y: 0,
-                    x: 0,
-                    y: 0,
-                },
-                arrow: {
-                    arrow_type: 1,
-                    width: 2,
-                    color: "#000000",
-                    force_vertical: false,
-                },
-            },
-        };
+        return _getDefaultSettings();
     }
 
     @action.bound changeSettings(path, value) {
