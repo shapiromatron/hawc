@@ -233,7 +233,7 @@ class PrismaDatastore {
         }
     }
 
-    getReferenceDetailId(){
+    getReferenceDetailId() {
         return `${this.settingsHash}-prisma-reference-list`;
     }
 }
