@@ -10407,7 +10407,6 @@
         count_include: []
         count_strategy: unique_sum
         use_style_overrides: true
-      title: Prisma Visual
       arrows:
       - dst: ebe5c95e5a97047
         key: 7a2e35857534abe
@@ -10424,18 +10423,37 @@
           force_vertical: false
         use_style_overrides: true
       styles:
-        x: 0
-        y: 0
-        width: 0
-        height: 0
-        bg_color: '#ffffff'
-        font_size: 0
-        padding_x: 0
-        padding_y: 0
-        font_color: '#000000'
-        stroke_color: '#000000'
-        stroke_width: 2
-        stroke_radius: 5
+        section:
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+          bg_color: '#ffffff'
+          font_size: 0
+          padding_x: 0
+          padding_y: 0
+          font_color: '#000000'
+          stroke_color: '#000000'
+          stroke_width: 2
+          stroke_radius: 5
+        box:
+          x: 0
+          y: 0
+          width: 0
+          height: 0
+          bg_color: '#afe8f3'
+          font_size: 0
+          padding_x: 0
+          padding_y: 0
+          font_color: '#000000'
+          stroke_color: '#000000'
+          stroke_width: 2
+          stroke_radius: 5
+        arrow:
+          arrow_type: 1
+          stroke_color: '#000000'
+          stroke_width: 2
+          force_vertical: false
       sections:
       - key: fa615c164559d51
         label: All references
@@ -10445,24 +10463,6 @@
         label: Screening
         styling: null
         use_style_overrides: false
-      box_styles:
-        x: 0
-        y: 0
-        width: 0
-        height: 0
-        bg_color: '#afe8f3'
-        font_size: 0
-        padding_x: 0
-        padding_y: 0
-        font_color: '#000000'
-        stroke_color: '#000000'
-        stroke_width: 2
-        stroke_radius: 5
-      arrow_styles:
-        arrow_type: 1
-        stroke_color: '#000000'
-        stroke_width: 2
-        force_vertical: false
     caption: ''
     published: true
     prefilters: {}
