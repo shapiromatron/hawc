@@ -12,68 +12,71 @@ import wrapRow from "shared/components/WrapRow";
 class GlobalSettings extends Component {
     render() {
         const {settings, changeSettings, getArrowTypes} = this.props.store.subclass,
-            {styles, box_styles, arrow_styles} = settings;
+            {styles} = settings;
         return (
             <div className="my-2 p-2 pb-3">
                 <h3>Default Style Settings</h3>
-                <p class='text-muted'>Configure overall styling for all visual components. You can manually configure any individual component overrides, but these are the default settings for all items in the visualization.
+                <p className="text-muted">
+                    Configure overall styling for all visual components. You can manually configure
+                    any individual component overrides, but these are the default settings for all
+                    items in the visualization.
                 </p>
                 <h4>Section Settings</h4>
                 {wrapRow(
                     [
                         <IntegerInput
                             label="Stroke Rounding"
-                            key="styles.stroke_radius"
-                            name="styles.stroke_radius"
-                            value={styles.stroke_radius}
+                            key="styles.section.stroke_radius"
+                            name="styles.section.stroke_radius"
+                            value={styles.section.stroke_radius}
                             onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
                             helpText="Set the roundness of the corners"
                         />,
                         <IntegerInput
                             label="Stroke Width"
-                            key="styles.stroke_width"
-                            name="styles.stroke_width"
-                            value={styles.stroke_width}
+                            key="styles.section.stroke_width"
+                            name="styles.section.stroke_width"
+                            value={styles.section.stroke_width}
                             onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
                             helpText="Set the width of the border. Set to 0 for no border"
                         />,
                         <TextInput
                             label="Stroke Color"
-                            key="styles.stroke_color"
-                            name="styles.stroke_color"
-                            value={styles.stroke_color}
+                            key="styles.section.stroke_color"
+                            name="styles.section.stroke_color"
+                            value={styles.section.stroke_color}
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             type="color"
                             helpText="Set the color of the border"
                         />,
                         <TextInput
-                            key={"styles.bg_color"}
-                            name={"styles.bg_color"}
-                            value={styles.bg_color}
+                            key={"styles.section.bg_color"}
+                            name={"styles.section.bg_color"}
+                            value={styles.section.bg_color}
                             label="Background Color"
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             type="color"
                         />,
                         <TextInput
-                            key={"styles.font_color"}
-                            name={"styles.font_color"}
-                            value={styles.font_color}
+                            key={"styles.section.font_color"}
+                            name={"styles.section.font_color"}
+                            value={styles.section.font_color}
                             label="Font Color"
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             type="color"
                         />,
                         <IntegerInput
-                            key={"styles.padding_x"}
-                            name={"styles.padding_x"}
-                            value={styles.padding_x}
+                            key={"styles.section.padding_x"}
+                            name={"styles.section.padding_x"}
+                            value={styles.section.padding_x}
                             label="Text Padding (X axis)"
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             helpText="Sets the padding space to the left and right of text elements"
                         />,
                         <IntegerInput
-                            key={"styles.padding_y"}
-                            name={"styles.padding_y"}
-                            value={styles.padding_y}
+                            key={"styles.section.padding_y"}
+                            name={"styles.section.padding_y"}
+                            value={styles.section.padding_y}
                             label="Text Padding (Y axis)"
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             helpText="Sets the padding space above and below text elements"
@@ -86,57 +89,57 @@ class GlobalSettings extends Component {
                     [
                         <IntegerInput
                             label="Stroke Rounding"
-                            key="box_styles.stroke_radius"
-                            name="box_styles.stroke_radius"
-                            value={box_styles.stroke_radius}
+                            key="styles.box.stroke_radius"
+                            name="styles.box.stroke_radius"
+                            value={styles.box.stroke_radius}
                             onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
                             helpText="Set the roundness of the corners"
                         />,
                         <IntegerInput
                             label="Stroke Width"
-                            key="box_styles.stroke_radius"
-                            name="box_styles.stroke_width"
-                            value={box_styles.stroke_width}
+                            key="styles.box.stroke_radius"
+                            name="styles.box.stroke_width"
+                            value={styles.box.stroke_width}
                             onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
                             helpText="Set the width of the border. Set to 0 for no border"
                         />,
                         <TextInput
                             label="Stroke Color"
-                            key="box_styles.stroke_color"
-                            name="box_styles.stroke_color"
-                            value={box_styles.stroke_color}
+                            key="styles.box.stroke_color"
+                            name="styles.box.stroke_color"
+                            value={styles.box.stroke_color}
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             type="color"
                             helpText="Set the color of the border"
                         />,
                         <TextInput
-                            key={"box_styles.bg_color"}
-                            name={"box_styles.bg_color"}
-                            value={box_styles.bg_color}
+                            key={"styles.box.bg_color"}
+                            name={"styles.box.bg_color"}
+                            value={styles.box.bg_color}
                             label="Background Color"
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             type="color"
                         />,
                         <TextInput
-                            key={"box_styles.font_color"}
-                            name={"box_styles.font_color"}
-                            value={box_styles.font_color}
+                            key={"styles.box.font_color"}
+                            name={"styles.box.font_color"}
+                            value={styles.box.font_color}
                             label="Font Color"
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             type="color"
                         />,
                         <IntegerInput
-                            key={"box_styles.padding_x"}
-                            name={"box_styles.padding_x"}
-                            value={box_styles.padding_x}
+                            key={"styles.box.padding_x"}
+                            name={"styles.box.padding_x"}
+                            value={styles.box.padding_x}
                             label="Text Padding (X axis)"
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             helpText="Sets the padding space to the left and right of text elements"
                         />,
                         <IntegerInput
-                            key={"box_styles.padding_y"}
-                            name={"box_styles.padding_y"}
-                            value={box_styles.padding_y}
+                            key={"styles.box.padding_y"}
+                            name={"styles.box.padding_y"}
+                            value={styles.box.padding_y}
                             label="Text Padding (Y axis)"
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             helpText="Sets the padding space above and below text elements"
@@ -148,34 +151,34 @@ class GlobalSettings extends Component {
                 {wrapRow(
                     [
                         <IntegerInput
-                            key={"arrow_styles.stroke_width"}
-                            name={"arrow_styles.stroke_width"}
-                            value={arrow_styles.stroke_width}
+                            key={"styles.arrow.stroke_width"}
+                            name={"styles.arrow.stroke_width"}
+                            value={styles.arrow.stroke_width}
                             label="Arrow Width"
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                         />,
                         <SelectInput
-                            key={"arrow_styles.arrow_type"}
-                            name={"arrow_styles.arrow_type"}
-                            value={arrow_styles.arrow_type}
+                            key={"styles.arrow.arrow_type"}
+                            name={"styles.arrow.arrow_type"}
+                            value={styles.arrow.arrow_type}
                             label="Arrow Type"
                             handleSelect={value =>
-                                changeSettings("arrow_styles.arrow_type", parseInt(value))
+                                changeSettings("styles.arrow.arrow_type", parseInt(value))
                             }
                             choices={getArrowTypes}
                         />,
                         <TextInput
-                            key={"arrow_styles.stroke_color"}
-                            name={"arrow_styles.stroke_color"}
-                            value={arrow_styles.stroke_color}
+                            key={"styles.arrow.stroke_color"}
+                            name={"styles.arrow.stroke_color"}
+                            value={styles.arrow.stroke_color}
                             label="Arrow Color"
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             type="color"
                         />,
                         <CheckboxInput
-                            key={"arrow_styles.force_vertical"}
-                            name={"arrow_styles.force_vertical"}
-                            checked={arrow_styles.force_vertical}
+                            key={"styles.arrow.force_vertical"}
+                            name={"styles.arrow.force_vertical"}
+                            checked={styles.arrow.force_vertical}
                             label="Force vertical arrow orientation"
                             onChange={e => changeSettings(e.target.name, e.target.checked)}
                         />,

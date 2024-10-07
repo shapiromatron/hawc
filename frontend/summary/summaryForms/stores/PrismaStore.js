@@ -66,43 +66,44 @@ class PrismaStore {
 
     getDefaultSettings() {
         return {
-            title: "Prisma Visual",
             sections: [],
             boxes: [],
             arrows: [],
             styles: {
-                stroke_radius: 5,
-                stroke_width: 2,
-                stroke_color: "#000000",
-                width: 0,
-                height: 0,
-                bg_color: "#ffffff",
-                font_color: "#000000",
-                font_size: 0.0,
-                padding_x: 0,
-                padding_y: 0,
-                x: 0,
-                y: 0,
-            },
-            box_styles: {
-                stroke_radius: 5,
-                stroke_width: 2,
-                stroke_color: "#000000",
-                width: 0,
-                height: 0,
-                bg_color: "#ffffff",
-                font_color: "#000000",
-                font_size: 0.0,
-                padding_x: 0,
-                padding_y: 0,
-                x: 0,
-                y: 0,
-            },
-            arrow_styles: {
-                arrow_type: 1,
-                stroke_width: 2,
-                stroke_color: "#000000",
-                force_vertical: false,
+                box: {
+                    stroke_radius: 5,
+                    stroke_width: 2,
+                    stroke_color: "#000000",
+                    width: 0,
+                    height: 0,
+                    bg_color: "#ffffff",
+                    font_color: "#000000",
+                    font_size: 0.0,
+                    padding_x: 0,
+                    padding_y: 0,
+                    x: 0,
+                    y: 0,
+                },
+                section: {
+                    stroke_radius: 5,
+                    stroke_width: 2,
+                    stroke_color: "#000000",
+                    width: 0,
+                    height: 0,
+                    bg_color: "#ffffff",
+                    font_color: "#000000",
+                    font_size: 0.0,
+                    padding_x: 0,
+                    padding_y: 0,
+                    x: 0,
+                    y: 0,
+                },
+                arrow: {
+                    arrow_type: 1,
+                    stroke_width: 2,
+                    stroke_color: "#000000",
+                    force_vertical: false,
+                },
             },
         };
     }
@@ -199,19 +200,18 @@ class PrismaStore {
     }
 
     @action.bound toggleStyling(arrayKey, index, checked) {
+        const {styles} = this.settings;
         if (checked && this.settings[arrayKey][index].styling == null) {
             // if checked for the first time, add defaults to the styling dict for this object
             switch (arrayKey) {
                 case "sections":
-                    this.settings[arrayKey][index].styling = _.cloneDeep(this.settings.styles);
+                    this.settings[arrayKey][index].styling = _.cloneDeep(styles.section);
                     break;
                 case "boxes":
-                    this.settings[arrayKey][index].styling = _.cloneDeep(this.settings.box_styles);
+                    this.settings[arrayKey][index].styling = _.cloneDeep(styles.box);
                     break;
                 case "arrows":
-                    this.settings[arrayKey][index].styling = _.cloneDeep(
-                        this.settings.arrow_styles
-                    );
+                    this.settings[arrayKey][index].styling = _.cloneDeep(styles.arrow);
                     break;
             }
         }

@@ -3,6 +3,33 @@ import HAWCModal from "shared/utils/HAWCModal";
 import h from "shared/utils/helpers";
 import {NULL_VALUE} from "summary/summary/constants";
 
+const mapStyling = function(styling) {
+        return {
+            x: styling.x,
+            y: styling.y,
+            width: styling.width,
+            height: styling.height,
+            "text-padding-x": styling.padding_x,
+            "text-padding-y": styling.padding_y,
+            "text-color": styling.font_color,
+            "text-style": "normal",
+            "text-size": styling.font_size,
+            "bg-color": styling.bg_color,
+            stroke: styling.stroke_color,
+            "stroke-width": styling.stroke_width,
+            rx: styling.stroke_radius,
+            ry: styling.stroke_radius,
+        };
+    },
+    mapArrowStyles = function(styling) {
+        return {
+            "arrow-color": styling["stroke_color"],
+            "arrow-width": styling["stroke_width"],
+            "arrow-type": styling["arrow_type"],
+            "arrow-force-vertical": styling["force_vertical"],
+        };
+    };
+
 class PrismaDatastore {
     constructor(settings, dataset, options) {
         this.settings = settings;
@@ -16,7 +43,7 @@ class PrismaDatastore {
     }
 
     getDiagramSections() {
-        const {sections, boxes} = this.settings;
+        const {sections, boxes, styles} = this.settings;
         return sections
             .filter(section => section.label.length > 0)
             .map(section => {
@@ -34,48 +61,23 @@ class PrismaDatastore {
                                 count_filters: b.count_filters,
                                 count_include: b.count_include,
                                 count_exclude: b.count_exclude,
-                                styling: b.use_style_overrides
-                                    ? this.mapStyling(b.styling)
-                                    : this.mapStyling(this.settings.box_styles),
+                                styling: mapStyling(b.use_style_overrides ? b.styling : styles.box),
                                 items: b.items,
                             };
                         }),
-                    ...(section.use_style_overrides && {styling: this.mapStyling(section.styling)}),
+                    styling: mapStyling(
+                        section.use_style_overrides ? section.styling : styles.section
+                    ),
                 };
             });
     }
 
-    mapStyling(styling) {
-        return {
-            x: styling.x,
-            y: styling.y,
-            width: styling.width,
-            height: styling.height,
-            "text-padding-x": styling.padding_x,
-            "text-padding-y": styling.padding_y,
-            "text-color": styling.font_color,
-            "text-style": "normal",
-            "text-size": styling.font_size,
-            "bg-color": styling.bg_color,
-            stroke: styling.stroke_color,
-            "stroke-width": styling.stroke_width,
-            rx: styling.stroke_radius,
-            ry: styling.stroke_radius,
-        };
-    }
-
     getConnections() {
-        return _.cloneDeep(this.settings.arrows)
+        const {arrows, styles} = this.settings;
+        return _.cloneDeep(arrows)
             .filter(a => a.src !== NULL_VALUE && a.dst !== NULL_VALUE)
             .map(a => {
-                a.styling = a.use_style_overrides
-                    ? {
-                          "arrow-color": a.styling["stroke_color"],
-                          "arrow-width": a.styling["stroke_width"],
-                          "arrow-type": a.styling["arrow_type"],
-                          "arrow-force-vertical": a.styling["force_vertical"],
-                      }
-                    : undefined;
+                a.styling = mapArrowStyles(a.use_style_overrides ? a.styling : styles.arrow);
                 return a;
             });
     }

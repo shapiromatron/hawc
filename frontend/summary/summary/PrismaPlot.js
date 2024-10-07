@@ -62,10 +62,7 @@ const NAMESPACE = "http://www.w3.org/2000/svg",
             .then(resp => resp.text())
             .then(html => (detailEl.innerHTML = html));
     },
-    connectPoints = function(svg, STYLE_DEFAULT, id, xy1, xy2, arrowhead = true, styling = {}) {
-        for (const [key, value] of Object.entries(STYLE_DEFAULT)) {
-            if (!styling[key]) styling[key] = value;
-        }
+    connectPoints = function(svg, id, xy1, xy2, arrowhead = true, styling = {}) {
         let arrowType = "arrow" + styling["arrow-type"],
             arrow = d3Arrow[arrowType]().id(id);
         if (arrowhead) {
@@ -243,6 +240,7 @@ class PrismaPlot {
         );
         textElement.setAttribute("y", y + this.TEXT_OFFSET_Y);
         textElement.setAttribute("display", "none");
+        textElement.setAttribute('class', 'cursor-pointer');
         textElement.setAttribute("id", id);
         textElement.setAttribute(
             "font-size",
@@ -282,16 +280,10 @@ class PrismaPlot {
         // https://github.com/HarryStevens/d3-arrow
         // https://observablehq.com/d/7759e56ba89ced03
         const id = connection.key,
-            styling = _.clone(this.store.settings.styles),
             node1BBox = getGroup(connection.src).rect.getBBox(),
             node2BBox = getGroup(connection.dst).rect.getBBox(),
             svg = this.svg,
-            DEF = this.STYLE_DEFAULT;
-
-        // add overrides (TODO - this isn't working yet, to fix)
-        if (connection.styling) {
-            _.merge(styling, connection.styling);
-        }
+            styling = connection.styling;
 
         let xMidpoint, yMidpoint, node1XY, node1Midpoint, node2Midpoint, node2XY;
         // same x = vertical
@@ -310,9 +302,9 @@ class PrismaPlot {
             node2Midpoint = [xMidpoint, node2BBox.y + node2BBox.height / 2];
             node2XY = [node2BBox.x, node2BBox.y + node2BBox.height / 2];
         }
-        connectPoints(svg, DEF, id + "_1", node1XY, node1Midpoint, false, styling);
-        connectPoints(svg, DEF, id + "_2", node1Midpoint, node2Midpoint, false, styling);
-        connectPoints(svg, DEF, id + "_3", node2Midpoint, node2XY, true, styling);
+        connectPoints(svg, `${id}_1`, node1XY, node1Midpoint, false, styling);
+        connectPoints(svg, `${id}_2`, node1Midpoint, node2Midpoint, false, styling);
+        connectPoints(svg, `${id}_3`, node2Midpoint, node2XY, true, styling);
     }
 
     createNewVerticalNode(prevNode, id, text, group = false, styling = {}) {
@@ -502,7 +494,7 @@ class PrismaPlot {
     }
 
     setDefaults() {
-        const {styles, arrow_styles} = this.store.settings;
+        const {styles} = this.store.settings;
         this.MAX_WIDTH = 300; // box dimensions
         this.MIN_HEIGHT = 100;
         this.SPACING_V = 100; // distance between boxes
@@ -517,20 +509,16 @@ class PrismaPlot {
             height: "0",
             "spacing-horizontal": this.SPACING_H,
             "spacing-vertical": this.SPACING_V,
-            "text-padding-x": styles.padding_x, // +- centered around global text offset values
-            "text-padding-y": styles.padding_y,
-            "text-color": styles.font_color,
+            "text-padding-x": styles.section.padding_x, // +- centered around global text offset values
+            "text-padding-y": styles.section.padding_y,
+            "text-color": styles.section.font_color,
             "text-style": "normal", // or "bold"
-            "text-size": styles.font_size, // always appends "em" unit, +- centered around global text size
-            "bg-color": styles.bg_color,
-            stroke: styles.stroke_color, // box border color
-            "stroke-width": styles.stroke_width, // box border width
-            rx: styles.stroke_radius, // box rounded edge horizontal
-            ry: styles.stroke_radius, // box rounded edge vertical
-            "arrow-color": arrow_styles["stroke_color"],
-            "arrow-width": arrow_styles["stroke_width"],
-            "arrow-type": arrow_styles["arrow_type"],
-            "arrow-force-vertical": arrow_styles["force_vertical"],
+            "text-size": styles.section.font_size, // always appends "em" unit, +- centered around global text size
+            "bg-color": styles.section.bg_color,
+            stroke: styles.section.stroke_color, // box border color
+            "stroke-width": styles.section.stroke_width, // box border width
+            rx: styles.section.stroke_radius, // box rounded edge horizontal
+            ry: styles.section.stroke_radius, // box rounded edge vertical
         };
         this.cardrowlength = -1;
     }
