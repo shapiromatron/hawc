@@ -42,42 +42,42 @@ class PrismaEditableRow extends EditableRow {
                             helpText="Set the height of this element. When 0 is entered, this will be calculated automatically"
                         />,
                         <IntegerInput
-                            key={`${key}-stroke-radius-${index}`}
-                            name={`${key}-stroke-radius-${index}`}
-                            value={row.styling.stroke_radius}
-                            label="Stroke Rounding"
+                            key={`${key}-border_radius-${index}`}
+                            name={`${key}-border_radius-${index}`}
+                            value={row.styling.border_radius}
+                            label="Border Rounding"
                             onChange={e =>
                                 changeStylingSettings(
                                     key,
                                     index,
-                                    "stroke_radius",
+                                    "border_radius",
                                     parseInt(e.target.value)
                                 )
                             }
                             helpText="Set the roundness of the corners"
                         />,
                         <IntegerInput
-                            key={`${key}-border-width-${index}`}
-                            name={`${key}-border-width-${index}`}
-                            value={row.styling.stroke_width}
-                            label="Stroke Width"
+                            key={`${key}-border_width-${index}`}
+                            name={`${key}-border_width-${index}`}
+                            value={row.styling.border_width}
+                            label="Border Width"
                             onChange={e =>
                                 changeStylingSettings(
                                     key,
                                     index,
-                                    "stroke_width",
+                                    "border_width",
                                     parseInt(e.target.value)
                                 )
                             }
                             helpText="Set the width of the border. Set to 0 for no border"
                         />,
                         <TextInput
-                            key={`${key}-stroke-color-${index}`}
-                            name={`${key}-stroke-color-${index}`}
-                            value={row.styling.stroke_color}
-                            label="Stroke Color"
+                            key={`${key}-border_color-${index}`}
+                            name={`${key}-border_color-${index}`}
+                            value={row.styling.border_color}
+                            label="Border Color"
                             onChange={e =>
-                                changeStylingSettings(key, index, "stroke_color", e.target.value)
+                                changeStylingSettings(key, index, "border_color", e.target.value)
                             }
                             type="color"
                             helpText="Set the color of the border"

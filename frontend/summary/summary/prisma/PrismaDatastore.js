@@ -15,16 +15,16 @@ const mapStyling = function(styling) {
             "text-style": "normal",
             "text-size": styling.font_size,
             "bg-color": styling.bg_color,
-            stroke: styling.stroke_color,
-            "stroke-width": styling.stroke_width,
-            rx: styling.stroke_radius,
-            ry: styling.stroke_radius,
+            stroke: styling.border_color,
+            "stroke-width": styling.border_width,
+            rx: styling.border_radius,
+            ry: styling.border_radius,
         };
     },
     mapArrowStyles = function(styling) {
         return {
-            "arrow-color": styling["stroke_color"],
-            "arrow-width": styling["stroke_width"],
+            "arrow-color": styling["color"],
+            "arrow-width": styling["width"],
             "arrow-type": styling["arrow_type"],
             "arrow-force-vertical": styling["force_vertical"],
         };

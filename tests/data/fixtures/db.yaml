@@ -10361,9 +10361,9 @@
           font_size: 0
           padding_x: 0
           padding_y: 0
-          stroke_color: '#000000'
-          stroke_width: 2
-          stroke_radius: 5
+          border_color: '#000000'
+          border_width: 2
+          border_radius: 5
         box_layout: card
         count_exclude: []
         count_filters:
@@ -10396,9 +10396,9 @@
           font_size: 0
           padding_x: 0
           padding_y: 0
-          stroke_color: '#000000'
-          stroke_width: 2
-          stroke_radius: 5
+          border_color: '#000000'
+          border_width: 2
+          border_radius: 5
         box_layout: list
         count_exclude: []
         count_filters: []
@@ -10416,8 +10416,8 @@
         src: deb3038ff530e06
         styling:
           arrow_type: 11
-          stroke_color: '#febd4d'
-          stroke_width: 5
+          color: '#febd4d'
+          width: 5
           force_vertical: false
         use_style_overrides: true
       styles:
@@ -10430,9 +10430,9 @@
           font_size: 0
           padding_x: 0
           padding_y: 0
-          stroke_color: '#000000'
-          stroke_width: 2
-          stroke_radius: 5
+          border_color: '#000000'
+          border_width: 2
+          border_radius: 5
         box:
           x: 0
           y: 0
@@ -10442,13 +10442,13 @@
           font_size: 0
           padding_x: 0
           padding_y: 0
-          stroke_color: '#000000'
-          stroke_width: 2
-          stroke_radius: 5
+          border_color: '#000000'
+          border_width: 2
+          border_radius: 5
         arrow:
           arrow_type: 1
-          stroke_color: '#000000'
-          stroke_width: 2
+          color: '#000000'
+          width: 2
           force_vertical: false
         spacing_x: 30
         spacing_y: 50

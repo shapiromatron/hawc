@@ -25,26 +25,26 @@ class GlobalSettings extends Component {
                 {wrapRow(
                     [
                         <IntegerInput
-                            label="Stroke Rounding"
-                            key="styles.section.stroke_radius"
-                            name="styles.section.stroke_radius"
-                            value={styles.section.stroke_radius}
+                            label="Border Rounding"
+                            key="styles.section.border_radius"
+                            name="styles.section.border_radius"
+                            value={styles.section.border_radius}
                             onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
                             helpText="Set the roundness of the corners"
                         />,
                         <IntegerInput
-                            label="Stroke Width"
-                            key="styles.section.stroke_width"
-                            name="styles.section.stroke_width"
-                            value={styles.section.stroke_width}
+                            label="Border Width"
+                            key="styles.section.border_width"
+                            name="styles.section.border_width"
+                            value={styles.section.border_width}
                             onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
                             helpText="Set the width of the border. Set to 0 for no border"
                         />,
                         <TextInput
-                            label="Stroke Color"
-                            key="styles.section.stroke_color"
-                            name="styles.section.stroke_color"
-                            value={styles.section.stroke_color}
+                            label="Border Color"
+                            key="styles.section.border_color"
+                            name="styles.section.border_color"
+                            value={styles.section.border_color}
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             type="color"
                             helpText="Set the color of the border"
@@ -80,26 +80,26 @@ class GlobalSettings extends Component {
                 {wrapRow(
                     [
                         <IntegerInput
-                            label="Stroke Rounding"
-                            key="styles.box.stroke_radius"
-                            name="styles.box.stroke_radius"
-                            value={styles.box.stroke_radius}
+                            label="Border Rounding"
+                            key="styles.box.border_radius"
+                            name="styles.box.border_radius"
+                            value={styles.box.border_radius}
                             onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
                             helpText="Set the roundness of the corners"
                         />,
                         <IntegerInput
-                            label="Stroke Width"
-                            key="styles.box.stroke_radius"
-                            name="styles.box.stroke_width"
-                            value={styles.box.stroke_width}
+                            label="Border Width"
+                            key="styles.box.border_radius"
+                            name="styles.box.border_width"
+                            value={styles.box.border_width}
                             onChange={e => changeSettings(e.target.name, parseInt(e.target.value))}
                             helpText="Set the width of the border. Set to 0 for no border"
                         />,
                         <TextInput
-                            label="Stroke Color"
-                            key="styles.box.stroke_color"
-                            name="styles.box.stroke_color"
-                            value={styles.box.stroke_color}
+                            label="Border Color"
+                            key="styles.box.border_color"
+                            name="styles.box.border_color"
+                            value={styles.box.border_color}
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             type="color"
                             helpText="Set the color of the border"
@@ -135,9 +135,9 @@ class GlobalSettings extends Component {
                 {wrapRow(
                     [
                         <IntegerInput
-                            key={"styles.arrow.stroke_width"}
-                            name={"styles.arrow.stroke_width"}
-                            value={styles.arrow.stroke_width}
+                            key={"styles.arrow.width"}
+                            name={"styles.arrow.width"}
+                            value={styles.arrow.width}
                             label="Arrow Width"
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                         />,
@@ -152,9 +152,9 @@ class GlobalSettings extends Component {
                             choices={getArrowTypes}
                         />,
                         <TextInput
-                            key={"styles.arrow.stroke_color"}
-                            name={"styles.arrow.stroke_color"}
-                            value={styles.arrow.stroke_color}
+                            key={"styles.arrow.color"}
+                            name={"styles.arrow.color"}
+                            value={styles.arrow.color}
                             label="Arrow Color"
                             onChange={e => changeSettings(e.target.name, e.target.value)}
                             type="color"

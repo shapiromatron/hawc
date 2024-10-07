@@ -153,13 +153,13 @@ class ArrowsRow extends PrismaEditableRow {
                         <IntegerInput
                             key={`${key}-width-${index}`}
                             name={`${key}-width-${index}`}
-                            value={row.styling.stroke_width}
+                            value={row.styling.width}
                             label="Width"
                             onChange={e =>
                                 changeStylingSettings(
                                     key,
                                     index,
-                                    "stroke_width",
+                                    "width",
                                     parseInt(e.target.value)
                                 )
                             }
@@ -177,10 +177,10 @@ class ArrowsRow extends PrismaEditableRow {
                         <TextInput
                             key={`${key}-color-${index}`}
                             name={`${key}-color-${index}`}
-                            value={row.styling.stroke_color}
+                            value={row.styling.color}
                             label="Color"
                             onChange={e =>
-                                changeStylingSettings(key, index, "stroke_color", e.target.value)
+                                changeStylingSettings(key, index, "color", e.target.value)
                             }
                             type="color"
                         />,
