@@ -412,6 +412,8 @@ class Visual(models.Model):
                 "references": list(
                     Reference.objects.filter(assessment=assessment.id).values_list("id", flat=True)
                 ),
+                "reference_detail_url": reverse("lit:interactive", args=(assessment.id,))
+                + "?action=venn_reference_list",
             }
         )
 
