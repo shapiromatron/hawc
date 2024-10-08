@@ -58,6 +58,11 @@ Client tutorials for common operations are below:
 
 ### Changelog
 
+#### [2024-3](https://pypi.org/project/hawc-client/2024.3/) (October 2024)
+
+* Update data pivot and visual output formats to return JSON
+* Add a new BMDS Export to return dose-response data
+
 #### [2024-2](https://pypi.org/project/hawc-client/2024.2/) (July 2024)
 
 * Minor documentation and docstring updates
