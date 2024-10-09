@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import RedirectView
 
+from hawc.apps.common.crumbs import Breadcrumb
+
 from ..assessment.models import Assessment
 from ..assessment.views import check_published_status
 from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseUpdate
@@ -114,6 +116,43 @@ class IdentifierStudyCreate(ReferenceStudyCreate):
         context = super().get_context_data(**kwargs)
         context["manual_entry_warning"] = False
         return context
+
+
+class StudyClone(BaseUpdate):
+    """
+    Copy studies along with all study information from one assessment to another.
+    """
+
+    template_name = "study/study_clone.html"
+    # parent_template_name = "assessment"
+    # parent_model = Assessment
+    model = Assessment
+    form_class = forms.StudyCloneForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["study_data"] = {}
+        assessments = Assessment.objects.all().user_can_view(
+            self.request.user, exclusion_id=self.assessment.id
+        )
+        for dst_assessment in assessments:
+            context["study_data"][f"studies_assessment_{dst_assessment.id}"] = (
+                models.Study.objects.filter(assessment=dst_assessment)
+            )
+            for study in context["study_data"][f"studies_assessment_{dst_assessment.id}"]:
+                study.rob = len(study.get_active_robs(with_final=False)) > 0
+
+        context["breadcrumbs"] = Breadcrumb.build_assessment_crumbs(
+            self.request.user, self.assessment
+        )
+        context["breadcrumbs"].append(Breadcrumb(name="Deep Clone"))
+        return context
+
+    def get_form_kwargs(self):
+        kw = super().get_form_kwargs()
+        kw.update(user=self.request.user, assessment=self.assessment)
+        return kw
 
 
 class StudyDetail(UDFDetailMixin, BaseDetail):

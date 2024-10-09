@@ -221,6 +221,46 @@ class IdentifierStudyForm(forms.Form):
         return models.Study.save_new_from_reference(ref, cleaned_data)
 
 
+class StudyCloneForm(forms.Form):
+    assessment = forms.ModelChoiceField(
+        label="Select source assessment", queryset=Assessment.objects.all(), empty_label=None
+    )
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
+        self.user = kwargs.pop("user")
+        self.assessment = kwargs.pop("assessment")
+        super().__init__(*args, **kwargs)
+        self.fields["assessment"].widget.attrs["class"] = "col-md-12"
+        self.fields["assessment"].queryset = Assessment.objects.all().user_can_view(
+            self.user, exclusion_id=self.assessment.id
+        )
+
+    def get_assessments(self):
+        return self.assessment
+
+    # submit
+    """
+    @property
+    def helper(self):
+        rob_name = self.assessment.get_rob_name_display().lower()
+        helper = BaseFormHelper(
+            self,
+            legend_text=f"Copy {rob_name} approach from another assessment",
+            help_text=f"Copy {rob_name} metrics and domains from an existing HAWC assessment which you have access to.",
+            cancel_url=reverse("riskofbias:arob_update", args=(self.assessment.id,)),
+            submit_text="Copy from assessment",
+        )
+        helper.layout.insert(3, cfl.Div(css_id="approach"))
+        helper.layout.insert(2, cfl.Div(css_id="extra_content_insertion"))
+        return helper
+    """
+
+    def evaluate(self):
+        pass
+        # clone_approach(self.assessment, self.cleaned_data["assessment"], self.user.id)
+
+
 class AttachmentForm(forms.ModelForm):
     class Meta:
         model = models.Attachment

@@ -8,6 +8,7 @@
         <span class="dropdown-header">Study editing</span>
         <a class="dropdown-item" href="{% url 'study:new_ref' assessment.pk %}">Create new</a>
         <a class="dropdown-item" href="{% url 'study:create_from_identifier' assessment.pk %}">Create from identifier</a>
+        <a class="dropdown-item" href="{% url 'study:clone_from_assessment' assessment.pk %}">Clone from assessment</a>
         {% if assessment.enable_risk_of_bias %}
           <div class="dropdown-divider"></div>
           <span class="dropdown-header">{{assessment.get_rob_name_display}}</span>
