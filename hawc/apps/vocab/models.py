@@ -202,6 +202,26 @@ class EntityTermRelation(models.Model):
         return f"{self.term} -> {self.entity}"
 
 
+class GuidelineProfile(models.Model):
+    guideline_profile_id = models.PositiveIntegerField(
+        unique=True, primary_key=True, verbose_name="ID"
+    )
+    guideline_id = models.PositiveIntegerField()
+    endpoint = models.ForeignKey("Term", on_delete=models.CASCADE, blank=True, null=True)
+    endpoint_category = models.CharField(max_length=256)
+    endpoint_type = models.CharField(max_length=256)
+    endpoint_target = models.CharField(max_length=256)
+    obs_status = models.CharField(choices=constants.ObservationStatus, null=True)
+    description = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ("guideline_profile_id",)
+
+    def __str__(self) -> str:
+        return f"{self.guideline_id}::{self.profile_id}::{self.endpoint_id}"
+
+
 reversion.register(Term)
 reversion.register(Entity)
 reversion.register(EntityTermRelation)
+reversion.register(GuidelineProfile)
