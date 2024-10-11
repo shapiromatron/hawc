@@ -16,15 +16,18 @@
       {% endactions %}
     {% endif %}
   </div>
-  <div class='visualization'></div>
+  <div id='visualization'></div>
   <p>{{object.caption|safe}}</p>
 {% endblock %}
 
 {% block extrajs %}
+  {{ config|json_script:"config" }}
   <script type="text/javascript">
     window.app.startup("summaryStartup", function(summary){
       window.isEditable = {{obj_perms.edit|lower}};
-      summary.Visual.displayAsPage({{object.id}}, $(".visualization"));
+      const config = JSON.parse(document.getElementById('config').textContent),
+            el = document.getElementById('visualization');
+      summary.startupPrismaAppRender(el, config.settings, config.data, {csrf: "{{ csrf_token }}"});
     });
   </script>
 {% endblock %}
