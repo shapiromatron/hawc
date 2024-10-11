@@ -28,6 +28,8 @@ class VisualType(models.IntegerChoices):
     PLOTLY = 7, "plotly"
     IMAGE = 8, "static image"
     PRISMA = 9, "PRISMA"
+    DATA_PIVOT_QUERY = 10, "Data Pivot Query"
+    DATA_PIVOT_FILE = 11, "Data Pivot File"
 
 
 VISUAL_EVIDENCE_CHOICES = {
