@@ -968,10 +968,10 @@ div.udf-info-row>p, div.udf-info-row>div.card>p {
 .show-only-child {
     display: none;
 }
-.show-only-child:only-child, .show-only-child:has(+.create-row.hidden) {
+.show-only-child:only-child, .show-only-child:has(+.create-row.hidden), .create-row.hidden+.show-only-child {
     display: revert;
 }
-tr+tr.show-only-child, div+div.show-only-child {
+tr+tr.show-only-child, div:not(.create-row.hidden)+div.show-only-child {
     display: none !important;
 }
 
