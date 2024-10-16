@@ -1,16 +1,22 @@
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect
+from django.http import HttpRequest, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import RedirectView
 
-from hawc.apps.common.crumbs import Breadcrumb
-
 from ..assessment.models import Assessment
 from ..assessment.views import check_published_status
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseUpdate
+from ..common.crumbs import Breadcrumb
+from ..common.htmx import HtmxViewSet, action, can_view
+from ..common.views import (
+    BaseCreate,
+    BaseDelete,
+    BaseDetail,
+    BaseFilterList,
+    BaseUpdate,
+)
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
 from ..udf.views import UDFDetailMixin
@@ -119,30 +125,12 @@ class IdentifierStudyCreate(ReferenceStudyCreate):
 
 
 class StudyClone(BaseUpdate):
-    """
-    Copy studies along with all study information from one assessment to another.
-    """
-
     template_name = "study/study_clone.html"
-    # parent_template_name = "assessment"
-    # parent_model = Assessment
     model = Assessment
     form_class = forms.StudyCloneForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        context["study_data"] = {}
-        assessments = Assessment.objects.all().user_can_view(
-            self.request.user, exclusion_id=self.assessment.id
-        )
-        for dst_assessment in assessments:
-            context["study_data"][f"studies_assessment_{dst_assessment.id}"] = (
-                models.Study.objects.filter(assessment=dst_assessment)
-            )
-            for study in context["study_data"][f"studies_assessment_{dst_assessment.id}"]:
-                study.rob = len(study.get_active_robs(with_final=False)) > 0
-
         context["breadcrumbs"] = Breadcrumb.build_assessment_crumbs(
             self.request.user, self.assessment
         )
@@ -153,6 +141,36 @@ class StudyClone(BaseUpdate):
         kw = super().get_form_kwargs()
         kw.update(user=self.request.user, assessment=self.assessment)
         return kw
+
+
+class StudyCloneViewSet(HtmxViewSet):
+    actions = {"update", "clone"}
+    model = Assessment
+
+    detail_fragment = "study/fragments/src_clone_details.html"
+
+    @action(methods=("post"), permission=can_view)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        if not request.POST.get("assessment"):
+            return render(request, self.detail_fragment, self.get_context_data())
+        src_assessment_id = request.POST["assessment"]
+        src_studies = models.Study.objects.filter(assessment_id=src_assessment_id)
+        for study in src_studies:
+            study.rob = len(study.get_active_robs(with_final=False)) > 0
+        return render(request, self.detail_fragment, self.get_context_data(src_studies=src_studies))
+
+    @action(methods=("post"), permission=can_view)
+    def clone(self, request: HttpRequest, *args, **kwargs):
+        try:
+            pass
+            # print(request.POST)
+            # print("\n")
+        except Exception:
+            import traceback
+
+            traceback.print_exc()
+
+        return render(request, self.detail_fragment, self.get_context_data())
 
 
 class StudyDetail(UDFDetailMixin, BaseDetail):

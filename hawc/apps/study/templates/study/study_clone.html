@@ -1,62 +1,31 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  {% crispy form %}
-  <br>
-  <h4>Select studies*</h4>
-  {% for assessment_id, studies in study_data.items %}
-    <table style="display: none;" id="{{assessment_id}}" class='table table-sm table-striped studies'>
-      {% bs4_colgroup '40,20,20,20' %}
-      {% bs4_thead 'Short citation,Bioassay,Epi,Risk of Bias' %}
-      <tbody>
-        {% for study in studies %}
-          <tr>
-            <td>
-              <input type="checkbox" id="study_{{study.id}}" value="{{study.id}}">
-              <label style="font-weight: normal;" for="study_{{study.id}}">&nbsp;{{study}}</label>
-            </td>
-            <td>
-              {% if study.bioassay %}
-                <input type="checkbox" value="{{study.bioassay}}">
-              {% else %}
-                <input disabled type="checkbox" value="{{study.bioassay}}">
-              {% endif %}
-            </td>
-            <td>
-              {% if study.epi and assessment.epi_version == 2 and study.assessment.epi_version == 2 %}
-                <input type="checkbox" value="{{study.epi}}">
-              {% else %}
-                <input disabled type="checkbox" value="{{study.epi}}">
-              {% endif %}
-            </td>
-            <td>
-              {% if study.rob %}
-                <input type="checkbox" name="rob" value="{{study.rob}}">
-              {% else %}
-                <input disabled name="rob" type="checkbox" value="{{study.rob}}">
-              {% endif %}
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% endfor %}
-  <br>
-  <h4>Map metrics*</h4>
-  {% include 'riskofbias/_arob_none_alert.html' %}
+  <form method="post">
+    {% crispy form %}
+    <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto"
+       hx-post="{% url 'study:clone_from_assessment-htmx' assessment.pk 'update' %}"
+       hx-trigger="click"
+       hx-indicator="#spinner-{{object.pk}}"
+       hx-target="#src-assessment-details"
+       hx-encoding="multipart/form-data">
+      Get Studies
+    </a>
+    <i class="fa fa-spinner fa-spin htmx-indicator ml-3" id="spinner-{{object.pk}}" aria-hidden="true"></i>
+    <br><br>
+    <div id="src-assessment-details">
+      {% include "study/fragments/src_clone_details.html" %}
+    </div>
+  </form>
 {% endblock %}
 
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      const updateTable = function(e){
-        let assessment_id = e.target.value;
-        $(".studies").hide();
-        $("#studies_assessment_"+assessment_id).show();
+      const hideTable = function(e){
+        $("#src-assessment-details-fragment").hide();
       };
-
-    // load approach on assessment change
-      $('#id_assessment').on('change', updateTable).trigger('change');
+      $('#id_assessment').on('change', hideTable).trigger('change');
     });
   </script>
 {% endblock extrajs %}

@@ -24,6 +24,11 @@ urlpatterns = [
         views.StudyClone.as_view(),
         name="clone_from_assessment",
     ),
+    path(
+        "<int:pk>/deep-clone/<slug:action>/",
+        views.StudyCloneViewSet.as_view(),
+        name="clone_from_assessment-htmx",
+    ),
     path("<int:pk>/", views.StudyDetail.as_view(), name="detail"),
     path("<int:pk>/toggle-lock/", views.StudyToggleLock.as_view(), name="toggle-lock"),
     path("<int:pk>/update/", views.StudyUpdate.as_view(), name="update"),

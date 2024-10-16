@@ -223,7 +223,7 @@ class IdentifierStudyForm(forms.Form):
 
 class StudyCloneForm(forms.Form):
     assessment = forms.ModelChoiceField(
-        label="Select source assessment", queryset=Assessment.objects.all(), empty_label=None
+        label="Select source assessment", queryset=Assessment.objects.all()
     )
 
     def __init__(self, *args, **kwargs):
@@ -236,29 +236,11 @@ class StudyCloneForm(forms.Form):
             self.user, exclusion_id=self.assessment.id
         )
 
-    def get_assessments(self):
-        return self.assessment
-
-    # submit
-    """
     @property
     def helper(self):
-        rob_name = self.assessment.get_rob_name_display().lower()
-        helper = BaseFormHelper(
-            self,
-            legend_text=f"Copy {rob_name} approach from another assessment",
-            help_text=f"Copy {rob_name} metrics and domains from an existing HAWC assessment which you have access to.",
-            cancel_url=reverse("riskofbias:arob_update", args=(self.assessment.id,)),
-            submit_text="Copy from assessment",
-        )
-        helper.layout.insert(3, cfl.Div(css_id="approach"))
-        helper.layout.insert(2, cfl.Div(css_id="extra_content_insertion"))
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
         return helper
-    """
-
-    def evaluate(self):
-        pass
-        # clone_approach(self.assessment, self.cleaned_data["assessment"], self.user.id)
 
 
 class AttachmentForm(forms.ModelForm):
