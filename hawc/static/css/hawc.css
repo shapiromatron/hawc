@@ -974,12 +974,6 @@ div.udf-info-row>p, div.udf-info-row>div.card>p {
 tr+tr.show-only-child, div+div.show-only-child {
     display: none !important;
 }
-/* .show-only-child-new {
-    display: none;
-}
-.show-only-child-new:only-child, .show-only-child-new:has(+.create-row) {
-    display: revert;
-} */
 
 /* table column text alignment */
 .col-r-1 td:nth-child(1),
