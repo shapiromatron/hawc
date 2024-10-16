@@ -1,7 +1,8 @@
-<div class="hide-empty-tbody">
+<div class="" id="attach_table">
+  {% if object_list or action == 'create' %}
   <h2>Attachments</h2>
   <table class="table table-sm table-striped">
-    {% if canEdit %}
+    {% if canEdit or permissions.edit %}
       {% bs4_colgroup '25,50,25' %}
       {% bs4_thead 'Attachment,Description,Editing' %}
     {% else %}
@@ -12,6 +13,8 @@
       {% for object in object_list %}
         {% include "assessment/fragments/attachment_row.html" %}
       {% endfor %}
+      {% include "assessment/fragments/attachment_edit_row.html" %}
     </tbody>
   </table>
+  {% endif %}
 </div>
