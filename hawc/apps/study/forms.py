@@ -221,6 +221,28 @@ class IdentifierStudyForm(forms.Form):
         return models.Study.save_new_from_reference(ref, cleaned_data)
 
 
+class StudyCloneForm(forms.Form):
+    assessment = forms.ModelChoiceField(
+        label="Select source assessment", queryset=Assessment.objects.all()
+    )
+
+    def __init__(self, *args, **kwargs):
+        kwargs.pop("instance")
+        self.user = kwargs.pop("user")
+        self.assessment = kwargs.pop("assessment")
+        super().__init__(*args, **kwargs)
+        self.fields["assessment"].widget.attrs["class"] = "col-md-12"
+        self.fields["assessment"].queryset = Assessment.objects.all().user_can_view(
+            self.user, exclusion_id=self.assessment.id
+        )
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        return helper
+
+
 class AttachmentForm(forms.ModelForm):
     class Meta:
         model = models.Attachment

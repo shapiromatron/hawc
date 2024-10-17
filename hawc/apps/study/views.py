@@ -1,16 +1,25 @@
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect
+from django.http import HttpRequest, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import RedirectView
 
 from ..assessment.models import Assessment
 from ..assessment.views import check_published_status
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseUpdate
+from ..common.crumbs import Breadcrumb
+from ..common.htmx import HtmxViewSet, action, can_edit
+from ..common.views import (
+    BaseCreate,
+    BaseDelete,
+    BaseDetail,
+    BaseFilterList,
+    BaseUpdate,
+)
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
+from ..riskofbias.models import RiskOfBiasMetric
 from ..udf.views import UDFDetailMixin
 from . import filterset, forms, models
 
@@ -114,6 +123,65 @@ class IdentifierStudyCreate(ReferenceStudyCreate):
         context = super().get_context_data(**kwargs)
         context["manual_entry_warning"] = False
         return context
+
+
+class StudyClone(BaseUpdate):
+    template_name = "study/study_clone.html"
+    model = Assessment
+    form_class = forms.StudyCloneForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = Breadcrumb.build_assessment_crumbs(
+            self.request.user, self.assessment
+        )
+        context["breadcrumbs"].append(Breadcrumb(name="Deep Clone"))
+        return context
+
+    def get_form_kwargs(self):
+        kw = super().get_form_kwargs()
+        kw.update(user=self.request.user, assessment=self.assessment)
+        return kw
+
+
+class StudyCloneViewSet(HtmxViewSet):
+    actions = {"update", "clone"}
+    model = Assessment
+
+    detail_fragment = "study/fragments/src_clone_details.html"
+
+    @action(methods=("post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        if not request.POST.get("assessment"):
+            return render(request, self.detail_fragment, self.get_context_data())
+        src_assessment_id = request.POST["assessment"]
+        src_studies = models.Study.objects.filter(assessment_id=src_assessment_id)
+        for study in src_studies:
+            study.rob = len(study.get_active_robs(with_final=False)) > 0
+
+        src_metrics = RiskOfBiasMetric.objects.filter(domain__assessment_id=src_assessment_id)
+        dst_metrics = RiskOfBiasMetric.objects.filter(
+            domain__assessment_id=request.item.assessment.id
+        )
+        context = self.get_context_data(
+            src_studies=src_studies,
+            src_metrics=src_metrics,
+            dst_metrics=dst_metrics,
+        )
+        return render(request, self.detail_fragment, context)
+
+    @action(methods=("post"), permission=can_edit)
+    def clone(self, request: HttpRequest, *args, **kwargs):
+        try:
+            pass
+            # print(request.POST)
+            # print("\n")
+        except Exception:
+            import traceback
+
+            traceback.print_exc()
+
+        return render(request, self.detail_fragment, self.get_context_data())
 
 
 class StudyDetail(UDFDetailMixin, BaseDetail):
