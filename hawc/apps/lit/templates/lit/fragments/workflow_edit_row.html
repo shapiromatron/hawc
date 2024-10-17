@@ -1,6 +1,6 @@
-<div hx-target="this" hx-swap="outerHTML" class="workflow-edit-row mb-4" id="workflow-form" style="max-width: 90rem;">
+<div hx-target="this" hx-swap="outerHTML" class="workflow-edit-row mb-4 {% if form and not form.instance.id %} create-row {% endif %}" style="max-width: 90rem;">
   <div class="bg-lightblue rounded box-shadow px-5 py-4 pad-form">
-    <form class="workflow-form" method="post">
+    <form method="post">
       {% if form.instance.id %}
         <div class="d-flex">
           <h3 class="py-2">Update Workflow</h3>
@@ -60,7 +60,7 @@
           <button class="btn btn-light"
                   id="workflow-cancel"
                   type='button'
-                  onclick="window.app.HAWCUtils.hideElement($(this).closest('.workflow-edit-row'), deleteEl=true)"
+                  onclick="window.app.HAWCUtils.hideElement($(this).closest('.workflow-edit-row'), deleteEl=false)"
                   style="width: 10rem; height: 2rem;">
             Cancel
           </button>

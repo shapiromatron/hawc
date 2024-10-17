@@ -968,8 +968,11 @@ div.udf-info-row>p, div.udf-info-row>div.card>p {
 .show-only-child {
     display: none;
 }
-.show-only-child:only-child {
+.show-only-child:only-child, .show-only-child:has(+.create-row.hidden), .create-row.hidden+.show-only-child {
     display: revert;
+}
+tr+tr.show-only-child, div:not(.create-row.hidden)+div.show-only-child {
+    display: none !important;
 }
 
 /* table column text alignment */
@@ -1024,13 +1027,6 @@ div.udf-info-row>p, div.udf-info-row>div.card>p {
 .col-l-12 td:nth-child(12),
 .col-l-12 th:nth-child(12) {
     text-align: left;
-}
-
-.hide-empty-tbody {
-    display: none;
-}
-.hide-empty-tbody:has(tbody>tr) {
-    display: revert;
 }
 
 .table-striped-invert tbody tr.epiv2-obj-row:nth-of-type(even) {

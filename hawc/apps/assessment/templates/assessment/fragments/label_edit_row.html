@@ -1,5 +1,5 @@
 
-<div hx-target="this" hx-swap="outerHTML" class="label-edit-row list-group-item d-flex {% if action == 'delete' %} bg-pink {% else %} bg-lightblue {% endif %}">
+<div hx-target="this" hx-swap="outerHTML" class="label-edit-row list-group-item d-flex {% if action == 'delete' %} bg-pink {% else %} bg-lightblue {% endif %}{% if form and not form.instance.id %} create-row {% endif %}">
   <form method="post" class="d-flex align-items-center p-1 w-100">
     <div class="col-md-auto flex-fill pl-0 py-2">
       {% crispy form %}
@@ -62,7 +62,7 @@
         <button class="btn btn-light px-3 py-2 ml-2"
                 id="binding-cancel"
                 type='button'
-                onclick="window.app.HAWCUtils.hideElement($(this).closest('.label-edit-row'), true)">
+                onclick="window.app.HAWCUtils.hideElement($(this).closest('.label-edit-row'), false)">
           Cancel
         </button>
       {% endif %}
