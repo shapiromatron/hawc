@@ -27,5 +27,18 @@
       };
       $('#id_assessment').on('change', hideTable).trigger('change');
     });
+    const submitSrcDetails = function(e){
+      // wrap up src clone selection
+      let clone_details = {};
+      $("#src-studies-table tr > td").each(function() {
+        let src_id = $(this).closest("tr").attr('id'),
+            cell_name = $(this).find("input").attr('name'),
+            cell_value = $(this).find("input").is(':checked');
+        if (!(src_id in clone_details))
+          clone_details[src_id] = {};
+        clone_details[src_id][cell_name] = cell_value;
+      });
+      $("#src-studies-clone").val(JSON.stringify(clone_details))
+    };
   </script>
 {% endblock extrajs %}

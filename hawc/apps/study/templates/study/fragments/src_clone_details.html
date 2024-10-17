@@ -1,36 +1,38 @@
 <div id="src-assessment-details-fragment">
   {% if src_studies %}
     <h4>Select studies*</h4>
-    <table class='table table-sm table-striped'>
+    <table id="src-studies-table" class='table table-sm table-striped'>
       {% bs4_colgroup '40,20,20,20' %}
       {% bs4_thead 'Short citation,Bioassay,Epi,Risk of Bias' %}
       <tbody>
         {% for study in src_studies %}
-          <tr>
+          <tr id="{{study.id}}">
             <td>
-              <input type="checkbox" id="study_{{study.id}}" name="study" value="{{study.id}}">
+              <input type="checkbox" id="study_{{study.id}}" name="study">
               <label style="font-weight: normal;" for="study_{{study.id}}">&nbsp;{{study}}</label>
             </td>
             <td>
-              {% if study.bioassay %}
-                <input type="checkbox" name="bioassay" value="{{study.bioassay}}">
-              {% else %}
-                <input disabled type="checkbox" name="bioassay" value="{{study.bioassay}}">
-              {% endif %}
+              <input
+                {% if not study.bioassay %}
+                  disabled
+                {% endif %}
+                type="checkbox" name="bioassay">
             </td>
             <td>
-              {% if study.epi and assessment.epi_version == 2 and study.assessment.epi_version == 2 %}
-                <input type="checkbox" name="epi" value="{{study.epi}}">
-              {% else %}
-                <input disabled type="checkbox" name="epi" value="{{study.epi}}">
-              {% endif %}
+              <input
+                {% if not study.epi %}
+                  disabled
+                {% elif not assessment.epi_version == 2 or not study.assessment.epi_version == 2 %}
+                  disabled
+                {% endif %}
+                type="checkbox" name="epi">
             </td>
             <td>
-              {% if study.rob %}
-                <input type="checkbox" name="rob" value="{{study.rob}}">
-              {% else %}
-                <input disabled type="checkbox" name="rob" value="{{study.rob}}">
-              {% endif %}
+              <input
+                {% if not study.rob %}
+                  disabled
+                {% endif %}
+                type="checkbox" name="rob">
             </td>
           </tr>
         {% endfor %}
@@ -38,14 +40,39 @@
     </table>
     <br>
     <h4>Map metrics*</h4>
-    {% include 'riskofbias/_arob_none_alert.html' %}
-    <br>
+    {% if dst_metrics %}
+      <table class='table table-sm table-striped'>
+        {% bs4_colgroup '50,50' %}
+        {% bs4_thead 'Source Metric,Destination Metric' %}
+        <tbody>
+          {% for metric in src_metrics %}
+            <tr>
+              <td>
+                <p value="{{ metric.id }}">{{ metric.name }}</p>
+              </td>
+              <td>
+                <select class="custom-select">
+                  <option selected hidden value=""></option>
+                  <option value="">N/A</option>
+                  {% for dst_metric in dst_metrics %}
+                    <option value="{{ dst_metric.id }}">{{ dst_metric.name }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      {% include 'riskofbias/_arob_none_alert.html' %}
+    {% endif %}
+    <input hidden type="text" id="src-studies-clone" name="src-studies" value="">
     <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto"
        hx-post="{% url 'study:clone_from_assessment-htmx' assessment.pk 'clone' %}"
        hx-trigger="click"
        hx-target="#src-assessment-details"
        hx-encoding="multipart/form-data"
-       onclick="alert('!')">
+       onclick="submitSrcDetails()">
       Clone
     </a>
   {% endif %}

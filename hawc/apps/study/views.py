@@ -9,7 +9,7 @@ from django.views.generic import RedirectView
 from ..assessment.models import Assessment
 from ..assessment.views import check_published_status
 from ..common.crumbs import Breadcrumb
-from ..common.htmx import HtmxViewSet, action, can_view
+from ..common.htmx import HtmxViewSet, action, can_edit
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -19,6 +19,7 @@ from ..common.views import (
 )
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
+from ..riskofbias.models import RiskOfBiasMetric
 from ..udf.views import UDFDetailMixin
 from . import filterset, forms, models
 
@@ -149,7 +150,7 @@ class StudyCloneViewSet(HtmxViewSet):
 
     detail_fragment = "study/fragments/src_clone_details.html"
 
-    @action(methods=("post"), permission=can_view)
+    @action(methods=("post"), permission=can_edit)
     def update(self, request: HttpRequest, *args, **kwargs):
         if not request.POST.get("assessment"):
             return render(request, self.detail_fragment, self.get_context_data())
@@ -157,9 +158,19 @@ class StudyCloneViewSet(HtmxViewSet):
         src_studies = models.Study.objects.filter(assessment_id=src_assessment_id)
         for study in src_studies:
             study.rob = len(study.get_active_robs(with_final=False)) > 0
-        return render(request, self.detail_fragment, self.get_context_data(src_studies=src_studies))
 
-    @action(methods=("post"), permission=can_view)
+        src_metrics = RiskOfBiasMetric.objects.filter(domain__assessment_id=src_assessment_id)
+        dst_metrics = RiskOfBiasMetric.objects.filter(
+            domain__assessment_id=request.item.assessment.id
+        )
+        context = self.get_context_data(
+            src_studies=src_studies,
+            src_metrics=src_metrics,
+            dst_metrics=dst_metrics,
+        )
+        return render(request, self.detail_fragment, context)
+
+    @action(methods=("post"), permission=can_edit)
     def clone(self, request: HttpRequest, *args, **kwargs):
         try:
             pass
