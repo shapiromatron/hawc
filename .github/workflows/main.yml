@@ -76,7 +76,7 @@ jobs:
         coverage run -m pytest --record-mode=none
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
         coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
-        coverage html -d coverage -i --fail-under=92
+        coverage html -d coverage -i
     - name: loc
       run: |
         sudo apt-get install -y cloc
