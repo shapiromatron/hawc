@@ -29,6 +29,7 @@ from ..common.helper import new_window_a
 from ..common.widgets import DateCheckboxInput
 from ..myuser.autocomplete import UserAutocomplete
 from ..study.autocomplete import StudyAutocomplete
+from ..vocab.constants import VocabularyNamespace
 from . import autocomplete, constants, models
 
 
@@ -326,6 +327,7 @@ class AssessmentModulesForm(forms.ModelForm):
         self.fields[
             "enable_risk_of_bias"
         ].label = f"Enable {self.instance.get_rob_name_display().lower()}"
+        self.fields["vocabulary"].choices = VocabularyNamespace.display_choices()
 
     @property
     def helper(self):
