@@ -511,7 +511,7 @@ class DataPivotVisualization extends D3Plot {
                                 let key = _.toString(d[cf.field_name]),
                                     value = hash.get(key);
                                 if (value && value !== NULL_CASE) {
-                                    d._styles[styles] = get_associated_style("bars", value);
+                                    d._styles[styles] = get_associated_style("lines", value);
                                 }
                             });
 
