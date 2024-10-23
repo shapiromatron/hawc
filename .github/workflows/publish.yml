@@ -1,13 +1,9 @@
 name: publish
 
 on:
-  pull_request:
   push:
-    branches:
-      - main
     tags:
       - "hawc-client-[0-9]+.[0-9]+"
-  workflow_dispatch:
 
 jobs:
   publish-hawc-client:
@@ -18,7 +14,7 @@ jobs:
 
     environment:
       name: publish
-      url: https://test.pypi.org/project/hawc-client/
+      url: https://pypi.org/project/hawc-client/
 
     steps:
       - uses: actions/checkout@v4
@@ -35,13 +31,13 @@ jobs:
       - name: Build client
         run: cd client && flit build
 
-      - name: Publish package to TestPyPI
+      - name: Publish package to PyPI
         env:
           PUBLISH_PYPI: ${{ secrets.PUBLISH_PYPI }}
         if: env.PUBLISH_PYPI != null
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          repository-url: https://test.pypi.org/legacy/
+          repository-url: https://pypi.org/legacy/
           verbose: true
           attestations: true
           print-hash: true
