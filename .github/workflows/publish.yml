@@ -1,8 +1,10 @@
 name: publish
 
 on:
+  pull_request:
   push:
-    branches: main
+    branches:
+      - main
     tags:
       - "hawc-client-[0-9]+.[0-9]+"
   workflow_dispatch:
