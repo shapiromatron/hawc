@@ -1,4 +1,4 @@
-<tr hx-target="this" hx-swap="outerHTML swap:0s" class="{{app}}-edit-row {{model}}-edit-row">
+<tr hx-target="this" hx-swap="outerHTML swap:0s" class="{{app}}-edit-row {{model}}-edit-row {% if form and not form.instance.id %} create-row {% endif %}">
   {% if form %}
     <td colspan="100%" class="p-3">
       <form method="post" class="border p-2 pb-4 edit-form-background rounded pad-form form-{{model}}">
@@ -18,7 +18,7 @@
               Save
             </button>
             <button id="{{model}}-cancel" class="btn btn-sm btn-light mx-2 py-2" type='button' style="width: 8rem; padding: 0.7rem;"
-                    onclick="window.app.HAWCUtils.hideElement($(this).closest('.{{app}}-edit-row'), true)"><i
+                    onclick="window.app.HAWCUtils.hideElement($(this).closest('.{{app}}-edit-row'), false)"><i
               class="fa fa-fw fa-times mr-1"></i>
               Cancel</button>
           {% endif %}
