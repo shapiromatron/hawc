@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish hawc_client:
+  publish hawc client:
     runs-on: ubuntu-22.04
 
     permissions:
@@ -36,7 +36,9 @@ jobs:
         run: cd client && flit build
 
       - name: Publish package to TestPyPI
-        if: secrets.PUBLISH_PYPI != ""
+        env:
+          PUBLISH_PYPI: ${{ secrets.PUBLISH_PYPI }}
+        if: env.PUBLISH_PYPI != null
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
