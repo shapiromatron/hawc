@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish hawc-client:
+  publish hawc_client:
     runs-on: ubuntu-22.04
 
     permissions:
