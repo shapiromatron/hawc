@@ -15,8 +15,8 @@ jobs:
       id-token: write
 
     environment:
-      environment: publish
-      environment_url: https://test.pypi.org/project/hawc-client/
+      name: publish
+      url: https://test.pypi.org/project/hawc-client/
 
     steps:
       - uses: actions/checkout@v4
