@@ -167,7 +167,7 @@ jobs:
         path: hawc
     - name: install hawc
       run: |
-        uv sync --all-extras --python-preference=only-system --link-mode=copy
+        uv sync --all-extras --python-preference=only-system
         uv run playwright install --with-deps chromium
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run integration tests
