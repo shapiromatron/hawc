@@ -101,9 +101,9 @@ const _getDefaultSettings = function() {
     ];
 
 class PrismaStore {
-    constructor(rootStore, data) {
+    constructor(rootStore) {
         this.root = rootStore;
-        this.data = data;
+        this.data = rootStore.base.config.prisma_data;
     }
     @observable settings = null;
 

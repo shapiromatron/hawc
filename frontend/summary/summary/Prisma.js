@@ -10,15 +10,13 @@ import {handleVisualError} from "./common";
 import PrismaDatastore from "./prisma/PrismaDatastore";
 import PrismaPlot from "./PrismaPlot";
 
-const startupPrismaAppRender = function(el, settings, data, options) {
-    const store = new PrismaDatastore(settings, data, options);
-
-    if (options.asComponent) {
-        return <PrismaComponent store={store} options={options} />;
+const startupPrismaAppRender = function(el, settings, data, config, asComponent=false) {
+    const store = new PrismaDatastore(settings, data, config);
+    if (asComponent) {
+        return <PrismaComponent store={store} config={config} />;
     }
-
     try {
-        ReactDOM.render(<PrismaComponent store={store} options={options} />, el);
+        ReactDOM.render(<PrismaComponent store={store} config={config} />, el);
     } catch (err) {
         handleVisualError(err, $(el));
     }
@@ -27,12 +25,12 @@ const startupPrismaAppRender = function(el, settings, data, options) {
 @observer
 class PrismaComponent extends Component {
     componentDidMount() {
-        const {store} = this.props,
+        const {store, config} = this.props,
             id = store.settingsHash,
             el = document.getElementById(id);
 
         if (el) {
-            new PrismaPlot(store, this.props.options).render(el);
+            new PrismaPlot(store, config).render(el);
         }
     }
     render() {
@@ -51,7 +49,7 @@ class PrismaComponent extends Component {
 }
 PrismaComponent.propTypes = {
     store: PropTypes.object.isRequired,
-    options: PropTypes.object.isRequired,
+    config: PropTypes.object.isRequired,
 };
 
 export default startupPrismaAppRender;
