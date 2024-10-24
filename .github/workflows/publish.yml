@@ -1,0 +1,44 @@
+name: publish
+
+on:
+  push:
+    tags:
+      - "hawc-client-[0-9]+.[0-9]+"
+
+jobs:
+  publish-hawc-client:
+    runs-on: ubuntu-22.04
+
+    permissions:
+      id-token: write
+
+    environment:
+      name: publish
+      url: https://pypi.org/project/hawc-client/
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          architecture: 'x64'
+          cache: 'pip'
+
+      - name: install
+        run: python -m pip install -U pip wheel flit
+
+      - name: Build client
+        run: cd client && flit build
+
+      - name: Publish package to PyPI
+        env:
+          PUBLISH_PYPI: ${{ secrets.PUBLISH_PYPI }}
+        if: env.PUBLISH_PYPI != null
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://pypi.org/legacy/
+          verbose: true
+          attestations: true
+          print-hash: true
+          packages-dir: client/dist/

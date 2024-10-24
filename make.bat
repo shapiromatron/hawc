@@ -1,5 +1,9 @@
 @ECHO off
 
+:: Windows still uses legacy code pages instead of UTF-8
+:: required for djhtml to work properly
+set PYTHONUTF8=1
+
 if "%~1" == "" goto :help
 if /I %1 == help goto :help
 if /I %1 == sync-dev goto :sync-dev

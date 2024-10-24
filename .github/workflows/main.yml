@@ -184,17 +184,3 @@ jobs:
         else
           exit 1
         fi
-    - name: build wheels
-      if: startsWith(github.event.ref, 'refs/tags/') || endsWith(github.event.ref, 'refs/heads/main')
-      run: |
-        python manage.py set_git_commit
-        flit build --format wheel
-        cd client && flit build --format wheel && cd ..
-        cp client/dist/*.whl dist
-    - name: Upload wheels
-      uses: actions/upload-artifact@v4
-      with:
-        name: wheel
-        path: dist/*.whl
-        if-no-files-found: ignore
-        retention-days: 7
