@@ -36,13 +36,17 @@ jobs:
       with:
         python-version: '3.12'
         architecture: 'x64'
-        cache: 'pip'
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+        cache-dependency-glob: "**/pyproject.toml"
     - name: install
       run: |
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
-        python -m pip install -U pip wheel
-        python -m pip install -e ".[dev,docs]"
-        python -m pip install -e client
+        uv pip install --system -U wheel
+        uv pip install --system -e ".[dev,docs]"
+        uv pip install --system -e client
     - name: lint-py
       run: |
         make lint-py
@@ -152,17 +156,22 @@ jobs:
       with:
         python-version: '3.12'
         architecture: 'x64'
-        cache: 'pip'
     - name: Download webpack build
       uses: actions/download-artifact@v4
       with:
         name: webpack
         path: hawc
-    - name: install hawc
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+        cache-dependency-glob: "**/pyproject.toml"
+    - name: install
       run: |
-        python -m pip install -U pip wheel
-        python -m pip install -e ".[dev,docs]"
-        python -m pip install -e client
+        mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
+        uv pip install --system -U wheel
+        uv pip install --system -e ".[dev,docs]"
+        uv pip install --system -e client
         playwright install --with-deps chromium
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run integration tests
