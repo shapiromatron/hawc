@@ -151,10 +151,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.12'
-        architecture: 'x64'
     - name: Download webpack build
       uses: actions/download-artifact@v4
       with:
@@ -165,24 +161,21 @@ jobs:
       with:
         enable-cache: true
         cache-dependency-glob: "**/pyproject.toml"
+    - name: Set up Python
+      run: uv python install 3.12
     - name: install
       run: |
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
-        uv venv venv --python-preference only-system --prompt hawc
-        source venv/bin/activate
-        uv pip install -U wheel
-        uv pip install -e ".[dev,docs]"
-        uv pip install -e client
-        playwright install --with-deps chromium
+        uv pip compile pyproject.toml --all-extras
+        uv sync --all-extras
+        uv run playwright install --with-deps chromium
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run integration tests
       id: test
       continue-on-error: false
       run: |
-        source venv/bin/activate
-        uv pip freeze
-        pytest tests/hawc/apps/assessment
-        py.test -svvv tests/integration/
+        uv run py.test tests/hawc/apps/assessment
+        uv run py.test -svvv tests/integration/
     # - name: run integration tests (retry)
     #   if: steps.test.outcome=='failure'
     #   id: retry
