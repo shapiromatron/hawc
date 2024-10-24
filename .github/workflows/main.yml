@@ -46,51 +46,51 @@ jobs:
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
         uv pip install --system -e ".[dev,docs]"
         uv pip install --system -e client
-    # - name: lint-py
-    #   run: |
-    #     make lint-py
-    # - name: lint-html
-    #   run: |
-    #     make lint-html
-    # - name: Setup linux environment
-    #   if: startsWith(runner.os, 'Linux')
-    #   run: |
-    #     sudo apt-get update -y
-    #     sudo apt-get install -y make libgslcblas0 libgsl-dev
-    #     export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib"
-    #     sudo cp vendor/libnlopt.so /usr/local/lib/libnlopt.so.0
-    #     sudo ln -s /lib/x86_64-linux-gnu/libgsl.so /usr/local/lib/libgsl.so.25
-    #     export SITE_PKG=`python -c "import sysconfig; print(sysconfig.get_path('purelib'))"`
-    #     export "BMD_DLL=$SITE_PKG/bmds/bin/BMDS330/libDRBMD.so"
-    #     echo $BMD_DLL
-    #     ldd $BMD_DLL
-    # - name: test
-    #   env:
-    #     DJANGO_DB_NAME: hawc
-    #     DJANGO_DB_USER: hawc
-    #     DJANGO_DB_PW: password
-    #     DJANGO_DB_HOST: localhost
-    #     DJANGO_CACHE_LOCATION: redis://localhost:6379/0
-    #     PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
-    #   run: |
-    #     if [ "$RUNNER_OS" == "Linux" ]; then
-    #       export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib"
-    #     fi
-    #     coverage run -m pytest --record-mode=none
-    #     echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
-    #     coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
-    #     coverage html -d coverage -i
-    # - name: loc
-    #   run: |
-    #     sudo apt-get install -y cloc
-    #     echo "# Lines of code report" >> $GITHUB_STEP_SUMMARY
-    #     make loc >> $GITHUB_STEP_SUMMARY
-    # - name: Upload Coverage Report
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: coverage
-    #     path: coverage
-    #     retention-days: 90
+    - name: lint-py
+      run: |
+        make lint-py
+    - name: lint-html
+      run: |
+        make lint-html
+    - name: Setup linux environment
+      if: startsWith(runner.os, 'Linux')
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y make libgslcblas0 libgsl-dev
+        export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib"
+        sudo cp vendor/libnlopt.so /usr/local/lib/libnlopt.so.0
+        sudo ln -s /lib/x86_64-linux-gnu/libgsl.so /usr/local/lib/libgsl.so.25
+        export SITE_PKG=`python -c "import sysconfig; print(sysconfig.get_path('purelib'))"`
+        export "BMD_DLL=$SITE_PKG/bmds/bin/BMDS330/libDRBMD.so"
+        echo $BMD_DLL
+        ldd $BMD_DLL
+    - name: test
+      env:
+        DJANGO_DB_NAME: hawc
+        DJANGO_DB_USER: hawc
+        DJANGO_DB_PW: password
+        DJANGO_DB_HOST: localhost
+        DJANGO_CACHE_LOCATION: redis://localhost:6379/0
+        PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
+      run: |
+        if [ "$RUNNER_OS" == "Linux" ]; then
+          export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib"
+        fi
+        coverage run -m pytest --record-mode=none
+        echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
+        coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+        coverage html -d coverage -i
+    - name: loc
+      run: |
+        sudo apt-get install -y cloc
+        echo "# Lines of code report" >> $GITHUB_STEP_SUMMARY
+        make loc >> $GITHUB_STEP_SUMMARY
+    - name: Upload Coverage Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage
+        path: coverage
+        retention-days: 90
 
   frontend:
     name: frontend
@@ -105,12 +105,12 @@ jobs:
     - name: install
       run: |
         yarn --cwd ./frontend install --frozen-lockfile
-    # - name: lint
-    #   run: |
-    #     yarn --cwd ./frontend run lint
-    # - name: test
-    #   run: |
-    #     yarn --cwd ./frontend run test
+    - name: lint
+      run: |
+        yarn --cwd ./frontend run lint
+    - name: test
+      run: |
+        yarn --cwd ./frontend run test
     - name: build for integration tests
       run: |
         yarn --cwd ./frontend run build
@@ -151,43 +151,39 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        architecture: 'x64'
+        cache: 'pip'
     - name: Download webpack build
       uses: actions/download-artifact@v4
       with:
         name: webpack
         path: hawc
-    - name: Install uv
-      uses: astral-sh/setup-uv@v3
-      with:
-        enable-cache: true
-        cache-dependency-glob: "**/pyproject.toml"
-    - name: Set up Python
-      run: uv python install 3.12
-    - name: install
+    - name: install hawc
       run: |
-        mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
-        uv pip compile pyproject.toml --all-extras
-        uv sync --all-extras
-        uv run playwright install --with-deps chromium
+        python -m pip install -U pip wheel
+        python -m pip install -e ".[dev,docs]"
+        python -m pip install -e client
+        playwright install --with-deps chromium
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run integration tests
       id: test
-      continue-on-error: false
+      continue-on-error: true
       run: |
-        uv run py.test tests/hawc/apps/assessment
-        uv run py.test -svvv tests/integration/
-    # - name: run integration tests (retry)
-    #   if: steps.test.outcome=='failure'
-    #   id: retry
-    #   continue-on-error: true
-    #   run: |
-    #     source venv/bin/activate
-    #     py.test -sv --lf tests/integration/
-    # - name: set status
-    #   if: always()
-    #   run: |
-    #     if ${{ steps.test.outcome=='success' || steps.retry.outcome=='success' }}; then
-    #       echo success!
-    #     else
-    #       exit 1
-    #     fi
+        py.test -sv tests/integration/
+    - name: run integration tests (retry)
+      if: steps.test.outcome=='failure'
+      id: retry
+      continue-on-error: true
+      run: |
+        py.test -sv --lf tests/integration/
+    - name: set status
+      if: always()
+      run: |
+        if ${{ steps.test.outcome=='success' || steps.retry.outcome=='success' }}; then
+          echo success!
+        else
+          exit 1
+        fi
