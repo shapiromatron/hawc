@@ -44,7 +44,6 @@ jobs:
     - name: install
       run: |
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
-        uv pip install --system -U wheel
         uv pip install --system -e ".[dev,docs]"
         uv pip install --system -e client
     - name: lint-py
@@ -169,21 +168,25 @@ jobs:
     - name: install
       run: |
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
-        uv pip install --system -U wheel
-        uv pip install --system -e ".[dev,docs]"
-        uv pip install --system -e client
+        uv venv venv
+        venv\bin\activate
+        uv pip install -U wheel
+        uv pip install -e ".[dev,docs]"
+        uv pip install -e client
         playwright install --with-deps chromium
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run integration tests
       id: test
       continue-on-error: true
       run: |
+        venv\bin\activate
         py.test -sv tests/integration/
     - name: run integration tests (retry)
       if: steps.test.outcome=='failure'
       id: retry
       continue-on-error: true
       run: |
+        venv\bin\activate
         py.test -sv --lf tests/integration/
     - name: set status
       if: always()
@@ -196,6 +199,7 @@ jobs:
     - name: build wheels
       if: startsWith(github.event.ref, 'refs/tags/') || endsWith(github.event.ref, 'refs/heads/main')
       run: |
+        venv\bin\activate
         python manage.py set_git_commit
         flit build --format wheel
         cd client && flit build --format wheel && cd ..
