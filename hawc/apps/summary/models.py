@@ -7,6 +7,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from docx import Document as create_document
@@ -416,6 +417,24 @@ class Visual(models.Model):
                 + "?action=venn_reference_list",
             }
         )
+
+    @classmethod
+    def get_data_from_config(cls, config):
+        """Get Visual data without having an ID."""
+        visual_type = config.get("visual_type")
+        assessment_id = config.get("assessment")
+        assessment = get_object_or_404(Assessment, assessment_id)
+        if visual_type == constants.VisualType.PRISMA:
+            return cls.get_prisma_data(assessment)
+        else:
+            raise ValueError("Not supported for this visual type")
+
+    def get_data(self):
+        """Get data needed to display Visual."""
+        if self.visual_type == constants.VisualType.PRISMA:
+            return self.get_prisma_data(self.assessment)
+        else:
+            raise ValueError("Not supported for this visual type")
 
     @staticmethod
     def get_dose_units():

@@ -445,7 +445,12 @@ class VisualizationCreate(BaseCreate):
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
         if context["visual_type"] == constants.VisualType.PRISMA:
-            context.update(prisma_data=models.Visual.get_prisma_data(self.assessment))
+            context.update(
+                prisma_data=models.Visual.get_prisma_data(self.assessment),
+                api_url=reverse("summary:api:visual-data-json"),
+                interaction_url=reverse("lit:interactive", args=(self.assessment.id,))
+                + "?action=venn_reference_list",
+            )
         return context
 
     def get_initial_visual(self, context) -> dict:
@@ -542,7 +547,10 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
             list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
         )
         if context["visual_type"] == constants.VisualType.PRISMA:
-            context.update(prisma_data=models.Visual.get_prisma_data(self.assessment))
+            context.update(
+                prisma_data=models.Visual.get_prisma_data(self.assessment),
+                api_url=reverse("summary:api:visual-data", args=(self.object.pk,)),
+            )
         context["initial_data"] = json.dumps(
             serializers.VisualSerializer().to_representation(self.object)
         )
