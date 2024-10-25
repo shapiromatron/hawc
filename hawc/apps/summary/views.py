@@ -543,8 +543,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         )
         if context["visual_type"] == constants.VisualType.PRISMA:
             context.update(
-                prisma_data=models.Visual.get_prisma_data(self.assessment),
-                api_url=reverse("summary:api:visual-data", args=(self.object.pk,)),
+                api_url=reverse("summary:api:visual-data-json"),
             )
         context["initial_data"] = json.dumps(
             serializers.VisualSerializer().to_representation(self.object)

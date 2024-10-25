@@ -123,9 +123,14 @@ class PrismaStore {
     }
 
     @action.bound getDataset() {
+        let payload = {}
+        if (this.root.base.config.crud === "Create") {
+            payload = { config: this.root.base.config };
+        }
+        else payload = { pk: this.root.base.config.instance.id };
         h.handleSubmit(this.root.base.config.api_url, "POST",
             this.root.base.config.csrf,
-            {config: this.root.base.config},
+            payload,
             (response) => {
                 this.root.base.dataset = JSON.parse(response);
                 this.root.base.dataRefreshRequired = false;
