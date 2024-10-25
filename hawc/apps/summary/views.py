@@ -445,12 +445,7 @@ class VisualizationCreate(BaseCreate):
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
         if context["visual_type"] == constants.VisualType.PRISMA:
-            context.update(
-                prisma_data=models.Visual.get_prisma_data(self.assessment),
-                api_url=reverse("summary:api:visual-data-json"),
-                interaction_url=reverse("lit:interactive", args=(self.assessment.id,))
-                + "?action=venn_reference_list",
-            )
+            context.update(api_url=reverse("summary:api:visual-data-json"))
         return context
 
     def get_initial_visual(self, context) -> dict:

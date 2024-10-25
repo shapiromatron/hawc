@@ -136,7 +136,7 @@ class VisualViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
     def data_json(self, request):
         """Get json data export for a visual. Use primary key if available, or use config."""
         if pk := request.data.get("pk", None):
-            data = get_object_or_404(models.Visual, pk).get_data()
+            data = get_object_or_404(models.Visual, pk=pk).get_data()
             return Response(data)
 
         if config := request.data.get("config", None):

@@ -423,7 +423,7 @@ class Visual(models.Model):
         """Get Visual data without having an ID."""
         visual_type = config.get("visual_type")
         assessment_id = config.get("assessment")
-        assessment = get_object_or_404(Assessment, assessment_id)
+        assessment = get_object_or_404(Assessment, pk=assessment_id)
         if visual_type == constants.VisualType.PRISMA:
             return cls.get_prisma_data(assessment)
         else:
