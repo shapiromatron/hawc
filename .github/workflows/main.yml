@@ -44,7 +44,7 @@ jobs:
     - name: install
       run: |
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
-        uv pip install --system -e ".[dev,docs]"
+        uv sync --all-extras --python-preference=only-system
         uv pip install --system -e client
     - name: lint-py
       run: |
