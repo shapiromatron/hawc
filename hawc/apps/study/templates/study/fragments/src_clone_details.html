@@ -41,7 +41,7 @@
     <br>
     <h4>Map metrics*</h4>
     {% if dst_metrics %}
-      <table class='table table-sm table-striped'>
+      <table id="metric-map-table" class='table table-sm table-striped'>
         {% bs4_colgroup '50,50' %}
         {% bs4_thead 'Source Metric,Destination Metric' %}
         <tbody>
@@ -67,9 +67,11 @@
       {% include 'riskofbias/_arob_none_alert.html' %}
     {% endif %}
     <input hidden type="text" id="src-studies-clone" name="src-studies" value="">
+    <input hidden type="text" id="metric-map-clone" name="metric-map" value="">
     <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto"
        hx-post="{% url 'study:clone_from_assessment-htmx' assessment.pk 'clone' %}"
        hx-trigger="click"
+       hx-indicator="#spinner-{{object.pk}}"
        hx-target="#src-assessment-details"
        hx-encoding="multipart/form-data"
        onclick="submitSrcDetails()">

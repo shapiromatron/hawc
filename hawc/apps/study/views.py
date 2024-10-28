@@ -1,3 +1,5 @@
+import json
+
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
@@ -22,6 +24,7 @@ from ..mgmt.views import EnsurePreparationStartedMixin
 from ..riskofbias.models import RiskOfBiasMetric
 from ..udf.views import UDFDetailMixin
 from . import filterset, forms, models
+from .clone import clone_animal_bioassay, clone_epiv2, clone_rob, clone_study
 
 
 class StudyFilterList(BaseFilterList):
@@ -152,9 +155,9 @@ class StudyCloneViewSet(HtmxViewSet):
 
     @action(methods=("post"), permission=can_edit)
     def update(self, request: HttpRequest, *args, **kwargs):
-        if not request.POST.get("assessment"):
+        src_assessment_id = request.POST.get("src_assessment")
+        if not src_assessment_id:
             return render(request, self.detail_fragment, self.get_context_data())
-        src_assessment_id = request.POST["assessment"]
         src_studies = models.Study.objects.filter(assessment_id=src_assessment_id)
         for study in src_studies:
             study.rob = len(study.get_active_robs(with_final=False)) > 0
@@ -173,15 +176,38 @@ class StudyCloneViewSet(HtmxViewSet):
     @action(methods=("post"), permission=can_edit)
     def clone(self, request: HttpRequest, *args, **kwargs):
         try:
-            pass
-            # print(request.POST)
-            # print("\n")
-        except Exception:
-            import traceback
+            dst_assessment_id = request.item.assessment.id
+            src_studies = json.loads(request.POST["src-studies"])
+            metric_map = json.loads(request.POST["metric-map"])
 
-            traceback.print_exc()
+            for src_study_id, opts in src_studies.items():
+                if not opts["study"]:
+                    continue
+                src_study_id = int(src_study_id)
+                clone_map = clone_study(src_study_id, dst_assessment_id)
+                dst_study_id = clone_map["study"][src_study_id]
 
-        return render(request, self.detail_fragment, self.get_context_data())
+                if opts["bioassay"]:
+                    clone_map = {
+                        **clone_map,
+                        **clone_animal_bioassay(src_study_id, dst_study_id),
+                    }
+                if opts["epi"]:
+                    clone_map = {
+                        **clone_map,
+                        **clone_epiv2(src_study_id, dst_study_id),
+                    }
+                if opts["rob"] and metric_map:
+                    clone_map = {
+                        **clone_map,
+                        **clone_rob(src_study_id, dst_study_id, metric_map, clone_map),
+                    }
+        except Exception as e:
+            return self.str_response(e)
+
+        # FIXME implement HtmxView instead?
+        # return redirect(reverse_lazy("study:list", args=(request.item.assessment.id,)))
+        return self.str_response()
 
 
 class StudyDetail(UDFDetailMixin, BaseDetail):

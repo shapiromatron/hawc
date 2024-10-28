@@ -222,7 +222,7 @@ class IdentifierStudyForm(forms.Form):
 
 
 class StudyCloneForm(forms.Form):
-    assessment = forms.ModelChoiceField(
+    src_assessment = forms.ModelChoiceField(
         label="Select source assessment", queryset=Assessment.objects.all()
     )
 
@@ -231,8 +231,8 @@ class StudyCloneForm(forms.Form):
         self.user = kwargs.pop("user")
         self.assessment = kwargs.pop("assessment")
         super().__init__(*args, **kwargs)
-        self.fields["assessment"].widget.attrs["class"] = "col-md-12"
-        self.fields["assessment"].queryset = Assessment.objects.all().user_can_view(
+        self.fields["src_assessment"].widget.attrs["class"] = "col-md-12"
+        self.fields["src_assessment"].queryset = Assessment.objects.all().user_can_view(
             self.user, exclusion_id=self.assessment.id
         )
 

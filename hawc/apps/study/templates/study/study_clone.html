@@ -25,7 +25,7 @@
       const hideTable = function(e){
         $("#src-assessment-details-fragment").hide();
       };
-      $('#id_assessment').on('change', hideTable).trigger('change');
+      $('#id_src_assessment').on('change', hideTable).trigger('change');
     });
     const submitSrcDetails = function(e){
       // wrap up src clone selection
@@ -38,7 +38,17 @@
           clone_details[src_id] = {};
         clone_details[src_id][cell_name] = cell_value;
       });
-      $("#src-studies-clone").val(JSON.stringify(clone_details))
+      $("#src-studies-clone").val(JSON.stringify(clone_details));
+
+      // wrap up metric map selection
+      let metric_map = {};
+      $("#metric-map-table tr").each(function() {
+        let src_metric = $(this).find("p").attr("value"),
+            dst_metric = $(this).find("select :selected").val();
+        if (dst_metric)
+          metric_map[src_metric] = dst_metric;
+      })
+      $("#metric-map-clone").val(JSON.stringify(metric_map));
     };
   </script>
 {% endblock extrajs %}
