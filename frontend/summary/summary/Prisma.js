@@ -10,7 +10,7 @@ import {handleVisualError} from "./common";
 import PrismaDatastore from "./prisma/PrismaDatastore";
 import PrismaPlot from "./PrismaPlot";
 
-const startupPrismaAppRender = function(el, settings, data, config, asComponent=false) {
+const startupPrismaAppRender = function(el, settings, data, config, asComponent = false) {
     const store = new PrismaDatastore(settings, data, config);
     if (asComponent) {
         return <PrismaComponent store={store} config={config} />;

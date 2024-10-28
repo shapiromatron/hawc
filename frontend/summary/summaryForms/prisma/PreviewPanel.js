@@ -9,8 +9,10 @@ import startupPrismaAppRender from "../../summary/Prisma";
 @observer
 class PreviewPanel extends Component {
     render() {
-        const {store} = this.props, settings = toJS(store.subclass.settings),
-            data = store.subclass.data, config = store.base.config;
+        const {store} = this.props,
+            settings = toJS(store.subclass.settings),
+            data = store.subclass.data,
+            config = store.base.config;
         return (
             <div>
                 <legend>Preview</legend>

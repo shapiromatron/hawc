@@ -118,31 +118,32 @@ class PrismaStore {
     @action setFromJsonSettings(settings, firstTime) {
         this.settings = settings;
         if (firstTime) {
-            this.getDataset()
+            this.getDataset();
         }
     }
 
     @action.bound getDataset() {
-        let payload = {}
+        let payload = {};
         if (this.root.base.config.crud === "Create") {
-            payload = { config: this.root.base.config };
-        }
-        else payload = { pk: this.root.base.config.instance.id };
-        h.handleSubmit(this.root.base.config.api_url, "POST",
+            payload = {config: this.root.base.config};
+        } else payload = {pk: this.root.base.config.instance.id};
+        h.handleSubmit(
+            this.root.base.config.api_url,
+            "POST",
             this.root.base.config.csrf,
             payload,
-            (response) => {
+            response => {
                 this.root.base.dataset = JSON.parse(response);
                 this.root.base.dataRefreshRequired = false;
                 this.afterGetDataset();
             },
-            (err) => {
+            err => {
                 console.error(err);
             },
-            (err) => {
+            err => {
                 console.error(err);
             }
-        )
+        );
     }
 
     @action.bound afterGetDataset() {
