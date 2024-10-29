@@ -24,7 +24,7 @@ from ..common.views import (
     BaseUpdate,
 )
 from ..riskofbias.models import RiskOfBiasMetric
-from . import constants, filterset, forms, models, prefilters, schemas, serializers
+from . import constants, filterset, forms, models, prefilters, serializers
 
 
 def get_visual_list_crumb(assessment) -> Breadcrumb:
@@ -446,27 +446,6 @@ class VisualizationCreate(BaseCreate):
         )
         if context["visual_type"] == constants.VisualType.PRISMA:
             context.update(api_url=reverse("summary:api:visual-data-json"))
-        context["config"] = schemas.VisualConfig(
-            assessment=self.assessment.id,
-            crud="Create",
-            dose_units=models.Visual.get_dose_units(),
-            instance={},
-            visual_type=int(self.kwargs.get("visual_type")),
-            evidence_type=self.evidence_type,
-            initial_data=self.get_initial_visual(context),
-            csrf=get_token(self.request),
-            cancel_url=reverse("summary:visualization_list", args=(self.assessment.id,)),
-            data_url=reverse("summary:api:visual-list"),
-            endpoint_url=reverse("autocomplete", args=("animal-endpointautocomplete",)),
-            preview_url=reverse(
-                "summary:visualization_create_tester",
-                args=(self.assessment.id, int(self.kwargs.get("visual_type")), self.evidence_type),
-            ),
-            rob_metrics=list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id)),
-            api_heatmap_datasets=context["form"].instance.get_api_heatmap_datasets(),
-            clear_cache_url=self.assessment.get_clear_cache_url(),
-            api_url=reverse("summary:api:visual-data-json"),
-        ).model_dump()
         return context
 
     def get_initial_visual(self, context) -> dict:

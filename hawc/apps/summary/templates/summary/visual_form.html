@@ -29,8 +29,7 @@
 
 {% block extrajs %}
   {{ smart_tag_form.media }}
-  {{ config|json_script:"config" }}
-  {% comment %} <script id="config" type="text/json" charset="utf-8">
+  <script id="config" type="text/json" charset="utf-8">
     {
       "assessment": {{assessment.id}},
       "crud": "{{crud}}",
@@ -48,7 +47,7 @@
       "clear_cache_url": "{{assessment.get_clear_cache_url}}"
       {% if api_url %},"api_url": "{{api_url|safe}}"{% endif %}
     }
-  </script> {% endcomment %}
+  </script>
   <script type="text/javascript">
     window.app.startup("summaryFormsStartup", function(summaryForms){
       const config = window.app.getConfig(),
