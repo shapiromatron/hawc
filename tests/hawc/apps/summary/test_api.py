@@ -253,6 +253,28 @@ class TestVisual:
         }
         self._test_visual_crud_api(data, rewrite_data_files, "exploratory-heatmap")
 
+    def test_api_json_data(self, rewrite_data_files: bool, db_keys):
+        slug = "prisma-visual"
+        visual = models.Visual.objects.get(slug=slug)
+        url = reverse("summary:api:visual-json-data", args=(visual.id,))
+        # anon can get from public assessment
+        anon_client = Client()
+        resp = anon_client.get(url)
+        assert resp.status_code == 200
+        resp_data = resp.json()
+        data_str = json.dumps(resp_data, indent=2, sort_keys=True)
+        key = f"api-summary-visual-json-data-{slug}.json"
+        check_api_json_data(json.loads(data_str), key, rewrite_data_files)
+
+        # can't get if private
+        visual.published = False
+        visual.save()
+        assert anon_client.get(url).status_code == 404
+
+        team_client = Client()
+        assert team_client.login(username="team@hawcproject.org", password="pw") is True
+        assert team_client.get(url).status_code == 200
+
 
 @pytest.mark.django_db
 class TestDataPivot:
@@ -374,6 +396,26 @@ class TestSummaryAssessmentViewSet:
         data = resp.json()
         key = f"api-summary-heatmap-datasets-{db_keys.assessment_working}.json"
         check_api_json_data(data, key, rewrite_data_files)
+
+    def test_json_data(self, db_keys, rewrite_data_files):
+        anon_client = APIClient()
+        rev_client = APIClient()
+        assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
+        team_client = APIClient()
+        assert team_client.login(username="team@hawcproject.org", password="pw") is True
+
+        url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
+        payload = {"config": {"visual_type": 9}}
+
+        assert anon_client.post(url, payload, format="json").status_code == 403
+        assert rev_client.post(url, payload, format="json").status_code == 403
+
+        resp = team_client.post(url, payload, format="json")
+        assert resp.status_code == 200
+        resp_data = resp.json()
+        data_str = json.dumps(resp_data, indent=2, sort_keys=True)
+        key = f"api-summary-assessment-visual-json-{db_keys.assessment_working}.json"
+        check_api_json_data(json.loads(data_str), key, rewrite_data_files)
 
 
 @pytest.mark.django_db

@@ -53,7 +53,7 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
     @action(
         detail=True,
         methods=("post",),
-        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
     )
     def json_data(self, request, pk):
         """Get json data for a Visual using a configuration given in the payload."""
@@ -148,7 +148,7 @@ class VisualViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
             )
         return FlatExport.api_response(df, obj.slug)
 
-    @action(detail=False, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
+    @action(detail=True, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
     def json_data(self, request, pk):
         """Get json data export for a visual."""
         instance = self.get_object()
