@@ -9,7 +9,7 @@
        hx-indicator="#spinner-{{object.pk}}"
        hx-target="#src-assessment-details"
        hx-encoding="multipart/form-data">
-      Get Studies
+      Fetch Available Studies
     </a>
     <i class="fa fa-spinner fa-spin htmx-indicator ml-3" id="spinner-{{object.pk}}" aria-hidden="true"></i>
     <br><br>
@@ -30,7 +30,7 @@
     const submitSrcDetails = function(e){
       // wrap up src clone selection
       let clone_details = {};
-      $("#src-studies-table tr > td").each(function() {
+      $("#src-studies-table tbody > tr > td").each(function() {
         let src_id = $(this).closest("tr").attr('id'),
             cell_name = $(this).find("input").attr('name'),
             cell_value = $(this).find("input").is(':checked');
@@ -49,6 +49,7 @@
           metric_map[src_metric] = dst_metric;
       })
       $("#metric-map-clone").val(JSON.stringify(metric_map));
+      $("#id_src_assessment").val("");
     };
   </script>
 {% endblock extrajs %}

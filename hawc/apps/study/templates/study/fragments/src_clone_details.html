@@ -1,9 +1,15 @@
 <div id="src-assessment-details-fragment">
+  {% if success_msg %}
+    <div class="col alert alert-success success">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      {{ success_msg }}
+    </div>
+  {% endif %}
   {% if src_studies %}
     <h4>Select studies*</h4>
     <table id="src-studies-table" class='table table-sm table-striped'>
       {% bs4_colgroup '40,20,20,20' %}
-      {% bs4_thead 'Short citation,Bioassay,Epi,Risk of Bias' %}
+      {% bs4_thead 'Short citation,Bioassay,Epi*,Risk of Bias' %}
       <tbody>
         {% for study in src_studies %}
           <tr id="{{study.id}}">
@@ -37,34 +43,43 @@
           </tr>
         {% endfor %}
       </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="100%" class="text-muted">
+            * Only assessments using epidemiology schema version 2 are eligible to be cloned.
+          </td>
+        </tr>
+      </tfoot>
     </table>
-    <br>
-    <h4>Map metrics*</h4>
-    {% if dst_metrics %}
-      <table id="metric-map-table" class='table table-sm table-striped'>
-        {% bs4_colgroup '50,50' %}
-        {% bs4_thead 'Source Metric,Destination Metric' %}
-        <tbody>
-          {% for metric in src_metrics %}
-            <tr>
-              <td>
-                <p value="{{ metric.id }}">{{ metric.name }}</p>
-              </td>
-              <td>
-                <select class="custom-select">
-                  <option selected hidden value=""></option>
-                  <option value="">N/A</option>
-                  {% for dst_metric in dst_metrics %}
-                    <option value="{{ dst_metric.id }}">{{ dst_metric.name }}</option>
-                  {% endfor %}
-                </select>
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      {% include 'riskofbias/_arob_none_alert.html' %}
+    {% if src_metrics %}
+      <br>
+      <h4>Map metrics*</h4>
+      {% if dst_metrics %}
+        <table id="metric-map-table" class='table table-sm table-striped'>
+          {% bs4_colgroup '50,50' %}
+          {% bs4_thead 'Source Metric,Destination Metric' %}
+          <tbody>
+            {% for metric in src_metrics %}
+              <tr>
+                <td>
+                  <p value="{{ metric.id }}">{{ metric.name }}</p>
+                </td>
+                <td>
+                  <select class="custom-select">
+                    <option selected hidden value=""></option>
+                    <option value="">N/A</option>
+                    {% for dst_metric in dst_metrics %}
+                      <option value="{{ dst_metric.id }}">{{ dst_metric.name }}</option>
+                    {% endfor %}
+                  </select>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        {% include 'riskofbias/_arob_none_alert.html' %}
+      {% endif %}
     {% endif %}
     <input hidden type="text" id="src-studies-clone" name="src-studies" value="">
     <input hidden type="text" id="metric-map-clone" name="metric-map" value="">
@@ -77,6 +92,17 @@
        onclick="submitSrcDetails()">
       Clone
     </a>
+
+    <script type="text/javascript">
+      $('#src-studies-table input').on('change', (e) => {
+        let study_input = $(e.target).closest("tr").find('input[name="study"]');
+        let row_inputs = $(e.target).closest("tr").find('input');
+        if ($(e.target).is(":checked"))
+          study_input.prop('checked', true);
+        else if (!study_input.is(":checked"))
+        row_inputs.prop('checked', false);
+      });
+    </script>
   {% endif %}
 </div>
 
