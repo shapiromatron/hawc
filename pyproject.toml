@@ -115,6 +115,10 @@ omit = [
   "./venv/*",
 ]
 
+[tool.coverage.report]
+fail_under=91.5
+precision=1
+
 [tool.flit.sdist]
 include = [
   "hawc/static/bundles/**/*",
