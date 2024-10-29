@@ -17,7 +17,7 @@ from ..common.api import DisabledPagination
 from ..common.helper import FlatExport, cacheable
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
-from . import models, serializers, table_serializers
+from . import models, schemas, serializers, table_serializers
 
 
 class UnpublishedFilter(BaseFilterBackend):
@@ -140,7 +140,8 @@ class VisualViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
             return Response(data)
 
         if config := request.data.get("config", None):
-            data = models.Visual.get_data_from_config(config)
+            visual_config = schemas.VisualConfig.model_validate(config)
+            data = models.Visual.get_data_from_config(visual_config)
             return Response(data)
 
         return Response(

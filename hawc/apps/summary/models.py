@@ -41,7 +41,7 @@ from ..lit.models import Reference, ReferenceFilterTag, Search
 from ..riskofbias.models import RiskOfBiasScore
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
-from . import constants, managers, prefilters
+from . import constants, managers, prefilters, schemas
 
 logger = logging.getLogger(__name__)
 
@@ -419,12 +419,10 @@ class Visual(models.Model):
         )
 
     @classmethod
-    def get_data_from_config(cls, config):
+    def get_data_from_config(cls, config: schemas.VisualConfig):
         """Get Visual data without having an ID."""
-        visual_type = config.get("visual_type")
-        assessment_id = config.get("assessment")
-        assessment = get_object_or_404(Assessment, pk=assessment_id)
-        if visual_type == constants.VisualType.PRISMA:
+        assessment = get_object_or_404(Assessment, pk=config.assessment)
+        if config.visual_type == constants.VisualType.PRISMA:
             return cls.get_prisma_data(assessment)
         else:
             raise ValueError("Not supported for this visual type")
