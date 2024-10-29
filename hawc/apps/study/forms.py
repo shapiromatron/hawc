@@ -223,7 +223,9 @@ class IdentifierStudyForm(forms.Form):
 
 class StudyCloneForm(forms.Form):
     src_assessment = forms.ModelChoiceField(
-        label="Select source assessment", queryset=Assessment.objects.all()
+        label="Select source assessment",
+        queryset=Assessment.objects.all(),
+        required=False,
     )
 
     def __init__(self, *args, **kwargs):

@@ -6,7 +6,7 @@
     </div>
   {% endif %}
   {% if src_studies %}
-    <h4>Select studies*</h4>
+    <h4>Select studies</h4>
     <table id="src-studies-table" class='table table-sm table-striped'>
       {% bs4_colgroup '40,20,20,20' %}
       {% bs4_thead 'Short citation,Bioassay,Epi*,Risk of Bias' %}
@@ -52,34 +52,36 @@
       </tfoot>
     </table>
     {% if src_metrics %}
-      <br>
-      <h4>Map metrics*</h4>
-      {% if dst_metrics %}
-        <table id="metric-map-table" class='table table-sm table-striped'>
-          {% bs4_colgroup '50,50' %}
-          {% bs4_thead 'Source Metric,Destination Metric' %}
-          <tbody>
-            {% for metric in src_metrics %}
-              <tr>
-                <td>
-                  <p value="{{ metric.id }}">{{ metric.name }}</p>
-                </td>
-                <td>
-                  <select class="custom-select">
-                    <option selected hidden value=""></option>
-                    <option value="">N/A</option>
-                    {% for dst_metric in dst_metrics %}
-                      <option value="{{ dst_metric.id }}">{{ dst_metric.name }}</option>
-                    {% endfor %}
-                  </select>
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      {% else %}
-        {% include 'riskofbias/_arob_none_alert.html' %}
-      {% endif %}
+      <div id="metrics" class="hidden">
+        <br>
+        <h4>Map metrics</h4>
+        {% if dst_metrics %}
+          <table id="metric-map-table" class='table table-sm table-striped'>
+            {% bs4_colgroup '50,50' %}
+            {% bs4_thead 'Source Metric,Destination Metric' %}
+            <tbody>
+              {% for metric in src_metrics %}
+                <tr>
+                  <td>
+                    <p value="{{ metric.id }}">{{ metric.name }}</p>
+                  </td>
+                  <td>
+                    <select class="custom-select">
+                      <option selected hidden value=""></option>
+                      <option value="">N/A</option>
+                      {% for dst_metric in dst_metrics %}
+                        <option value="{{ dst_metric.id }}">{{ dst_metric.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          {% include 'riskofbias/_arob_none_alert.html' %}
+        {% endif %}
+      </div>
     {% endif %}
     <input hidden type="text" id="src-studies-clone" name="src-studies" value="">
     <input hidden type="text" id="metric-map-clone" name="metric-map" value="">
@@ -101,6 +103,11 @@
           study_input.prop('checked', true);
         else if (!study_input.is(":checked"))
         row_inputs.prop('checked', false);
+
+        if ($('input[name="rob"]').is(":checked"))
+          $("#metrics").show();
+        else
+          $("#metrics").hide();
       });
     </script>
   {% endif %}

@@ -23,7 +23,7 @@ from ..mgmt.views import EnsurePreparationStartedMixin
 from ..riskofbias.models import RiskOfBiasMetric
 from ..udf.views import UDFDetailMixin
 from . import filterset, forms, models
-from .clone import clone_animal_bioassay, clone_epiv2, clone_rob, clone_study
+from .actions.clone import clone_animal_bioassay, clone_epiv2, clone_rob, clone_study
 
 
 class StudyFilterList(BaseFilterList):

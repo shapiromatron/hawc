@@ -1,12 +1,12 @@
 from django.apps import apps
 
-from ..animal.models import (
+from ...animal.models import (
     AnimalGroup,
     Endpoint,
     EndpointGroup,
     Experiment,
 )
-from ..epiv2.models import (
+from ...epiv2.models import (
     AdjustmentFactor,
     Chemical,
     DataExtraction,
@@ -15,11 +15,11 @@ from ..epiv2.models import (
     ExposureLevel,
     Outcome,
 )
-from ..riskofbias.models import (
+from ...riskofbias.models import (
     RiskOfBias,
     RiskOfBiasScoreOverrideObject,
 )
-from .models import Study
+from ..models import Study
 
 
 def clone_study(src_study_id, dst_assessment_id):
