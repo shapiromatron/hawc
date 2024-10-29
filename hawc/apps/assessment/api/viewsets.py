@@ -276,7 +276,7 @@ class Assessment(AssessmentEditViewSet):
         """Get the list of assessments where the user is a team member or project manager."""
         queryset = self.model.objects.filter(
             Q(project_manager=request.user) | Q(team_members=request.user)
-        )
+        ).distinct()
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 
