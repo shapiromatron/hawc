@@ -123,10 +123,8 @@ class PrismaStore {
     }
 
     @action.bound getDataset() {
-        let payload = {};
-        if (this.root.base.config.crud === "Create") {
-            payload = {config: this.root.base.config};
-        } else payload = {pk: this.root.base.config.instance.id};
+        const payload =  {config: this.root.base.config};
+        console.log(payload);
         h.handleSubmit(
             this.root.base.config.api_url,
             "POST",

@@ -7,7 +7,6 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
 from docx import Document as create_document
@@ -419,9 +418,8 @@ class Visual(models.Model):
         )
 
     @classmethod
-    def get_data_from_config(cls, config: schemas.VisualConfig):
+    def get_data_from_config(cls, assessment: Assessment, config: schemas.VisualDataRequest):
         """Get Visual data without having an ID."""
-        assessment = get_object_or_404(Assessment, pk=config.assessment)
         if config.visual_type == constants.VisualType.PRISMA:
             return cls.get_prisma_data(assessment)
         else:

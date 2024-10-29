@@ -50,6 +50,24 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
         datasets = models.Visual.get_heatmap_datasets(instance).model_dump()
         return Response(datasets)
 
+    @action(
+        detail=True,
+        methods=("post",),
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+    )
+    def json_data(self, request, pk):
+        """Get json data for a Visual using a configuration given in the payload."""
+        assessment = self.get_object()
+        if config := request.data.get("config"):
+            valid_config = schemas.VisualDataRequest.model_validate(config)
+            data = models.Visual.get_data_from_config(assessment, valid_config)
+            return Response(data)
+        else:
+            return Response(
+                {"error": "Expected config or Visual ID in payload."},
+                status=HTTP_400_BAD_REQUEST,
+            )
+
 
 class DataPivotViewSet(AssessmentViewSet):
     """
@@ -130,24 +148,12 @@ class VisualViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
             )
         return FlatExport.api_response(df, obj.slug)
 
-    @action(
-        detail=False, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT
-    )
-    def data_json(self, request):
-        """Get json data export for a visual. Use primary key if available, or use config."""
-        if pk := request.data.get("pk", None):
-            data = get_object_or_404(models.Visual, pk=pk).get_data()
-            return Response(data)
-
-        if config := request.data.get("config", None):
-            visual_config = schemas.VisualConfig.model_validate(config)
-            data = models.Visual.get_data_from_config(visual_config)
-            return Response(data)
-
-        return Response(
-            {"error": "Expected config or Visual ID in payload."},
-            status=HTTP_400_BAD_REQUEST,
-        )
+    @action(detail=False, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
+    def json_data(self, request, pk):
+        """Get json data export for a visual."""
+        instance = self.get_object()
+        data = instance.get_data()
+        return Response(data)
 
 
 class SummaryTableViewSet(AssessmentEditViewSet):

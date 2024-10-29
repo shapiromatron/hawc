@@ -445,7 +445,9 @@ class VisualizationCreate(BaseCreate):
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
         if context["visual_type"] == constants.VisualType.PRISMA:
-            context.update(api_url=reverse("summary:api:visual-data-json"))
+            context.update(
+                api_url=reverse("summary:api:assessment-json-data", args=(self.assessment.id,))
+            )
         return context
 
     def get_initial_visual(self, context) -> dict:
@@ -543,7 +545,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         )
         if context["visual_type"] == constants.VisualType.PRISMA:
             context.update(
-                api_url=reverse("summary:api:visual-data-json"),
+                api_url=reverse("summary:api:assessment-json-data", args=(self.assessment.id,)),
             )
         context["initial_data"] = json.dumps(
             serializers.VisualSerializer().to_representation(self.object)
