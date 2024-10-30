@@ -123,8 +123,7 @@ class PrismaStore {
     }
 
     @action.bound getDataset() {
-        const payload =  {config: this.root.base.config};
-        console.log(payload);
+        const payload = {config: this.root.base.config};
         h.handleSubmit(
             this.root.base.config.api_url,
             "POST",
