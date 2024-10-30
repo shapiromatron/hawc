@@ -161,6 +161,13 @@ tfoot > tr > td {
 .bg-light.clickable:active, .clickable:active .bg-light {
     background-color: #d4d5d6 !important;
 }
+.collapsed .collapsible-icon {
+    transform: rotate(0deg);
+}
+.collapsible-icon {
+    transform: rotate(-180deg);
+    transition: transform 250ms ease-in-out;
+}
 .showOptsCaret:hover .optsCaret {
     opacity: 1;
     -webkit-transition: all 0.5s ease-in-out;
