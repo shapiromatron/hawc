@@ -49,7 +49,7 @@
           metric_map[src_metric] = dst_metric;
       })
       $("#metric-map-clone").val(JSON.stringify(metric_map));
-      $("#id_src_assessment").val("");
+      $("#id_src_assessment").val("").trigger('change');
     };
   </script>
 {% endblock extrajs %}
