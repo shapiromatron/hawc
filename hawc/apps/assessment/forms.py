@@ -689,6 +689,14 @@ class DatasetForm(forms.ModelForm):
 class LabelForm(forms.ModelForm):
     parent = forms.ModelChoiceField(None, empty_label=None)
 
+    after = forms.ModelChoiceField(
+        None,
+        required=False,
+        empty_label="Default order",
+        initial=None,
+        help_text="Move a label next to another label. This makes it a sibling of the label, and directly below it in the tree.",
+    )
+
     class Meta:
         model = models.Label
         fields = ["name", "description", "parent", "color", "published"]
@@ -701,8 +709,12 @@ class LabelForm(forms.ModelForm):
             self.instance.assessment = assessment
         if self.instance.pk is not None:
             self.fields["parent"].initial = self.instance.get_parent()
-        self.fields["parent"].queryset = self.get_parent_queryset()
+        tree_queryset, root = self.get_tree_queryset()
+        self.fields["parent"].queryset = tree_queryset
+        self.fields["after"].queryset = tree_queryset.exclude(id=root.pk)
         self.fields["parent"].label_from_instance = lambda label: label.get_nested_name()
+        self.fields["after"].label_from_instance = lambda label: label.get_nested_name()
+        self.fields["after"].hover_help = True
         self.fields["description"].widget.attrs["rows"] = 2
 
     @property
@@ -711,27 +723,33 @@ class LabelForm(forms.ModelForm):
         helper.form_tag = False
         helper.layout = cfl.Layout(
             cfl.Row(
-                cfl.Column("name", "published", css_class="col-md-3"),
+                cfl.Column("name", "published", css_class="col-md-2"),
                 cfl.Column("color", css_class="col-md-1"),
                 cfl.Column("description", css_class="col"),
                 cfl.Column("parent", css_class="col-md-2"),
+                cfl.Column("after", css_class="col-md-2"),
             ),
         )
         return helper
 
-    def get_parent_queryset(self):
+    def get_tree_queryset(self):
         root = models.Label.get_assessment_root(self.instance.assessment.pk)
         queryset = models.Label.get_tree(root)
         if self.instance.pk is not None:
             queryset = queryset.exclude(
                 path__startswith=self.instance.path, depth__gte=self.instance.depth
             )
-        return queryset
+        return queryset, root
 
     def clean(self):
         cleaned_data = super().clean()
         parent_conflict_msg = "Cannot be published: parent label is unpublished."
         descendant_conflict_msg = "Cannot be unpublished: child label is published."
+        after_conflict_msg = "Must be a child of the 'parent' label."
+        #  check that 'after' and parent align
+        if "after" in self.changed_data:
+            if not self.cleaned_data["after"].is_child_of(self.cleaned_data["parent"]):
+                self.add_error("after", after_conflict_msg)
         # if published changed, check parent and subtree published status
         if "published" in self.changed_data:
             if cleaned_data["published"] and not cleaned_data["parent"].published:
@@ -750,15 +768,20 @@ class LabelForm(forms.ModelForm):
         instance = super().save(commit=False)
         if commit:
             parent = self.cleaned_data["parent"]
+            after = self.cleaned_data["after"]
             # handle new instance
             if instance.pk is None:
                 instance = models.Label.create_tag(
                     assessment_id=instance.assessment.pk, parent_id=parent.pk, instance=instance
                 )
+                if "after" in self.changed_data:
+                    instance.move(after, pos="right")
             # handle existing instance
             else:
                 instance.save()
-                if "parent" in self.changed_data:
+                if "after" in self.changed_data:
+                    instance.move(after, pos="right")
+                elif "parent" in self.changed_data:
                     instance.move(parent, pos="last-child")
             self.save_m2m()
         return instance

@@ -11,7 +11,7 @@
     <div class="row">
       {% widthratio object.depth 10 20 as marginLeft %}
       <i class="fa fa-spinner fa-spin htmx-indicator align-self-start m-1" id="spinner-{{object.pk}}" aria-hidden="true"></i>
-      <p class="label align-self-start mt-0" style="background-color: {{object.color}}; color: {{object.text_color}}; {% if object.depth > 0 %} margin-left: {{ marginLeft|add:"-4" }}rem;{% endif %}" label_url="{% url 'assessment:labeled-items' assessment.pk %}?label={{object.id}}">{{object.name}}</p>
+      <p class="label align-self-start mt-0" style="background-color: {{object.color}}; color: {{object.text_color}}; {% if object.depth > 0 %} margin-left: {{ marginLeft|add:"-4" }}rem;{% endif %}" title="Click to view labeled objects" label_url="{% url 'assessment:labeled-items' assessment.pk %}?label={{object.id}}">{{object.name}}</p>
       <div class="card mx-3 d-inline-block align-self-start {{ object.published|yesno:'border-success text-success,text-muted' }}" title="{{ object.published|yesno:'Published,Unpublished' }}">
         <p class="m-0"><i class="fa fa-{{ object.published|yesno:'eye,eye-slash' }} px-1"></i></p>
       </div>
@@ -19,6 +19,3 @@
     </div>
   </div>
 </div>
-{% if action == 'create' %}
-  <div class="create-row hidden"></div>
-{% endif %}

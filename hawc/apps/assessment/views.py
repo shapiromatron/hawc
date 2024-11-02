@@ -968,6 +968,10 @@ class LabelViewSet(HtmxViewSet):
     model = models.Label
     form_fragment = "assessment/fragments/label_edit_row.html"
     detail_fragment = "assessment/fragments/label_row.html"
+    list_fragment = "assessment/fragments/label_list.html"
+
+    def get_queryset(self, request):
+        return models.Label.get_assessment_qs(request.item.assessment.pk)
 
     @action(permission=can_view, htmx_only=False)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -976,36 +980,57 @@ class LabelViewSet(HtmxViewSet):
     @action(methods=("get", "post"), permission=can_edit)
     def create(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
+        kwargs = {}
+        retarget_form = False
         if request.method == "POST":
             form = forms.LabelForm(request.POST, assessment=request.item.assessment)
             if form.is_valid():
                 self.perform_create(request.item, form)
-                template = self.detail_fragment
+                template = self.list_fragment
+                kwargs = {"object_list": self.get_queryset(request)}
+            else:
+                retarget_form = True
         else:
             form = forms.LabelForm(assessment=request.item.assessment)
-        context = self.get_context_data(form=form)
-        return render(request, template, context)
+        context = self.get_context_data(form=form, **kwargs)
+        response = render(request, template, context)
+        if retarget_form:
+            response["HX-Retarget"] = "#label-edit-row-"
+        return response
 
     @action(methods=("get", "post"), permission=can_edit)
     def update(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
+        kwargs = {}
+        retarget_form = False
         if request.method == "POST":
             form = forms.LabelForm(request.POST, instance=request.item.object)
             if form.is_valid():
                 self.perform_update(request.item, form)
-                template = self.detail_fragment
+                template = self.list_fragment
+                kwargs = {"object_list": self.get_queryset(request)}
+            else:
+                retarget_form = True
         else:
             form = forms.LabelForm(data=None, instance=request.item.object)
-        context = self.get_context_data(form=form)
-        return render(request, template, context)
+        context = self.get_context_data(form=form, **kwargs)
+        response = render(request, template, context)
+        if retarget_form:
+            response["HX-Retarget"] = f"#label-edit-row-{request.item.object.id}"
+        return response
 
     @action(methods=("get", "post"), permission=can_edit)
     def delete(self, request: HttpRequest, *args, **kwargs):
+        kwargs = {}
         if request.method == "POST":
             self.perform_delete(request.item)
-            return self.str_response()
-        form = forms.LabelForm(data=None, instance=request.item.object)
-        return render(request, self.form_fragment, self.get_context_data(form=form))
+            kwargs = {"object_list": self.get_queryset(request)}
+            template = self.list_fragment
+        else:
+            form = forms.LabelForm(data=None, instance=request.item.object)
+            template = self.form_fragment
+            kwargs = {"form": form}
+        return render(request, template, self.get_context_data(**kwargs))
 
 
 class LabelItem(HtmxView):

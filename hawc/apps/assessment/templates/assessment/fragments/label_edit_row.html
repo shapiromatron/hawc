@@ -1,5 +1,5 @@
 
-<div hx-target="this" hx-swap="outerHTML" class="label-edit-row list-group-item d-flex {% if action == 'delete' %} bg-pink {% else %} bg-lightblue {% endif %}{% if form and not form.instance.id %} create-row {% endif %}">
+<div hx-target="this" hx-swap="outerHTML" id="label-edit-row-{{object.pk}}" class="label-edit-row list-group-item d-flex {% if action == 'delete' %} bg-pink {% else %} bg-lightblue {% endif %}{% if form and not form.instance.id %} create-row {% endif %}">
   <form method="post" class="d-flex align-items-center p-1 w-100">
     <div class="col-md-auto flex-fill pl-0 py-2">
       {% crispy form %}
@@ -20,7 +20,8 @@
                           id="label-conf-delete"
                           hx-post="{{ object.get_delete_url }}"
                           hx-indicator="#spinner-{{object.pk}}"
-                          hx-swap="outerHTML swap:1s"><i class="fa fa-trash"></i>&nbsp;Delete</button>
+                          hx-target="#label-listgroup"
+                          hx-swap="outerHTML"><i class="fa fa-trash"></i>&nbsp;Delete</button>
                 </div>
               </div>
             </div>
@@ -38,6 +39,8 @@
             <i class="fa fa-spinner fa-spin align-self-center htmx-indicator" id="spinner-{{object.pk}}" aria-hidden="true"></i>
             <button class="btn btn-primary px-4 py-2 ml-2"
                     id="binding-update"
+                    hx-swap="outerHTML"
+                    hx-target="#label-listgroup"
                     hx-post="{% url 'assessment:label-htmx' object.pk 'update' %}"
                     hx-indicator="#spinner-{{object.pk}}">
               <i class="fa fa-fw fa-save"></i>&nbsp;
@@ -55,6 +58,8 @@
         <i class="fa fa-spinner fa-spin htmx-indicator mr-2" id="spinner-{{object.pk}}" aria-hidden="true"></i>
         <button class="btn btn-primary px-4 py-2"
                 id="binding-create"
+                hx-target="#label-listgroup"
+                hx-swap="outerHTML"
                 hx-post="{% url 'assessment:label-htmx' assessment.pk 'create' %}"
                 hx-indicator="#spinner-{{object.pk}}">
           <i class="fa fa-fw fa-save"></i>&nbsp;Create
@@ -69,4 +74,5 @@
     </div>
   </form>
   {{ form.media }}
+  {% include "common/helptext_popup_js.html" %}
 </div>
