@@ -11,7 +11,7 @@ from hawc.apps.animal.models import Experiment
 from hawc.apps.assessment import constants
 from hawc.apps.assessment.models import DoseUnits, Strain
 from hawc.apps.epi.models import ResultMetric
-from hawc.apps.lit.models import Reference
+from hawc.apps.lit.models import Reference, ReferenceFilterTag
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.study import constants as studyconstants
 from hawc.apps.study.models import Study
@@ -1178,20 +1178,20 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.lit.delete_tag(tag_id)
         assert response is None
 
-    # def test_move(self):
-    #     client = get_client("pm", api=True)
-    #     tags = models.ReferenceFilterTag.get_assessment_qs(3)
-    #     tag = tags.get(name="Tier I")
-    #     url = reverse("lit:api:tags-move", args=(tag.id,))
+    def test_move(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        tags = ReferenceFilterTag.get_assessment_qs(3)
+        tag = tags.get(name="Tier I")
 
-    #     qs = tags.get(name="Exclusion").get_descendants().values_list("name", flat=True)
-    #     assert list(qs) == ["Tier I", "Tier II", "Tier III"]
+        qs = tags.get(name="Exclusion").get_descendants().values_list("name", flat=True)
+        assert list(qs) == ["Tier I", "Tier II", "Tier III"]
 
-    #     response = client.patch(url, {"newIndex": 2}, format="json")
-    #     assert response.json()["status"] is True
+        response = client.lit.move_tag(tag.id, new_index=2)
+        assert response["status"] is True
 
-    #     qs = tags.get(name="Exclusion").get_descendants().values_list("name", flat=True)
-    #     assert list(qs) == ["Tier II", "Tier III", "Tier I"]
+        qs = tags.get(name="Exclusion").get_descendants().values_list("name", flat=True)
+        assert list(qs) == ["Tier II", "Tier III", "Tier I"]
 
     ##########################
     # RiskOfBiasClient tests #
