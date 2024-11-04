@@ -303,3 +303,22 @@ class LiteratureClient(BaseClient):
         """
         url = f"{self.session.root_url}/lit/api/assessment/{assessment_id}/update-reference-metadata-from-hero/"
         self.session.post(url)
+
+    def create_tag(self, data: dict) -> dict:
+        url = f"{self.session.root_url}/lit/api/tags/"
+        response = self.session.post(url, data)
+        return response.json()
+
+    def update_tag(self, tag_id: int, data: dict) -> dict:
+        url = f"{self.session.root_url}/lit/api/tags/{tag_id}/"
+        response = self.session.patch(url, data)
+        return response.json()
+
+    def delete_tag(self, tag_id: int) -> None:
+        url = f"{self.session.root_url}/lit/api/tags/{tag_id}/"
+        self.session.delete(url)
+
+    def move_tag(self, tag_id: int, new_index: int) -> None:
+        url = f"{self.session.root_url}/lit/api/tags/{tag_id}/move/"
+        body = {"newIndex": new_index}
+        self.session.patch(url, body)
