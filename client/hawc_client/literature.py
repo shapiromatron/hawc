@@ -1,4 +1,5 @@
 import pandas as pd
+from requests import Response
 
 from .client import BaseClient
 
@@ -305,20 +306,58 @@ class LiteratureClient(BaseClient):
         self.session.post(url)
 
     def create_tag(self, data: dict) -> dict:
+        """
+        Create a tag.
+
+        Args:
+            data (dict): required metadata for creation
+
+        Returns:
+            dict: The resulting object, if create was successful.
+        """
         url = f"{self.session.root_url}/lit/api/tags/"
         response = self.session.post(url, data)
         return response.json()
 
     def update_tag(self, tag_id: int, data: dict) -> dict:
+        """
+        Update an existing tag.
+
+        Args:
+            tag_id (int): Tag ID
+            data (dict): fields to update in tag
+
+        Returns:
+            dict: The resulting object, if update was successful.
+        """
         url = f"{self.session.root_url}/lit/api/tags/{tag_id}/"
         response = self.session.patch(url, data)
         return response.json()
 
-    def delete_tag(self, tag_id: int) -> None:
-        url = f"{self.session.root_url}/lit/api/tags/{tag_id}/"
-        self.session.delete(url)
+    def delete_tag(self, tag_id: int) -> Response:
+        """
+        Delete a tag.
 
-    def move_tag(self, tag_id: int, new_index: int) -> dict:
+        Args:
+            tag_id (int): Tag ID
+
+        Returns:
+            Response: The response object.
+        """
+        url = f"{self.session.root_url}/lit/api/tags/{tag_id}/"
+        return self.session.delete(url)
+
+    def move_tag(self, tag_id: int, new_index: int) -> Response:
+        """
+        Change the order of a tag within its tagtree.
+
+        Args:
+            tag_id (int): Tag ID
+            new_index: Index to place this tag in relation to its siblings in the tagtree
+
+        Returns:
+            Response: The response object.
+        """
         url = f"{self.session.root_url}/lit/api/tags/{tag_id}/move/"
         body = {"newIndex": new_index}
-        return self.session.patch(url, body).json()
+        return self.session.patch(url, body)

@@ -1176,7 +1176,7 @@ class TestClient(LiveServerTestCase, TestCase):
 
         # delete
         response = client.lit.delete_tag(tag_id)
-        assert response is None
+        assert response.status_code == 204
 
     def test_move(self):
         client = HawcClient(self.live_server_url)
@@ -1187,7 +1187,7 @@ class TestClient(LiveServerTestCase, TestCase):
         qs = tags.get(name="Exclusion").get_descendants().values_list("name", flat=True)
         assert list(qs) == ["Tier I", "Tier II", "Tier III"]
 
-        response = client.lit.move_tag(tag.id, new_index=2)
+        response = client.lit.move_tag(tag.id, new_index=2).json()
         assert response["status"] is True
 
         qs = tags.get(name="Exclusion").get_descendants().values_list("name", flat=True)
