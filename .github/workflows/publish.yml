@@ -37,7 +37,6 @@ jobs:
         if: env.PUBLISH_PYPI != null
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          repository-url: https://pypi.org/legacy/
           verbose: true
           attestations: true
           print-hash: true
