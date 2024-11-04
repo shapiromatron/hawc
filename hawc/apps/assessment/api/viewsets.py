@@ -274,9 +274,13 @@ class Assessment(AssessmentEditViewSet):
     @action(detail=False, permission_classes=(permissions.IsAuthenticated,))
     def team_member(self, request):
         """Get the list of assessments where the user is a team member or project manager."""
-        queryset = self.model.objects.filter(
-            Q(project_manager=request.user) | Q(team_members=request.user)
-        ).distinct()
+        queryset = (
+            self.model.objects.filter(
+                Q(project_manager=request.user) | Q(team_members=request.user)
+            )
+            .prefetch_related("project_manager", "team_members", "reviewers", "dtxsids")
+            .distinct()
+        )
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 
