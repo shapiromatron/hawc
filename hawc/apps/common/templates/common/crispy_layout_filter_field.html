@@ -27,13 +27,15 @@
               {% include 'common/helptext_popup.html' with text=field.field.help_text %}
             {% endif %}
           </div>
-        {% elif field|is_select and use_custom_control %}
+        {% else %}
           <div {% if field.errors %} title="{% for error in field.errors %} {{error}} {% endfor %}" {% else %} title="{{field.help_text}} {% endif %}">
+            <label for="{{ field.id_for_label }}" class="custom-control-label sr-only">{{ field.label }}</label>
             {% if field.errors %}
               {% crispy_field field 'class' 'custom-select form-sm-field is-invalid' 'placeholder' field.help_text %}
             {% else %}
               {% crispy_field field 'class' 'custom-select form-sm-field' 'placeholder' field.help_text %}
             {% endif %}
+            <div id="{{ field.id_for_label }}_helptext" class="sr-only">{{ field.help_text }}</div>
           </div>
         {% endif %}
       {% endfor %}
@@ -41,12 +43,6 @@
       <button type="submit" name="save" class="btn btn-primary px-5" title="Apply filters"><i class="fa fa-search" aria-hidden="true"></i></button>
     </div>
   </div>
-  {% for field in appended_fields %}
-    {% if not field|is_checkbox %}
-      <label for="{{ field.id_for_label }}" class="custom-control-label sr-only">{{ field.label }}</label>
-      <div id="{{ field.id_for_label }}_helptext" class="sr-only">{{ field.help_text }}</div>
-    {% endif %}
-  {% endfor %}
 </div>
 {% if expandable %}
   <script>
