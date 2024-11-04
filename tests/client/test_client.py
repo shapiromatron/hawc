@@ -1159,6 +1159,40 @@ class TestClient(LiveServerTestCase, TestCase):
         updated_hero = updated_reference.identifiers.get(database=2)
         assert updated_hero.unique_id == "1037739"
 
+    def test_tags_crud(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+
+        # create
+        data = {"assessment_id": self.db_keys.assessment_working, "name": "Test", "parent": 28}
+        instance = client.lit.create_tag(data)
+        assert instance["name"] == "Test"
+
+        # update
+        data = {"name": "Test2"}
+        tag_id = instance["id"]
+        instance = client.lit.update_tag(tag_id, data)
+        assert instance["name"] == "Test2"
+
+        # delete
+        response = client.lit.delete_tag(tag_id)
+        assert response is None
+
+    # def test_move(self):
+    #     client = get_client("pm", api=True)
+    #     tags = models.ReferenceFilterTag.get_assessment_qs(3)
+    #     tag = tags.get(name="Tier I")
+    #     url = reverse("lit:api:tags-move", args=(tag.id,))
+
+    #     qs = tags.get(name="Exclusion").get_descendants().values_list("name", flat=True)
+    #     assert list(qs) == ["Tier I", "Tier II", "Tier III"]
+
+    #     response = client.patch(url, {"newIndex": 2}, format="json")
+    #     assert response.json()["status"] is True
+
+    #     qs = tags.get(name="Exclusion").get_descendants().values_list("name", flat=True)
+    #     assert list(qs) == ["Tier II", "Tier III", "Tier I"]
+
     ##########################
     # RiskOfBiasClient tests #
     ##########################

@@ -318,7 +318,7 @@ class LiteratureClient(BaseClient):
         url = f"{self.session.root_url}/lit/api/tags/{tag_id}/"
         self.session.delete(url)
 
-    def move_tag(self, tag_id: int, new_index: int) -> None:
+    def move_tag(self, tag_id: int, new_index: int) -> dict:
         url = f"{self.session.root_url}/lit/api/tags/{tag_id}/move/"
         body = {"newIndex": new_index}
-        self.session.patch(url, body)
+        return self.session.patch(url, body).json()
