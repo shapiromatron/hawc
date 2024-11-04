@@ -27,7 +27,7 @@
               {% include 'common/helptext_popup.html' with text=field.field.help_text %}
             {% endif %}
           </div>
-        {% else %}
+        {% elif field|is_select and use_custom_control %}
           <div {% if field.errors %} title="{% for error in field.errors %} {{error}} {% endfor %}" {% else %} title="{{field.help_text}} {% endif %}">
             <label for="{{ field.id_for_label }}" class="custom-control-label sr-only">{{ field.label }}</label>
             {% if field.errors %}
@@ -37,6 +37,8 @@
             {% endif %}
             <div id="{{ field.id_for_label }}_helptext" class="sr-only">{{ field.help_text }}</div>
           </div>
+        {% else %}
+          <div class="alert alert-danger">NOT IMPLEMENTED: {{field.id_for_label}}</div>
         {% endif %}
       {% endfor %}
       <a role="button" style="border: #ced4da solid 1px !important;" class="btn btn-light d-flex flex-wrap align-content-center px-3" href="." title="Reset form"><span aria-hidden="true">&times;</span></a>
