@@ -1,8 +1,10 @@
+import _ from "lodash";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import ReactDOM from "react-dom";
 import Loading from "shared/components/Loading";
+import h from "shared/utils/helpers";
 
 import $ from "$";
 
@@ -11,16 +13,26 @@ import PrismaDatastore from "./prisma/PrismaDatastore";
 import PrismaPlot from "./PrismaPlot";
 
 const startupPrismaAppRender = function(el, settings, data, config, asComponent = false) {
-    const store = new PrismaDatastore(settings, data, config);
-    if (asComponent) {
-        return <PrismaComponent store={store} config={config} />;
-    }
-    try {
-        ReactDOM.render(<PrismaComponent store={store} config={config} />, el);
-    } catch (err) {
-        handleVisualError(err, $(el));
-    }
-};
+        if (_.isUndefined(data)) {
+            fetch(config.data_url, h.fetchGet)
+                .then(resp => resp.json())
+                .then(data => start(el, settings, data, config, asComponent));
+        } else {
+            console.log(data);
+            start(el, settings, data, config, asComponent);
+        }
+    },
+    start = function(el, settings, data, config, asComponent) {
+        const store = new PrismaDatastore(settings, data, config);
+        if (asComponent) {
+            return <PrismaComponent store={store} config={config} />;
+        }
+        try {
+            ReactDOM.render(<PrismaComponent store={store} config={config} />, el);
+        } catch (err) {
+            handleVisualError(err, $(el));
+        }
+    };
 
 @observer
 class PrismaComponent extends Component {

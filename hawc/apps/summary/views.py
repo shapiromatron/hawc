@@ -4,9 +4,10 @@ import re
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpResponseRedirect, JsonResponse
+from django.http import Http404, HttpRequest, HttpResponseRedirect, JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
+from django.template.context_processors import csrf
 from django.urls import reverse, reverse_lazy
 from django.views.generic import RedirectView, TemplateView
 
@@ -327,6 +328,12 @@ class VisualizationByIdDetail(RedirectView):
         return get_object_or_404(models.Visual, id=kwargs.get("pk")).get_absolute_url()
 
 
+def add_csrf(obj: dict, request: HttpRequest) -> dict:
+    """Add CSRF token to context object as the key `csrf`."""
+    obj["csrf"] = str(csrf(request)["csrf_token"])
+    return obj
+
+
 class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
     model = models.Visual
 
@@ -335,14 +342,7 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
-        if self.object.visual_type == constants.VisualType.PRISMA:
-            context.update(
-                config=dict(
-                    id=self.object.id,
-                    data=json.loads(models.Visual.get_prisma_data(self.assessment)),
-                    settings=self.object.settings,
-                )
-            )
+        context.update(config=add_csrf(self.object.get_read_config(), self.request))
         return context
 
     def get_template_names(self):
@@ -432,28 +432,31 @@ class VisualizationCreate(BaseCreate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["dose_units"] = models.Visual.get_dose_units()
-        context["instance"] = {}
-        context["visual_type"] = int(self.kwargs.get("visual_type"))
-        context["evidence_type"] = self.evidence_type
-        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["rob_metrics"] = json.dumps(
-            list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
+        visual = self.get_initial_visual(context)
+        context.update(
+            dose_units=models.Visual.get_dose_units(),
+            instance={},
+            visual_type=visual.visual_type,
+            evidence_type=visual.evidence_type,
+            initial_data=json.dumps(serializers.VisualSerializer().to_representation(visual)),
+            smart_tag_form=forms.SmartTagForm(assessment_id=self.assessment.id),
+            rob_metrics=json.dumps(
+                list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
+            ),
+            **visual.get_update_config(),
         )
-        context["initial_data"] = json.dumps(self.get_initial_visual(context))
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
-        if context["visual_type"] == constants.VisualType.PRISMA:
-            context.update(
-                api_url=reverse("summary:api:assessment-json-data", args=(self.assessment.id,))
-            )
         return context
 
-    def get_initial_visual(self, context) -> dict:
+    def get_initial_visual(self, context) -> models.Visual:
         instance = context["form"].instance
         instance.id = instance.FAKE_INITIAL_ID
-        return serializers.VisualSerializer().to_representation(instance)
+        instance.assessment = self.assessment
+        instance.visual_type = int(self.kwargs.get("visual_type"))
+        instance.evidence_type = self.evidence_type
+        return instance
 
 
 class VisualizationCreateTester(VisualizationCreate):
@@ -535,20 +538,18 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["dose_units"] = models.Visual.get_dose_units()
-        context["instance"] = self.object.get_json()
-        context["visual_type"] = self.object.visual_type
-        context["evidence_type"] = self.object.evidence_type
-        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["rob_metrics"] = json.dumps(
-            list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
-        )
-        if context["visual_type"] == constants.VisualType.PRISMA:
-            context.update(
-                api_url=reverse("summary:api:assessment-json-data", args=(self.assessment.id,)),
-            )
-        context["initial_data"] = json.dumps(
-            serializers.VisualSerializer().to_representation(self.object)
+        visual = self.object
+        context.update(
+            dose_units=models.Visual.get_dose_units(),
+            instance=visual.get_json(),
+            visual_type=visual.visual_type,
+            evidence_type=visual.evidence_type,
+            initial_data=json.dumps(serializers.VisualSerializer().to_representation(visual)),
+            smart_tag_form=forms.SmartTagForm(assessment_id=self.assessment.id),
+            rob_metrics=json.dumps(
+                list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
+            ),
+            **visual.get_update_config(),
         )
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
@@ -568,6 +569,7 @@ class VisualizationDelete(GetVisualizationObjectMixin, BaseDelete):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )
+        context.update(config=add_csrf(self.object.get_read_config(), self.request))
         return context
 
 

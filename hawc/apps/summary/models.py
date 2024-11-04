@@ -37,7 +37,7 @@ from ..epimeta.exports import MetaResultFlatDataPivot
 from ..epiv2.exports import EpiFlatComplete
 from ..invitro import exports as ivexports
 from ..lit.models import Reference, ReferenceFilterTag, Search
-from ..riskofbias.models import RiskOfBiasScore
+from ..riskofbias.models import RiskOfBiasMetric, RiskOfBiasScore
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
 from . import constants, managers, prefilters, schemas
@@ -262,6 +262,13 @@ class Visual(models.Model):
     def get_data_url(self):
         return reverse("summary:api:visual-data", args=(self.id,))
 
+    def get_data_json_url(self):
+        return (
+            reverse("summary:api:assessment-json-data", args=(self.assessment_id,))
+            if self.id == self.FAKE_INITIAL_ID
+            else reverse("summary:api:visual-json-data", args=(self.id,))
+        )
+
     def get_api_heatmap_datasets(self):
         return reverse("summary:api:assessment-heatmap-datasets", args=(self.assessment_id,))
 
@@ -392,45 +399,67 @@ class Visual(models.Model):
         return HeatmapDatasets(datasets=datasets)
 
     @classmethod
-    def get_prisma_data(cls, assessment: Assessment) -> str:
-        return json.dumps(
-            {
-                "reference_tag_pairs": list(
-                    Reference.objects.tag_pairs(assessment.references.all())
-                ),
-                "reference_search_pairs": list(
-                    Reference.searches.through.objects.filter(
-                        reference_id__in=assessment.references.all()
-                    ).values("search_id", "reference_id")
-                ),
-                "searches": list(
-                    Search.objects.filter(assessment_id=assessment.id).values("id", "title")
-                ),
-                "tags": list(
-                    ReferenceFilterTag.as_dataframe(assessment.id).to_dict(orient="records")
-                ),
-                "references": list(
-                    Reference.objects.filter(assessment=assessment.id).values_list("id", flat=True)
-                ),
-                "reference_detail_url": reverse("lit:interactive", args=(assessment.id,))
-                + "?action=venn_reference_list",
-            }
-        )
+    def get_prisma_data(cls, assessment: Assessment) -> dict:
+        return {
+            "reference_tag_pairs": list(Reference.objects.tag_pairs(assessment.references.all())),
+            "reference_search_pairs": list(
+                Reference.searches.through.objects.filter(
+                    reference_id__in=assessment.references.all()
+                ).values("search_id", "reference_id")
+            ),
+            "searches": list(
+                Search.objects.filter(assessment_id=assessment.id).values("id", "title")
+            ),
+            "tags": list(ReferenceFilterTag.as_dataframe(assessment.id).to_dict(orient="records")),
+            "references": list(
+                Reference.objects.filter(assessment=assessment.id).values_list("id", flat=True)
+            ),
+            "reference_detail_url": reverse("lit:interactive", args=(assessment.id,))
+            + "?action=venn_reference_list",
+        }
 
     @classmethod
-    def get_data_from_config(cls, assessment: Assessment, config: schemas.VisualDataRequest):
+    def get_data_from_config(
+        cls, assessment: Assessment, config: schemas.VisualDataRequest
+    ) -> dict:
         """Get Visual data without having an ID."""
         if config.visual_type == constants.VisualType.PRISMA:
             return cls.get_prisma_data(assessment)
-        else:
-            raise ValueError("Not supported for this visual type")
+        raise ValueError("Not supported for this visual type")
 
-    def get_data(self):
+    def get_data(self) -> dict:
         """Get data needed to display Visual."""
-        if self.visual_type == constants.VisualType.PRISMA:
-            return self.get_prisma_data(self.assessment)
-        else:
-            raise ValueError("Not supported for this visual type")
+        match self.visual_type:
+            case constants.VisualType.PRISMA:
+                return self.get_prisma_data(self.assessment)
+            case _:
+                return {}
+
+    def get_update_config(self) -> dict:
+        """
+        Configuration required to create/update a visual.
+
+        This visual may be a mock instance which has not yet been saved to the database.
+        """
+        match self.visual_type:
+            case constants.VisualType.PRISMA:
+                return dict(
+                    settings=self.settings,
+                    data_url=self.get_data_json_url(),
+                )
+            case _:
+                return {}
+
+    def get_read_config(self) -> dict:
+        """Configuration required to render an instance of the visual in read-only views."""
+        match self.visual_type:
+            case constants.VisualType.PRISMA:
+                return dict(
+                    settings=self.settings,
+                    data_url=self.get_data_json_url(),
+                )
+            case _:
+                return {}
 
     @staticmethod
     def get_dose_units():
