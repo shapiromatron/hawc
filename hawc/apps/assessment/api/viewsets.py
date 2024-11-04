@@ -271,7 +271,7 @@ class Assessment(AssessmentEditViewSet):
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, permission_classes=(permissions.IsAuthenticated,))
+    @action(detail=False, permission_classes=(permissions.IsAuthenticated,), url_path="team-member")
     def team_member(self, request):
         """Get the list of assessments where the user is a team member or project manager."""
         queryset = (
