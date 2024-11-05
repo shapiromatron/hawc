@@ -1,1 +1,110 @@
-"{\"reference_tag_pairs\": [{\"tag_id\": 13, \"reference_id\": 7}, {\"tag_id\": 12, \"reference_id\": 8}, {\"tag_id\": 12, \"reference_id\": 5}, {\"tag_id\": 13, \"reference_id\": 6}], \"reference_search_pairs\": [{\"search_id\": 5, \"reference_id\": 5}, {\"search_id\": 5, \"reference_id\": 6}, {\"search_id\": 5, \"reference_id\": 7}, {\"search_id\": 5, \"reference_id\": 8}, {\"search_id\": 2, \"reference_id\": 12}], \"searches\": [{\"id\": 5, \"title\": \"pmid import\"}, {\"id\": 2, \"title\": \"Manual import\"}], \"tags\": [{\"id\": 11, \"depth\": 2, \"name\": \"Inclusion\", \"nested_name\": \"Inclusion\"}, {\"id\": 12, \"depth\": 3, \"name\": \"Human Study\", \"nested_name\": \"Inclusion|Human Study\"}, {\"id\": 13, \"depth\": 3, \"name\": \"Animal Study\", \"nested_name\": \"Inclusion|Animal Study\"}, {\"id\": 14, \"depth\": 3, \"name\": \"Mechanistic Study\", \"nested_name\": \"Inclusion|Mechanistic Study\"}, {\"id\": 15, \"depth\": 2, \"name\": \"Exclusion\", \"nested_name\": \"Exclusion\"}, {\"id\": 16, \"depth\": 3, \"name\": \"Tier I\", \"nested_name\": \"Exclusion|Tier I\"}, {\"id\": 17, \"depth\": 3, \"name\": \"Tier II\", \"nested_name\": \"Exclusion|Tier II\"}, {\"id\": 18, \"depth\": 3, \"name\": \"Tier III\", \"nested_name\": \"Exclusion|Tier III\"}], \"references\": [5, 6, 7, 8, 12], \"reference_detail_url\": \"/lit/assessment/2/interactive/?action=venn_reference_list\"}"
+{
+  "reference_detail_url": "/lit/assessment/2/interactive/?action=venn_reference_list",
+  "reference_search_pairs": [
+    {
+      "reference_id": 5,
+      "search_id": 5
+    },
+    {
+      "reference_id": 6,
+      "search_id": 5
+    },
+    {
+      "reference_id": 7,
+      "search_id": 5
+    },
+    {
+      "reference_id": 8,
+      "search_id": 5
+    },
+    {
+      "reference_id": 12,
+      "search_id": 2
+    }
+  ],
+  "reference_tag_pairs": [
+    {
+      "reference_id": 7,
+      "tag_id": 13
+    },
+    {
+      "reference_id": 8,
+      "tag_id": 12
+    },
+    {
+      "reference_id": 5,
+      "tag_id": 12
+    },
+    {
+      "reference_id": 6,
+      "tag_id": 13
+    }
+  ],
+  "references": [
+    5,
+    6,
+    7,
+    8,
+    12
+  ],
+  "searches": [
+    {
+      "id": 5,
+      "title": "pmid import"
+    },
+    {
+      "id": 2,
+      "title": "Manual import"
+    }
+  ],
+  "tags": [
+    {
+      "depth": 2,
+      "id": 11,
+      "name": "Inclusion",
+      "nested_name": "Inclusion"
+    },
+    {
+      "depth": 3,
+      "id": 12,
+      "name": "Human Study",
+      "nested_name": "Inclusion|Human Study"
+    },
+    {
+      "depth": 3,
+      "id": 13,
+      "name": "Animal Study",
+      "nested_name": "Inclusion|Animal Study"
+    },
+    {
+      "depth": 3,
+      "id": 14,
+      "name": "Mechanistic Study",
+      "nested_name": "Inclusion|Mechanistic Study"
+    },
+    {
+      "depth": 2,
+      "id": 15,
+      "name": "Exclusion",
+      "nested_name": "Exclusion"
+    },
+    {
+      "depth": 3,
+      "id": 16,
+      "name": "Tier I",
+      "nested_name": "Exclusion|Tier I"
+    },
+    {
+      "depth": 3,
+      "id": 17,
+      "name": "Tier II",
+      "nested_name": "Exclusion|Tier II"
+    },
+    {
+      "depth": 3,
+      "id": 18,
+      "name": "Tier III",
+      "nested_name": "Exclusion|Tier III"
+    }
+  ]
+}
