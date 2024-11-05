@@ -394,18 +394,26 @@ class Visual(models.Model):
     @classmethod
     def get_prisma_data(cls, assessment: Assessment) -> dict:
         return {
-            "reference_tag_pairs": list(Reference.objects.tag_pairs(assessment.references.all())),
+            "reference_tag_pairs": list(
+                Reference.objects.tag_pairs(assessment.references.all().order_by("id"))
+            ),
             "reference_search_pairs": list(
                 Reference.searches.through.objects.filter(
                     reference_id__in=assessment.references.all()
-                ).values("search_id", "reference_id")
+                )
+                .values("search_id", "reference_id")
+                .order_by("search_id", "reference_id")
             ),
             "searches": list(
-                Search.objects.filter(assessment_id=assessment.id).values("id", "title")
+                Search.objects.filter(assessment_id=assessment.id)
+                .values("id", "title")
+                .order_by("id")
             ),
             "tags": list(ReferenceFilterTag.as_dataframe(assessment.id).to_dict(orient="records")),
             "references": list(
-                Reference.objects.filter(assessment=assessment.id).values_list("id", flat=True)
+                Reference.objects.filter(assessment=assessment.id)
+                .values_list("id", flat=True)
+                .order_by("id")
             ),
             "reference_detail_url": reverse("lit:interactive", args=(assessment.id,))
             + "?action=venn_reference_list",

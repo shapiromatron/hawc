@@ -2,6 +2,10 @@
   "reference_detail_url": "/lit/assessment/2/interactive/?action=venn_reference_list",
   "reference_search_pairs": [
     {
+      "reference_id": 12,
+      "search_id": 2
+    },
+    {
       "reference_id": 5,
       "search_id": 5
     },
@@ -16,10 +20,6 @@
     {
       "reference_id": 8,
       "search_id": 5
-    },
-    {
-      "reference_id": 12,
-      "search_id": 2
     }
   ],
   "reference_tag_pairs": [
@@ -49,12 +49,12 @@
   ],
   "searches": [
     {
-      "id": 5,
-      "title": "pmid import"
-    },
-    {
       "id": 2,
       "title": "Manual import"
+    },
+    {
+      "id": 5,
+      "title": "pmid import"
     }
   ],
   "tags": [
