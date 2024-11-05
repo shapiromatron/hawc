@@ -17,7 +17,7 @@ const startupPrismaAppRender = function(el, settings, data, config, asComponent 
             if (asComponent == true) {
                 console.error("Cannot return asComponent if we have to fetch data");
             }
-            fetch(config.data_url, h.fetchGet)
+            fetch(config.api_data_url, h.fetchGet)
                 .then(resp => resp.json())
                 .then(data => start(el, settings, data, config, asComponent));
         } else {

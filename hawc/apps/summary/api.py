@@ -14,7 +14,7 @@ from ..assessment.api import (
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import DisabledPagination
-from ..common.helper import FlatExport, cacheable
+from ..common.helper import FlatExport, PydanticToDjangoError, cacheable
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import models, schemas, serializers, table_serializers
@@ -58,15 +58,11 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
     def json_data(self, request, pk):
         """Get json data for a Visual using a configuration given in the payload."""
         assessment = self.get_object()
-        if config := request.data.get("config"):
-            valid_config = schemas.VisualDataRequest.model_validate(config)
-            data = models.Visual.get_data_from_config(assessment, valid_config)
-            return Response(data)
-        else:
-            return Response(
-                {"error": "Expected config or Visual ID in payload."},
-                status=HTTP_400_BAD_REQUEST,
-            )
+        with PydanticToDjangoError(drf=True):
+            config = schemas.VisualDataRequest.model_validate(request.data.get("config", {}))
+        instance = config.mock_visual(assessment)
+        data = instance.get_data()
+        return Response(data)
 
 
 class DataPivotViewSet(AssessmentViewSet):

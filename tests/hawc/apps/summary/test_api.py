@@ -9,7 +9,7 @@ from rest_framework.test import APIClient
 
 from hawc.apps.summary import models
 
-from ..test_utils import check_api_json_data
+from ..test_utils import check_api_json_data, get_client
 
 
 @pytest.mark.django_db
@@ -257,22 +257,21 @@ class TestVisual:
         slug = "prisma-visual"
         visual = models.Visual.objects.get(slug=slug)
         url = reverse("summary:api:visual-json-data", args=(visual.id,))
+
         # anon can get from public assessment
-        anon_client = Client()
+        anon_client = get_client(api=True)
         resp = anon_client.get(url)
         assert resp.status_code == 200
         resp_data = resp.json()
-        data_str = json.dumps(resp_data, indent=2, sort_keys=True)
         key = f"api-summary-visual-json-data-{slug}.json"
-        check_api_json_data(json.loads(data_str), key, rewrite_data_files)
+        check_api_json_data(resp_data, key, rewrite_data_files)
 
         # can't get if private
         visual.published = False
         visual.save()
         assert anon_client.get(url).status_code == 404
 
-        team_client = Client()
-        assert team_client.login(username="team@hawcproject.org", password="pw") is True
+        team_client = get_client(role="team", api=True)
         assert team_client.get(url).status_code == 200
 
 
@@ -398,11 +397,9 @@ class TestSummaryAssessmentViewSet:
         check_api_json_data(data, key, rewrite_data_files)
 
     def test_json_data(self, db_keys, rewrite_data_files):
-        anon_client = APIClient()
-        rev_client = APIClient()
-        assert rev_client.login(username="reviewer@hawcproject.org", password="pw") is True
-        team_client = APIClient()
-        assert team_client.login(username="team@hawcproject.org", password="pw") is True
+        anon_client = get_client(api=True)
+        rev_client = get_client("reviewer", api=True)
+        team_client = get_client("team", api=True)
 
         url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
         payload = {"config": {"visual_type": 9}}
@@ -410,12 +407,15 @@ class TestSummaryAssessmentViewSet:
         assert anon_client.post(url, payload, format="json").status_code == 403
         assert rev_client.post(url, payload, format="json").status_code == 403
 
+        for bad_payload in [{}, {"config": "TEST"}, {"config": {"visual_type": "TEST"}}]:
+            resp = team_client.post(url, bad_payload, format="json")
+            assert resp.status_code == 400
+
         resp = team_client.post(url, payload, format="json")
         assert resp.status_code == 200
         resp_data = resp.json()
-        data_str = json.dumps(resp_data, indent=2, sort_keys=True)
         key = f"api-summary-assessment-visual-json-{db_keys.assessment_working}.json"
-        check_api_json_data(json.loads(data_str), key, rewrite_data_files)
+        check_api_json_data(resp_data, key, rewrite_data_files)
 
 
 @pytest.mark.django_db

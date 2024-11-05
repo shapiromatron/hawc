@@ -342,7 +342,7 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
-        context.update(config=add_csrf(self.object.get_read_config(), self.request))
+        context.update(config=add_csrf(self.object.read_config(), self.request))
         return context
 
     def get_template_names(self):
@@ -443,7 +443,7 @@ class VisualizationCreate(BaseCreate):
             rob_metrics=json.dumps(
                 list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
             ),
-            **visual.get_update_config(),
+            **visual.update_config(),
         )
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
@@ -549,7 +549,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
             rob_metrics=json.dumps(
                 list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
             ),
-            **visual.get_update_config(),
+            **visual.update_config(),
         )
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
@@ -569,7 +569,7 @@ class VisualizationDelete(GetVisualizationObjectMixin, BaseDelete):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )
-        context.update(config=add_csrf(self.object.get_read_config(), self.request))
+        context.update(config=add_csrf(self.object.read_config(), self.request))
         return context
 
 

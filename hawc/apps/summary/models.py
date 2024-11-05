@@ -40,7 +40,7 @@ from ..lit.models import Reference, ReferenceFilterTag, Search
 from ..riskofbias.models import RiskOfBiasScore
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
-from . import constants, managers, prefilters, schemas
+from . import constants, managers, prefilters
 
 logger = logging.getLogger(__name__)
 
@@ -391,52 +391,44 @@ class Visual(models.Model):
         datasets.extend(additional_datasets)
         return HeatmapDatasets(datasets=datasets)
 
-    @classmethod
-    def get_prisma_data(cls, assessment: Assessment) -> dict:
+    def get_prisma_data(self) -> dict:
         return {
             "reference_tag_pairs": list(
-                Reference.objects.tag_pairs(assessment.references.all().order_by("id"))
+                Reference.objects.tag_pairs(self.assessment.references.all().order_by("id"))
             ),
             "reference_search_pairs": list(
                 Reference.searches.through.objects.filter(
-                    reference_id__in=assessment.references.all()
+                    reference_id__in=self.assessment.references.all()
                 )
                 .values("search_id", "reference_id")
                 .order_by("search_id", "reference_id")
             ),
             "searches": list(
-                Search.objects.filter(assessment_id=assessment.id)
+                Search.objects.filter(assessment_id=self.assessment.id)
                 .values("id", "title")
                 .order_by("id")
             ),
-            "tags": list(ReferenceFilterTag.as_dataframe(assessment.id).to_dict(orient="records")),
+            "tags": list(
+                ReferenceFilterTag.as_dataframe(self.assessment.id).to_dict(orient="records")
+            ),
             "references": list(
-                Reference.objects.filter(assessment=assessment.id)
+                Reference.objects.filter(assessment=self.assessment.id)
                 .values_list("id", flat=True)
                 .order_by("id")
             ),
-            "reference_detail_url": reverse("lit:interactive", args=(assessment.id,))
+            "reference_detail_url": reverse("lit:interactive", args=(self.assessment.id,))
             + "?action=venn_reference_list",
         }
-
-    @classmethod
-    def get_data_from_config(
-        cls, assessment: Assessment, config: schemas.VisualDataRequest
-    ) -> dict:
-        """Get Visual data without having an ID."""
-        if config.visual_type == constants.VisualType.PRISMA:
-            return cls.get_prisma_data(assessment)
-        raise ValueError("Not supported for this visual type")
 
     def get_data(self) -> dict:
         """Get data needed to display Visual."""
         match self.visual_type:
             case constants.VisualType.PRISMA:
-                return self.get_prisma_data(self.assessment)
+                return self.get_prisma_data()
             case _:
                 return {}
 
-    def get_update_config(self) -> dict:
+    def update_config(self) -> dict:
         """
         Configuration required to create/update a visual.
 
@@ -453,13 +445,13 @@ class Visual(models.Model):
             case _:
                 return {}
 
-    def get_read_config(self) -> dict:
+    def read_config(self) -> dict:
         """Configuration required to render an instance of the visual in read-only views."""
         match self.visual_type:
             case constants.VisualType.PRISMA:
                 return dict(
                     settings=self.settings,
-                    data_url=reverse("summary:api:visual-json-data", args=(self.id,)),
+                    api_data_url=reverse("summary:api:visual-json-data", args=(self.id,)),
                 )
             case _:
                 return {}
