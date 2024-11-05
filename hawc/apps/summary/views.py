@@ -4,10 +4,9 @@ import re
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpRequest, HttpResponseRedirect, JsonResponse
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
-from django.template.context_processors import csrf
 from django.urls import reverse, reverse_lazy
 from django.views.generic import RedirectView, TemplateView
 
@@ -23,6 +22,7 @@ from ..common.views import (
     BaseDetail,
     BaseFilterList,
     BaseUpdate,
+    add_csrf,
 )
 from ..riskofbias.models import RiskOfBiasMetric
 from . import constants, filterset, forms, models, prefilters, serializers
@@ -326,12 +326,6 @@ class VisualizationByIdDetail(RedirectView):
 
     def get_redirect_url(*args, **kwargs):
         return get_object_or_404(models.Visual, id=kwargs.get("pk")).get_absolute_url()
-
-
-def add_csrf(obj: dict, request: HttpRequest) -> dict:
-    """Add CSRF token to context object as the key `csrf`."""
-    obj["csrf"] = str(csrf(request)["csrf_token"])
-    return obj
 
 
 class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
