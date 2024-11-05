@@ -120,11 +120,12 @@ class PrismaStore {
     }
 
     @action.bound getDataset() {
-        const payload = {config: this.root.base.config};
+        const {config} = this.root.base,
+            payload = {config: {visual_type: config.visual_type}};
         h.handleSubmit(
-            this.root.base.config.data_url,
+            config.api_data_url,
             "POST",
-            this.root.base.config.csrf,
+            config.csrf,
             payload,
             response => {
                 this.data = response;

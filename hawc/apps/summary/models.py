@@ -37,7 +37,7 @@ from ..epimeta.exports import MetaResultFlatDataPivot
 from ..epiv2.exports import EpiFlatComplete
 from ..invitro import exports as ivexports
 from ..lit.models import Reference, ReferenceFilterTag, Search
-from ..riskofbias.models import RiskOfBiasMetric, RiskOfBiasScore
+from ..riskofbias.models import RiskOfBiasScore
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
 from . import constants, managers, prefilters, schemas
@@ -262,13 +262,6 @@ class Visual(models.Model):
     def get_data_url(self):
         return reverse("summary:api:visual-data", args=(self.id,))
 
-    def get_data_json_url(self):
-        return (
-            reverse("summary:api:assessment-json-data", args=(self.assessment_id,))
-            if self.id == self.FAKE_INITIAL_ID
-            else reverse("summary:api:visual-json-data", args=(self.id,))
-        )
-
     def get_api_heatmap_datasets(self):
         return reverse("summary:api:assessment-heatmap-datasets", args=(self.assessment_id,))
 
@@ -445,7 +438,9 @@ class Visual(models.Model):
             case constants.VisualType.PRISMA:
                 return dict(
                     settings=self.settings,
-                    data_url=self.get_data_json_url(),
+                    api_data_url=reverse(
+                        "summary:api:assessment-json-data", args=(self.assessment.id,)
+                    ),
                 )
             case _:
                 return {}
@@ -456,7 +451,7 @@ class Visual(models.Model):
             case constants.VisualType.PRISMA:
                 return dict(
                     settings=self.settings,
-                    data_url=self.get_data_json_url(),
+                    data_url=reverse("summary:api:visual-json-data", args=(self.id,)),
                 )
             case _:
                 return {}

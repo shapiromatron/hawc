@@ -18,8 +18,7 @@ const startupPrismaAppRender = function(el, settings, data, config, asComponent 
                 .then(resp => resp.json())
                 .then(data => start(el, settings, data, config, asComponent));
         } else {
-            console.log(data);
-            start(el, settings, data, config, asComponent);
+            return start(el, settings, data, config, asComponent);
         }
     },
     start = function(el, settings, data, config, asComponent) {
@@ -48,7 +47,6 @@ class PrismaComponent extends Component {
     render() {
         const {store} = this.props,
             id = store.settingsHash;
-
         return (
             <div className="row py-3">
                 <div id={id} className="col-lg-8">
