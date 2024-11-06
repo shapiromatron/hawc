@@ -1,0 +1,83 @@
+{
+  "reference_detail_url": "/lit/assessment/1/interactive/?action=venn_reference_list",
+  "reference_search_pairs": [],
+  "reference_tag_pairs": [],
+  "references": [
+    1,
+    3
+  ],
+  "searches": [
+    {
+      "id": 1,
+      "title": "Manual import"
+    }
+  ],
+  "tags": [
+    {
+      "depth": 2,
+      "id": 2,
+      "name": "Inclusion",
+      "nested_name": "Inclusion"
+    },
+    {
+      "depth": 3,
+      "id": 3,
+      "name": "Human Study",
+      "nested_name": "Inclusion|Human Study"
+    },
+    {
+      "depth": 3,
+      "id": 4,
+      "name": "Animal Study",
+      "nested_name": "Inclusion|Animal Study"
+    },
+    {
+      "depth": 3,
+      "id": 5,
+      "name": "Mechanistic Study",
+      "nested_name": "Inclusion|Mechanistic Study"
+    },
+    {
+      "depth": 2,
+      "id": 6,
+      "name": "Exclusion",
+      "nested_name": "Exclusion"
+    },
+    {
+      "depth": 3,
+      "id": 7,
+      "name": "Tier I",
+      "nested_name": "Exclusion|Tier I"
+    },
+    {
+      "depth": 3,
+      "id": 8,
+      "name": "Tier II",
+      "nested_name": "Exclusion|Tier II"
+    },
+    {
+      "depth": 3,
+      "id": 9,
+      "name": "Tier III",
+      "nested_name": "Exclusion|Tier III"
+    },
+    {
+      "depth": 4,
+      "id": 19,
+      "name": "a",
+      "nested_name": "Exclusion|Tier III|a"
+    },
+    {
+      "depth": 4,
+      "id": 20,
+      "name": "b",
+      "nested_name": "Exclusion|Tier III|b"
+    },
+    {
+      "depth": 4,
+      "id": 21,
+      "name": "c",
+      "nested_name": "Exclusion|Tier III|c"
+    }
+  ]
+}

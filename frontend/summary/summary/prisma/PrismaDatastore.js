@@ -31,10 +31,10 @@ const mapStyles = function(styles) {
     };
 
 class PrismaDatastore {
-    constructor(settings, dataset, options) {
+    constructor(settings, dataset, config) {
         this.settings = settings;
         this.dataset = dataset;
-        this.options = options;
+        this.config = config;
         this.createFilterMaps();
         this.sections = this.getDiagramSections();
         this.setRefs();
@@ -193,7 +193,7 @@ class PrismaDatastore {
     }
 
     getCsrfToken() {
-        return this.options.csrf;
+        return this.config.csrf;
     }
 
     setRefs() {

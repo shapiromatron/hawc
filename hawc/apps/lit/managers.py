@@ -834,6 +834,7 @@ class ReferenceManager(BaseManager):
             ReferenceTags.objects.filter(content_object__in=qs)
             .annotate(reference_id=models.F("content_object_id"))
             .values("reference_id", "tag_id")
+            .order_by("id")
         )
 
     def get_hero_references(self, search, identifiers):
