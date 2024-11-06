@@ -8,30 +8,8 @@ from django.views.generic import RedirectView
 from ..animal.models import Endpoint
 from ..assessment.constants import AssessmentViewPermissions
 from ..common.helper import WebappConfig
-from ..common.views import BaseDelete, BaseDetail, BaseList, BaseUpdate
-from . import forms, models
-
-
-# Assessment settings
-class AssessmentSettingsDetail(BaseDetail):
-    model = models.AssessmentSettings
-
-    def get_object(self, **kwargs):
-        # get the bmd settings of the specified assessment
-        obj = get_object_or_404(self.model, assessment_id=self.kwargs["pk"])
-        return super().get_object(object=obj, **kwargs)
-
-
-class AssessSettingsUpdate(BaseUpdate):
-    success_message = "BMD Settings updated."
-    model = models.AssessmentSettings
-    form_class = forms.AssessmentSettingsForm
-    assessment_permission = AssessmentViewPermissions.PROJECT_MANAGER_EDITABLE
-
-    def get_object(self, **kwargs):
-        # get the bmd settings of the specified assessment
-        obj = get_object_or_404(self.model, assessment_id=self.kwargs["pk"])
-        return super().get_object(object=obj, **kwargs)
+from ..common.views import BaseDelete, BaseDetail, BaseList
+from . import models
 
 
 # BMD sessions
@@ -59,17 +37,8 @@ class SessionList(BaseList):
 
 
 def _get_session_config(self, context, is_editing: bool = False) -> WebappConfig:
-    if self.object.can_edit:
-        config = WebappConfig(
-            app="bmds3Startup",
-            data=dict(
-                edit=is_editing,
-                session_url=self.object.get_api_url(),
-                csrf=get_token(self.request) if is_editing else None,
-            ),
-        )
-    else:
-        config = WebappConfig(
+    if self.object.is_bmds_version2():
+        return WebappConfig(
             app="bmds2Startup",
             data=dict(
                 editMode=is_editing,
@@ -80,7 +49,14 @@ def _get_session_config(self, context, is_editing: bool = False) -> WebappConfig
                 csrf=get_token(self.request) if is_editing else None,
             ),
         )
-    return config
+    return WebappConfig(
+        app="bmds3Startup",
+        data=dict(
+            edit=is_editing,
+            session_url=self.object.get_api_url(),
+            csrf=get_token(self.request) if is_editing else None,
+        ),
+    )
 
 
 class SessionDetail(BaseDetail):
@@ -96,8 +72,8 @@ class SessionUpdate(BaseDetail):
 
     def dispatch(self, request, *args, **kwargs):
         response = super().dispatch(request, *args, **kwargs)
-        if not self.object.can_edit:
-            raise BadRequest("Session BMDS version is unsupported, can't update this session.")
+        if self.object.is_bmds_version2():
+            raise BadRequest(f"BMDS version {self.object.version} is unsupported, cannot update.")
         return response
 
     def get_redirect_url(self, *args, **kwargs):

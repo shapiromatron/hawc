@@ -4374,34 +4374,6 @@
     significant: false
     significance_level: null
     treatment_effect: null
-- model: bmd.assessmentsettings
-  pk: 1
-  fields:
-    assessment: 3
-    version: BMDS270
-    created: 2020-11-25 16:47:36.227246+00:00
-    last_updated: 2020-11-25 16:47:36.227279+00:00
-- model: bmd.assessmentsettings
-  pk: 2
-  fields:
-    assessment: 2
-    version: BMDS330
-    created: 2020-11-25 16:47:36.236947+00:00
-    last_updated: 2022-12-05 21:15:14.684837+00:00
-- model: bmd.assessmentsettings
-  pk: 3
-  fields:
-    assessment: 1
-    version: BMDS270
-    created: 2020-11-25 16:47:36.244091+00:00
-    last_updated: 2020-11-25 16:47:36.244109+00:00
-- model: bmd.assessmentsettings
-  pk: 4
-  fields:
-    assessment: 4
-    version: BMDS270
-    created: 2022-10-27 21:02:29.790125+00:00
-    last_updated: 2022-10-27 21:02:29.790139+00:00
 - model: bmd.session
   pk: 2
   fields:

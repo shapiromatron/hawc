@@ -5,6 +5,10 @@ from ..animal.constants import DataType
 from ..animal.models import Endpoint
 
 
+def version():
+    return pybmds.__version__
+
+
 def build_dataset(endpoint: Endpoint, dose_units_id: int, n_drop_doses: int = 0) -> DatasetBase:
     ds = endpoint.get_json(json_encode=False)
     doses = [

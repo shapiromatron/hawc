@@ -39,10 +39,6 @@
           <a class="dropdown-item" href="{% url 'riskofbias:arob_detail' pk=object.pk %}">{{object.get_rob_name_display}} settings</a>
         {% endif %}
 
-        {% if assessment.enable_bmd %}
-          <a class="dropdown-item" href="{% url 'bmd:assess_settings_detail' pk=object.pk %}">Benchmark dose settings</a>
-        {% endif %}
-
         {% if assessment.enable_data_extraction and obj_perms.edit_assessment %}
           <a class="dropdown-item" href="{% url 'invitro:endpointcategory_update' object.pk %}">In vitro endpoint categories</a>
         {% endif%}
