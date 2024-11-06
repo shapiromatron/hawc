@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from rest_framework import exceptions, serializers
 
 from ..assessment.models import Assessment
@@ -44,7 +45,7 @@ class SimpleStudySerializer(StudySerializer):
 
     def create(self, validated_data):
         ref_id = self.initial_data.get("reference_id")
-        reference = Reference.objects.get(id=ref_id)
+        reference = get_object_or_404(Reference, id=ref_id)
         if models.Study.objects.filter(reference_ptr=ref_id).exists():
             raise serializers.ValidationError(f"Reference ID {ref_id} already linked with a study.")
         if not reference.assessment.user_can_edit_object(self.context["request"].user):
