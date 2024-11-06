@@ -55,7 +55,7 @@ dependencies = [
   "jinja2==3.1.4",
   "plotly==5.22.0",
   "scipy==1.13.1",
-  "bmds==23.4",
+  "pybmds==24.1",
   # exports
   "rispy==0.9.0",
   "python-docx==1.1.2",

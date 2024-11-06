@@ -1,9 +1,8 @@
-import bmds
-from bmds.datasets import DatasetBase
+import pybmds
+from pybmds.datasets.base import DatasetBase
 
 from ..animal.constants import DataType
 from ..animal.models import Endpoint
-from .constants import BmdsVersion
 
 
 def build_dataset(endpoint: Endpoint, dose_units_id: int, n_drop_doses: int = 0) -> DatasetBase:
@@ -19,7 +18,7 @@ def build_dataset(endpoint: Endpoint, dose_units_id: int, n_drop_doses: int = 0)
     doses = [d for d, grp in zip(doses, grps, strict=True) if grp["isReported"]]
 
     if endpoint.data_type == DataType.CONTINUOUS:
-        Cls = bmds.ContinuousDataset
+        Cls = pybmds.ContinuousDataset
         kwargs = dict(
             doses=doses,
             ns=[d["n"] for d in grps if d["isReported"]],
@@ -27,7 +26,7 @@ def build_dataset(endpoint: Endpoint, dose_units_id: int, n_drop_doses: int = 0)
             stdevs=[d["stdev"] for d in grps if d["isReported"]],
         )
     elif endpoint.data_type in [DataType.DICHOTOMOUS, DataType.DICHOTOMOUS_CANCER]:
-        Cls = bmds.DichotomousDataset
+        Cls = pybmds.DichotomousDataset
         kwargs = dict(
             doses=doses,
             ns=[d["n"] for d in grps if d["isReported"]],
@@ -43,22 +42,15 @@ def build_dataset(endpoint: Endpoint, dose_units_id: int, n_drop_doses: int = 0)
     return Cls(**kwargs)
 
 
-def build_session(dataset: DatasetBase, version: BmdsVersion):
-    if version == BmdsVersion.BMDS2601:
-        version = BmdsVersion.BMDS270
-    Session = bmds.BMDS.version(version.value)
-
-    if version.startswith("BMDS2"):
-        return Session(dataset.dtype, dataset=dataset)
-    else:
-        return Session(dataset=dataset)
+def build_session(dataset) -> pybmds.Session:
+    return pybmds.Session(dataset=dataset)
 
 
 def build_and_execute(endpoint, inputs):
     dataset = build_dataset(
         endpoint, inputs.settings.dose_units_id, inputs.settings.num_doses_dropped
     )
-    session = build_session(dataset, BmdsVersion.BMDS330)
+    session = build_session(dataset)
     inputs.add_models(session)
     session.execute_and_recommend()
     return session

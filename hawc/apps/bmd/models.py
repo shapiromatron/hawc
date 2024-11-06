@@ -4,6 +4,7 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from reversion import revisions as reversion
 
 from ..animal.models import Endpoint
 from . import bmd_interface, constants, managers
@@ -20,7 +21,7 @@ class AssessmentSettings(models.Model):
         choices=constants.BmdsVersion,
         default=constants.BmdsVersion.BMDS330,
         help_text="Select the BMDS version to be used for dose-response modeling. Version 2 is no longer supported for execution; but results will be available for any version after execution is complete.",
-    )
+    )  # TODO - remove?
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -148,7 +149,7 @@ class Session(models.Model):
             dataset = bmd_interface.build_dataset(
                 self.endpoint, dose_units_id=self.dose_units_id, n_drop_doses=self.n_drop_doses()
             )
-            session = bmd_interface.build_session(dataset, constants.BmdsVersion(self.version))
+            session = bmd_interface.build_session(dataset)
             self._session = session
 
         if with_models and not session.has_models:
@@ -166,10 +167,10 @@ class Session(models.Model):
         )
 
     def get_model_options(self):
-        return self.get_session().get_model_options()
+        return []  # TODO
 
     def get_bmr_options(self):
-        return self.get_session().get_bmr_options()
+        return []  # TODO
 
     def get_study(self):
         return self.endpoint.get_study()
@@ -202,3 +203,7 @@ class Session(models.Model):
 
     def get_input_options(self) -> dict:
         return constants.get_input_options(self.endpoint.data_type)
+
+
+reversion.register(AssessmentSettings)
+reversion.register(Session)
