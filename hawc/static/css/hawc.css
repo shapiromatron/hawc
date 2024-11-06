@@ -1029,6 +1029,13 @@ tr+tr.show-only-child, div:not(.create-row.hidden)+div.show-only-child {
     text-align: left;
 }
 
+.hide-empty-tbody {
+    display: none;
+}
+.hide-empty-tbody:has(tbody>tr:not(.hidden)) {
+    display: revert;
+}
+
 .table-striped-invert tbody tr.epiv2-obj-row:nth-of-type(even) {
     background-color: #ffffff;
 }
