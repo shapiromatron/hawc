@@ -20,8 +20,8 @@ class BmdsVersion(models.TextChoices):
 
 
 @lru_cache
-def bmds2_logic() -> dict:
-    return json.loads((Path(__file__).parent / "fixtures" / "logic.json").read_text())["objects"]
+def bmds2_defaults() -> dict:
+    return json.loads((Path(__file__).parent / "fixtures" / "bmds2.json").read_text())
 
 
 class DichtomoumsBmrChoices(IntegerChoices):

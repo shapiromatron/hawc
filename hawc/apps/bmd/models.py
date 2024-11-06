@@ -124,12 +124,6 @@ class Session(models.Model):
             [0] + [model["overrides"].get("dose_drop", 0) for model in self.outputs["models"]]
         )
 
-    def get_model_options(self):
-        return []  # TODO
-
-    def get_bmr_options(self):
-        return []  # TODO
-
     def get_study(self):
         return self.endpoint.get_study()
 

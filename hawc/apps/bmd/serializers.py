@@ -6,12 +6,14 @@ from . import constants, models, tasks
 
 
 class SessionBmd2Serializer(serializers.ModelSerializer):
-    model_options = serializers.JSONField(source="get_model_options", read_only=True)
-    bmr_options = serializers.JSONField(source="get_bmr_options", read_only=True)
-
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        ret["logic"] = constants.bmds2_logic()
+        defaults = constants.bmds2_defaults()
+        ret.update(
+            logic=defaults["logic"],
+            model_options=defaults["model_options"][instance.endpoint.data_type],
+            bmr_options=defaults["bmr_options"][instance.endpoint.data_type],
+        )
         return ret
 
     class Meta:
@@ -30,8 +32,6 @@ class SessionBmd2Serializer(serializers.ModelSerializer):
             "outputs",
             "errors",
             "selected",
-            "model_options",
-            "bmr_options",
         )
 
 
