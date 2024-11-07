@@ -62,8 +62,6 @@ class LiteratureAssessmentViewSet(BaseAssessmentViewSet):
             create_object_log(
                 "Updated (tagtree replace)", assessment, assessment.id, self.request.user.id
             )
-        else:
-            raise ValueError()
         return Response(serializer.data)
 
     @action(
