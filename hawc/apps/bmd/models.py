@@ -18,7 +18,7 @@ class Session(models.Model):
     dose_units = models.ForeignKey(
         "assessment.DoseUnits", on_delete=models.CASCADE, related_name="bmd_sessions"
     )
-    version = models.CharField(max_length=10, choices=constants.BmdsVersion)
+    version = models.CharField(max_length=10)
     inputs = models.JSONField(default=dict)
     outputs = models.JSONField(default=dict)
     errors = models.JSONField(default=dict)

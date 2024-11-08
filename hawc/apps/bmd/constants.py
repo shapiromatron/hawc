@@ -4,19 +4,12 @@ from pathlib import Path
 from typing import Annotated, Literal
 
 import pybmds
-from django.db import models
 from django.db.models import IntegerChoices
 from pybmds.constants import Dtype, Models
 from pydantic import BaseModel, Field
 
 from ..animal.constants import DataType
 from ..animal.models import Endpoint
-
-
-class BmdsVersion(models.TextChoices):
-    BMDS2601 = "BMDS2601", "BMDS 2.6.0.1"
-    BMDS270 = "BMDS270", "BMDS 2.7"
-    BMDS330 = "BMDS330", "BMDS 3.3 (2022.10)"
 
 
 @lru_cache
