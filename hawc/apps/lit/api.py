@@ -62,6 +62,8 @@ class LiteratureAssessmentViewSet(BaseAssessmentViewSet):
             create_object_log(
                 "Updated (tagtree replace)", assessment, assessment.id, self.request.user.id
             )
+        else:
+            raise ValidationError(f"Request method {self.request.method} is not allowed.")
         return Response(serializer.data)
 
     @action(
