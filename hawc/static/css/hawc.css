@@ -86,7 +86,7 @@ tfoot > tr > td {
     border-top: none;
 }
 .hidden {
-    display: none;
+    display: none !important;
 }
 .resize-y {
     overflow-y: auto;
