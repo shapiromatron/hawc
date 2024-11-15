@@ -281,6 +281,12 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.assessment.public()
         assert isinstance(response, list)
 
+    def test_assessment_team_member(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        response = client.assessment.team_member()
+        assert isinstance(response, list)
+
     def test_assessment_create_value(self):
         value_data = {
             "assessment_id": 3,

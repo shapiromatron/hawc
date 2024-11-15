@@ -101,9 +101,9 @@ const _getDefaultSettings = function() {
     ];
 
 class PrismaStore {
-    constructor(rootStore, data) {
+    constructor(rootStore) {
         this.root = rootStore;
-        this.data = data;
+        this.getDataset();
     }
     @observable settings = null;
 
@@ -117,6 +117,26 @@ class PrismaStore {
 
     @action setFromJsonSettings(settings, firstTime) {
         this.settings = settings;
+    }
+
+    @action.bound getDataset() {
+        const {config} = this.root.base,
+            payload = {config: {visual_type: config.visual_type}};
+        h.handleSubmit(
+            config.api_data_url,
+            "POST",
+            config.csrf,
+            payload,
+            response => {
+                this.data = response;
+            },
+            err => {
+                console.error(err);
+            },
+            err => {
+                console.error(err);
+            }
+        );
     }
 
     @action.bound changeArraySettings(arrayKey, index, key, value) {
