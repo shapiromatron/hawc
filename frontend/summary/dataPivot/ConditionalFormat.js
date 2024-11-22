@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import _ from "lodash";
 import HAWCModal from "shared/utils/HAWCModal";
+import h from "shared/utils/helpers";
 
 import $ from "$";
 
@@ -137,40 +138,38 @@ _.extend(_DataPivot_settings_conditionalFormat, {
 class _DataPivot_ColorGradientSVG {
     constructor(svg, start_color, stop_color) {
         svg = d3.select(svg);
-        var gradient = svg
-            .append("svg:defs")
-            .append("svg:linearGradient")
-            .attr("id", "gradient")
-            .attr("x1", "0%")
-            .attr("y1", "100%")
-            .attr("x2", "100%")
-            .attr("y2", "100%")
-            .attr("spreadMethod", "pad");
+        const gradientId = h.randomString(),
+            gradient = svg
+                .append("svg:defs")
+                .append("svg:linearGradient")
+                .attr("id", gradientId)
+                .attr("x1", "0%")
+                .attr("y1", "0%")
+                .attr("x2", "100%")
+                .attr("y2", "0%");
 
         this.start = gradient
             .append("svg:stop")
             .attr("offset", "0%")
-            .attr("stop-color", start_color)
-            .attr("stop-opacity", 1);
+            .attr("style", `stop-color:${start_color};stop-opacity:1`);
 
         this.stop = gradient
             .append("svg:stop")
             .attr("offset", "100%")
-            .attr("stop-color", stop_color)
-            .attr("stop-opacity", 1);
+            .attr("style", `stop-color:${stop_color};stop-opacity:1`);
 
         svg.append("svg:rect")
             .attr("width", "100%")
             .attr("height", "100%")
-            .style("fill", "url(#gradient)");
+            .attr("fill", `url(#${gradientId})`);
     }
 
     update_start_color(color) {
-        this.start.attr("stop-color", color);
+        this.start.attr("style", `stop-color:${color};stop-opacity:1`);
     }
 
     update_stop_color(color) {
-        this.stop.attr("stop-color", color);
+        this.stop.attr("style", `stop-color:${color};stop-opacity:1`);
     }
 }
 
@@ -239,17 +238,13 @@ class _DataPivot_settings_conditional {
                 values.max_color || defaults.max_color
             ),
             svg = $(
-                '<svg role="image" aria-label="Color gradient" width="150" height="25" class="d3" style="margin-top: 10px"></svg>'
+                '<svg role="image" aria-label="Color gradient" width="100%" height="25" class="d3 mt-3">'
             ),
             gradient = new _DataPivot_ColorGradientSVG(svg[0], min_color.val(), max_color.val());
 
         // add event-handlers to change gradient color
-        min_color.change(function(v) {
-            gradient.update_start_color(min_color.val());
-        });
-        max_color.change(function(v) {
-            gradient.update_stop_color(max_color.val());
-        });
+        min_color.change(v => gradient.update_start_color(min_color.val()));
+        max_color.change(v => gradient.update_stop_color(max_color.val()));
 
         // add size values to size div
         var ps = div.find(".point-size"),
