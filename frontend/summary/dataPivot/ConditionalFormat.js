@@ -292,7 +292,9 @@ class _DataPivot_settings_conditional {
                 let mapping = buildStyleMap(values, true);
                 vals.unique_tokens.forEach(v => {
                     var select = dp.style_manager
-                        .add_select(parent.settings.type, mapping.get(v) || NULL_CASE, true)
+                        .add_select(parent.settings.type, mapping.get(v) || NULL_CASE, true, {
+                            null_label: " --- no change ---",
+                        })
                         .data("key", v);
                     self.discrete_styles.push(select);
                     add_input_row(discrete, `Style for <kbd>${v}</kbd>:`, select);
