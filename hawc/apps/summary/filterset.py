@@ -49,7 +49,9 @@ class VisualFilterSet(BaseFilterSet):
         return queryset.prefetch_related(
             Prefetch(
                 "labels",
-                queryset=LabeledItem.objects.filter(query).select_related("label"),
+                queryset=LabeledItem.objects.filter(query)
+                .select_related("label")
+                .order_by("label__path"),
                 to_attr="visible_labels",
             )
         )
@@ -124,12 +126,16 @@ class DataPivotFilterSet(VisualFilterSet):
         return queryset.prefetch_related(
             Prefetch(
                 "datapivotquery__labels",
-                queryset=LabeledItem.objects.filter(filters).select_related("label"),
+                queryset=LabeledItem.objects.filter(filters)
+                .select_related("label")
+                .order_by("label__path"),
                 to_attr="visible_query_labels",
             ),
             Prefetch(
                 "datapivotupload__labels",
-                queryset=LabeledItem.objects.filter(filters).select_related("label"),
+                queryset=LabeledItem.objects.filter(filters)
+                .select_related("label")
+                .order_by("label__path"),
                 to_attr="visible_upload_labels",
             ),
         )

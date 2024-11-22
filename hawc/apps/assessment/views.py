@@ -1056,7 +1056,7 @@ class LabelItem(HtmxView):
     def label_indicators(self, request: HttpRequest, *args, **kwargs):
         if not self.assessment.user_can_view_object(request.user):
             raise PermissionDenied()
-        labels = models.Label.objects.get_applied(self.content_object)
+        labels = models.Label.objects.get_applied(self.content_object).order_by("path")
         if not self.assessment.user_can_edit_object(request.user):
             labels = labels.filter(published=True)
         context = dict(

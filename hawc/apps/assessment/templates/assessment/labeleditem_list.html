@@ -20,7 +20,7 @@
             {% if obj_perms.edit %}
               <i class="text-secondary fa fa-{{ object.content_object.published|yesno:'eye,eye-slash' }} px-1 mr-2" title="{{object.content_object|model_verbose_name|title}} is {{ object.content_object.published|yesno:'published,unpublished' }}"></i>
             {% endif %}
-            {% for labeled_item in object.content_object.labels.all %}
+            {% for labeled_item in object.content_object.get_ordered_labels.all %}
               {% if labeled_item.label.published or obj_perms.edit %}
                 {% include "assessment/fragments/label.html" with label=labeled_item.label %}
               {% endif %}
