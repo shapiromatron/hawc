@@ -190,7 +190,9 @@ class _DataPivot_settings_conditional {
             div = $('<div class="well">').appendTo(el),
             add_input_row = function(parent, desc_txt, inp) {
                 var lbl = $("<label>").html(desc_txt);
-                parent.append(lbl, inp);
+                $('<div class="col-6">')
+                    .append(lbl, inp)
+                    .appendTo(parent);
             },
             fieldName = dp.column_select_manager
                 .createSelect(true, {name: "field_name"})
@@ -213,8 +215,9 @@ class _DataPivot_settings_conditional {
             .prependTo(div);
 
         // add master conditional inputs and divs for changing fields
-        add_input_row(div, "Condition field", fieldName);
-        add_input_row(div, "Condition type", conditionType);
+        const selectorDiv = $('<div class="row">').appendTo(div);
+        add_input_row(selectorDiv, "Condition field", fieldName);
+        add_input_row(selectorDiv, "Condition type", conditionType);
         div.append("<hr>");
         formattingTypes.forEach(function(v) {
             $(`<div class="conditionalDivs ${v}">`)
@@ -251,15 +254,17 @@ class _DataPivot_settings_conditional {
         // add size values to size div
         var ps = div.find(".point-size"),
             min_max_ps = $("<p>").appendTo(ps);
-        add_input_row(ps, "Minimum point-size", DataPivot.rangeInputDiv(min_size));
-        add_input_row(ps, "Maximum point-size", DataPivot.rangeInputDiv(max_size));
+        const psDiv = $('<div class="row">').appendTo(ps);
+        add_input_row(psDiv, "Minimum point-size", DataPivot.rangeInputDiv(min_size));
+        add_input_row(psDiv, "Maximum point-size", DataPivot.rangeInputDiv(max_size));
 
         // add color values to color div
         var pc = div.find(".point-color"),
             min_max_pc = $("<p>").appendTo(pc);
-        add_input_row(pc, "Minimum color", min_color);
-        add_input_row(pc, "Maximum color", max_color);
-        pc.append("<br>", svg);
+        const pcDiv = $('<div class="row">').appendTo(pc);
+        add_input_row(pcDiv, "Minimum color", min_color);
+        add_input_row(pcDiv, "Maximum color", max_color);
+        pcDiv.append($('<div class="col-12">').append(svg));
 
         this.inputs.push(fieldName, conditionType, min_size, max_size, min_color, max_color);
 
