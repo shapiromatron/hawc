@@ -831,12 +831,24 @@ class PublishedItemsChecklist(HtmxViewSet):
     @action(permission=can_edit, methods={"post"})
     def update_item(self, request: HttpRequest, *args, **kwargs):
         instance = self.get_instance(request.item, kwargs["type"], kwargs["object_id"])
-        self.perform_update(request, instance)
+        can_update, can_update_message = self.can_update(instance)
+        if can_update:
+            self.perform_update(request, instance)
         return render(
             request,
             "assessment/fragments/publish_item_td.html",
-            {"name": kwargs["type"], "object": instance, "assessment": request.item.assessment},
+            {
+                "name": kwargs["type"],
+                "object": instance,
+                "assessment": request.item.assessment,
+                "can_update_message": can_update_message,
+            },
         )
+
+    def can_update(self, instance) -> tuple[bool, str]:
+        if hasattr(instance, "can_change_published"):
+            return instance.can_change_published()
+        return True, ""
 
     def get_instance(self, item, type: str, object_id: int):
         Model = self.model_lookups.get(type)

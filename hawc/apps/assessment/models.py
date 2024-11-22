@@ -1391,6 +1391,29 @@ class Label(AssessmentRootMixin, MP_Node):
     def get_delete_url(self):
         return reverse("assessment:label-htmx", args=(self.pk, "delete"))
 
+    def can_change_published(self) -> tuple[bool, str]:
+        """Check that the item can be published or unpublished
+
+        Returns:
+            tuple[bool, str]: boolean, status message if false
+        """
+        next = not self.published
+        if next:
+            if self.depth == 1:
+                # any depth of 1 tag can be published
+                return True, ""
+            parent_published = self.get_parent().published
+            return (
+                parent_published,
+                "" if parent_published else "Parent must be published to publish child",
+            )
+        else:
+            all_unpublished = all(child.published is False for child in self.get_children())
+            return (
+                all_unpublished,
+                "" if all_unpublished else "All children must be unpublished to unpublish",
+            )
+
 
 class LabeledItem(models.Model):
     objects = managers.LabeledItemManager()
