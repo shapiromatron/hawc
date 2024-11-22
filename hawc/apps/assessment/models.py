@@ -1379,6 +1379,9 @@ class Label(AssessmentRootMixin, MP_Node):
     def get_nested_name(self) -> str:
         return "<root-node>" if self.is_root() else f"{'━ ' * (self.depth - 1)}{self.name}"
 
+    def get_labelled_items_url(self):
+        return reverse("assessment:labeled-items", args=(self.assessment_id,)) + f"?label={self.id}"
+
     def get_absolute_url(self):
         return reverse("assessment:label-htmx", args=(self.pk, "read"))
 
