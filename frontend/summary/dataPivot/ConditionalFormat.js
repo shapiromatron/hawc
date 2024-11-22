@@ -288,17 +288,28 @@ class _DataPivot_settings_conditional {
                     return;
                 }
 
+                const tbody = $("<tbody>"),
+                    tbl = $(`<table class="table table-sm table-bordered">
+                    <colgroup><col width="30%" /><col width="70%" /></colgroup>
+                    <thead><tr><th>Value</th><th>Style</th></tr></thead>
+                    </table>`);
+
                 // build rows for all unique items; tokens must be a string
                 let mapping = buildStyleMap(values, true);
-                vals.unique_tokens.forEach(v => {
-                    var select = dp.style_manager
-                        .add_select(parent.settings.type, mapping.get(v) || NULL_CASE, true, {
-                            null_label: " --- no change ---",
-                        })
-                        .data("key", v);
-                    self.discrete_styles.push(select);
-                    add_input_row(discrete, `Style for <kbd>${v}</kbd>:`, select);
-                });
+                tbody.append(
+                    vals.unique_tokens.map(v => {
+                        var select = dp.style_manager
+                            .add_select(parent.settings.type, mapping.get(v) || NULL_CASE, true, {
+                                null_label: "--- no change ---",
+                            })
+                            .data("key", v);
+                        self.discrete_styles.push(select);
+                        return $("<tr>")
+                            .append(`<td><kbd>${v}</kbd></td>`)
+                            .append($("<td>").append(select));
+                    })
+                );
+                tbl.append(tbody).appendTo(discrete);
             } else {
                 var txt = `Selected items in <i>${fieldName.val()}</i> `;
                 if (vals.range) {
