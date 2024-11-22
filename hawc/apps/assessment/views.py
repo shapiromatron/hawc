@@ -817,6 +817,7 @@ class PublishedItemsChecklist(HtmxViewSet):
         "dataset": apps.get_model("assessment", "Dataset"),
         "summarytable": apps.get_model("summary", "SummaryTable"),
         "attachment": apps.get_model("assessment", "Attachment"),
+        "label": models.Label,
     }
 
     @action(permission=can_edit, htmx_only=False)
@@ -884,6 +885,7 @@ class PublishedItemsChecklist(HtmxViewSet):
         attachments = apps.get_model("assessment", "Attachment").objects.get_attachments(
             assessment, False
         )
+        labels = models.Label.get_assessment_qs(assessment.pk, include_root=False)
         return {
             "assessment": assessment,
             "breadcrumbs": crumbs,
@@ -893,6 +895,7 @@ class PublishedItemsChecklist(HtmxViewSet):
             "datasets": datasets,
             "summarytables": summarytables,
             "attachments": attachments,
+            "labels": labels,
         }
 
 

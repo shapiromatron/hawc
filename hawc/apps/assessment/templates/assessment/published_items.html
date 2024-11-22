@@ -125,6 +125,24 @@
           {% endfor %}
         </tbody>
       </table>
+      <h3>Labels</h3>
+      <p class="help-text">View all <a href="{% url 'assessment:manage-labels' assessment.id %}">labels</a>. All parent labels must be published in order to publish a child label. All children must be unpublished to unpublish a parent label.</p>
+      <table class="table table-sm table-bordered">
+        {% bs4_colgroup '20,80' %}
+        {% bs4_thead 'Published,Label' %}
+        <tbody>
+          {% for label in labels %}
+            <tr>
+              {% include 'assessment/fragments/publish_item_td.html' with name="label" object=label %}
+              <td><a href="{{label.get_labelled_items_url}}">{{label.get_nested_name}}</a></td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="2"><i>No labels exist.</i></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
 {% endblock content %}
