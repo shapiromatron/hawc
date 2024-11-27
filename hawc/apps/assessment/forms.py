@@ -559,6 +559,54 @@ class ContactForm(forms.Form):
         return self.cleaned_data
 
 
+class SearchForm(forms.Form):
+    all_public = forms.BooleanField(required=False, initial=True)
+    public = forms.ModelMultipleChoiceField(
+        queryset=models.Assessment.objects.all(), required=False
+    )
+    all_internal = forms.BooleanField(required=False, initial=True)
+    internal = forms.ModelMultipleChoiceField(
+        queryset=models.Assessment.objects.all(), required=False
+    )
+    query = forms.CharField(max_length=128)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+        self.fields["public"].queryset = self.fields["public"].queryset.public().order_by("name")
+        if self.user.is_anonymous:
+            self.fields.pop("all_internal")
+            self.fields.pop("internal")
+        else:
+            self.fields["internal"].queryset = (
+                self.fields["internal"].queryset.user_can_view(self.user).order_by("name")
+            )
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_method = "GET"
+
+        internal_fields = tuple() if self.user.is_anonymous else ("all_internal", "internal")
+
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("all_public", "public"),
+                cfl.Column(*internal_fields),
+            ),
+            cfl.Row(
+                cfl.Column("query", css_class="col-10"),
+                cfl.Column(
+                    cfl.Submit("search", "Search", css_class="btn-block py-4"), css_class="col-2"
+                ),
+            ),
+        )
+        return helper
+
+    def search(self):
+        pass
+
+
 class DatasetForm(forms.ModelForm):
     revision_version = forms.IntegerField(
         disabled=True,

@@ -20,6 +20,7 @@ urlpatterns = [
     path("all/", views.AssessmentFullList.as_view(), name="full_list"),
     path("public/", views.AssessmentPublicList.as_view(), name="public_list"),
     path("new/", views.AssessmentCreate.as_view(), name="new"),
+    path("search/", views.Search.as_view(), name="search"),
     path("<int:pk>/", views.AssessmentDetail.as_view(), name="detail"),
     path("<int:pk>/update/", views.AssessmentUpdate.as_view(), name="update"),
     path(

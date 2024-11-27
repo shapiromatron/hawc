@@ -1,0 +1,18 @@
+{% extends 'crumbless.html' %}
+
+
+{% block content %}
+  <h2>Search</h2>
+  {% crispy form %}
+{% endblock content %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    $(document).ready(function () {
+      const public_div = $('#div_id_public'),
+            internal_div = $('#div_id_internal');
+      $('#id_all_public').on('change', e=>(e.target.checked)?public_div.hide():public_div.show()).trigger('change')
+      $('#id_all_internal').on('change', e=>(e.target.checked)?internal_div.hide():internal_div.show()).trigger('change')
+    })
+  </script>
+{% endblock extrajs %}
