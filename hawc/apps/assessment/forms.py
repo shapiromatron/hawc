@@ -568,7 +568,8 @@ class SearchForm(forms.Form):
     internal = forms.ModelMultipleChoiceField(
         queryset=models.Assessment.objects.all(), required=False
     )
-    query = forms.CharField(max_length=128)
+    type = forms.ChoiceField(required=True, choices=(("visual", "Visuals"), ("study", "Studies")))
+    query = forms.CharField(max_length=128, required=False)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
@@ -595,7 +596,8 @@ class SearchForm(forms.Form):
                 cfl.Column(*internal_fields),
             ),
             cfl.Row(
-                cfl.Column("query", css_class="col-10"),
+                cfl.Column("query", css_class="col-6"),
+                cfl.Column("type", css_class="col-4"),
                 cfl.Column(
                     cfl.Submit("search", "Search", css_class="btn-block py-4"), css_class="col-2"
                 ),
@@ -604,7 +606,40 @@ class SearchForm(forms.Form):
         return helper
 
     def search(self):
-        pass
+        from itertools import chain
+
+        from django.db.models import Q
+
+        from ..summary.models import Visual
+
+        data = self.cleaned_data
+        assessment_filters = Q(
+            id__in=[a.id for a in chain(data.get("public", []), data.get("internal", []))]
+        )
+        if data["all_public"]:
+            assessment_filters |= Q(public_on__isnull=False, hide_from_public_page=False)
+        if data["all_internal"]:
+            assessment_filters |= (
+                Q(project_manager=self.user) | Q(team_members=self.user) | Q(reviewers=self.user)
+            )
+
+        assessment_ids = list(
+            models.Assessment.objects.filter(assessment_filters).values_list("id", flat=True)
+        )
+        # search public, published visuals and data pivots
+        # search internal, published and unpublished visuals and data pivots
+        # TODO - search by tags
+        # TODO - search studies
+
+        filters = Q()
+        if query := data.get("query"):
+            filters &= Q(title__icontains=query) | Q(labels__name__icontains=query)
+        return (
+            Visual.objects.filter(assessment__in=assessment_ids)
+            .filter(filters)
+            .select_related("assessment")
+            .prefetch_related("labels")[:100]
+        )
 
 
 class DatasetForm(forms.ModelForm):

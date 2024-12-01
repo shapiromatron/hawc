@@ -4,6 +4,23 @@
 {% block content %}
   <h2>Search</h2>
   {% crispy form %}
+  <table class="table table-sm table-striped">
+    {% bs4_colgroup '30,40,30' %}
+    {% bs4_thead 'Timestamp,Visual,Last Updated' %}
+    <tbody>
+      {% for result in results %}
+        <tr>
+          <td><a href="{{ result.assessment.get_absolute_url }}">{{result.assessment}}</a></td>
+          <td><a href="{{ results.get_absolute_url }}">{{result.title}}</a></td>
+          <td>{{result.last_updated}}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="3">No content found</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock content %}
 
 {% block extrajs %}
