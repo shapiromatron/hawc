@@ -63,7 +63,7 @@ class LiteratureAssessmentViewSet(BaseAssessmentViewSet):
                 "Updated (tagtree replace)", assessment, assessment.id, self.request.user.id
             )
         elif self.request.method == "HEAD":
-            return Response(status=200)
+            return Response({})
         else:
             raise ValidationError(f"Request method {self.request.method} is not allowed.")
         return Response(serializer.data)
