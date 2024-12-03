@@ -187,6 +187,10 @@ class TestLiteratureAssessmentViewSet:
         assert response.status_code == 400
         assert "does not match" in error["tree"][0]
 
+        response = c.head(url, format="json")
+        assert response.status_code == 200
+        assert response.data == {}
+
         # good payload
         response = c.post(url, good_payload, format="json")
         assert response.status_code == 200
