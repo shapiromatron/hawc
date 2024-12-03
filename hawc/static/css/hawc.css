@@ -86,7 +86,7 @@ tfoot > tr > td {
     border-top: none;
 }
 .hidden {
-    display: none;
+    display: none !important;
 }
 .resize-y {
     overflow-y: auto;
@@ -160,6 +160,13 @@ tfoot > tr > td {
 }
 .bg-light.clickable:active, .clickable:active .bg-light {
     background-color: #d4d5d6 !important;
+}
+.collapsed .collapsible-icon {
+    transform: rotate(0deg);
+}
+.collapsible-icon {
+    transform: rotate(-180deg);
+    transition: transform 250ms ease-in-out;
 }
 .showOptsCaret:hover .optsCaret {
     opacity: 1;
@@ -1027,6 +1034,13 @@ tr+tr.show-only-child, div:not(.create-row.hidden)+div.show-only-child {
 .col-l-12 td:nth-child(12),
 .col-l-12 th:nth-child(12) {
     text-align: left;
+}
+
+.hide-empty-tbody {
+    display: none;
+}
+.hide-empty-tbody:has(tbody>tr:not(.hidden)) {
+    display: revert;
 }
 
 .table-striped-invert tbody tr.epiv2-obj-row:nth-of-type(even) {

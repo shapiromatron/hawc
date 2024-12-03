@@ -274,7 +274,7 @@ class Exposure(ReadWriteSerializerMixin, EditPermissionsCheckMixin, AssessmentEd
         if dtxsid := request.data.get("dtxsid"):
             try:
                 DSSTox.objects.get(dtxsid=dtxsid)
-            except DSSTox.DoesNotExist as err:
+            except (DSSTox.DoesNotExist, ValueError) as err:
                 raise ValidationError(f"{dtxsid} does not exist in HAWC") from err
 
     @transaction.atomic

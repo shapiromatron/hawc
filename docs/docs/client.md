@@ -58,6 +58,10 @@ Client tutorials for common operations are below:
 
 ### Changelog
 
+#### NEXT (TBD)
+
+* Added literature tag API {create, update, delete, move}
+
 #### [2024-3](https://pypi.org/project/hawc-client/2024.3/) (October 2024)
 
 * Update data pivot and visual output formats to return JSON
