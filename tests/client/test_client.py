@@ -1165,7 +1165,7 @@ class TestClient(LiveServerTestCase, TestCase):
         updated_hero = updated_reference.identifiers.get(database=2)
         assert updated_hero.unique_id == "1037739"
 
-    def test_tags_crud(self):
+    def test_tags(self):
         client = HawcClient(self.live_server_url)
         client.authenticate("pm@hawcproject.org", "pw")
 
@@ -1184,9 +1184,7 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.lit.delete_tag(tag_id)
         assert response.status_code == 204
 
-    def test_move(self):
-        client = HawcClient(self.live_server_url)
-        client.authenticate("pm@hawcproject.org", "pw")
+        # move tag
         tags = ReferenceFilterTag.get_assessment_qs(3)
         tag = tags.get(name="Tier I")
 
