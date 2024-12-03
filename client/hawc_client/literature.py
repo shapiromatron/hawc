@@ -347,7 +347,7 @@ class LiteratureClient(BaseClient):
         url = f"{self.session.root_url}/lit/api/tags/{tag_id}/"
         return self.session.delete(url)
 
-    def move_tag(self, tag_id: int, new_index: int) -> Response:
+    def move_tag(self, tag_id: int, new_index: int) -> dict:
         """
         Change the order of a tag within its tagtree.
 
