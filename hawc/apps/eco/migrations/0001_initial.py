@@ -30,6 +30,7 @@ class Migration(migrations.Migration):
                     "type",
                     models.CharField(choices=[("CE", "cause/effect")], default="CE", max_length=2),
                 ),
+                ("deprecated_on", models.DateTimeField(blank=True, default=None, null=True)),
                 ("created", models.DateTimeField(auto_now_add=True)),
                 ("last_updated", models.DateTimeField(auto_now=True)),
                 ("notes", models.TextField(blank=True)),
@@ -92,6 +93,7 @@ class Migration(migrations.Migration):
                         to="eco.vocab",
                     ),
                 ),
+                ("deprecated_on", models.DateTimeField(blank=True, default=None, null=True)),
             ],
             options={
                 "verbose_name": "Controlled vocabulary",
