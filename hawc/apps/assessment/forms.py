@@ -9,6 +9,7 @@ from django.contrib.admin.widgets import AutocompleteSelectMultiple
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
 from django.db import transaction
+from django.db.models import QuerySet
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
@@ -692,9 +693,9 @@ class LabelForm(forms.ModelForm):
     after = forms.ModelChoiceField(
         None,
         required=False,
-        empty_label="Default order",
+        empty_label="--- last ---",
         initial=None,
-        help_text="Move a label next to another label. This makes it a sibling of the label, and directly below it in the tree.",
+        help_text="Move label after a sibling label.",
     )
 
     class Meta:
@@ -732,7 +733,7 @@ class LabelForm(forms.ModelForm):
         )
         return helper
 
-    def get_tree_queryset(self):
+    def get_tree_queryset(self) -> tuple[QuerySet[models.Label], models.Label]:
         root = models.Label.get_assessment_root(self.instance.assessment.pk)
         queryset = models.Label.get_tree(root)
         if self.instance.pk is not None:
