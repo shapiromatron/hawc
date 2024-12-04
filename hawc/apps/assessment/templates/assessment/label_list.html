@@ -5,8 +5,8 @@
     <h2 class="mb-0">Labels</h2>
     <button class="btn btn-primary ml-2 ml-auto align-self-start flex-shrink-0"
             hx-get="{% url 'assessment:label-htmx' assessment.pk 'create' %}"
-            hx-target="#label-listgroup"
-            hx-swap="beforeend">
+            hx-target=".create-row"
+            hx-swap="outerHTML">
       <i class="fa fa-fw fa-save"></i>&nbsp;
       Create label
     </button>
@@ -17,6 +17,7 @@
         {% include "assessment/fragments/label_row.html" with canEdit=True %}
       {% endfor %}
       <div class="alert alert-info text-center show-only-child my-0">No labels created (yet).</div>
+      <div class="create-row hidden"></div>
     </div>
   </div>
 {% endblock content %}

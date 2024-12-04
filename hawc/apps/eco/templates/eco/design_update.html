@@ -13,15 +13,16 @@
   <div class="card my-4 mx-2">
     <div class="card-body">
       {% url 'eco:cause-htmx' object.pk 'create' as cause_create %}
-      {% include "common/fragments/_create_card.html" with title="Causes" hx_get=cause_create hx_target="#cause-tbody" model="cause" btn_text="Create" %}
+      {% include "common/fragments/_create_card.html" with title="Causes" hx_get=cause_create hx_target=".cause-edit-row.create-row" model="cause" btn_text="Create" %}
       <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '10,15,15,15,15,15,15' %}
         {% bs4_thead 'Name,Term,Species,Level,Level Units,Comment,Edit' %}
         <tbody id="cause-tbody">
-          {% include "common/fragments/_create_one.html" with text="No effects. Create one?" %}
           {% for object in causes %}
             {% include "eco/fragments/cause_row.html" %}
           {% endfor %}
+          {% include "common/fragments/_create_one.html" with text="No causes. Create one?" %}
+          {% include "common/fragments/_create_row.html" with model="cause" first=True %}
         </tbody>
       </table>
     </div>
@@ -30,15 +31,16 @@
   <div class="card my-4 mx-2">
     <div class="card-body">
       {% url 'eco:effect-htmx' object.pk 'create' as effect_create %}
-      {% include "common/fragments/_create_card.html" with title="Effects" hx_get=effect_create hx_target="#effect-tbody" model="effect" btn_text="Create" %}
+      {% include "common/fragments/_create_card.html" with title="Effects" hx_get=effect_create hx_target=".effect-edit-row.create-row" model="effect" btn_text="Create" %}
       <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '10,15,15,15,15,15,15' %}
         {% bs4_thead 'Name,Term,Species,Units,As Reported,Comment,Edit' %}
         <tbody id="effect-tbody">
-          {% include "common/fragments/_create_one.html" with text="No effects. Create one?" %}
           {% for object in effects %}
             {% include "eco/fragments/effect_row.html" %}
           {% endfor %}
+          {% include "common/fragments/_create_one.html" with text="No effects. Create one?" %}
+          {% include "common/fragments/_create_row.html" with model="effect" first=True %}
         </tbody>
       </table>
     </div>
@@ -47,15 +49,16 @@
   <div class="card my-4 mx-2">
     <div class="card-body">
       {% url 'eco:result-htmx' object.pk 'create' as result_create %}
-      {% include "common/fragments/_create_card.html" with title="Results" hx_get=result_create hx_target="#result-tbody" model="result" btn_text="Create" %}
+      {% include "common/fragments/_create_card.html" with title="Results" hx_get=result_create hx_target=".result-edit-row.create-row" model="result" btn_text="Create" %}
       <table class="table table-sm table-striped-invert">
         {% bs4_colgroup '15,15,15,10,15,15,15' %}
         {% bs4_thead 'Name,Cause,Effect,Relationship Direction,Modifying Factors,Value,Edit' %}
         <tbody id="result-tbody">
-          {% include "common/fragments/_create_one.html" with text="No effects. Create one?" %}
           {% for object in results %}
             {% include "eco/fragments/result_row.html" %}
           {% endfor %}
+          {% include "common/fragments/_create_one.html" with text="No results. Create one?" %}
+          {% include "common/fragments/_create_row.html" with model="result" first=True %}
         </tbody>
       </table>
     </div>
