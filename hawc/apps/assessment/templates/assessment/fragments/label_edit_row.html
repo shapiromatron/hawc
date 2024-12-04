@@ -1,5 +1,5 @@
 
-<div hx-target="this" hx-swap="outerHTML" id="label-edit-row-{{object.pk}}" class="label-edit-row list-group-item d-flex {% if action == 'delete' %} bg-pink {% else %} bg-lightblue {% endif %}{% if form and not form.instance.id %} create-row {% endif %}">
+<div hx-target="this" hx-swap="outerHTML" id="label-edit-row-{{object.pk|default:'new'}}" class="label-edit-row list-group-item d-flex {% if action == 'delete' %} bg-pink {% else %} bg-lightblue {% endif %}{% if form and not form.instance.id %} create-row {% endif %}">
   <form method="post" class="d-flex align-items-center p-1 w-100">
     <div class="col-md-auto flex-fill pl-0 py-2">
       {% crispy form %}

@@ -1003,6 +1003,7 @@ class LabelViewSet(HtmxViewSet):
         response = render(request, template, context)
         if retarget_form:
             response["HX-Retarget"] = "#label-edit-row-"
+            response["HX-Retarget"] = "#label-edit-row-new"
         return response
 
     @action(methods=("get", "post"), permission=can_edit)
