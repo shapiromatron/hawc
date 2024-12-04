@@ -978,7 +978,7 @@ class LabelViewSet(HtmxViewSet):
     list_fragment = "assessment/fragments/label_list.html"
 
     def get_queryset(self, request):
-        return models.Label.get_assessment_qs(request.item.assessment_id)
+        return models.Label.get_assessment_qs(request.item.assessment.id)
 
     @action(permission=can_view, htmx_only=False)
     def read(self, request: HttpRequest, *args, **kwargs):
