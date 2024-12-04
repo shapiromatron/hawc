@@ -1,50 +1,12 @@
 import traceback
 
-from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from reversion import revisions as reversion
 
 from ..animal.models import Endpoint
 from . import bmd_interface, constants, managers
-
-
-class AssessmentSettings(models.Model):
-    objects = managers.AssessmentSettingsManager()
-
-    assessment = models.OneToOneField(
-        "assessment.Assessment", on_delete=models.CASCADE, related_name="bmd_settings"
-    )
-    version = models.CharField(
-        max_length=10,
-        choices=constants.BmdsVersion,
-        default=constants.BmdsVersion.BMDS330,
-        help_text="Select the BMDS version to be used for dose-response modeling. Version 2 is no longer supported for execution; but results will be available for any version after execution is complete.",
-    )
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-    BREADCRUMB_PARENT = "assessment"
-
-    class Meta:
-        verbose_name_plural = "BMD settings"
-
-    def __str__(self):
-        return "BMD settings"
-
-    def get_absolute_url(self):
-        return reverse("bmd:assess_settings_detail", args=(self.assessment_id,))
-
-    def get_assessment(self):
-        return self.assessment
-
-    @classmethod
-    def build_default(cls, assessment):
-        cls.objects.create(assessment=assessment)
-
-    @property
-    def can_create_sessions(self):
-        return settings.HAWC_FEATURES.ENABLE_BMDS_33 and self.version.startswith("BMDS3")
 
 
 class Session(models.Model):
@@ -56,7 +18,7 @@ class Session(models.Model):
     dose_units = models.ForeignKey(
         "assessment.DoseUnits", on_delete=models.CASCADE, related_name="bmd_sessions"
     )
-    version = models.CharField(max_length=10, choices=constants.BmdsVersion)
+    version = models.CharField(max_length=10)
     inputs = models.JSONField(default=dict)
     outputs = models.JSONField(default=dict)
     errors = models.JSONField(default=dict)
@@ -96,9 +58,7 @@ class Session(models.Model):
 
     @classmethod
     def create_new(cls, endpoint: Endpoint) -> "Session":
-        if not endpoint.assessment.bmd_settings.can_create_sessions:
-            raise ValueError("Cannot create new analysis")
-        version = endpoint.assessment.bmd_settings.version
+        version = bmd_interface.version()
         inputs = constants.BmdInputSettings.create_default(endpoint)
         return cls.objects.create(
             endpoint_id=endpoint.id,
@@ -111,10 +71,6 @@ class Session(models.Model):
     @property
     def is_finished(self) -> bool:
         return any(map(bool, [self.date_executed, self.outputs, self.errors]))
-
-    @property
-    def can_edit(self):
-        return self.version.startswith("BMDS3")
 
     def deactivate_similar_sessions(self):
         Session.objects.filter(endpoint=self.endpoint, dose_units=self.dose_units).exclude(
@@ -148,7 +104,7 @@ class Session(models.Model):
             dataset = bmd_interface.build_dataset(
                 self.endpoint, dose_units_id=self.dose_units_id, n_drop_doses=self.n_drop_doses()
             )
-            session = bmd_interface.build_session(dataset, constants.BmdsVersion(self.version))
+            session = bmd_interface.build_session(dataset)
             self._session = session
 
         if with_models and not session.has_models:
@@ -160,16 +116,13 @@ class Session(models.Model):
     def get_endpoint_serialized(self) -> dict:
         return self.endpoint.get_json(json_encode=False)
 
+    def is_bmds_version2(self) -> bool:
+        return self.version in {"BMDS2601", "BMDS270"}
+
     def n_drop_doses(self) -> int:
         return max(
             [0] + [model["overrides"].get("dose_drop", 0) for model in self.outputs["models"]]
         )
-
-    def get_model_options(self):
-        return self.get_session().get_model_options()
-
-    def get_bmr_options(self):
-        return self.get_session().get_bmr_options()
 
     def get_study(self):
         return self.endpoint.get_study()
@@ -202,3 +155,6 @@ class Session(models.Model):
 
     def get_input_options(self) -> dict:
         return constants.get_input_options(self.endpoint.data_type)
+
+
+reversion.register(Session)

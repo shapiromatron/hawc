@@ -14,8 +14,6 @@ def test_get_200():
     assert client.get(url).status_code == 302
 
     urls = [
-        reverse("bmd:assess_settings_detail", args=(main,)),
-        reverse("bmd:assess_settings_update", args=(main,)),
         reverse("bmd:session_list", args=(main,)),
         reverse("bmd:session_detail", args=(sessions,)),
         reverse("bmd:session_update", args=(sessions,)),
