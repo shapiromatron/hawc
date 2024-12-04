@@ -1002,7 +1002,7 @@ class LabelViewSet(HtmxViewSet):
         context = self.get_context_data(form=form, **kwargs)
         response = render(request, template, context)
         if retarget_form:
-            response["HX-Retarget"] = "#label-edit-row-"
+            # form validation error - swap form div instead of labels div
             response["HX-Retarget"] = "#label-edit-row-new"
         return response
 
@@ -1024,6 +1024,7 @@ class LabelViewSet(HtmxViewSet):
         context = self.get_context_data(form=form, **kwargs)
         response = render(request, template, context)
         if retarget_form:
+            # form validation error - swap form div instead of labels div
             response["HX-Retarget"] = f"#label-edit-row-{request.item.object.id}"
         return response
 
