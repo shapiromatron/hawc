@@ -14,12 +14,8 @@
       <h3>Studies</h3>
       <p class="help-text">View all <a href="{% url 'study:list' assessment.id %}">studies</a>.</p>
       <table class="table table-sm table-bordered">
-        <thread>
-          <tr>
-            <th>Published</th>
-            <th>Study</th>
-          </tr>
-        </thread>
+        {% bs4_colgroup '20,80' %}
+        {% bs4_thead 'Published,Study' %}
         <tbody>
           {% for study in studies %}
             <tr>
@@ -38,12 +34,8 @@
       <h3>Visuals</h3>
       <p class="help-text">View all <a href="{% url 'summary:visualization_list' assessment.id %}">visuals</a>.</p>
       <table class="table table-sm table-bordered">
-        <thread>
-          <tr>
-            <th>Published</th>
-            <th>Visual</th>
-          </tr>
-        </thread>
+        {% bs4_colgroup '20,80' %}
+        {% bs4_thead 'Published,Visual' %}
         <tbody>
           {% for dp in datapivots %}
             {% if forloop.first %}
@@ -82,12 +74,8 @@
       <h3>Summary tables</h3>
       <p class="help-text">View all <a href="{% url 'summary:tables_list' assessment.id %}">tables</a>.</p>
       <table class="table table-sm table-bordered">
-        <thread>
-          <tr>
-            <th>Published</th>
-            <th>Summary tables</th>
-          </tr>
-        </thread>
+        {% bs4_colgroup '20,80' %}
+        {% bs4_thead 'Published,Table' %}
         <tbody>
           {% for table in summarytables %}
             <tr>
@@ -101,17 +89,11 @@
           {% endfor %}
         </tbody>
       </table>
-    </div>
-    <div class='col-xl-4'>
       <h3>Datasets</h3>
       <p class="help-text">View all <a href="{{assessment.get_absolute_url}}">datasets</a>.</p>
       <table class="table table-sm table-bordered">
-        <thread>
-          <tr>
-            <th>Published</th>
-            <th>Dataset</th>
-          </tr>
-        </thread>
+        {% bs4_colgroup '20,80' %}
+        {% bs4_thead 'Published,Dataset' %}
         <tbody>
           {% for dataset in datasets %}
             <tr>
@@ -125,17 +107,11 @@
           {% endfor %}
         </tbody>
       </table>
-    </div>
-    <div class='col-xl-4'>
       <h3>Attachments</h3>
       <p class="help-text">View all <a href="{{assessment.get_absolute_url}}">attachments</a>.</p>
       <table class="table table-sm table-bordered">
-        <thread>
-          <tr>
-            <th>Published</th>
-            <th>Assessment Attachments</th>
-          </tr>
-        </thread>
+        {% bs4_colgroup '20,80' %}
+        {% bs4_thead 'Published,Assessment Attachments' %}
         <tbody>
           {% for attachment in attachments %}
             <tr>
@@ -145,6 +121,24 @@
           {% empty %}
             <tr>
               <td colspan="2"><i>No attachments exist.</i></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <h3>Labels</h3>
+      <p class="help-text">View all <a href="{% url 'assessment:manage-labels' assessment.id %}">labels</a>. All parent labels must be published in order to publish a child label. All children must be unpublished to unpublish a parent label.</p>
+      <table class="table table-sm table-bordered">
+        {% bs4_colgroup '20,80' %}
+        {% bs4_thead 'Published,Label' %}
+        <tbody>
+          {% for label in labels %}
+            <tr>
+              {% include 'assessment/fragments/publish_item_td.html' with name="label" object=label %}
+              <td><a href="{{label.get_labelled_items_url}}">{{label.get_nested_name}}</a></td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="2"><i>No labels exist.</i></td>
             </tr>
           {% endfor %}
         </tbody>

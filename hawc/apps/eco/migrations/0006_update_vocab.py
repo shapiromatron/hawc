@@ -61,16 +61,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name="nestedterm",
-            name="deprecated_on",
-            field=models.DateTimeField(blank=True, default=None, null=True),
-        ),
-        migrations.AddField(
-            model_name="vocab",
-            name="deprecated_on",
-            field=models.DateTimeField(blank=True, default=None, null=True),
-        ),
         migrations.AlterField(
             model_name="design",
             name="climates",

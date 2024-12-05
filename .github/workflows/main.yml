@@ -78,7 +78,7 @@ jobs:
         fi
         coverage run -m pytest --record-mode=none
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
-        coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+        coverage report --format=markdown -i >> $GITHUB_STEP_SUMMARY || true
         coverage html -d coverage -i
     - name: loc
       run: |
@@ -99,7 +99,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: 22
         cache: 'yarn'
         cache-dependency-path: 'frontend/yarn.lock'
     - name: install

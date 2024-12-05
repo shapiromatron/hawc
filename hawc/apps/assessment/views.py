@@ -834,6 +834,7 @@ class PublishedItemsChecklist(HtmxViewSet):
         "dataset": apps.get_model("assessment", "Dataset"),
         "summarytable": apps.get_model("summary", "SummaryTable"),
         "attachment": apps.get_model("assessment", "Attachment"),
+        "label": models.Label,
     }
 
     @action(permission=can_edit, htmx_only=False)
@@ -847,12 +848,24 @@ class PublishedItemsChecklist(HtmxViewSet):
     @action(permission=can_edit, methods={"post"})
     def update_item(self, request: HttpRequest, *args, **kwargs):
         instance = self.get_instance(request.item, kwargs["type"], kwargs["object_id"])
-        self.perform_update(request, instance)
+        can_update, can_update_message = self.can_update(instance)
+        if can_update:
+            self.perform_update(request, instance)
         return render(
             request,
             "assessment/fragments/publish_item_td.html",
-            {"name": kwargs["type"], "object": instance, "assessment": request.item.assessment},
+            {
+                "name": kwargs["type"],
+                "object": instance,
+                "assessment": request.item.assessment,
+                "can_update_message": can_update_message,
+            },
         )
+
+    def can_update(self, instance) -> tuple[bool, str]:
+        if hasattr(instance, "can_change_published"):
+            return instance.can_change_published()
+        return True, ""
 
     def get_instance(self, item, type: str, object_id: int):
         Model = self.model_lookups.get(type)
@@ -901,6 +914,7 @@ class PublishedItemsChecklist(HtmxViewSet):
         attachments = apps.get_model("assessment", "Attachment").objects.get_attachments(
             assessment, False
         )
+        labels = models.Label.get_assessment_qs(assessment.pk, include_root=False)
         return {
             "assessment": assessment,
             "breadcrumbs": crumbs,
@@ -910,6 +924,7 @@ class PublishedItemsChecklist(HtmxViewSet):
             "datasets": datasets,
             "summarytables": summarytables,
             "attachments": attachments,
+            "labels": labels,
         }
 
 
@@ -977,6 +992,10 @@ class LabelViewSet(HtmxViewSet):
     model = models.Label
     form_fragment = "assessment/fragments/label_edit_row.html"
     detail_fragment = "assessment/fragments/label_row.html"
+    list_fragment = "assessment/fragments/label_list.html"
+
+    def get_queryset(self, request):
+        return models.Label.get_assessment_qs(request.item.assessment.pk)
 
     @action(permission=can_view, htmx_only=False)
     def read(self, request: HttpRequest, *args, **kwargs):
@@ -985,36 +1004,59 @@ class LabelViewSet(HtmxViewSet):
     @action(methods=("get", "post"), permission=can_edit)
     def create(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
+        kwargs = {}
+        retarget_form = False
         if request.method == "POST":
             form = forms.LabelForm(request.POST, assessment=request.item.assessment)
             if form.is_valid():
                 self.perform_create(request.item, form)
-                template = self.detail_fragment
+                template = self.list_fragment
+                kwargs = {"object_list": self.get_queryset(request)}
+            else:
+                retarget_form = True
         else:
             form = forms.LabelForm(assessment=request.item.assessment)
-        context = self.get_context_data(form=form)
-        return render(request, template, context)
+        context = self.get_context_data(form=form, **kwargs)
+        response = render(request, template, context)
+        if retarget_form:
+            # form validation error - swap form div instead of labels div
+            response["HX-Retarget"] = "#label-edit-row-new"
+        return response
 
     @action(methods=("get", "post"), permission=can_edit)
     def update(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
+        kwargs = {}
+        retarget_form = False
         if request.method == "POST":
             form = forms.LabelForm(request.POST, instance=request.item.object)
             if form.is_valid():
                 self.perform_update(request.item, form)
-                template = self.detail_fragment
+                template = self.list_fragment
+                kwargs = {"object_list": self.get_queryset(request)}
+            else:
+                retarget_form = True
         else:
             form = forms.LabelForm(data=None, instance=request.item.object)
-        context = self.get_context_data(form=form)
-        return render(request, template, context)
+        context = self.get_context_data(form=form, **kwargs)
+        response = render(request, template, context)
+        if retarget_form:
+            # form validation error - swap form div instead of labels div
+            response["HX-Retarget"] = f"#label-edit-row-{request.item.object.id}"
+        return response
 
     @action(methods=("get", "post"), permission=can_edit)
     def delete(self, request: HttpRequest, *args, **kwargs):
+        kwargs = {}
         if request.method == "POST":
             self.perform_delete(request.item)
-            return self.str_response()
-        form = forms.LabelForm(data=None, instance=request.item.object)
-        return render(request, self.form_fragment, self.get_context_data(form=form))
+            kwargs = {"object_list": self.get_queryset(request)}
+            template = self.list_fragment
+        else:
+            form = forms.LabelForm(data=None, instance=request.item.object)
+            template = self.form_fragment
+            kwargs = {"form": form}
+        return render(request, template, self.get_context_data(**kwargs))
 
 
 class LabelItem(HtmxView):
