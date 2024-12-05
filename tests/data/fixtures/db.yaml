@@ -598,6 +598,14 @@
   fields:
     app_label: udf
     model: tagudfcontent
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: label
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: labeleditem
 - model: auth.permission
   fields:
     name: Can access Wagtail admin

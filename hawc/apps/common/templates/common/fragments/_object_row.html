@@ -20,7 +20,7 @@
     <button id="{{model}}-delete" class="btn btn-sm btn-danger" hx-get="{% crud_url app model 'delete' object.pk %}">
       <i class="fa fa-trash" aria-hidden="true"></i></button>
     <button id="{{model}}-clone" class="btn btn-sm btn-secondary" hx-post="{% crud_url app model 'clone' object.pk %}"
-            hx-target="#{{model}}-tbody" hx-swap="beforeend">
+            hx-target=".{{model}}-edit-row.create-row" hx-swap="outerHTML">
       <i class="fa fa-clone" aria-hidden="true"></i></button>
   </td>
 {% endif %}

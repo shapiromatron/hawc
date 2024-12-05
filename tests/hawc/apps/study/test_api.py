@@ -149,13 +149,13 @@ class TestStudyViewSet:
         assert client.login(username="team@hawcproject.org", password="pw") is True
 
         # invalid references will not be successful
-        data = {"reference_id": "invalid"}
-        response = client.post(url, data)
-        assert response.status_code == 400
-        assert str(response.data["non_field_errors"][0]) == "Reference ID must be a number."
+        for data in [{}, {"reference_id": "invalid"}, {"reference_id": 99999}]:
+            response = client.post(url, data)
+            assert response.status_code == 400
+            assert response.json()["reference_id"][0] == "Reference does not exist."
 
         # references can only be linked to one study
-        data["reference_id"] = db_keys.reference_linked
+        data = {"reference_id": db_keys.reference_linked}
         response = client.post(url, data)
         assert response.status_code == 400
         assert (
