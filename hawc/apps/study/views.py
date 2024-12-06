@@ -1,18 +1,29 @@
+import json
+
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect
+from django.http import HttpRequest, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import RedirectView
 
 from ..assessment.models import Assessment
 from ..assessment.views import check_published_status
-from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseUpdate
+from ..common.htmx import HtmxViewSet, action, can_edit
+from ..common.views import (
+    BaseCreate,
+    BaseDelete,
+    BaseDetail,
+    BaseFilterList,
+    BaseUpdate,
+)
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
+from ..riskofbias.models import RiskOfBiasMetric
 from ..udf.views import UDFDetailMixin
 from . import filterset, forms, models
+from .actions.clone import clone_animal_bioassay, clone_epiv2, clone_rob, clone_study
 
 
 class StudyFilterList(BaseFilterList):
@@ -114,6 +125,88 @@ class IdentifierStudyCreate(ReferenceStudyCreate):
         context = super().get_context_data(**kwargs)
         context["manual_entry_warning"] = False
         return context
+
+
+class StudyClone(BaseUpdate):
+    template_name = "study/study_clone.html"
+    model = Assessment
+    form_class = forms.StudyCloneForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"][-1].name = "Deep Clone"
+        return context
+
+    def get_form_kwargs(self):
+        kw = super().get_form_kwargs()
+        kw.update(user=self.request.user, assessment=self.assessment)
+        return kw
+
+
+class StudyCloneViewSet(HtmxViewSet):
+    actions = {"update", "clone"}
+    model = Assessment
+
+    detail_fragment = "study/fragments/src_clone_details.html"
+
+    @action(methods=("post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        src_assessment_id = request.POST.get("src_assessment")
+        if not src_assessment_id:
+            return render(request, self.detail_fragment, self.get_context_data())
+
+        src_studies = models.Study.objects.filter(assessment_id=src_assessment_id)
+        for study in src_studies:
+            study.rob = len(study.get_active_robs(with_final=False)) > 0
+        src_metrics = RiskOfBiasMetric.objects.filter(domain__assessment_id=src_assessment_id)
+        dst_metrics = RiskOfBiasMetric.objects.filter(
+            domain__assessment_id=request.item.assessment.id
+        )
+
+        context = self.get_context_data(
+            src_studies=src_studies,
+            src_metrics=src_metrics,
+            dst_metrics=dst_metrics,
+        )
+        context["obj_perms"] = context.pop("permissions")
+        return render(request, self.detail_fragment, context)
+
+    @action(methods=("post"), permission=can_edit)
+    @transaction.atomic
+    def clone(self, request: HttpRequest, *args, **kwargs):
+        dst_assessment_id = request.item.assessment.id
+        src_studies = json.loads(request.POST["src-studies"])
+        metric_map = json.loads(request.POST["metric-map"])
+
+        for src_study_id, opts in src_studies.items():
+            if not opts["study"]:
+                continue
+            src_study_id = int(src_study_id)
+            clone_map = clone_study(src_study_id, dst_assessment_id)
+            dst_study_id = clone_map["study"][src_study_id]
+
+            if opts["bioassay"]:
+                clone_map = {
+                    **clone_map,
+                    **clone_animal_bioassay(src_study_id, dst_study_id),
+                }
+            if opts["epi"]:
+                clone_map = {
+                    **clone_map,
+                    **clone_epiv2(src_study_id, dst_study_id),
+                }
+            if opts["rob"] and metric_map:
+                clone_map = {
+                    **clone_map,
+                    **clone_rob(src_study_id, dst_study_id, metric_map, clone_map),
+                }
+
+        num_studies = len([k for k, v in src_studies.items() if v["study"]])
+        if num_studies == 1:
+            success_msg = "Successfully cloned 1 study."
+        else:
+            success_msg = f"Successfully cloned {num_studies} studies."
+        return render(request, self.detail_fragment, self.get_context_data(success_msg=success_msg))
 
 
 class StudyDetail(UDFDetailMixin, BaseDetail):
