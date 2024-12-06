@@ -32,6 +32,7 @@ from ..myuser.autocomplete import UserAutocomplete
 from ..study.autocomplete import StudyAutocomplete
 from ..vocab.constants import VocabularyNamespace
 from . import autocomplete, constants, models
+from .actions import search
 
 
 class AssessmentForm(forms.ModelForm):
@@ -563,11 +564,13 @@ class ContactForm(forms.Form):
 class SearchForm(forms.Form):
     all_public = forms.BooleanField(required=False, initial=True)
     public = forms.ModelMultipleChoiceField(
-        queryset=models.Assessment.objects.all(), required=False
+        queryset=models.Assessment.objects.all(),
+        required=False,
     )
     all_internal = forms.BooleanField(required=False, initial=True)
     internal = forms.ModelMultipleChoiceField(
-        queryset=models.Assessment.objects.all(), required=False
+        queryset=models.Assessment.objects.all(),
+        required=False,
     )
     type = forms.ChoiceField(required=True, choices=(("visual", "Visuals"), ("study", "Studies")))
     query = forms.CharField(max_length=128, required=False)
@@ -604,43 +607,45 @@ class SearchForm(forms.Form):
                 ),
             ),
         )
+        helper.attrs.update(
+            **{
+                "hx-get": ".",
+                "hx-target": "#results",
+                "hx-swap": "outerHTML",
+                "hx-select": "#results",
+                "hx-trigger": "submit",
+                "hx-push-url": "true",
+            }
+        )
         return helper
 
     def search(self):
-        from itertools import chain
-
-        from django.db.models import Q
-
-        from ..summary.models import Visual
-
         data = self.cleaned_data
-        assessment_filters = Q(
-            id__in=[a.id for a in chain(data.get("public", []), data.get("internal", []))]
-        )
-        if data["all_public"]:
-            assessment_filters |= Q(public_on__isnull=False, hide_from_public_page=False)
-        if data["all_internal"]:
-            assessment_filters |= (
-                Q(project_manager=self.user) | Q(team_members=self.user) | Q(reviewers=self.user)
-            )
-
-        assessment_ids = list(
-            models.Assessment.objects.filter(assessment_filters).values_list("id", flat=True)
-        )
-        # search public, published visuals and data pivots
-        # search internal, published and unpublished visuals and data pivots
-        # TODO - search by tags
-        # TODO - search studies
-
-        filters = Q()
-        if query := data.get("query"):
-            filters &= Q(title__icontains=query) | Q(labels__name__icontains=query)
-        return (
-            Visual.objects.filter(assessment__in=assessment_ids)
-            .filter(filters)
-            .select_related("assessment")
-            .prefetch_related("labels")[:100]
-        )
+        match data["type"]:
+            case "study":
+                return search.search_studies(
+                    query=data["query"],
+                    all_public=data["all_public"],
+                    public=data["public"],
+                    all_internal=data.get("all_internal", False),
+                    internal=data.get("internal", None),
+                    user=self.user if self.user.is_authenticated else None,
+                ).select_related("assessment")
+            case "visual":
+                return (
+                    search.search_visuals(
+                        query=data["query"],
+                        all_public=data["all_public"],
+                        public=data["public"],
+                        all_internal=data.get("all_internal", False),
+                        internal=data.get("internal", None),
+                        user=self.user if self.user.is_authenticated else None,
+                    )
+                    .select_related("assessment")
+                    .prefetch_related("labels")
+                )
+            case _:
+                raise ValueError("Unknown Type")
 
 
 class DatasetForm(forms.ModelForm):

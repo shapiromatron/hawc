@@ -3,24 +3,72 @@
 
 {% block content %}
   <h2>Search</h2>
-  {% crispy form %}
-  <table class="table table-sm table-striped">
-    {% bs4_colgroup '30,40,30' %}
-    {% bs4_thead 'Timestamp,Visual,Last Updated' %}
-    <tbody>
-      {% for result in results %}
-        <tr>
-          <td><a href="{{ result.assessment.get_absolute_url }}">{{result.assessment}}</a></td>
-          <td><a href="{{ results.get_absolute_url }}">{{result.title}}</a></td>
-          <td>{{result.last_updated}}</td>
-        </tr>
-      {% empty %}
-        <tr>
-          <td colspan="3">No content found</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div id='response' style='display:none' >
+    {% crispy form %}
+    <div id="results">
+      {% if form.is_bound %}
+        {% if form.type.value == 'study' %}
+          <table class="table table-sm table-striped">
+            {% bs4_colgroup '20,20,40,20' %}
+            {% bs4_thead 'Assessment,Study,Full Citation,Last Updated' %}
+            <tbody>
+              {% for object in results %}
+                <tr>
+                  <td>
+                    <a href="{{ object.assessment.get_absolute_url }}">{{object.assessment}}</a>
+                    {% if object.assessment.public_on is None %}
+                      <i class="fa fa-eye-slash" title="Not Public" aria-hidden="true"></i>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a href="{{ object.get_absolute_url }}">{{object.short_citation}}</a>
+                    {% if not object.published %}
+                      <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
+                    {% endif %}
+                  </td>
+                  <td>{{object.full_citation}}</td>
+                  <td>{{object.last_updated}}</td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="4">None found</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% elif form.type.value == 'visual' %}
+          <table class="table table-sm table-striped">
+            {% bs4_colgroup '20,20,40,20' %}
+            {% bs4_thead 'Assessment,Title,Caption,Last Updated' %}
+            <tbody>
+              {% for object in results %}
+                <tr>
+                  <td>
+                    <a href="{{ object.assessment.get_absolute_url }}">{{object.assessment}}</a>
+                    {% if object.assessment.public_on is None %}
+                      <i class="fa fa-eye-slash" title="Not Public" aria-hidden="true"></i>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a href="{{ object.get_absolute_url }}">{{object.title}}</a>
+                    {% if not object.published %}
+                      <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
+                    {% endif %}
+                  </td>
+                  <td>{{object.caption|safe}}</td>
+                  <td>{{object.last_updated}}</td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="4">None found</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
 {% endblock content %}
 
 {% block extrajs %}
@@ -30,6 +78,7 @@
             internal_div = $('#div_id_internal');
       $('#id_all_public').on('change', e=>(e.target.checked)?public_div.hide():public_div.show()).trigger('change')
       $('#id_all_internal').on('change', e=>(e.target.checked)?internal_div.hide():internal_div.show()).trigger('change')
+      $('#response').fadeIn();
     })
   </script>
 {% endblock extrajs %}
