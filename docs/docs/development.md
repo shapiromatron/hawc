@@ -6,7 +6,7 @@ following applications installed on your local development system:
 
 - [Git](https://git-scm.com/)
 - [Python](https://www.python.org/) == 3.12
-- [Node.js](https://nodejs.org)
+- [Node.js](https://nodejs.org) LTS v22
 - [Yarn](https://yarnpkg.com/) < 2
 - [PostgreSQL](https://www.postgresql.org/) >= 16
 
