@@ -97,6 +97,9 @@ class SummaryTable(models.Model):
     def get_api_list_url(cls, assessment_id: int):
         return reverse("summary:api:summary-table-list") + f"?assessment_id={assessment_id}"
 
+    def get_ordered_labels(self):
+        return self.labels.order_by("label__path")
+
     def get_absolute_url(self):
         return reverse(
             "summary:tables_detail",
@@ -264,6 +267,9 @@ class Visual(models.Model):
 
     def get_api_heatmap_datasets(self):
         return reverse("summary:api:assessment-heatmap-datasets", args=(self.assessment_id,))
+
+    def get_ordered_labels(self):
+        return self.labels.order_by("label__path")
 
     def get_visual_type_display(self):
         label = constants.VisualType(self.visual_type).label
@@ -709,6 +715,9 @@ class DataPivotUpload(DataPivot):
     def visual_type(self):
         return "Data pivot (file upload)"
 
+    def get_ordered_labels(self):
+        return self.labels.order_by("label__path")
+
     def get_dataset(self) -> FlatExport:
         worksheet_name = self.worksheet_name if len(self.worksheet_name) > 0 else 0
         df = pd.read_excel(self.excel_file.file, sheet_name=worksheet_name)
@@ -747,6 +756,9 @@ class DataPivotQuery(DataPivot):
     )
     prefilters = models.JSONField(default=dict)
     labels = GenericRelation(LabeledItem, related_query_name="datapivot_queries")
+
+    def get_ordered_labels(self):
+        return self.labels.order_by("label__path")
 
     def clean(self):
         count = self.get_queryset().count()

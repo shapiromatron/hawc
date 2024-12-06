@@ -182,7 +182,7 @@ class LabeledItemFilterset(BaseFilterSet):
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
-        return queryset.filter(label__assessment=self.assessment)
+        return queryset.filter(label__assessment=self.assessment).order_by("label__path")
 
     def filter_title(self, queryset, name, value):
         if not value:

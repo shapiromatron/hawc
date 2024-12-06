@@ -367,7 +367,7 @@ class LabeledItemQuerySet(QuerySet):
             )
             # filtering for objects matching all labels
             matched = matched.intersection(objects) if i > 0 else set(objects)
-        return qs.filter(object_info__in=matched)
+        return qs.filter(object_info__in=matched).order_by("label__path")
 
 
 class LabeledItemManager(BaseManager):
