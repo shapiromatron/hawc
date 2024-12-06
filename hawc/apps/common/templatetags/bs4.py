@@ -78,7 +78,12 @@ class AlertWrapperNode(template.Node):
 
     def render(self, context):
         return format_html(
-            f'<div class="alert alert-{self.type} {self.classes}">{self.dismiss_html if self.dismiss else ""}{self.nodelist.render(context)}</div>'
+            '<div class="alert alert-{} {}">{}{}</div>',
+            self.type,
+            self.classes,
+            mark_safe(self.dismiss_html) if self.dismiss else "",
+            mark_safe(self.nodelist.render(context)),
+            "</div>",
         )
 
 
