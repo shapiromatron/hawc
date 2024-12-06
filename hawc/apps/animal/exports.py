@@ -525,12 +525,16 @@ class EndpointGroupFlatCompleteExporter(Exporter):
 
 class EndpointGroupFlatComplete(FlatFileExporter):
     def handle_doses(self, df: pd.DataFrame, assessment_id: int) -> pd.DataFrame:
-        df2 = pd.DataFrame(
-            models.DoseGroup.objects.filter(
-                dose_regime__dosed_animals__experiment__study__assessment_id=assessment_id
-            ).values("dose_regime_id", "dose_units__name", "dose_group_id", "dose")
-        ).pivot(
-            index=["dose_regime_id", "dose_group_id"], columns="dose_units__name", values="dose"
+        df2 = (
+            pd.DataFrame(
+                models.DoseGroup.objects.filter(
+                    dose_regime__dosed_animals__experiment__study__assessment_id=assessment_id
+                ).values("dose_regime_id", "dose_units__name", "dose_group_id", "dose")
+            )
+            .drop_duplicates()
+            .pivot(
+                index=["dose_regime_id", "dose_group_id"], columns="dose_units__name", values="dose"
+            )
         )
         df2.columns = [f"doses-{name}" for name in df2.columns]
         # cast to Int64; needed all values in a dataframe are None for this field

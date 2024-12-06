@@ -130,9 +130,9 @@ class DoseUnitsSerializer(serializers.ModelSerializer):
 
 class GrowthPlotSerializer(serializers.Serializer):
     model = serializers.ChoiceField(choices=["user", "assessment", "study"])
-    grouper = serializers.ChoiceField(choices=["A", "Q", "M"])
+    grouper = serializers.ChoiceField(choices=["YE", "QE", "ME"])
 
-    group_mapping = dict(A="Annual", Q="Quarterly", M="Monthly")
+    group_mapping = dict(YE="Annual", QE="Quarterly", ME="Monthly")
 
     def _build_change_plots(self, df: pd.DataFrame, grouper: str, y_axis: str) -> go.Figure:
         df1 = df.set_index("date").groupby(pd.Grouper(freq=grouper)).count().cumsum().reset_index()

@@ -1,0 +1,7 @@
+<div class="my-2 box-shadow-minor list-group py-0" id="label-listgroup">
+  {% for object in object_list %}
+    {% include "assessment/fragments/label_row.html" with canEdit=True %}
+  {% endfor %}
+  <div class="alert alert-info text-center show-only-child my-0">No labels created (yet).</div>
+  <div class="create-row hidden"></div>
+</div>
