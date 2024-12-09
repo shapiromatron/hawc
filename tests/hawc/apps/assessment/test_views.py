@@ -91,7 +91,7 @@ class TestAboutPage:
         url = reverse("about")
         response = client.get(url)
         assert "counts" in response.context
-        assert response.context["counts"]["assessments"] == 4
+        assert response.context["counts"]["assessments"] == 5
         assert response.context["counts"]["users"] == 5
 
     def test_settings_external(self):
