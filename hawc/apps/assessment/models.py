@@ -1431,6 +1431,7 @@ class LabeledItem(models.Model):
                 fields=["label", "content_type", "object_id"], name="label_item"
             )
         ]
+        ordering = ("content_type", "object_id", "label__path")
 
     def __str__(self):
         return f"{self.label} on {self.content_object}"
