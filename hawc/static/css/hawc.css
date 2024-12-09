@@ -86,7 +86,7 @@ tfoot > tr > td {
     border-top: none;
 }
 .hidden {
-    display: none;
+    display: none !important;
 }
 .resize-y {
     overflow-y: auto;
@@ -780,6 +780,15 @@ div.input-group-append input.select2-search__field {
     height: 38px !important;
 }
 
+/* select2 */
+.select2-container .select2-selection--single {
+    /* same as .custom-select */
+    height: calc(1.5em + .75rem + 2px) !important;
+}
+.select2-selection__arrow{
+    display: none !important;
+}
+
 /* BMD APPLICATION STYLES */
 
 /* BMD output table */
@@ -975,8 +984,11 @@ div.udf-info-row>p, div.udf-info-row>div.card>p {
 .show-only-child {
     display: none;
 }
-.show-only-child:only-child {
+.show-only-child:only-child, .show-only-child:has(+.create-row.hidden), .create-row.hidden+.show-only-child {
     display: revert;
+}
+tr+tr.show-only-child, div:not(.create-row.hidden)+div.show-only-child {
+    display: none !important;
 }
 
 /* table column text alignment */
@@ -1036,7 +1048,7 @@ div.udf-info-row>p, div.udf-info-row>div.card>p {
 .hide-empty-tbody {
     display: none;
 }
-.hide-empty-tbody:has(tbody>tr) {
+.hide-empty-tbody:has(tbody>tr:not(.hidden)) {
     display: revert;
 }
 

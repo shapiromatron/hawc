@@ -16,6 +16,7 @@ from ..animal.models import Endpoint
 from ..assessment.models import DoseUnits
 from ..common import validators
 from ..common.autocomplete import AutocompleteChoiceField
+from ..common.autocomplete.forms import HawcModelSelect2
 from ..common.clean import sanitize_html
 from ..common.dynamic_forms import Schema
 from ..common.forms import (
@@ -192,7 +193,7 @@ class VisualSelectorForm(CopyForm):
     help_text = "Select an existing visualization from this assessment to copy as a template for a new one. This will include all model-settings, and the selected dataset."
     create_url_pattern = "summary:visualization_create"
     selector = forms.ModelChoiceField(
-        queryset=models.Visual.objects.all(), empty_label=None, label="Select template"
+        queryset=models.Visual.objects.all(), label="Select template", widget=HawcModelSelect2()
     )
 
     def __init__(self, *args, **kw):
@@ -817,7 +818,7 @@ class DataPivotSelectorForm(CopyForm):
         the currently-selected data pivot."""
     create_url_pattern = "summary:visualization_create"
     selector = forms.ModelChoiceField(
-        queryset=models.DataPivot.objects.all(), empty_label=None, label="Select template"
+        queryset=models.DataPivot.objects.all(), label="Select template", widget=HawcModelSelect2()
     )
     reset_row_overrides = forms.BooleanField(
         help_text="Reset all row-level customization in the data-pivot copy",

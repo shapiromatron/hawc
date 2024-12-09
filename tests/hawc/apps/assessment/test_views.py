@@ -9,7 +9,7 @@ from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from hawc.apps.assessment.forms import ContactForm
-from hawc.apps.assessment.models import Assessment
+from hawc.apps.assessment.models import Assessment, Label
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.study.models import Study
 
@@ -387,6 +387,17 @@ class TestBulkPublishItems:
         assertTemplateUsed(resp, "assessment/fragments/publish_item_td.html")
         study.refresh_from_db()
         assert study.published is False
+
+    def test_publish_label(self):
+        label = Label.objects.get(id=2)
+        assert label.published is True
+        url = reverse("assessment:publish-update", args=(1, "label", label.id))
+        pm = get_client("pm", api=False, htmx=True)
+        pm.post(url)
+        label.refresh_from_db()
+        assert label.published is False
+        label.published = True
+        label.save()
 
 
 @pytest.mark.django_db

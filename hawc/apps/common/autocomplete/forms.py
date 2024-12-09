@@ -1,9 +1,17 @@
 from dal import autocomplete
-from dal_select2.widgets import I18N_PATH
+from dal_select2.widgets import I18N_PATH, ModelSelect2
 from django.conf import settings
 from django.forms import Media, ModelChoiceField, ModelMultipleChoiceField
 
 from .views import BaseAutocomplete
+
+
+class HawcModelSelect2(ModelSelect2):
+    def __init__(self, *args, **kw):
+        attrs = kw.get("attrs", {})
+        attrs.setdefault("data-theme", "bootstrap")
+        attrs.setdefault("data-width", "100%")
+        super().__init__(*args, **kw)
 
 
 class AutocompleteWidgetMixin:
