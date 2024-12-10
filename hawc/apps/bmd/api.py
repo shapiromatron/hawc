@@ -27,9 +27,9 @@ class Session(BaseAssessmentViewSet):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        if instance.version.startswith("BMDS2"):
+        if instance.is_bmds_version2():
             raise exceptions.ValidationError("Cannot modify legacy BMD analyses")
-        serializer = serializers.SessionBmd3UpdateSerializer(instance, data=request.data)
+        serializer = serializers.SessionBmdUpdateSerializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
         action = request.data.get("action")
         if action == "execute":
@@ -50,7 +50,7 @@ class Session(BaseAssessmentViewSet):
     )
     def execute_status(self, request, pk=None):
         instance = self.get_object()
-        if instance.version.startswith("BMDS2"):
+        if instance.is_bmds_version2():
             raise exceptions.ValidationError("Cannot modify legacy BMD analyses")
         SerializerClass = (
             serializers.SessionBmd3Serializer

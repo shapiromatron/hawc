@@ -95,7 +95,6 @@ Fields include:
 - `DEFAULT_LITERATURE_CONFLICT_RESOLUTION`: If true, when a new assessment is created, conflict resolution is enabled. If false, its disabled. Defaults to false.
 - `ALLOW_RIS_IMPORTS`: If true, RIS imports are available when working on assessments. If false, the button is not there, but it's still possible for users to import via RIS if the can find the correct URL. Defaults to true.
 - `ANONYMOUS_ACCOUNT_CREATION`: If true, anonymous users can create accounts. If false, only staff can create new accounts via the admin. Defaults to true.
-- `ENABLE_BMDS_33`: If true, enable BMD execution using 3.x versions, currently under  development. Defaults to false.
 
 ### Application monitoring
 
