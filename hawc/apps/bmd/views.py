@@ -18,12 +18,7 @@ class SessionCreate(RedirectView):
         self.object = get_object_or_404(Endpoint, pk=kwargs["pk"])
         if not self.object.assessment.user_can_edit_object(self.request.user):
             raise PermissionDenied()
-        try:
-            obj = models.Session.create_new(self.object)
-        except ValueError as exc:
-            raise BadRequest(
-                "Assessment BMDS version is unsupported, can't create a new session."
-            ) from exc
+        obj = models.Session.create_new(self.object)
         return obj.get_update_url()
 
 
@@ -43,7 +38,7 @@ def _get_session_config(self, context, is_editing: bool = False) -> WebappConfig
             data=dict(
                 editMode=is_editing,
                 assessment_id=self.assessment.id,
-                bmds_version=self.object.get_version_display(),
+                bmds_version=self.object.version,
                 endpoint_id=self.object.endpoint_id,
                 session_url=self.object.get_api_url(),
                 csrf=get_token(self.request) if is_editing else None,
@@ -75,10 +70,6 @@ class SessionUpdate(BaseDetail):
         if self.object.is_bmds_version2():
             raise BadRequest(f"BMDS version {self.object.version} is unsupported, cannot update.")
         return response
-
-    def get_redirect_url(self, *args, **kwargs):
-        obj = models.Session.create_new(self.object)
-        return obj.get_update_url()
 
 
 class SessionDelete(BaseDelete):

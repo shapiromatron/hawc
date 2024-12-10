@@ -75,7 +75,7 @@ class SessionBmd3StatusSerializer(serializers.ModelSerializer):
         )
 
 
-class SessionBmd3UpdateSerializer(serializers.ModelSerializer):
+class SessionBmdUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Session
         fields = (

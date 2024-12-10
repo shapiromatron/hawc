@@ -79,11 +79,13 @@ class Session(models.Model):
 
     def execute(self):
         settings = self.get_settings()
+        session = None
         try:
             session = bmd_interface.build_and_execute(self.endpoint, settings)
-            self.outputs = session.to_dict()
-        except Exception:
+        except Exception:  # pragma: no cover
             self.errors = {"traceback": traceback.format_exc()}
+        if session:
+            self.outputs = session.to_dict()
         self.date_executed = timezone.now()
         self.save()
 
@@ -97,32 +99,11 @@ class Session(models.Model):
     def get_settings(self) -> constants.BmdInputSettings:
         return constants.BmdInputSettings.model_validate(self.inputs)
 
-    def get_session(self, with_models=False):
-        session = getattr(self, "_session", None)
-
-        if session is None:
-            dataset = bmd_interface.build_dataset(
-                self.endpoint, dose_units_id=self.dose_units_id, n_drop_doses=self.n_drop_doses()
-            )
-            session = bmd_interface.build_session(dataset)
-            self._session = session
-
-        if with_models and not session.has_models:
-            for model in self.models.all():
-                session.add_model(model.name, overrides=model.overrides, id=model.id)
-
-        return session
-
     def get_endpoint_serialized(self) -> dict:
         return self.endpoint.get_json(json_encode=False)
 
     def is_bmds_version2(self) -> bool:
         return self.version in {"BMDS2601", "BMDS270"}
-
-    def n_drop_doses(self) -> int:
-        return max(
-            [0] + [model["overrides"].get("dose_drop", 0) for model in self.outputs["models"]]
-        )
 
     def get_study(self):
         return self.endpoint.get_study()

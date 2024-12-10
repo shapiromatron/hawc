@@ -1676,7 +1676,7 @@
     assessment_objective: <p>for bmd analysis testing</p>
     authors: <p>N/A</p>
     creator:
-    - admin@hawcproject.org
+    - pm@hawcproject.org
     editable: true
     public_on: null
     hide_from_public_page: false
@@ -1700,8 +1700,9 @@
     last_updated: 2024-12-09 23:19:03.678314+00:00
     dtxsids: []
     project_manager:
-    - - admin@hawcproject.org
-    team_members: []
+    - - pm@hawcproject.org
+    team_members:
+    - - team@hawcproject.org
     reviewers: []
 - model: assessment.AssessmentDetail
   pk: 1
