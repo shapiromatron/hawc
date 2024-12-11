@@ -84,39 +84,40 @@ class Bmd3Store {
             this.endpoint.doseUnits.activate(value);
         }
     }
-
-    @computed get datasetTableProps() {
+    @computed get dosesArray() {
         const e = this.endpoint,
-            doseUnitsId = this.settings.dose_units_id;
-
-        let colNames,
-            data,
+            doseUnitsId = this.settings.dose_units_id,
             doses = e.data.animal_group.dosing_regime.doses.filter(
                 d => d.dose_units.id === doseUnitsId
             );
+        return _.map(doses, "dose");
+    }
 
+    @computed get datasetTableProps() {
+        const e = this.endpoint;
+        let colNames, data;
         if (this.isDichotomous) {
             colNames = [
-                `Dose (${e.doseUnits.activeUnit.name})`,
+                `Dose (${this.doseUnitsText})`,
                 "N",
                 `Incidence (${e.data.response_units})`,
                 "% Incidence",
             ];
             data = [
-                _.map(doses, "dose"),
+                this.dosesArray,
                 _.map(e.data.groups, "n"),
                 _.map(e.data.groups, "incidence"),
                 _.map(e.data.groups, d => `${100 * _.round(d.incidence / d.n, 2)}%`),
             ];
         } else if (this.isContinuous) {
             colNames = [
-                `Dose (${e.doseUnits.activeUnit.name})`,
+                `Dose (${this.doseUnitsText})`,
                 "N",
                 `Response (${e.data.response_units})`,
                 "Standard Deviation",
             ];
             data = [
-                _.map(doses, "dose"),
+                this.dosesArray,
                 _.map(e.data.groups, "n"),
                 _.map(e.data.groups, "response"),
                 _.map(e.data.groups, "stdev"),
@@ -212,12 +213,91 @@ class Bmd3Store {
     @action.bound setSelectedModel(model) {
         this.selectedModel = model ? model : null;
     }
-    @computed get drPlotConfig() {
+    @computed get drPlotDatasetData() {
+        const groups = this.endpoint.data.groups,
+            errorBars = {
+                type: "data",
+                symmetric: false,
+                array: null,
+                arrayminus: null,
+            },
+            data = {
+                x: this.dosesArray,
+                y: null,
+                mode: "markers",
+                type: "scatter",
+                marker: {size: 10},
+                error_y: errorBars,
+                customdata: errorBars.bounds,
+                hovertemplate:
+                    "%{y:.3f} (%{customdata[0]:.3f}, %{customdata[1]:.3f})<extra></extra>",
+                name: null,
+            };
+        if (this.isDichotomous) {
+            data.y = groups.map(d => d.incidence / d.n);
+            errorBars.array = groups.map(d => Math.max(0, d.upper_ci - d.incidence / d.n));
+            errorBars.arrayminus = groups.map(d => Math.max(0, d.incidence / d.n - d.lower_ci));
+            data.customdata = groups.map(d => [d.upper_ci, d.lower_ci]);
+            data.name = "Fraction Affected ± 95% CI";
+        } else if (this.isContinuous) {
+            data.y = groups.map(d => d.response);
+            errorBars.array = groups.map(d => Math.max(0, d.upper_ci - d.response));
+            errorBars.arrayminus = groups.map(d => Math.max(0, d.response - d.lower_ci));
+            data.customdata = groups.map(d => [d.upper_ci, d.lower_ci]);
+            data.name = "Observed Mean ± 95% CI";
+        } else {
+            throw new Error("Unknown data type");
+        }
+        return data;
+    }
+    @computed get plottingRanges() {
+        const data = this.drPlotDatasetData,
+            yArr = _.flatten(data.customdata),
+            minY = _.min(yArr),
+            maxY = _.max(yArr),
+            minX = _.min(data.x),
+            maxX = _.max(data.x),
+            buffX = Math.abs(maxX - minX) * 0.05,
+            buffY = Math.abs(maxY - minY) * 0.05;
         return {
-            data: [
-                {orientation: "h", x: [1, 2, 3], xaxis: "x", y: [0, 1, 2], yaxis: "y", type: "bar"},
-            ],
-            layout: {title: {text: "test"}},
+            x: [minX - buffX, maxX + buffX],
+            y: this.isDichotomous ? [-0.05, 1.05] : [minY - buffY, maxY + buffY],
+        };
+    }
+    @computed get drPlotConfig() {
+        const e = this.endpoint,
+            ranges = this.plottingRanges;
+        return {
+            data: [this.drPlotDatasetData],
+            layout: {
+                autosize: true,
+                legend: {
+                    yanchor: "top",
+                    y: 0.99,
+                    xanchor: "left",
+                    x: 0.05,
+                    bordercolor: "#efefef",
+                    borderwidth: 2,
+                },
+                margin: {l: 50, r: 5, t: 40, b: 40},
+                showlegend: true,
+                title: {
+                    text: e.data.name,
+                },
+                xaxis: {
+                    range: ranges.x,
+                    title: {
+                        text: `Dose (${this.doseUnitsText})`,
+                    },
+                },
+                yaxis: {
+                    range: ranges.y,
+                    title: {
+                        text: `Response (${e.data.response_units})`,
+                    },
+                },
+                height: 400,
+            },
         };
     }
 

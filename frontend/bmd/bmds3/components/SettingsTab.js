@@ -1,10 +1,10 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
+import Alert from "shared/components/Alert";
 import FloatInput from "shared/components/FloatInput";
 import SelectInput from "shared/components/SelectInput";
 
-import DoseResponse from "../../bmds2/components/DoseResponse";
 import DatasetTable from "./DatasetTable";
 import DoseResponsePlot from "./DoseResponsePlot";
 
@@ -19,7 +19,7 @@ class SettingsTab extends React.Component {
                 doseDropChoices,
                 bmrTypeChoices,
                 varianceModelChoices,
-                endpoint,
+
                 settings,
                 changeSetting,
                 isContinuous,
@@ -29,20 +29,9 @@ class SettingsTab extends React.Component {
         return (
             <div className="container-fluid">
                 <div className="row">
-                    <div className="col-md-6">
+                    <div className="col-lg-7">
                         <DatasetTable />
-                    </div>
-                    <div className="col-md-6">
-                        <DoseResponsePlot />
-                    </div>
-                    <div className="col-md-12 pb-5">
-                        <DoseResponse endpoint={endpoint} />
-                    </div>
-                </div>
-                {readOnly ? (
-                    <div className="row">
-                        <h3 className="col-md-12">BMD modeling settings</h3>
-                        <div className="col-md-8">
+                        {readOnly ? (
                             <table className="table table-sm table-striped">
                                 <thead>
                                     <tr>
@@ -73,96 +62,98 @@ class SettingsTab extends React.Component {
                                     ) : null}
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="row">
-                        <h3 className="col-md-12">BMD modeling settings</h3>
-                        <div className="col-md-9">
-                            <div className="row">
-                                <div className="col-md-4">
-                                    <SelectInput
-                                        choices={doseUnitChoices}
-                                        handleSelect={value =>
-                                            changeSetting("dose_units_id", parseInt(value))
-                                        }
-                                        value={settings.dose_units_id.toString()}
-                                        label="Dose Units"
-                                        helpText="..."
-                                    />
-                                </div>
-                                <div className="col-md-4">
-                                    <SelectInput
-                                        choices={doseDropChoices}
-                                        handleSelect={value =>
-                                            changeSetting("num_doses_dropped", parseInt(value))
-                                        }
-                                        value={settings.num_doses_dropped.toString()}
-                                        label="Doses to Drop"
-                                        helpText="..."
-                                    />
-                                </div>
-                                <div className="col-md-4"></div>
-                                <div className="col-md-4">
-                                    <SelectInput
-                                        choices={bmrTypeChoices}
-                                        handleSelect={value =>
-                                            changeSetting("bmr_type", parseInt(value))
-                                        }
-                                        value={settings.bmr_type.toString()}
-                                        label="BMR Type"
-                                        helpText="..."
-                                    />
-                                </div>
-                                <div className="col-md-4">
-                                    <FloatInput
-                                        label="BMR"
-                                        name="BMR"
-                                        value={settings.bmr_value}
-                                        onChange={e =>
-                                            changeSetting("bmr_value", parseFloat(e.target.value))
-                                        }
-                                        helpText="..."
-                                    />
-                                </div>
-                                <div className="col-md-4">
-                                    {isContinuous ? (
+                        ) : (
+                            <div>
+                                <div className="row">
+                                    <div className="col-md-4">
                                         <SelectInput
-                                            choices={varianceModelChoices}
+                                            choices={doseUnitChoices}
                                             handleSelect={value =>
-                                                changeSetting("variance_model", parseInt(value))
+                                                changeSetting("dose_units_id", parseInt(value))
                                             }
-                                            value={settings.variance_model.toString()}
-                                            label="Variance model"
+                                            value={settings.dose_units_id.toString()}
+                                            label="Dose Units"
                                             helpText="..."
                                         />
-                                    ) : null}
+                                    </div>
+                                    <div className="col-md-4">
+                                        <SelectInput
+                                            choices={doseDropChoices}
+                                            handleSelect={value =>
+                                                changeSetting("num_doses_dropped", parseInt(value))
+                                            }
+                                            value={settings.num_doses_dropped.toString()}
+                                            label="Doses to Drop"
+                                            helpText="..."
+                                        />
+                                    </div>
+                                    <div className="col-md-4"></div>
+                                    <div className="col-md-4">
+                                        <SelectInput
+                                            choices={bmrTypeChoices}
+                                            handleSelect={value =>
+                                                changeSetting("bmr_type", parseInt(value))
+                                            }
+                                            value={settings.bmr_type.toString()}
+                                            label="BMR Type"
+                                            helpText="..."
+                                        />
+                                    </div>
+                                    <div className="col-md-4">
+                                        <FloatInput
+                                            label="BMR"
+                                            name="BMR"
+                                            value={settings.bmr_value}
+                                            onChange={e =>
+                                                changeSetting(
+                                                    "bmr_value",
+                                                    parseFloat(e.target.value)
+                                                )
+                                            }
+                                            helpText="..."
+                                        />
+                                    </div>
+                                    <div className="col-md-4">
+                                        {isContinuous ? (
+                                            <SelectInput
+                                                choices={varianceModelChoices}
+                                                handleSelect={value =>
+                                                    changeSetting("variance_model", parseInt(value))
+                                                }
+                                                value={settings.variance_model.toString()}
+                                                label="Variance model"
+                                                helpText="..."
+                                            />
+                                        ) : null}
+                                    </div>
                                 </div>
+                                <button
+                                    className="btn btn-primary btn-block my-3 py-3"
+                                    disabled={store.isExecuting}
+                                    onClick={store.saveAndExecute}>
+                                    <i className="fa fa-fw fa-play-circle"></i>&nbsp;Execute
+                                    Analysis
+                                </button>
+                                {store.isExecuting ? (
+                                    <Alert
+                                        className="alert-info"
+                                        icon="fa-spinner fa-spin fa-2x"
+                                        message="Executing, please wait..."
+                                    />
+                                ) : null}
+                                {executionError ? (
+                                    <Alert
+                                        message="An error occurred. If the problem persists, please
+                                        contact the site administrators."
+                                    />
+                                ) : null}
                             </div>
-                        </div>
-                        <div className="col-md-3 bg-light">
-                            <button
-                                className="btn btn-primary btn-block my-3 py-3"
-                                disabled={store.isExecuting}
-                                onClick={store.saveAndExecute}>
-                                <i className="fa fa-fw fa-play-circle"></i>&nbsp;Execute Analysis
-                            </button>
-                            {store.isExecuting ? (
-                                <div className="alert alert-info mt-2">
-                                    Executing, please wait...
-                                    <i className="fa fa-spinner fa-spin fa-fw fa-2x"></i>
-                                </div>
-                            ) : null}
-                            {executionError ? (
-                                <div className="alert alert-danger">
-                                    <i className="fa fa-exclamation-triangle fa-fw"></i>
-                                    &nbsp; An error occurred. If the problem persists, please
-                                    contact the site administrators.
-                                </div>
-                            ) : null}
-                        </div>
+                        )}
                     </div>
-                )}
+                    <div className="col-lg-5">
+                        <DoseResponsePlot />
+                    </div>
+                </div>
             </div>
         );
     }
