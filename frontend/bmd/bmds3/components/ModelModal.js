@@ -5,6 +5,7 @@ import React from "react";
 import Modal from "shared/components/Modal";
 import h from "shared/utils/helpers";
 
+import DoseResponsePlot from "./DoseResponsePlot";
 import Table from "./Table";
 
 const showDegree = model => {
@@ -136,7 +137,9 @@ class ModelModal extends React.Component {
                     />
                 </div>
                 <div className="col-xl-8">
-                    <div className="well">TODO - add dose response visual</div>
+                    <div style={{height: "250px"}}>
+                        <DoseResponsePlot showDataset={true} showSelected={true} showModal={true} />
+                    </div>
                 </div>
                 <div className="col-xl-8">
                     <Table
@@ -280,7 +283,9 @@ class ModelModal extends React.Component {
                     />
                 </div>
                 <div className="col-xl-8">
-                    <div className="well">TODO - add dose response visual</div>
+                    <div style={{height: "250px"}}>
+                        <DoseResponsePlot showDataset={true} showSelected={true} showModal={true} />
+                    </div>
                 </div>
                 <div className="col-xl-8">
                     <Table

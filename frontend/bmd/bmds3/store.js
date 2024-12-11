@@ -11,6 +11,7 @@ import {
     doseDropOptions,
     getLabel,
     getModelFromIndex,
+    getPlotlyDrCurve,
 } from "./utils";
 
 class Bmd3Store {
@@ -92,7 +93,6 @@ class Bmd3Store {
             );
         return _.map(doses, "dose");
     }
-
     @computed get datasetTableProps() {
         const e = this.endpoint;
         let colNames, data;
@@ -213,7 +213,53 @@ class Bmd3Store {
     @action.bound setSelectedModel(model) {
         this.selectedModel = model ? model : null;
     }
-    @computed get drPlotDatasetData() {
+    @computed get plottingRanges() {
+        const data = this.drPlotDataset,
+            yArr = _.flatten(data.customdata),
+            minY = _.min(yArr),
+            maxY = _.max(yArr),
+            minX = _.min(data.x),
+            maxX = _.max(data.x),
+            buffX = Math.abs(maxX - minX) * 0.05,
+            buffY = Math.abs(maxY - minY) * 0.05;
+        return {
+            x: [minX - buffX, maxX + buffX],
+            y: this.isDichotomous ? [-0.05, 1.05] : [minY - buffY, maxY + buffY],
+        };
+    }
+    @computed get drPlotLayout() {
+        const e = this.endpoint,
+            ranges = this.plottingRanges;
+        return {
+            autosize: true,
+            legend: {
+                yanchor: "top",
+                y: 0.99,
+                xanchor: "left",
+                x: 0.05,
+                bordercolor: "#efefef",
+                borderwidth: 2,
+            },
+            margin: {l: 50, r: 5, t: 40, b: 40},
+            showlegend: true,
+            title: {
+                text: e.data.name,
+            },
+            xaxis: {
+                range: ranges.x,
+                title: {
+                    text: `Dose (${this.doseUnitsText})`,
+                },
+            },
+            yaxis: {
+                range: ranges.y,
+                title: {
+                    text: `Response (${e.data.response_units})`,
+                },
+            },
+        };
+    }
+    @computed get drPlotDataset() {
         const groups = this.endpoint.data.groups,
             errorBars = {
                 type: "data",
@@ -250,55 +296,23 @@ class Bmd3Store {
         }
         return data;
     }
-    @computed get plottingRanges() {
-        const data = this.drPlotDatasetData,
-            yArr = _.flatten(data.customdata),
-            minY = _.min(yArr),
-            maxY = _.max(yArr),
-            minX = _.min(data.x),
-            maxX = _.max(data.x),
-            buffX = Math.abs(maxX - minX) * 0.05,
-            buffY = Math.abs(maxY - minY) * 0.05;
-        return {
-            x: [minX - buffX, maxX + buffX],
-            y: this.isDichotomous ? [-0.05, 1.05] : [minY - buffY, maxY + buffY],
-        };
+    @computed get drPlotSelectedData() {
+        if (!this.selectedModel) {
+            return null;
+        }
+        return getPlotlyDrCurve(this.selectedModel, "#4a9f2f");
     }
-    @computed get drPlotConfig() {
-        const e = this.endpoint,
-            ranges = this.plottingRanges;
-        return {
-            data: [this.drPlotDatasetData],
-            layout: {
-                autosize: true,
-                legend: {
-                    yanchor: "top",
-                    y: 0.99,
-                    xanchor: "left",
-                    x: 0.05,
-                    bordercolor: "#efefef",
-                    borderwidth: 2,
-                },
-                margin: {l: 50, r: 5, t: 40, b: 40},
-                showlegend: true,
-                title: {
-                    text: e.data.name,
-                },
-                xaxis: {
-                    range: ranges.x,
-                    title: {
-                        text: `Dose (${this.doseUnitsText})`,
-                    },
-                },
-                yaxis: {
-                    range: ranges.y,
-                    title: {
-                        text: `Response (${e.data.response_units})`,
-                    },
-                },
-                height: 400,
-            },
-        };
+    @computed get drPlotHover() {
+        if (!this.hoverModel || this.hoverModel == this.selectedModel) {
+            return null;
+        }
+        return getPlotlyDrCurve(this.hoverModel, "#DA2CDA");
+    }
+    @computed get drPlotModal() {
+        if (!this.modalModel || this.modalModel == this.selectedModel) {
+            return null;
+        }
+        return getPlotlyDrCurve(this.modalModel, "#DA2CDA");
     }
 
     // RESULTS

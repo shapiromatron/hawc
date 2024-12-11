@@ -1,5 +1,4 @@
 import _ from "lodash";
-import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
@@ -8,7 +7,7 @@ import SelectInput from "shared/components/SelectInput";
 import TextAreaInput from "shared/components/TextAreaInput";
 import h from "shared/utils/helpers";
 
-import OutputFigure from "../../bmds2/components/OutputFigure";
+import DoseResponsePlot from "./DoseResponsePlot";
 import ModelModal from "./ModelModal";
 
 const RecommendationTd = function({bin, notes}) {
@@ -104,23 +103,27 @@ class SummaryTable extends React.Component {
                     <col width="8%" />
                     <col width="8%" />
                     <col width="8%" />
-                    <col width="10%" />
-                    <col width="10%" />
-                    <col width="25%" />
+                    <col width="11%" />
+                    <col width="11%" />
+                    <col width="23%" />
                 </colgroup>
                 <thead>
                     <tr>
                         <th>Model Name</th>
-                        <th>BMDL ({store.doseUnitsText})</th>
-                        <th>BMD ({store.doseUnitsText})</th>
-                        <th>BMDU ({store.doseUnitsText})</th>
+                        <th>BMDL</th>
+                        <th>BMD</th>
+                        <th>BMDU</th>
                         <th>
                             <i>P</i>-Value
                         </th>
                         <th>AIC</th>
-                        <th>Scaled Residual for Dose Group near BMD</th>
-                        <th>Scaled Residual for Control Dose Group</th>
-                        <th>Recommendation and Notes</th>
+                        <th>Scaled Residual at Control</th>
+                        <th>Scaled Residual near BMD</th>
+                        <th>
+                            Recommendation
+                            <br />
+                            and Notes
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -149,8 +152,8 @@ class SummaryTable extends React.Component {
                                     )}
                                 </td>
                                 <td>{h.ff(model.results.fit.aic)}</td>
-                                <td>{h.ff(model.results.gof.roi)}</td>
                                 <td>{h.ff(model.results.gof.residual[0])}</td>
+                                <td>{h.ff(model.results.gof.roi)}</td>
                                 <RecommendationTd
                                     bin={store.outputs.recommender.results.model_bin[i]}
                                     notes={store.outputs.recommender.results.model_notes[i]}
@@ -191,8 +194,7 @@ SummaryTable.propTypes = {
 @observer
 class ResultTab extends React.Component {
     render() {
-        const {store} = this.props,
-            {endpoint} = store;
+        const {store} = this.props;
 
         if (store.hasErrors) {
             return (
@@ -230,18 +232,18 @@ class ResultTab extends React.Component {
         return (
             <div className="container-fluid">
                 <div className="row">
-                    <div className="col-xl-8">
-                        <h3>Summary Table</h3>
+                    <div className="col-lg-8">
                         <SummaryTable />
                         <ModelSelection />
                     </div>
-                    <div className="col-xl-4">
-                        <h3>Summary Figure</h3>
-                        <OutputFigure
-                            endpoint={endpoint}
-                            hoverModel={toJS(store.hoverModel)}
-                            selectedModel={store.selectedModel}
-                        />
+                    <div className="col-lg-4">
+                        <div className="pt-5" style={{height: "400px"}}>
+                            <DoseResponsePlot
+                                showDataset={true}
+                                showSelected={true}
+                                showHover={true}
+                            />
+                        </div>
                     </div>
                 </div>
                 <ModelModal />
