@@ -8,6 +8,9 @@
         <span class="dropdown-header">BMD editing</span>
         {% if not object.is_bmds_version2 %}<a class="dropdown-item" href="{{object.get_update_url}}">Update</a>{% endif %}
         <a class="dropdown-item" href="{{object.get_delete_url}}">Delete</a>
+        {% if not object.is_bmds_version2 and object.has_results %}
+          <a class="dropdown-item" href="{{object.get_report_url}}">Download Report</a>
+        {% endif %}
       {% endactions %}
     {% endif %}
   </div>

@@ -1,5 +1,6 @@
 import traceback
 
+import pybmds
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
@@ -53,6 +54,9 @@ class Session(models.Model):
     def get_api_url(self):
         return reverse("bmd:api:session-detail", args=(self.id,))
 
+    def get_report_url(self):
+        return reverse("bmd:api:session-report", args=(self.id,))
+
     def get_execute_status_url(self):
         return reverse("bmd:api:session-execute-status", args=(self.id,))
 
@@ -71,6 +75,10 @@ class Session(models.Model):
     @property
     def is_finished(self) -> bool:
         return any(map(bool, [self.date_executed, self.outputs, self.errors]))
+
+    @property
+    def has_results(self) -> bool:
+        return self.date_executed is not None and len(self.outputs) > 0
 
     def deactivate_similar_sessions(self):
         Session.objects.filter(endpoint=self.endpoint, dose_units=self.dose_units).exclude(
@@ -136,6 +144,11 @@ class Session(models.Model):
 
     def get_input_options(self) -> dict:
         return constants.get_input_options(self.endpoint.data_type)
+
+    def get_session(self) -> pybmds.Session:
+        if self.is_bmds_version2():
+            raise ValueError("Cannot build session")
+        return pybmds.Session.from_serialized(self.outputs)
 
 
 reversion.register(Session)

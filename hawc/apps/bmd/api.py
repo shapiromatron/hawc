@@ -1,9 +1,13 @@
+from pybmds.reporting.styling import Report
 from rest_framework import exceptions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from ...tools import word
 from ..assessment.api import BaseAssessmentViewSet
 from ..assessment.constants import AssessmentViewSetPermissions
+from ..common.helper import ReportExport
+from ..common.renderers import DocxRenderer
 from ..common.serializers import UnusedSerializer
 from . import models, serializers
 
@@ -59,3 +63,24 @@ class Session(BaseAssessmentViewSet):
         )
         serializer = SerializerClass(instance)
         return Response(serializer.data)
+
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=[DocxRenderer],
+    )
+    def report(self, request, pk):
+        instance = self.get_object()
+        if instance.is_bmds_version2():
+            raise exceptions.ValidationError("Cannot modify legacy BMD analyses")
+        if not instance.has_results:
+            raise exceptions.ValidationError("Must be executed to create a report")
+
+        session = instance.get_session()
+        report = Report.build_default()
+        p = report.document.add_paragraph()
+        word.add_url_hyperlink(p, "https://google.com", "TODO")
+        word.write_setting_p(report.document, "TODO: ", "TODO")
+        report = session.to_docx(report=report, all_models=True)
+        export = ReportExport(docx=report, filename="test")
+        return Response(export)

@@ -1,4 +1,7 @@
+from io import BytesIO
+
 import pytest
+from docx import Document
 
 from hawc.apps.bmd.constants import BmdInputSettings, SelectedModel
 from hawc.apps.bmd.models import Session
@@ -101,3 +104,13 @@ class TestSessionViewSet:
         assert resp.status_code == 200
         data = resp.json()
         assert data == {"status": "success", "id": 7}
+
+    def test_report(self):
+        client = get_client("team", api=True)
+
+        session = Session.objects.filter(version="24.1", active=True).first()
+        url = session.get_report_url()
+        resp = client.get(url)
+        assert resp.status_code == 200
+        docx = Document(BytesIO(resp.content))
+        assert len(docx.paragraphs) > 0
