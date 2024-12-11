@@ -1,0 +1,2064 @@
+{
+    "logic": [
+        {
+            "failure_bin": 2,
+            "description": "A BMD value was successfully calculated.",
+            "name": "BMD",
+            "threshold": null,
+            "continuous_on": true,
+            "dichotomous_on": true,
+            "cancer_dichotomous_on": true
+        },
+        {
+            "failure_bin": 2,
+            "description": "A BMDL value was successfully calculated.",
+            "name": "BMDL",
+            "threshold": null,
+            "continuous_on": true,
+            "dichotomous_on": true,
+            "cancer_dichotomous_on": true
+        },
+        {
+            "failure_bin": 0,
+            "description": "A BMDU value was successfully calculated.",
+            "name": "BMDU",
+            "threshold": null,
+            "continuous_on": false,
+            "dichotomous_on": false,
+            "cancer_dichotomous_on": true
+        },
+        {
+            "failure_bin": 2,
+            "description": "An AIC value was successfully calculated.",
+            "name": "AIC",
+            "threshold": null,
+            "continuous_on": true,
+            "dichotomous_on": true,
+            "cancer_dichotomous_on": true
+        },
+        {
+            "failure_bin": 1,
+            "description": "The correct variance model was used (based on p-test #2).",
+            "name": "Variance Type",
+            "threshold": 0.1,
+            "continuous_on": true,
+            "dichotomous_on": false,
+            "cancer_dichotomous_on": false
+        },
+        {
+            "failure_bin": 1,
+            "description": "The variance model appropriately captures the variance of the dataset being modeled (based on p-test #3).",
+            "name": "Variance Fit",
+            "threshold": 0.1,
+            "continuous_on": true,
+            "dichotomous_on": false,
+            "cancer_dichotomous_on": false
+        },
+        {
+            "failure_bin": 1,
+            "description": "The mean model is appropriately modeling the dataset, based on the global-goodness-of-fit (p-test #4).",
+            "name": "GGOF",
+            "threshold": 0.1,
+            "continuous_on": true,
+            "dichotomous_on": true,
+            "cancer_dichotomous_on": false
+        },
+        {
+            "failure_bin": 1,
+            "description": "The mean model is appropriately modeling the dataset, based on the global-goodness-of-fit (p-test #4).",
+            "name": "GGOF (Cancer)",
+            "threshold": 0.05,
+            "continuous_on": false,
+            "dichotomous_on": false,
+            "cancer_dichotomous_on": true
+        },
+        {
+            "failure_bin": 1,
+            "description": "The ratio between the BMD and BMDL values is large, indicating a large spread of estimates in the range of interest (warning).",
+            "name": "BMD/BMDL (serious)",
+            "threshold": 20,
+            "continuous_on": true,
+            "dichotomous_on": true,
+            "cancer_dichotomous_on": true
+        },
+        {
+            "failure_bin": 0,
+            "description": "The ratio between the BMD and BMDL values is large, indicating a large spread of estimates in the range of interest (caution).",
+            "name": "BMD/BMDL (warning)",
+            "threshold": 5,
+            "continuous_on": true,
+            "dichotomous_on": true,
+            "cancer_dichotomous_on": true
+        },
+        {
+            "failure_bin": 1,
+            "description": "The absolute value of the residual at the dose closest to the BMD is large, which means the model may not be estimating well in this range.",
+            "name": "Residual of Interest",
+            "threshold": 2,
+            "continuous_on": true,
+            "dichotomous_on": true,
+            "cancer_dichotomous_on": true
+        },
+        {
+            "failure_bin": 0,
+            "description": "The model output file included additional warnings.",
+            "name": "Warnings",
+            "threshold": null,
+            "continuous_on": true,
+            "dichotomous_on": true,
+            "cancer_dichotomous_on": true
+        },
+        {
+            "failure_bin": 0,
+            "description": "The BMD estimate is higher than the maximum dose modeled, thus the model is extrapolating a result.",
+            "name": "BMD higher",
+            "threshold": 1,
+            "continuous_on": true,
+            "dichotomous_on": true,
+            "cancer_dichotomous_on": true
+        },
+        {
+            "failure_bin": 1,
+            "description": "The BMDL estimate is higher than the maximum dose modeled, thus the model is extrapolating a result.",
+            "name": "BMDL higher",
+            "threshold": 1,
+            "continuous_on": true,
+            "dichotomous_on": true,
+            "cancer_dichotomous_on": true
+        },
+        {
+            "failure_bin": 0,
+            "description": "The BMD estimate is lower than the lowest non-zero dose (caution).",
+            "name": "Low BMD (warning)",
+            "threshold": 3,
+            "continuous_on": true,
+            "dichotomous_on": true,
+            "cancer_dichotomous_on": true
+        },
+        {
+            "failure_bin": 0,
+            "description": "The BMDL estimate is lower than the lowest non-zero dose (caution).",
+            "name": "Low BMDL (warning)",
+            "threshold": 3,
+            "continuous_on": true,
+            "dichotomous_on": true,
+            "cancer_dichotomous_on": true
+        },
+        {
+            "failure_bin": 1,
+            "description": "The BMD estimate is lower than the lowest non-zero dose (warning).",
+            "name": "Low BMD (serious)",
+            "threshold": 10,
+            "continuous_on": true,
+            "dichotomous_on": true,
+            "cancer_dichotomous_on": true
+        },
+        {
+            "failure_bin": 1,
+            "description": "The BMDL estimate is lower than the lowest non-zero dose (warning).",
+            "name": "Low BMDL (serious)",
+            "threshold": 10,
+            "continuous_on": true,
+            "dichotomous_on": true,
+            "cancer_dichotomous_on": true
+        },
+        {
+            "failure_bin": 1,
+            "description": "The absolute value of the residual at the control is large, which is often used to estimate the BMR. Thus, the BMR estimate may be inaccurate.",
+            "name": "Control residual",
+            "threshold": 2,
+            "continuous_on": true,
+            "dichotomous_on": false,
+            "cancer_dichotomous_on": false
+        },
+        {
+            "failure_bin": 1,
+            "description": "The standard deviation estimate at the control is different the the reported deviation, which is often used to estimate the BMR. Thus, the BMR estimate may be inaccurate.",
+            "name": "Control stdev",
+            "threshold": 1.5,
+            "continuous_on": true,
+            "dichotomous_on": false,
+            "cancer_dichotomous_on": false
+        }
+    ],
+    "bmr_options": {
+        "D": [
+            {
+                "type": "Extra",
+                "value": 0.1,
+                "confidence_level": 0.95
+            },
+            {
+                "type": "Added",
+                "value": 0.1,
+                "confidence_level": 0.95
+            }
+        ],
+        "C": [
+            {
+                "type": "Std. Dev.",
+                "value": 1,
+                "confidence_level": 0.95
+            },
+            {
+                "type": "Abs. Dev.",
+                "value": 0.1,
+                "confidence_level": 0.95
+            },
+            {
+                "type": "Rel. Dev.",
+                "value": 0.1,
+                "confidence_level": 0.95
+            },
+            {
+                "type": "Point",
+                "value": 1,
+                "confidence_level": 0.95
+            },
+            {
+                "type": "Extra",
+                "value": 1,
+                "confidence_level": 0.95
+            }
+        ]
+    },
+    "model_options": {
+        "C": [
+            {
+                "name": "Linear",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "alpha": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Alpha"
+                    },
+                    "rho": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Rho"
+                    },
+                    "beta_0": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta0"
+                    },
+                    "beta_1": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta1"
+                    },
+                    "restrict_polynomial": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "Restrict polynomial"
+                    },
+                    "degree_poly": {
+                        "c": "ot",
+                        "t": "i",
+                        "d": 1
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 1
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    },
+                    "constant_variance": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "Constant variance"
+                    }
+                }
+            },
+            {
+                "name": "Polynomial",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "alpha": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Alpha"
+                    },
+                    "rho": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Rho"
+                    },
+                    "beta_0": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta0"
+                    },
+                    "beta_1": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta1"
+                    },
+                    "beta_2": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta2"
+                    },
+                    "beta_3": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta3"
+                    },
+                    "beta_4": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta4"
+                    },
+                    "beta_5": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta5"
+                    },
+                    "beta_7": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta7"
+                    },
+                    "beta_6": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta6"
+                    },
+                    "beta_8": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta8"
+                    },
+                    "restrict_polynomial": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "Restrict polynomial"
+                    },
+                    "degree_poly": {
+                        "c": "ot",
+                        "t": "i",
+                        "d": 2,
+                        "n": "Degree of polynomial"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 1
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    },
+                    "constant_variance": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "Constant variance"
+                    }
+                }
+            },
+            {
+                "name": "Power",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "log_transform": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "alpha": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Alpha"
+                    },
+                    "rho": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Rho"
+                    },
+                    "control": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Control"
+                    },
+                    "slope": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Slope"
+                    },
+                    "power": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Power"
+                    },
+                    "restrict_power": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "Restrict power"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 1
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    },
+                    "constant_variance": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "Constant variance"
+                    }
+                }
+            },
+            {
+                "name": "Hill",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "log_transform": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "alpha": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Alpha"
+                    },
+                    "rho": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Rho"
+                    },
+                    "intercept": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Intercept"
+                    },
+                    "v": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "V"
+                    },
+                    "n": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "N"
+                    },
+                    "k": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "K"
+                    },
+                    "restrict_n": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "Restrict N>1"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 1
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    },
+                    "constant_variance": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "Constant variance"
+                    }
+                }
+            },
+            {
+                "name": "Exponential-M2",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "alpha": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Alpha"
+                    },
+                    "rho": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Rho"
+                    },
+                    "a": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "a"
+                    },
+                    "b": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "b"
+                    },
+                    "c": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "c"
+                    },
+                    "d": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "d"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 1
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    },
+                    "constant_variance": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "Constant variance"
+                    }
+                }
+            },
+            {
+                "name": "Exponential-M3",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "alpha": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Alpha"
+                    },
+                    "rho": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Rho"
+                    },
+                    "a": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "a"
+                    },
+                    "b": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "b"
+                    },
+                    "c": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "c"
+                    },
+                    "d": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "d"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 1
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    },
+                    "constant_variance": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "Constant variance"
+                    }
+                }
+            },
+            {
+                "name": "Exponential-M4",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "alpha": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Alpha"
+                    },
+                    "rho": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Rho"
+                    },
+                    "a": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "a"
+                    },
+                    "b": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "b"
+                    },
+                    "c": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "c"
+                    },
+                    "d": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "d"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 1
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    },
+                    "constant_variance": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "Constant variance"
+                    }
+                }
+            },
+            {
+                "name": "Exponential-M5",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "alpha": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Alpha"
+                    },
+                    "rho": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Rho"
+                    },
+                    "a": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "a"
+                    },
+                    "b": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "b"
+                    },
+                    "c": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "c"
+                    },
+                    "d": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "d"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 1
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    },
+                    "constant_variance": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "Constant variance"
+                    }
+                }
+            }
+        ],
+        "D": [
+            {
+                "name": "Logistic",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "log_transform": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "restrict_slope": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "background": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|"
+                    },
+                    "slope": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Slope"
+                    },
+                    "intercept": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Intercept"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 0.1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    }
+                }
+            },
+            {
+                "name": "LogLogistic",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "log_transform": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1
+                    },
+                    "restrict_slope": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "background": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|"
+                    },
+                    "slope": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Slope"
+                    },
+                    "intercept": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Intercept"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 0.1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    }
+                }
+            },
+            {
+                "name": "Probit",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "log_transform": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "restrict_slope": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "Restrict slope"
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "background": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|"
+                    },
+                    "slope": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Slope"
+                    },
+                    "intercept": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Intercept"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 0.1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    }
+                }
+            },
+            {
+                "name": "LogProbit",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "log_transform": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "background": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|"
+                    },
+                    "slope": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Slope"
+                    },
+                    "intercept": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Intercept"
+                    },
+                    "restrict_slope": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "Restrict slope"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 0.1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    }
+                }
+            },
+            {
+                "name": "Multistage",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "background": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Background"
+                    },
+                    "beta1": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta1"
+                    },
+                    "beta2": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta2"
+                    },
+                    "beta3": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta3"
+                    },
+                    "beta4": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta4"
+                    },
+                    "beta5": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta5"
+                    },
+                    "beta6": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta6"
+                    },
+                    "beta7": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta7"
+                    },
+                    "beta8": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta8"
+                    },
+                    "restrict_beta": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "Restrict beta"
+                    },
+                    "degree_poly": {
+                        "c": "ot",
+                        "t": "i",
+                        "d": 1,
+                        "n": "Degree of polynomial"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 0.1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    }
+                }
+            },
+            {
+                "name": "Multistage",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "background": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Background"
+                    },
+                    "beta1": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta1"
+                    },
+                    "beta2": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta2"
+                    },
+                    "beta3": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta3"
+                    },
+                    "beta4": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta4"
+                    },
+                    "beta5": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta5"
+                    },
+                    "beta6": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta6"
+                    },
+                    "beta7": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta7"
+                    },
+                    "beta8": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Beta8"
+                    },
+                    "restrict_beta": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "Restrict beta"
+                    },
+                    "degree_poly": {
+                        "c": "ot",
+                        "t": "i",
+                        "d": 2,
+                        "n": "Degree of polynomial"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 0.1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    }
+                }
+            },
+            {
+                "name": "Gamma",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "background": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|"
+                    },
+                    "slope": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Slope"
+                    },
+                    "power": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Power"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "restrict_power": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "Restrict power"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 0.1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    }
+                }
+            },
+            {
+                "name": "Weibull",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "log_transform": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "background": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|"
+                    },
+                    "slope": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Slope"
+                    },
+                    "power": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|",
+                        "n": "Power"
+                    },
+                    "restrict_power": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "Restrict power"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 0.1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    }
+                }
+            },
+            {
+                "name": "Dichotomous-Hill",
+                "defaults": {
+                    "bmdl_curve_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0,
+                        "n": "BMDL curve calculation"
+                    },
+                    "restrict_power": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1
+                    },
+                    "append_or_overwrite": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "smooth_option": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 0
+                    },
+                    "max_iterations": {
+                        "c": "op",
+                        "t": "i",
+                        "d": 500,
+                        "n": "Iteration"
+                    },
+                    "relative_fn_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Relative function"
+                    },
+                    "parameter_conv": {
+                        "c": "op",
+                        "t": "d",
+                        "d": 1e-8,
+                        "n": "Parameter"
+                    },
+                    "v": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|"
+                    },
+                    "g": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|"
+                    },
+                    "intercept": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|"
+                    },
+                    "slope": {
+                        "c": "p",
+                        "t": "p",
+                        "d": "d|"
+                    },
+                    "bmd_calculation": {
+                        "c": "ot",
+                        "t": "b",
+                        "d": 1,
+                        "n": "BMD calculation"
+                    },
+                    "dose_drop": {
+                        "c": "ot",
+                        "t": "dd",
+                        "d": 0,
+                        "n": "Doses to drop"
+                    },
+                    "bmr": {
+                        "c": "b",
+                        "t": "i",
+                        "d": 0.1
+                    },
+                    "bmr_type": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0
+                    },
+                    "confidence_level": {
+                        "c": "b",
+                        "t": "d",
+                        "d": 0.95
+                    }
+                }
+            }
+        ]
+    }
+}

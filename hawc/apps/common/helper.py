@@ -267,6 +267,8 @@ class SerializerHelper:
     @classmethod
     def _serialize(cls, obj, json=False):
         serializer = cls.serializers.get(obj.__class__)
+        if serializer is None:
+            raise ValueError(f"Serializer not found: {obj.__class__}")
         serialized = serializer(obj).data
         if json:
             serialized = JSONRenderer().render(serialized).decode("utf8")

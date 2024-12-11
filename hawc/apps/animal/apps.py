@@ -7,3 +7,6 @@ class AnimalConfig(AppConfig):
 
     def ready(self):
         from . import signals  # noqa: F401
+        from .serializers import register_serializers
+
+        register_serializers()
