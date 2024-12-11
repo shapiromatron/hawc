@@ -85,6 +85,55 @@ class Bmd3Store {
         }
     }
 
+    @computed get datasetTableProps() {
+        const e = this.endpoint,
+            doseUnitsId = this.settings.dose_units_id;
+
+        let colNames,
+            data,
+            doses = e.data.animal_group.dosing_regime.doses.filter(
+                d => d.dose_units.id === doseUnitsId
+            );
+
+        if (this.isDichotomous) {
+            colNames = [
+                `Dose (${e.doseUnits.activeUnit.name})`,
+                "N",
+                `Incidence (${e.data.response_units})`,
+                "% Incidence",
+            ];
+            data = [
+                _.map(doses, "dose"),
+                _.map(e.data.groups, "n"),
+                _.map(e.data.groups, "incidence"),
+                _.map(e.data.groups, d => `${100 * _.round(d.incidence / d.n, 2)}%`),
+            ];
+        } else if (this.isContinuous) {
+            colNames = [
+                `Dose (${e.doseUnits.activeUnit.name})`,
+                "N",
+                `Response (${e.data.response_units})`,
+                "Standard Deviation",
+            ];
+            data = [
+                _.map(doses, "dose"),
+                _.map(e.data.groups, "n"),
+                _.map(e.data.groups, "response"),
+                _.map(e.data.groups, "stdev"),
+            ];
+        } else {
+            throw new Error("Unknown data type");
+        }
+        data = _.zip(...data); // transpose
+        return {
+            label: "",
+            extraClasses: "table-sm table-striped text-right",
+            colWidths: [25, 25, 25, 25],
+            colNames,
+            data,
+        };
+    }
+
     // EXECUTION STATE
     @observable isExecuting = false;
     @observable executionError = false;
@@ -162,6 +211,14 @@ class Bmd3Store {
     @observable selectedModel = null;
     @action.bound setSelectedModel(model) {
         this.selectedModel = model ? model : null;
+    }
+    @computed get drPlotConfig() {
+        return {
+            data: [
+                {orientation: "h", x: [1, 2, 3], xaxis: "x", y: [0, 1, 2], yaxis: "y", type: "bar"},
+            ],
+            layout: {title: {text: "test"}},
+        };
     }
 
     // RESULTS

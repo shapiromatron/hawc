@@ -5,6 +5,8 @@ import FloatInput from "shared/components/FloatInput";
 import SelectInput from "shared/components/SelectInput";
 
 import DoseResponse from "../../bmds2/components/DoseResponse";
+import DatasetTable from "./DatasetTable";
+import DoseResponsePlot from "./DoseResponsePlot";
 
 @inject("store")
 @observer
@@ -27,6 +29,12 @@ class SettingsTab extends React.Component {
         return (
             <div className="container-fluid">
                 <div className="row">
+                    <div className="col-md-6">
+                        <DatasetTable />
+                    </div>
+                    <div className="col-md-6">
+                        <DoseResponsePlot />
+                    </div>
                     <div className="col-md-12 pb-5">
                         <DoseResponse endpoint={endpoint} />
                     </div>
