@@ -67,6 +67,7 @@ class ModelSelection extends React.Component {
                             className="alert-success"
                             icon="fa-check"
                             message="Save successful!"
+                            testId="select-model-confirmation"
                         />
                     ) : null}
                     {store.selectedError ? <Alert /> : null}

@@ -20,7 +20,6 @@ class SettingsTab extends React.Component {
                 doseDropChoices,
                 bmrTypeChoices,
                 varianceModelChoices,
-
                 settings,
                 changeSetting,
                 isContinuous,
@@ -140,6 +139,7 @@ class SettingsTab extends React.Component {
                                         className="alert-info"
                                         icon="fa-spinner fa-spin fa-2x"
                                         message="Executing, please wait..."
+                                        testId="executing-spinner"
                                     />
                                 ) : null}
                                 {executionError ? (
