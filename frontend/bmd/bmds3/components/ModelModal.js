@@ -345,6 +345,7 @@ class ModelModal extends React.Component {
                     <button
                         type="button"
                         className="float-right close"
+                        data-dismiss="modal"
                         onClick={hideModal}
                         aria-label="Close">
                         <span aria-hidden="true">&times;</span>
