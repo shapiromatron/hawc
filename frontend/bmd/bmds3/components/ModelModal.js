@@ -2,6 +2,7 @@ import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
+import Loading from "shared/components/Loading";
 import Modal from "shared/components/Modal";
 import h from "shared/utils/helpers";
 
@@ -52,6 +53,30 @@ const showDegree = model => {
             ];
         });
     };
+
+@inject("store")
+@observer
+class ModalPlot extends React.Component {
+    // wait to render until modal is loaded
+    constructor(props) {
+        super(props);
+        this.state = {isReady: false};
+    }
+    componentDidMount() {
+        setTimeout(() => {
+            this.setState({isReady: true});
+        }, 500);
+    }
+    render() {
+        if (this.state.isReady) {
+            return <DoseResponsePlot showDataset={true} showSelected={true} showModal={true} />;
+        }
+        return <Loading />;
+    }
+}
+ModalPlot.propTypes = {
+    store: PropTypes.object,
+};
 
 @inject("store")
 @observer
@@ -120,7 +145,7 @@ class ModelModal extends React.Component {
                         data={getParamPriors(model)}
                     />
                 </div>
-                <div className="col-xl-4">
+                <div className="col-xl-6">
                     <Table
                         label="Modeling Summary"
                         extraClasses="col-r-2"
@@ -136,12 +161,10 @@ class ModelModal extends React.Component {
                         ]}
                     />
                 </div>
-                <div className="col-xl-8">
-                    <div style={{height: "250px"}}>
-                        <DoseResponsePlot showDataset={true} showSelected={true} showModal={true} />
-                    </div>
+                <div className="col-xl-6">
+                    <ModalPlot />
                 </div>
-                <div className="col-xl-8">
+                <div className="col-xl-6">
                     <Table
                         label="Model Parameters"
                         extraClasses="text-right col-l-1"
@@ -266,7 +289,7 @@ class ModelModal extends React.Component {
                         data={getParamPriors(model)}
                     />
                 </div>
-                <div className="col-xl-4">
+                <div className="col-xl-6">
                     <Table
                         label="Modeling Summary"
                         extraClasses="col-r-2"
@@ -282,10 +305,8 @@ class ModelModal extends React.Component {
                         ]}
                     />
                 </div>
-                <div className="col-xl-8">
-                    <div style={{height: "250px"}}>
-                        <DoseResponsePlot showDataset={true} showSelected={true} showModal={true} />
-                    </div>
+                <div className="col-xl-6">
+                    <ModalPlot />
                 </div>
                 <div className="col-xl-8">
                     <Table
