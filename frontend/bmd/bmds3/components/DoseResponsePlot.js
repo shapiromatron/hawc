@@ -20,19 +20,6 @@ class DoseResponsePlot extends React.Component {
                     ])
                 )}
                 layout={store.drPlotLayout}
-                config={{
-                    modeBarButtonsToRemove: [
-                        "pan2d",
-                        "select2d",
-                        "lasso2d",
-                        "zoomIn2d",
-                        "zoomOut2d",
-                        "autoScale2d",
-                        "hoverClosestCartesian",
-                        "hoverCompareCartesian",
-                        "toggleSpikelines",
-                    ],
-                }}
             />
         );
     }

@@ -58,7 +58,19 @@ PlotlyFigure.propTypes = {
     resizable: PropTypes.bool,
 };
 PlotlyFigure.defaultProps = {
-    config: {},
+    config: {
+        modeBarButtonsToRemove: [
+            "pan2d",
+            "select2d",
+            "lasso2d",
+            "zoomIn2d",
+            "zoomOut2d",
+            "autoScale2d",
+            "hoverClosestCartesian",
+            "hoverCompareCartesian",
+            "toggleSpikelines",
+        ],
+    },
     resizable: false,
 };
 
