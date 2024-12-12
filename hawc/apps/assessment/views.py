@@ -162,6 +162,23 @@ class Error401(TemplateView):
     template_name = "401.html"
 
 
+class Search(FormView):
+    template_name = "assessment/search.html"
+    form_class = forms.SearchForm
+
+    def get_form_kwargs(self) -> dict:
+        kw = super().get_form_kwargs()
+        data = self.request.GET or None
+        kw.update(data=data, user=self.request.user)
+        return kw
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        if context["form"].is_valid():
+            context.update(results=context["form"].search())
+        return context
+
+
 # Assessment Object
 class AssessmentList(LoginRequiredMixin, FilterSetMixin, ListView):
     model = models.Assessment

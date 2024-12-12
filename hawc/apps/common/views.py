@@ -703,7 +703,7 @@ class FilterSetMixin:
     filterset_class: type[BaseFilterSet]
     paginate_by = 25
 
-    def get_paginate_by(self, qs) -> int:
+    def get_paginate_by(self, queryset) -> int:
         form = self.filterset.form
         value = (
             form.cleaned_data.get("paginate_by")

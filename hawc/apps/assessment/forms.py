@@ -32,6 +32,7 @@ from ..myuser.autocomplete import UserAutocomplete
 from ..study.autocomplete import StudyAutocomplete
 from ..vocab.constants import VocabularyNamespace
 from . import autocomplete, constants, models
+from .actions import search
 
 
 class AssessmentForm(forms.ModelForm):
@@ -558,6 +559,93 @@ class ContactForm(forms.Form):
         if self.enable_turnstile:
             self.turnstile.validate(self.data)
         return self.cleaned_data
+
+
+class SearchForm(forms.Form):
+    all_public = forms.BooleanField(required=False, initial=True)
+    public = forms.ModelMultipleChoiceField(
+        queryset=models.Assessment.objects.all(),
+        required=False,
+    )
+    all_internal = forms.BooleanField(required=False, initial=True)
+    internal = forms.ModelMultipleChoiceField(
+        queryset=models.Assessment.objects.all(),
+        required=False,
+    )
+    type = forms.ChoiceField(required=True, choices=(("visual", "Visuals"), ("study", "Studies")))
+    query = forms.CharField(max_length=128, required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+        self.fields["public"].queryset = self.fields["public"].queryset.public().order_by("name")
+        if self.user.is_anonymous:
+            self.fields.pop("all_internal")
+            self.fields.pop("internal")
+        else:
+            self.fields["internal"].queryset = (
+                self.fields["internal"].queryset.user_can_view(self.user).order_by("name")
+            )
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_method = "GET"
+
+        internal_fields = tuple() if self.user.is_anonymous else ("all_internal", "internal")
+
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("all_public", "public"),
+                cfl.Column(*internal_fields),
+            ),
+            cfl.Row(
+                cfl.Column("query", css_class="col-6"),
+                cfl.Column("type", css_class="col-4"),
+                cfl.Column(
+                    cfl.Submit("search", "Search", css_class="btn-block py-4"), css_class="col-2"
+                ),
+            ),
+        )
+        helper.attrs.update(
+            **{
+                "hx-get": ".",
+                "hx-target": "#results",
+                "hx-swap": "outerHTML",
+                "hx-select": "#results",
+                "hx-trigger": "submit",
+                "hx-push-url": "true",
+            }
+        )
+        return helper
+
+    def search(self):
+        data = self.cleaned_data
+        match data["type"]:
+            case "study":
+                return search.search_studies(
+                    query=data["query"],
+                    all_public=data["all_public"],
+                    public=data["public"],
+                    all_internal=data.get("all_internal", False),
+                    internal=data.get("internal", None),
+                    user=self.user if self.user.is_authenticated else None,
+                ).select_related("assessment")
+            case "visual":
+                return (
+                    search.search_visuals(
+                        query=data["query"],
+                        all_public=data["all_public"],
+                        public=data["public"],
+                        all_internal=data.get("all_internal", False),
+                        internal=data.get("internal", None),
+                        user=self.user if self.user.is_authenticated else None,
+                    )
+                    .select_related("assessment")
+                    .prefetch_related("labels")
+                )
+            case _:
+                raise ValueError("Unknown Type")
 
 
 class DatasetForm(forms.ModelForm):
