@@ -5,6 +5,7 @@ import React from "react";
 import Alert from "shared/components/Alert";
 import SelectInput from "shared/components/SelectInput";
 import TextAreaInput from "shared/components/TextAreaInput";
+import WaitLoad from "shared/components/WaitLoad";
 import h from "shared/utils/helpers";
 
 import DoseResponsePlot from "./DoseResponsePlot";
@@ -237,13 +238,15 @@ class ResultTab extends React.Component {
                         <ModelSelection />
                     </div>
                     <div className="col-lg-4">
-                        <div className="pt-5" style={{height: "400px"}}>
-                            <DoseResponsePlot
-                                showDataset={true}
-                                showSelected={true}
-                                showHover={true}
-                            />
-                        </div>
+                        <WaitLoad>
+                            <div className="pt-5" style={{height: "400px"}}>
+                                <DoseResponsePlot
+                                    showDataset={true}
+                                    showSelected={true}
+                                    showHover={true}
+                                />
+                            </div>
+                        </WaitLoad>
                     </div>
                 </div>
                 <ModelModal />

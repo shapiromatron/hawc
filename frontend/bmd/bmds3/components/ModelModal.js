@@ -2,8 +2,8 @@ import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
-import Loading from "shared/components/Loading";
 import Modal from "shared/components/Modal";
+import WaitLoad from "shared/components/WaitLoad";
 import h from "shared/utils/helpers";
 
 import DoseResponsePlot from "./DoseResponsePlot";
@@ -53,30 +53,6 @@ const showDegree = model => {
             ];
         });
     };
-
-@inject("store")
-@observer
-class ModalPlot extends React.Component {
-    // wait to render until modal is loaded
-    constructor(props) {
-        super(props);
-        this.state = {isReady: false};
-    }
-    componentDidMount() {
-        setTimeout(() => {
-            this.setState({isReady: true});
-        }, 500);
-    }
-    render() {
-        if (this.state.isReady) {
-            return <DoseResponsePlot showDataset={true} showSelected={true} showModal={true} />;
-        }
-        return <Loading />;
-    }
-}
-ModalPlot.propTypes = {
-    store: PropTypes.object,
-};
 
 @inject("store")
 @observer
@@ -162,7 +138,9 @@ class ModelModal extends React.Component {
                     />
                 </div>
                 <div className="col-xl-6">
-                    <ModalPlot />
+                    <WaitLoad>
+                        <DoseResponsePlot showDataset={true} showSelected={true} showModal={true} />
+                    </WaitLoad>
                 </div>
                 <div className="col-xl-6">
                     <Table
@@ -306,7 +284,9 @@ class ModelModal extends React.Component {
                     />
                 </div>
                 <div className="col-xl-6">
-                    <ModalPlot />
+                    <WaitLoad>
+                        <DoseResponsePlot showDataset={true} showSelected={true} showModal={true} />
+                    </WaitLoad>
                 </div>
                 <div className="col-xl-8">
                     <Table

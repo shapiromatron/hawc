@@ -4,6 +4,7 @@ import React from "react";
 import Alert from "shared/components/Alert";
 import FloatInput from "shared/components/FloatInput";
 import SelectInput from "shared/components/SelectInput";
+import WaitLoad from "shared/components/WaitLoad";
 
 import DatasetTable from "./DatasetTable";
 import DoseResponsePlot from "./DoseResponsePlot";
@@ -151,9 +152,11 @@ class SettingsTab extends React.Component {
                         )}
                     </div>
                     <div className="col-lg-4">
-                        <div style={{height: "400px"}}>
-                            <DoseResponsePlot showDataset={true} />
-                        </div>
+                        <WaitLoad>
+                            <div style={{height: "400px"}}>
+                                <DoseResponsePlot showDataset={true} />
+                            </div>
+                        </WaitLoad>
                     </div>
                 </div>
             </div>
