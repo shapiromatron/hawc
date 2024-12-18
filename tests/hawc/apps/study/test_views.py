@@ -1,9 +1,44 @@
+import json
+
 import pytest
 from django.test.client import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from ..test_utils import check_200, get_client
+
+
+@pytest.mark.django_db
+class TestCloneViewSet:
+    def test_update(self):
+        client = get_client("pm", htmx=True)
+
+        url = reverse("study:clone_from_assessment-htmx", args=[4, "update"])
+        resp = client.post(url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "study/fragments/src_clone_details.html")
+
+        url = reverse("study:clone_from_assessment-htmx", args=[4, "update"])
+        resp = client.post(url, {"src_assessment": 1})
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "study/fragments/src_clone_details.html")
+
+    def test_clone(self):
+        client = get_client("pm", htmx=True)
+
+        url = reverse("study:clone_from_assessment-htmx", args=[4, "clone"])
+        resp = client.post(
+            url,
+            {
+                "src_assessment": "1",
+                "src-studies": json.dumps(
+                    {"1": {"study": True, "bioassay": True, "epi": True, "rob": True}}
+                ),
+                "metric-map": "{}",
+            },
+        )
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "study/fragments/src_clone_details.html")
 
 
 @pytest.mark.django_db
@@ -162,6 +197,7 @@ def test_get_200():
     urls = [
         reverse("study:new_ref", args=(main,)),
         reverse("study:create_from_identifier", args=(main,)),
+        reverse("study:clone_from_assessment", args=(main,)),
         reverse("study:attachment_create", args=(main,)),
         reverse("study:list", args=(main,)),
         reverse("study:detail", args=(main,)),
