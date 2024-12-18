@@ -79,6 +79,13 @@ class Bmd3Store {
     @computed get bmrText() {
         return bmrLabel(this.inputOptions.dtype, this.settings.bmr_type, this.settings.bmr_value);
     }
+    @computed get bmrTypeLabel() {
+        return _.find(this.inputOptions.bmr_types, d => d.id === this.settings.bmr_type).label;
+    }
+    @computed get distributionType() {
+        return _.find(this.inputOptions.dist_types, d => d.id === this.settings.variance_model)
+            .label;
+    }
     @action.bound changeSetting(key, value) {
         this.settings[key] = value;
         if (key === "dose_units_id") {
