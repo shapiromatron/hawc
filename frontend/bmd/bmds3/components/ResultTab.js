@@ -7,7 +7,7 @@ import SelectInput from "shared/components/SelectInput";
 import TextAreaInput from "shared/components/TextAreaInput";
 import WaitLoad from "shared/components/WaitLoad";
 
-import {ff} from "../formatters";
+import {ff, fractionalFormatter} from "../formatters";
 import DoseResponsePlot from "./DoseResponsePlot";
 import ModelModal from "./ModelModal";
 
@@ -149,7 +149,7 @@ class SummaryTable extends React.Component {
                                 <td>{ff(model.results.bmd)}</td>
                                 <td>{ff(model.results.bmdu)}</td>
                                 <td>
-                                    {ff(
+                                    {fractionalFormatter(
                                         model.results.gof.p_value || model.results.tests.p_values[3]
                                     )}
                                 </td>

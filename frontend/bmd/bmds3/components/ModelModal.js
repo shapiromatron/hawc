@@ -5,7 +5,7 @@ import React from "react";
 import Modal from "shared/components/Modal";
 import WaitLoad from "shared/components/WaitLoad";
 
-import {ff} from "../formatters";
+import {ff, fractionalFormatter, parameterFormatter} from "../formatters";
 import DoseResponsePlot from "./DoseResponsePlot";
 import Table from "./Table";
 
@@ -43,12 +43,12 @@ const showDegree = model => {
                 parameters.bounded[i] ? (
                     <span title={parameters.values[i]}>On Bound</span>
                 ) : (
-                    ff(parameters.values[i])
+                    parameterFormatter(parameters.values[i])
                 ),
                 parameters.bounded[i] ? (
                     <span title={parameters.se[i]}>Not Reported</span>
                 ) : (
-                    ff(parameters.se[i])
+                    parameterFormatter(parameters.se[i])
                 ),
             ];
         });
@@ -92,7 +92,7 @@ class ModelModal extends React.Component {
                         `Test ${i + 1}`,
                         ff(tests.ll_ratios[i]),
                         ff(tests.dfs[i]),
-                        ff(tests.p_values[i]),
+                        fractionalFormatter(tests.p_values[i]),
                     ];
                 });
             };
@@ -132,7 +132,7 @@ class ModelModal extends React.Component {
                             ["BMDU", ff(results.bmdu)],
                             ["AIC", ff(results.fit.aic)],
                             ["Log-Likelihood", ff(results.fit.loglikelihood)],
-                            ["P-Value", ff(results.tests.p_values[3])],
+                            ["P-Value", fractionalFormatter(results.tests.p_values[3])],
                             ["Model d.f.", results.tests.dfs[3]],
                         ]}
                     />
@@ -147,7 +147,7 @@ class ModelModal extends React.Component {
                         label="Model Parameters"
                         extraClasses="text-right col-l-1"
                         colWidths={[33, 33, 33]}
-                        colNames={["Variable", "Estimate", "StandardError"]}
+                        colNames={["Variable", "Estimate", "Standard Error"]}
                         data={getParams(model)}
                         footer={getParamFooter(model)}
                     />
@@ -239,7 +239,7 @@ class ModelModal extends React.Component {
                         deviance.params[i],
                         i === 0 ? "-" : ff(deviance.deviance[i]),
                         i === 0 ? "-" : deviance.df[i],
-                        i === 0 ? "-" : ff(deviance.p_value[i]),
+                        i === 0 ? "-" : fractionalFormatter(deviance.p_value[i]),
                     ];
                 });
             };
@@ -278,7 +278,7 @@ class ModelModal extends React.Component {
                             ["BMDU", ff(results.bmdu)],
                             ["AIC", ff(results.fit.aic)],
                             ["Log-Likelihood", ff(results.fit.loglikelihood)],
-                            ["P-Value", ff(results.gof.p_value)],
+                            ["P-Value", fractionalFormatter(results.gof.p_value)],
                             ["Model d.f.", results.gof.df],
                         ]}
                     />
@@ -293,7 +293,7 @@ class ModelModal extends React.Component {
                         label="Model Parameters"
                         extraClasses="text-right col-l-1"
                         colWidths={[33, 33, 33]}
-                        colNames={["Variable", "Estimate", "StandardError"]}
+                        colNames={["Variable", "Estimate", "Standard Error"]}
                         data={getParams(model)}
                         footer={getParamFooter(model)}
                     />
