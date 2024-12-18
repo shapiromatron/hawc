@@ -4,8 +4,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import Modal from "shared/components/Modal";
 import WaitLoad from "shared/components/WaitLoad";
-import h from "shared/utils/helpers";
 
+import {ff} from "../formatters";
 import DoseResponsePlot from "./DoseResponsePlot";
 import Table from "./Table";
 
@@ -18,9 +18,9 @@ const showDegree = model => {
         return _.range(parameters.names.length).map(i => {
             return [
                 parameters.names[i],
-                h.ff(parameters.prior_initial_value[i]),
-                h.ff(parameters.prior_min_value[i]),
-                h.ff(parameters.prior_max_value[i]),
+                ff(parameters.prior_initial_value[i]),
+                ff(parameters.prior_min_value[i]),
+                ff(parameters.prior_max_value[i]),
             ];
         });
     },
@@ -43,12 +43,12 @@ const showDegree = model => {
                 parameters.bounded[i] ? (
                     <span title={parameters.values[i]}>On Bound</span>
                 ) : (
-                    h.ff(parameters.values[i])
+                    ff(parameters.values[i])
                 ),
                 parameters.bounded[i] ? (
                     <span title={parameters.se[i]}>Not Reported</span>
                 ) : (
-                    h.ff(parameters.se[i])
+                    ff(parameters.se[i])
                 ),
             ];
         });
@@ -67,10 +67,10 @@ class ModelModal extends React.Component {
                         gof.dose[i],
                         gof.size[i],
                         gof.obs_mean[i],
-                        h.ff(gof.est_mean[i]),
+                        ff(gof.est_mean[i]),
                         gof.obs_sd[i],
-                        h.ff(gof.est_sd[i]),
-                        h.ff(gof.residual[i]),
+                        ff(gof.est_sd[i]),
+                        ff(gof.residual[i]),
                     ];
                 });
             },
@@ -79,9 +79,9 @@ class ModelModal extends React.Component {
                 return _.range(deviance.names.length).map(i => {
                     return [
                         deviance.names[i],
-                        h.ff(deviance.loglikelihoods[i]),
+                        ff(deviance.loglikelihoods[i]),
                         deviance.num_params[i],
-                        h.ff(deviance.aics[i]),
+                        ff(deviance.aics[i]),
                     ];
                 });
             },
@@ -90,9 +90,9 @@ class ModelModal extends React.Component {
                 return _.range(tests.names.length).map(i => {
                     return [
                         `Test ${i + 1}`,
-                        h.ff(tests.ll_ratios[i]),
-                        h.ff(tests.dfs[i]),
-                        h.ff(tests.p_values[i]),
+                        ff(tests.ll_ratios[i]),
+                        ff(tests.dfs[i]),
+                        ff(tests.p_values[i]),
                     ];
                 });
             };
@@ -105,9 +105,9 @@ class ModelModal extends React.Component {
                         colWidths={[60, 40]}
                         data={_.compact([
                             ["BMR Type", model.settings.bmr_type],
-                            ["BMRF", h.ff(model.settings.bmr)],
+                            ["BMRF", ff(model.settings.bmr)],
                             ["Distribution Type", model.settings.disttype],
-                            ["Confidence Level (one sided)", 1 - h.ff(model.settings.alpha)],
+                            ["Confidence Level (one sided)", 1 - ff(model.settings.alpha)],
                             showDegree(model) ? ["Degree", model.settings.degree] : undefined,
                         ])}
                     />
@@ -127,12 +127,12 @@ class ModelModal extends React.Component {
                         extraClasses="col-r-2"
                         colWidths={[60, 40]}
                         data={[
-                            ["BMD", h.ff(results.bmd)],
-                            ["BMDL", h.ff(results.bmdl)],
-                            ["BMDU", h.ff(results.bmdu)],
-                            ["AIC", h.ff(results.fit.aic)],
-                            ["Log-Likelihood", h.ff(results.fit.loglikelihood)],
-                            ["P-Value", h.ff(results.tests.p_values[3])],
+                            ["BMD", ff(results.bmd)],
+                            ["BMDL", ff(results.bmdl)],
+                            ["BMDU", ff(results.bmdu)],
+                            ["AIC", ff(results.fit.aic)],
+                            ["Log-Likelihood", ff(results.fit.loglikelihood)],
+                            ["P-Value", ff(results.tests.p_values[3])],
                             ["Model d.f.", results.tests.dfs[3]],
                         ]}
                     />
@@ -224,9 +224,9 @@ class ModelModal extends React.Component {
                         dataset.doses[i],
                         dataset.ns[i],
                         dataset.incidences[i],
-                        h.ff(gof.expected[i]),
-                        h.ff(gof.expected[i] / dataset.ns[i]),
-                        h.ff(gof.residual[i]),
+                        ff(gof.expected[i]),
+                        ff(gof.expected[i] / dataset.ns[i]),
+                        ff(gof.residual[i]),
                     ];
                 });
             },
@@ -235,11 +235,11 @@ class ModelModal extends React.Component {
                 return _.range(deviance.names.length).map(i => {
                     return [
                         deviance.names[i],
-                        h.ff(deviance.ll[i]),
+                        ff(deviance.ll[i]),
                         deviance.params[i],
-                        i === 0 ? "-" : h.ff(deviance.deviance[i]),
+                        i === 0 ? "-" : ff(deviance.deviance[i]),
                         i === 0 ? "-" : deviance.df[i],
-                        i === 0 ? "-" : h.ff(deviance.p_value[i]),
+                        i === 0 ? "-" : ff(deviance.p_value[i]),
                     ];
                 });
             };
@@ -252,8 +252,8 @@ class ModelModal extends React.Component {
                         colWidths={[60, 40]}
                         data={_.compact([
                             ["BMR Type", model.settings.bmr_type],
-                            ["BMRF", h.ff(model.settings.bmr)],
-                            ["Confidence Level (one sided)", 1 - h.ff(model.settings.alpha)],
+                            ["BMRF", ff(model.settings.bmr)],
+                            ["Confidence Level (one sided)", 1 - ff(model.settings.alpha)],
                             showDegree(model) ? ["Degree", model.settings.degree] : undefined,
                         ])}
                     />
@@ -273,12 +273,12 @@ class ModelModal extends React.Component {
                         extraClasses="col-r-2"
                         colWidths={[60, 40]}
                         data={[
-                            ["BMD", h.ff(results.bmd)],
-                            ["BMDL", h.ff(results.bmdl)],
-                            ["BMDU", h.ff(results.bmdu)],
-                            ["AIC", h.ff(results.fit.aic)],
-                            ["Log-Likelihood", h.ff(results.fit.loglikelihood)],
-                            ["P-Value", h.ff(results.gof.p_value)],
+                            ["BMD", ff(results.bmd)],
+                            ["BMDL", ff(results.bmdl)],
+                            ["BMDU", ff(results.bmdu)],
+                            ["AIC", ff(results.fit.aic)],
+                            ["Log-Likelihood", ff(results.fit.loglikelihood)],
+                            ["P-Value", ff(results.gof.p_value)],
                             ["Model d.f.", results.gof.df],
                         ]}
                     />

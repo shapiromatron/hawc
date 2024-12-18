@@ -1,5 +1,6 @@
 import _ from "lodash";
-import h from "shared/utils/helpers";
+
+import {ff} from "./formatters";
 
 const getLabel = function(value, items) {
         for (let index = 0; index < items.length; index++) {
@@ -86,7 +87,7 @@ const getLabel = function(value, items) {
         const hasBmd = bmd > 0;
 
         // prettier-ignore
-        const template = `<b>${name}</b><br />BMD: ${h.ff(bmd)}<br />BMDL: ${h.ff(bmdl)}<br />BMDU: ${h.ff(bmdu)}<br />BMR: ${h.ff(bmd_y)}<extra></extra>`;
+        const template = `<b>${name}</b><br />BMD: ${ff(bmd)}<br />BMDL: ${ff(bmdl)}<br />BMDU: ${ff(bmdu)}<br />BMR: ${ff(bmd_y)}<extra></extra>`;
 
         if (hasBmd) {
             return {

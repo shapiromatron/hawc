@@ -6,8 +6,8 @@ import Alert from "shared/components/Alert";
 import SelectInput from "shared/components/SelectInput";
 import TextAreaInput from "shared/components/TextAreaInput";
 import WaitLoad from "shared/components/WaitLoad";
-import h from "shared/utils/helpers";
 
+import {ff} from "../formatters";
 import DoseResponsePlot from "./DoseResponsePlot";
 import ModelModal from "./ModelModal";
 
@@ -145,17 +145,17 @@ class SummaryTable extends React.Component {
                                         {recommended_model_index === i ? <sup>†</sup> : ""}
                                     </button>
                                 </td>
-                                <td>{h.ff(model.results.bmdl)}</td>
-                                <td>{h.ff(model.results.bmd)}</td>
-                                <td>{h.ff(model.results.bmdu)}</td>
+                                <td>{ff(model.results.bmdl)}</td>
+                                <td>{ff(model.results.bmd)}</td>
+                                <td>{ff(model.results.bmdu)}</td>
                                 <td>
-                                    {h.ff(
+                                    {ff(
                                         model.results.gof.p_value || model.results.tests.p_values[3]
                                     )}
                                 </td>
-                                <td>{h.ff(model.results.fit.aic)}</td>
-                                <td>{h.ff(model.results.gof.residual[0])}</td>
-                                <td>{h.ff(model.results.gof.roi)}</td>
+                                <td>{ff(model.results.fit.aic)}</td>
+                                <td>{ff(model.results.gof.residual[0])}</td>
+                                <td>{ff(model.results.gof.roi)}</td>
                                 <RecommendationTd
                                     bin={store.outputs.recommender.results.model_bin[i]}
                                     notes={store.outputs.recommender.results.model_notes[i]}
