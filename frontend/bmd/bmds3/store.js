@@ -5,6 +5,7 @@ import $ from "$";
 
 import Endpoint from "../../animal/Endpoint";
 import h from "../../shared/utils/helpers";
+import {ff} from "./formatters";
 import {
     addDoseUnitsToModels,
     bmrLabel,
@@ -114,7 +115,7 @@ class Bmd3Store {
                 this.dosesArray,
                 _.map(e.data.groups, "n"),
                 _.map(e.data.groups, "incidence"),
-                _.map(e.data.groups, d => `${100 * _.round(d.incidence / d.n, 2)}%`),
+                _.map(e.data.groups, d => `${ff(100 * _.round(d.incidence / d.n, 2))}%`),
             ];
         } else if (this.isContinuous) {
             colNames = [
