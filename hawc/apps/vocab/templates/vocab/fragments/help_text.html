@@ -1,0 +1,51 @@
+<table class="table table-sm table-striped">
+  {% bs4_colgroup "15,15,70" %}
+  <thead>
+    <tr>
+      <th>Tested Status</th>
+      <th>Reported Status</th>
+      <th>Assumption</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>Yes</td>
+    <td>Yes</td>
+    <td>
+      The text of the study document explicitly stated the endpoint was measured, or data
+      was presented in tables for the endpoint. <b>This is the combination if required by
+        the guideline for that study type and data is provided within the document</b>,
+      even the effects measured were not significant.
+    </td>
+  </tr>
+  <tr>
+    <td>No</td>
+    <td>Yes</td>
+    <td>
+      <b>This is the combination if the study document explicitly states the endpoint was not
+        measured or data was not collected.</b> For a guideline study, Tested Status should be
+      changed to No, and Reported Status changed to Yes when this is true for an endpoint
+      required by the study guidelines, but not for endpoints that are not required by guideline
+    </td>
+  </tr>
+  <tr>
+    <td>Yes</td>
+    <td>No</td>
+    <td>
+      The text of the study document does not state the endpoint was measured and data for the
+      endpoint is not present. However, other evidence suggests that the endpoint was measured.
+      <b>This is the default for endpoints required by the study guideline and should only be
+        changed in the face of direct evidence from the document.</b>
+    </td>
+  </tr>
+  <tr>
+    <td>No</td>
+    <td>No</td>
+    <td>
+      A long table of observations from all study guidelines is displayed. <b>This is the
+        default setting for the endpoints not required by the alternative study guidelines
+        and they should only be changed in the face of direct evidence from the document
+        that the endpoint was tested.</b> Interpret these observations as irrelevant since
+      they are not serving the selected guideline, therefore not required to be tested nor reported.
+    </td>
+  </tr>
+</table>

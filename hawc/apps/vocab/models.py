@@ -203,25 +203,50 @@ class EntityTermRelation(models.Model):
 
 
 class GuidelineProfile(models.Model):
-    guideline_profile_id = models.PositiveIntegerField(
-        unique=True, primary_key=True, verbose_name="ID"
-    )
+    objects = managers.GuidelineProfileManager()
+
     guideline_id = models.PositiveIntegerField()
     endpoint = models.ForeignKey("Term", on_delete=models.CASCADE, blank=True, null=True)
-    endpoint_category = models.CharField(max_length=256)
-    endpoint_type = models.CharField(max_length=256)
-    endpoint_target = models.CharField(max_length=256)
     obs_status = models.CharField(choices=constants.ObservationStatus, null=True)
     description = models.TextField(blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ("guideline_profile_id",)
+        ordering = ("id",)
 
     def __str__(self) -> str:
-        return f"{self.guideline_id}::{self.profile_id}::{self.endpoint_id}"
+        guideline_name = GuidelineProfile.objects.get_guideline_name(self.guideline_id)
+        return f"{guideline_name}:{self.obs_status}"
+
+    def get_admin_edit_url(self) -> str:
+        return reverse("admin:vocab_guidelineprofile_change", args=(self.id,))
+
+
+class Observation(models.Model):
+    objects = managers.ObservationManager()
+
+    experiment = models.ForeignKey(
+        "animal.Experiment", on_delete=models.CASCADE, blank=True, null=True
+    )
+    endpoint = models.ForeignKey("Term", on_delete=models.CASCADE, blank=True, null=True)
+    tested_status = models.BooleanField(default=False)
+    reported_status = models.BooleanField(default=False)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
+
+    def __str__(self) -> str:
+        return f"{self.experiment}:{self.endpoint}"
+
+    def get_assessment(self):
+        return self.experiment.get_assessment()
 
 
 reversion.register(Term)
 reversion.register(Entity)
 reversion.register(EntityTermRelation)
 reversion.register(GuidelineProfile)
+reversion.register(Observation)
