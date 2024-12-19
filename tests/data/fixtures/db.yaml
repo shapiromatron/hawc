@@ -1465,6 +1465,42 @@
     deprecated_on: null
     created_on: 2020-08-12 14:11:50.023861+00:00
     last_updated: 2020-08-12 14:11:50.023879+00:00
+- model: vocab.guidelineprofile
+  pk: 1
+  fields:
+    guideline_id: 1
+    obs_status: not required
+    description: ''
+    endpoint_id: 7002
+    created_on: 2020-08-12 14:11:50.023861+00:00
+    last_updated: 2020-08-12 14:11:50.023879+00:00
+- model: vocab.guidelineprofile
+  pk: 2
+  fields:
+    guideline_id: 2
+    obs_status: required
+    description: ''
+    endpoint_id: 7002
+    created_on: 2020-08-12 14:11:50.023861+00:00
+    last_updated: 2020-08-12 14:11:50.023879+00:00
+- model: vocab.guidelineprofile
+  pk: 3
+  fields:
+    guideline_id: 2
+    obs_status: recommended
+    description: ''
+    endpoint_id: 7002
+    created_on: 2020-08-12 14:11:50.023861+00:00
+    last_updated: 2020-08-12 14:11:50.023879+00:00
+- model: vocab.observation
+  pk: 1
+  fields:
+    tested_status: true
+    reported_status: true
+    endpoint_id: 7002
+    experiment_id: 1
+    created_on: 2020-08-12 14:11:50.023861+00:00
+    last_updated: 2020-08-12 14:11:50.023879+00:00
 - model: assessment.dsstox
   pk: DTXSID6026296
   fields:
@@ -3493,6 +3529,7 @@
     purity: null
     vehicle: ''
     guideline_compliance: ''
+    guideline: '90-day Oral Toxicity in Rodents'
     description: ''
     created: 2020-02-27 20:36:41.236477+00:00
     last_updated: 2020-02-27 20:36:41.236499+00:00
@@ -3512,6 +3549,7 @@
     purity: 99.9
     vehicle: DMSO
     guideline_compliance: ''
+    guideline: ''
     description: 'Demonstration of data extraction of a study included in an assessment'
     created: 2020-04-10 19:21:14.709371+00:00
     last_updated: 2020-04-10 19:21:14.710369+00:00
@@ -3532,6 +3570,7 @@
     purity: 97.51
     vehicle: Corn oil
     guideline_compliance: guideline
+    guideline: '90-day Oral Toxicity in Rodents'
     description: <p>comments</p>
     created: 2020-05-08 17:38:22.190951+00:00
     last_updated: 2020-05-08 17:38:22.190975+00:00
@@ -3956,6 +3995,46 @@
     effect_term: null
     effect_subtype: ''
     effect_subtype_term: null
+    litter_effects: N
+    litter_effect_notes: n/a
+    observation_time: null
+    observation_time_units: 0
+    observation_time_text: ''
+    data_location: ''
+    expected_adversity_direction: 4
+    response_units: '%'
+    data_type: D
+    variance_type: 0
+    confidence_interval: null
+    NOEL: -999
+    LOEL: -999
+    FEL: -999
+    data_reported: true
+    data_extracted: true
+    values_estimated: false
+    monotonicity: 8
+    statistical_test: ''
+    trend_value: null
+    trend_result: 3
+    diagnostic: ''
+    power_notes: ''
+    results_notes: ''
+    endpoint_notes: ''
+    additional_fields: '{}'
+- model: animal.endpoint
+  pk: 10
+  fields:
+    baseendpoint_ptr: 10
+    animal_group: 3
+    name_term: 7003
+    system: 'systemic'
+    system_term: 7000
+    organ: ''
+    organ_term: null
+    effect: 'pathology microscopic'
+    effect_term: 7001
+    effect_subtype: 'eye'
+    effect_subtype_term: 7002
     litter_effects: N
     litter_effect_notes: n/a
     observation_time: null
@@ -11225,11 +11304,11 @@
     - team@hawcproject.org
     study: 1
     type: 20
-    status: 20
+    status: 30
     open: false
     due_date: null
-    started: null
-    completed: null
+    started: 2020-08-14 18:59:43.848775+00:00
+    completed: 2020-08-14 18:59:43.848775+00:00
 - model: mgmt.task
   pk: 3
   fields:

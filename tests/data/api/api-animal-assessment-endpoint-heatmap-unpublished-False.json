@@ -125,8 +125,8 @@
     "animal group id": 3,
     "animal group name": "sd rats",
     "diagnostic": "",
-    "effect": "",
-    "effect subtype": "",
+    "effect": "pathology microscopic",
+    "effect subtype": "eye",
     "endpoint id": 10,
     "endpoint name": "bmds3 - dichotomous",
     "experiment cas": "1163-19-5",
@@ -146,7 +146,7 @@
     "study citation": "Biesemeier JA et al. 2011",
     "study id": 7,
     "study identifier": "",
-    "system": "",
+    "system": "systemic",
     "treatment period": "Developmental (3 days)"
   }
 ]

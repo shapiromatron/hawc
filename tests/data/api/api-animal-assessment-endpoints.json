@@ -95,8 +95,8 @@
     "dose units id": 1,
     "dose units name": "mg/kg/d",
     "doses": "0, 1, 10, 100, 1000",
-    "effect": "",
-    "effect subtype": "",
+    "effect": "pathology microscopic",
+    "effect subtype": "eye",
     "endpoint id": 10,
     "endpoint name": "bmds3 - dichotomous",
     "experiment id": 3,
@@ -107,6 +107,6 @@
     "organ": "",
     "study citation": "Biesemeier JA et al. 2011",
     "study id": 7,
-    "system": ""
+    "system": "systemic"
   }
 ]
