@@ -11,11 +11,23 @@ import {ff, fractionalFormatter} from "../formatters";
 import DoseResponsePlot from "./DoseResponsePlot";
 import ModelModal from "./ModelModal";
 
-const RecommendationTd = function({bin, notes}) {
-    const label = {0: "Viable", 1: "Questionable", 2: "Unusable"};
+const RecommendationTd = function({results, model_index}) {
+    const bin = results.model_bin[model_index],
+        notes = results.model_notes[model_index],
+        label = {
+            0: "Viable",
+            1: "Questionable",
+            2: "Unusable",
+            aic: "Recommended - Lowest AIC",
+            bmdl: "Recommended - Lowest BMDL",
+        };
     return (
         <td>
-            <u>{label[bin]}</u>
+            <u>
+                {model_index === results.recommended_model_index
+                    ? label[results.recommended_model_variable]
+                    : label[bin]}
+            </u>
             <ul className="list-unstyled text-muted mb-0">
                 {_.flatten([notes[2], notes[1], notes[0]]).map((d, idx) => (
                     <li key={idx}>{d}</li>
@@ -25,8 +37,8 @@ const RecommendationTd = function({bin, notes}) {
     );
 };
 RecommendationTd.propTypes = {
-    bin: PropTypes.number.isRequired,
-    notes: PropTypes.object.isRequired,
+    results: PropTypes.object.isRequired,
+    model_index: PropTypes.number.isRequired,
 };
 
 @inject("store")
@@ -157,8 +169,8 @@ class SummaryTable extends React.Component {
                                 <td>{ff(model.results.gof.residual[0])}</td>
                                 <td>{ff(model.results.gof.roi)}</td>
                                 <RecommendationTd
-                                    bin={store.outputs.recommender.results.model_bin[i]}
-                                    notes={store.outputs.recommender.results.model_notes[i]}
+                                    results={store.outputs.recommender.results}
+                                    model_index={i}
                                 />
                             </tr>
                         );
