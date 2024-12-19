@@ -14,7 +14,7 @@ from ..common.serializers import get_matching_instance, get_matching_instances
 from ..study.models import Study
 from ..study.serializers import StudySerializer
 from ..vocab.constants import VocabularyTermType
-from ..vocab.serializers import GuidelineProfileSerializer
+from ..vocab.models import GuidelineProfile
 from . import forms, models
 
 
@@ -50,11 +50,10 @@ class ExperimentSerializer(serializers.ModelSerializer):
                 ) from exc
 
         # validate guideline profile
-        guideline = self.initial_data.get("guideline_profile")
+        guideline = self.initial_data.get("guideline")
         if guideline:
-            valid_guidelines = GuidelineProfileSerializer._load_guideline_data()
-            names = [guideline["guideline_name"] for guideline in valid_guidelines]
-            if guideline not in names:
+            valid_guidelines = GuidelineProfile.objects.get_guideline_choices()
+            if (guideline, guideline) not in valid_guidelines:
                 raise ValidationError(f"{guideline} is not a valid guideline")
 
         return data
