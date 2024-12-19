@@ -8,6 +8,10 @@
         <span class="dropdown-header">Experiment Editing</span>
         <a class="dropdown-item" href="{% url 'animal:experiment_update' object.pk %}">Update</a>
         <a class="dropdown-item" href="{% audit_url object %}">View change logs</a>
+        <a class="dropdown-item" href="{% url 'vocab:api:guideline_profile-export' object.guideline %}?format=csv">View guideline profiles</a>
+        {% if assessment.enable_observations and object.guideline %}
+          <a class="dropdown-item" href="{% url 'vocab:observation-list' object.pk %}?order_by=system">View observations</a>
+        {% endif %}
         <a class="dropdown-item" href="{% url 'animal:experiment_delete' object.pk %}">Delete</a>
         <div class="dropdown-divider"></div>
         <span class="dropdown-header">Animal Group Editing</span>

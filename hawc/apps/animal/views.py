@@ -80,6 +80,17 @@ class ExperimentDelete(BaseDelete):
         return self.object.study.get_absolute_url()
 
 
+class ExperimentFilterList(BaseFilterList):
+    template_name = "animal/experiment_list.html"
+    parent_model = Assessment
+    model = models.Experiment
+    filterset_class = filterset.ExperimentFilterSet
+    paginate_by = 50
+
+    def get_queryset(self):
+        return super().get_queryset().filter(study__assessment=self.parent.id, study__bioassay=True)
+
+
 # Animal Group Views
 class AnimalGroupCreate(BaseCreate):
     # Create view of AnimalGroup, and sometimes DosingRegime if generational.
