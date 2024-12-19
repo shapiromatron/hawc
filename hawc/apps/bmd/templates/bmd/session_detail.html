@@ -6,12 +6,15 @@
     {% if obj_perms.edit and crud == "Read" %}
       {% actions %}
         <span class="dropdown-header">BMD editing</span>
-        {% if object.can_edit %}<a class="dropdown-item" href="{{object.get_update_url}}">Update</a>{% endif %}
+        {% if not object.is_bmds_version2 %}<a class="dropdown-item" href="{{object.get_update_url}}">Update</a>{% endif %}
         <a class="dropdown-item" href="{{object.get_delete_url}}">Delete</a>
+        {% if not object.is_bmds_version2 and object.has_results %}
+          <a class="dropdown-item" href="{{object.get_report_url}}">Download Report</a>
+        {% endif %}
       {% endactions %}
     {% endif %}
   </div>
-  {% if obj_perms.edit and crud == "Read" and not object.can_edit %}{% include 'bmd/_read_only_session_alert.html' %}{% endif %}
+  {% if obj_perms.edit and crud == "Read" and object.is_bmds_version2 %}{% include 'bmd/_read_only_session_alert.html' %}{% endif %}
   <div id="main"></div>
 {% endblock %}
 

@@ -52,18 +52,6 @@ jobs:
     - name: lint-html
       run: |
         make lint-html
-    - name: Setup linux environment
-      if: startsWith(runner.os, 'Linux')
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install -y make libgslcblas0 libgsl-dev
-        export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib"
-        sudo cp vendor/libnlopt.so /usr/local/lib/libnlopt.so.0
-        sudo ln -s /lib/x86_64-linux-gnu/libgsl.so /usr/local/lib/libgsl.so.25
-        export SITE_PKG=`python -c "import sysconfig; print(sysconfig.get_path('purelib'))"`
-        export "BMD_DLL=$SITE_PKG/bmds/bin/BMDS330/libDRBMD.so"
-        echo $BMD_DLL
-        ldd $BMD_DLL
     - name: test
       env:
         DJANGO_DB_NAME: hawc

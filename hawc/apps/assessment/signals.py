@@ -28,9 +28,6 @@ def default_configuration(sender, instance, created, **kwargs):
         )
         apps.get_model("riskofbias", "RiskOfBiasAssessment").build_default(instance)
 
-        logger.info("Creating new BMD settings assessment creation")
-        apps.get_model("bmd", "AssessmentSettings").build_default(instance)
-
         logger.info("Building in-vitro endpoint category-root")
         apps.get_model("invitro", "IVEndpointCategory").create_root(assessment_id=instance.pk)
 

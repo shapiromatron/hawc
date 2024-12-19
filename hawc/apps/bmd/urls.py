@@ -9,17 +9,6 @@ router.register(r"session", api.Session, basename="session")
 app_name = "bmd"
 urlpatterns = [
     path("api/", include((router.urls, "api"))),
-    # BMD assessment-level settings
-    path(
-        "assessment/<int:pk>/settings/",
-        views.AssessmentSettingsDetail.as_view(),
-        name="assess_settings_detail",
-    ),
-    path(
-        "assessment/<int:pk>/settings/update/",
-        views.AssessSettingsUpdate.as_view(),
-        name="assess_settings_update",
-    ),
     # BMD create/read/update views
     path(
         "endpoint/<int:pk>/create/",
