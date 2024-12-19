@@ -38,11 +38,12 @@ ResizableDiv.propTypes = {
 
 class PlotlyFigure extends Component {
     render() {
-        const {data, layout, resizable} = this.props,
+        const {data, layout, config, resizable} = this.props,
             plot = (
                 <Plot
                     data={data}
                     layout={layout}
+                    config={config}
                     useResizeHandler={true}
                     style={{width: "100%", height: "100%"}}
                 />
@@ -51,11 +52,25 @@ class PlotlyFigure extends Component {
     }
 }
 PlotlyFigure.propTypes = {
-    resizable: PropTypes.bool,
     data: PropTypes.array,
     layout: PropTypes.object,
+    config: PropTypes.object,
+    resizable: PropTypes.bool,
 };
 PlotlyFigure.defaultProps = {
+    config: {
+        modeBarButtonsToRemove: [
+            "pan2d",
+            "select2d",
+            "lasso2d",
+            "zoomIn2d",
+            "zoomOut2d",
+            "autoScale2d",
+            "hoverClosestCartesian",
+            "hoverCompareCartesian",
+            "toggleSpikelines",
+        ],
+    },
     resizable: false,
 };
 
