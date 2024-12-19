@@ -1,5 +1,6 @@
 import django_filters as df
 from django import forms
+from django.db.models import Q
 
 from ..assessment.autocomplete import EffectTagAutocomplete, SpeciesAutocomplete, StrainAutocomplete
 from ..assessment.models import DoseUnits
@@ -9,6 +10,7 @@ from ..common.filterset import (
     AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
     ExpandableFilterForm,
+    InlineFilterForm,
     OrderingFilter,
     PaginationFilter,
 )
@@ -230,4 +232,78 @@ class EndpointFilterSet(BaseFilterSet):
                 )
 
         form.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(self.assessment.id)
+        return form
+
+
+class ExperimentFilterSet(BaseFilterSet):
+    query = df.CharFilter(
+        method="filter_query",
+        label="Short Citation",
+        help_text="Filter citations (author, year, title, ID)",
+    )
+    name = df.CharFilter(
+        lookup_expr="icontains",
+        label="Experiment name",
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.ExperimentAutocomplete,
+            field="name",
+            attrs={"data-placeholder": "Filter by name (ex: developmental)"},
+        ),
+    )
+    type = df.CharFilter(
+        lookup_expr="icontains",
+        label="Experiment type",
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.ExperimentAutocomplete,
+            field="type",
+            attrs={"data-placeholder": "Filter by type (ex: Dv)"},
+        ),
+    )
+    chemical = df.CharFilter(
+        field_name="chemical",
+        lookup_expr="icontains",
+        label="Chemical name",
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.ExperimentAutocomplete,
+            field="chemical",
+            attrs={"data-placeholder": "Chemical name"},
+        ),
+        help_text="ex: sodium",
+    )
+    cas = df.CharFilter(
+        field_name="cas",
+        lookup_expr="icontains",
+        label="CAS",
+        widget=AutocompleteTextWidget(
+            autocomplete_class=autocomplete.ExperimentAutocomplete,
+            field="cas",
+            attrs={"data-placeholder": "CAS"},
+        ),
+        help_text="ex: 107-02-8",
+    )
+    paginate_by = PaginationFilter()
+
+    class Meta:
+        model = models.Experiment
+        form = InlineFilterForm
+        fields = ["query", "name", "type", "chemical", "cas", "paginate_by"]
+        main_field = "query"
+        appended_fields = ["name", "type", "chemical", "cas", "paginate_by"]
+
+    def __init__(self, *args, assessment, **kwargs):
+        super().__init__(*args, assessment=assessment, **kwargs)
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        queryset = queryset.filter(study__assessment=self.assessment, study__bioassay=True)
+        return queryset
+
+    def filter_query(self, queryset, name, value):
+        query = Q(study__short_citation__icontains=value)
+        return queryset.filter(query)
+
+    def create_form(self):
+        form = super().create_form()
+        if "assigned_user" in form.fields:
+            form.fields["assigned_user"].queryset = self.assessment.pms_and_team_users()
         return form

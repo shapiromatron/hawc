@@ -66,6 +66,27 @@ class TestExperimentSerializer:
         assert serializer.is_valid() is False
         assert "dtxsid" not in serializer.validated_data
 
+    def test_guideline_validator(self, db_keys, user_request):
+        data = self._get_valid_dataset(db_keys)
+
+        # should be valid with no guideline
+        data.pop("guideline", None)
+        serializer = ExperimentSerializer(data=data, context={"request": user_request})
+        assert serializer.is_valid()
+        assert "guideline" not in serializer.validated_data
+
+        # should be valid with a valid, existing guideline
+        data["guideline"] = "90-day Dermal Toxicity"
+        serializer = ExperimentSerializer(data=data, context={"request": user_request})
+        assert serializer.is_valid()
+        assert "guideline" in serializer.validated_data
+
+        # should be invalid with an invalid guideline
+        data["guideline"] = "invalid"
+        serializer = ExperimentSerializer(data=data, context={"request": user_request})
+        assert serializer.is_valid() is False
+        assert "guideline" not in serializer.validated_data
+
 
 @pytest.mark.django_db
 class TestDosingRegimeSerializer:

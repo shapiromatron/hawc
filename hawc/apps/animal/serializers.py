@@ -1,6 +1,7 @@
 import itertools
 import json
 
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from rest_framework import serializers
 
@@ -13,6 +14,7 @@ from ..common.serializers import get_matching_instance, get_matching_instances
 from ..study.models import Study
 from ..study.serializers import StudySerializer
 from ..vocab.constants import VocabularyTermType
+from ..vocab.models import GuidelineProfile
 from . import forms, models
 
 
@@ -46,6 +48,13 @@ class ExperimentSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     dict(dtxsid=f"DSSTox {dtxsid} does not exist")
                 ) from exc
+
+        # validate guideline profile
+        guideline = self.initial_data.get("guideline")
+        if guideline:
+            valid_guidelines = GuidelineProfile.objects.get_guideline_choices()
+            if (guideline, guideline) not in valid_guidelines:
+                raise ValidationError(f"{guideline} is not a valid guideline")
 
         return data
 

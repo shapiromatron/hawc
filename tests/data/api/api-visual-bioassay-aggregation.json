@@ -115,6 +115,7 @@
           "created": "2020-05-08T13:38:22.190951-04:00",
           "description": "<p>comments</p>",
           "dtxsid": null,
+          "guideline": "90-day Oral Toxicity in Rodents",
           "guideline_compliance": "guideline",
           "has_multiple_generations": true,
           "id": 3,

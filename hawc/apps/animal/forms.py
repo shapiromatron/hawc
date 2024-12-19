@@ -16,6 +16,7 @@ from ..common.autocomplete import (
 from ..common.forms import BaseFormHelper, CopyForm, QuillField
 from ..udf.forms import UDFModelFormMixin
 from ..vocab.constants import VocabularyNamespace
+from ..vocab.models import GuidelineProfile
 from . import autocomplete, constants, models
 
 
@@ -49,6 +50,9 @@ class ExperimentForm(ModelForm):
         # change checkbox to select box
         self.fields["has_multiple_generations"].widget = forms.Select(
             choices=((True, "Yes"), (False, "No"))
+        )
+        self.fields["guideline"].widget = forms.Select(
+            choices=GuidelineProfile.objects.get_guideline_choices()
         )
 
     @property
