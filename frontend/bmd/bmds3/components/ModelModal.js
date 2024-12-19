@@ -191,7 +191,7 @@ class ModelModal extends React.Component {
                         label="Likelihoods"
                         extraClasses="text-right col-l-1"
                         colWidths={[25, 25, 25, 25]}
-                        colNames={["Model", "Log-Likelihood", "# of Parameters", "AIC"]}
+                        colNames={["Model", "Log-Likelihood", "N Parameters", "AIC"]}
                         data={getLikelihoodData()}
                     />
                 </div>
@@ -318,7 +318,7 @@ class ModelModal extends React.Component {
                         colNames={[
                             "Model",
                             "Log-Likelihood",
-                            "# of Parameters",
+                            "N Parameters",
                             "Deviance",
                             "Test d.f.",
                             "P-Value",
