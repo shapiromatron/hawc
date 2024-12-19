@@ -98,8 +98,15 @@ class Bmd3Store {
             doseUnitsId = this.settings.dose_units_id,
             doses = e.data.animal_group.dosing_regime.doses.filter(
                 d => d.dose_units.id === doseUnitsId
-            );
-        return _.map(doses, "dose");
+            ),
+            nDoses = doses.length,
+            doses_dropped = this.settings.num_doses_dropped;
+        return doses.map((d, i) => {
+            if (i + 1 > nDoses - doses_dropped) {
+                return `${d.dose} (dropped)`;
+            }
+            return d.dose;
+        });
     }
     @computed get datasetTableProps() {
         const e = this.endpoint;

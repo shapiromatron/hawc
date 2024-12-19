@@ -11,10 +11,53 @@ import DoseResponsePlot from "./DoseResponsePlot";
 
 @inject("store")
 @observer
-class SettingsTab extends React.Component {
+class SettingsTable extends React.Component {
     render() {
         const {store} = this.props,
-            readOnly = !store.config.edit,
+            {settings, isContinuous} = store;
+        return (
+            <table className="table table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th>Setting</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Dose units</td>
+                        <td>{store.doseUnitsText}</td>
+                    </tr>
+                    {settings.num_doses_dropped > 0 ? (
+                        <tr>
+                            <td>Doses dropped</td>
+                            <td>{settings.num_doses_dropped}</td>
+                        </tr>
+                    ) : null}
+                    <tr>
+                        <td>BMR</td>
+                        <td>{store.bmrText}</td>
+                    </tr>
+                    {isContinuous ? (
+                        <tr>
+                            <td>Variance model</td>
+                            <td>{store.variableModelText}</td>
+                        </tr>
+                    ) : null}
+                </tbody>
+            </table>
+        );
+    }
+}
+SettingsTable.propTypes = {
+    store: PropTypes.object,
+};
+
+@inject("store")
+@observer
+class SettingsForm extends React.Component {
+    render() {
+        const {store} = this.props,
             {
                 doseUnitChoices,
                 doseDropChoices,
@@ -27,129 +70,92 @@ class SettingsTab extends React.Component {
             } = store;
 
         return (
+            <div className="row">
+                <div className="col-md-4">
+                    <SelectInput
+                        choices={doseUnitChoices}
+                        handleSelect={value => changeSetting("dose_units_id", parseInt(value))}
+                        value={settings.dose_units_id.toString()}
+                        label="Dose Units"
+                        helpText="Select which dose units to use for modeling. You can create different sessions with different dose units."
+                    />
+                </div>
+                <div className="col-md-4">
+                    <SelectInput
+                        choices={doseDropChoices}
+                        handleSelect={value => changeSetting("num_doses_dropped", parseInt(value))}
+                        value={settings.num_doses_dropped.toString()}
+                        label="Doses to Drop"
+                        helpText="Remove dose groups from modeling; the highest groups are removed."
+                    />
+                </div>
+                <div className="col-md-4"></div>
+                <div className="col-md-4">
+                    <SelectInput
+                        choices={bmrTypeChoices}
+                        handleSelect={value => changeSetting("bmr_type", parseInt(value))}
+                        value={settings.bmr_type.toString()}
+                        label="BMR Type"
+                        helpText="Benchmark response type."
+                    />
+                </div>
+                <div className="col-md-4">
+                    <FloatInput
+                        label="BMR"
+                        name="BMR"
+                        value={settings.bmr_value}
+                        onChange={e => changeSetting("bmr_value", parseFloat(e.target.value))}
+                        helpText="Benchmark response value."
+                    />
+                </div>
+                <div className="col-md-4">
+                    {isContinuous ? (
+                        <SelectInput
+                            choices={varianceModelChoices}
+                            handleSelect={value => changeSetting("variance_model", parseInt(value))}
+                            value={settings.variance_model.toString()}
+                            label="Variance model"
+                            helpText="Which variance model to use."
+                        />
+                    ) : null}
+                </div>
+                <div className="col-12 px-5">
+                    <button
+                        className="btn btn-primary btn-block my-3 py-3"
+                        disabled={store.isExecuting}
+                        onClick={store.saveAndExecute}>
+                        <i className="fa fa-fw fa-play-circle"></i>&nbsp;Execute Analysis
+                    </button>
+                    {store.isExecuting ? (
+                        <Alert
+                            className="alert-info"
+                            icon="fa-spinner fa-spin fa-2x"
+                            message="Executing, please wait ..."
+                            testId="executing-spinner"
+                        />
+                    ) : null}
+                    {executionError ? <Alert /> : null}
+                </div>
+            </div>
+        );
+    }
+}
+SettingsForm.propTypes = {
+    store: PropTypes.object,
+};
+
+@inject("store")
+@observer
+class SettingsTab extends React.Component {
+    render() {
+        const {store} = this.props,
+            readOnly = !store.config.edit;
+        return (
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-lg-8">
                         <DatasetTable />
-                        {readOnly ? (
-                            <table className="table table-sm table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Setting</th>
-                                        <th>Value</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Dose units</td>
-                                        <td>{store.doseUnitsText}</td>
-                                    </tr>
-                                    {settings.num_doses_dropped > 0 ? (
-                                        <tr>
-                                            <td>Doses dropped</td>
-                                            <td>{settings.num_doses_dropped}</td>
-                                        </tr>
-                                    ) : null}
-                                    <tr>
-                                        <td>BMR</td>
-                                        <td>{store.bmrText}</td>
-                                    </tr>
-                                    {isContinuous ? (
-                                        <tr>
-                                            <td>Variance model</td>
-                                            <td>{store.variableModelText}</td>
-                                        </tr>
-                                    ) : null}
-                                </tbody>
-                            </table>
-                        ) : (
-                            <div>
-                                <div className="row">
-                                    <div className="col-md-4">
-                                        <SelectInput
-                                            choices={doseUnitChoices}
-                                            handleSelect={value =>
-                                                changeSetting("dose_units_id", parseInt(value))
-                                            }
-                                            value={settings.dose_units_id.toString()}
-                                            label="Dose Units"
-                                            helpText="..."
-                                        />
-                                    </div>
-                                    <div className="col-md-4">
-                                        <SelectInput
-                                            choices={doseDropChoices}
-                                            handleSelect={value =>
-                                                changeSetting("num_doses_dropped", parseInt(value))
-                                            }
-                                            value={settings.num_doses_dropped.toString()}
-                                            label="Doses to Drop"
-                                            helpText="..."
-                                        />
-                                    </div>
-                                    <div className="col-md-4"></div>
-                                    <div className="col-md-4">
-                                        <SelectInput
-                                            choices={bmrTypeChoices}
-                                            handleSelect={value =>
-                                                changeSetting("bmr_type", parseInt(value))
-                                            }
-                                            value={settings.bmr_type.toString()}
-                                            label="BMR Type"
-                                            helpText="..."
-                                        />
-                                    </div>
-                                    <div className="col-md-4">
-                                        <FloatInput
-                                            label="BMR"
-                                            name="BMR"
-                                            value={settings.bmr_value}
-                                            onChange={e =>
-                                                changeSetting(
-                                                    "bmr_value",
-                                                    parseFloat(e.target.value)
-                                                )
-                                            }
-                                            helpText="..."
-                                        />
-                                    </div>
-                                    <div className="col-md-4">
-                                        {isContinuous ? (
-                                            <SelectInput
-                                                choices={varianceModelChoices}
-                                                handleSelect={value =>
-                                                    changeSetting("variance_model", parseInt(value))
-                                                }
-                                                value={settings.variance_model.toString()}
-                                                label="Variance model"
-                                                helpText="..."
-                                            />
-                                        ) : null}
-                                    </div>
-                                </div>
-                                <button
-                                    className="btn btn-primary btn-block my-3 py-3"
-                                    disabled={store.isExecuting}
-                                    onClick={store.saveAndExecute}>
-                                    <i className="fa fa-fw fa-play-circle"></i>&nbsp;Execute
-                                    Analysis
-                                </button>
-                                {store.isExecuting ? (
-                                    <Alert
-                                        className="alert-info"
-                                        icon="fa-spinner fa-spin fa-2x"
-                                        message="Executing, please wait..."
-                                        testId="executing-spinner"
-                                    />
-                                ) : null}
-                                {executionError ? (
-                                    <Alert
-                                        message="An error occurred. If the problem persists, please
-                                        contact the site administrators."
-                                    />
-                                ) : null}
-                            </div>
-                        )}
+                        {readOnly ? <SettingsTable /> : <SettingsForm />}
                     </div>
                     <div className="col-lg-4">
                         <WaitLoad>

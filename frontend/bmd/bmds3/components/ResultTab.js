@@ -8,6 +8,7 @@ import TextAreaInput from "shared/components/TextAreaInput";
 import WaitLoad from "shared/components/WaitLoad";
 
 import {ff, fractionalFormatter} from "../formatters";
+import DatasetTable from "./DatasetTable";
 import DoseResponsePlot from "./DoseResponsePlot";
 import ModelModal from "./ModelModal";
 
@@ -246,20 +247,23 @@ class ResultTab extends React.Component {
         return (
             <div className="container-fluid">
                 <div className="row">
-                    <div className="col-lg-8">
-                        <SummaryTable />
-                        <ModelSelection />
+                    <div className="col-lg-5 pt-5">
+                        <DatasetTable withResults={true} />
                     </div>
-                    <div className="col-lg-4">
-                        <WaitLoad>
-                            <div className="pt-5" style={{height: "400px"}}>
+                    <div className="col-lg-7">
+                        <div style={{height: "400px"}}>
+                            <WaitLoad>
                                 <DoseResponsePlot
                                     showDataset={true}
                                     showSelected={true}
                                     showHover={true}
                                 />
-                            </div>
-                        </WaitLoad>
+                            </WaitLoad>
+                        </div>
+                    </div>
+                    <div className="col-lg-12 pt-3">
+                        <SummaryTable />
+                        <ModelSelection />
                     </div>
                 </div>
                 <ModelModal />
