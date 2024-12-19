@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="experiment",
-            name="guideline_profile",
+            name="guideline",
             field=models.CharField(blank=True, max_length=128, null=True),
         ),
     ]

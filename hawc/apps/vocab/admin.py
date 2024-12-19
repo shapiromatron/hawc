@@ -74,3 +74,16 @@ class EntityAdmin(admin.ModelAdmin):
     @admin.display(description="Related terms")
     def get_terms(self, obj):
         return ul_items(obj.terms.all(), lambda el: f"<a href={el.get_admin_edit_url()}>{el}</a>")
+
+
+@admin.register(models.GuidelineProfile)
+class GuidelineProfileAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "guideline_id",
+        "endpoint",
+        "obs_status",
+        "description",
+    )
+    list_filter = ("guideline_id", "obs_status")
+    search_fields = ("guideline id", "obs_status")

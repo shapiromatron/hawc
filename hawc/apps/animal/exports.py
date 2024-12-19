@@ -112,7 +112,7 @@ class ExperimentExport(ModelExport):
             "purity": "purity",
             "vehicle": "vehicle",
             "guideline_compliance": "guideline_compliance",
-            "guideline_profile": "guideline_profile",
+            "guideline": "guideline",
             "description": "description",
         }
 

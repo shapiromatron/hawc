@@ -118,7 +118,7 @@ class Experiment(models.Model):
             414 and 412, 1981 versions). If not reported, then use state "not reported."
             """,
     )
-    guideline_profile = models.CharField(max_length=128, blank=True, null=True)
+    guideline = models.CharField(max_length=128, blank=True, null=True)
     description = models.TextField(
         blank=True,
         verbose_name="Comments",
