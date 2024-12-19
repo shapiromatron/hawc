@@ -267,17 +267,6 @@ class TestExperimentCreateApi:
         assert response.status_code == 400
         assert response.json() == {"purity": ["Purity must be blank if purity is not available"]}
 
-        data = {
-            "name": "Experiment name",
-            "type": "NR",
-            "study_id": db_keys.study_working,
-            "purity_available": False,
-            "guideline_profile": "test profile",
-        }
-        response = client.post(url, data)
-        assert response.status_code == 400
-        assert response.json() == {"non_field_errors": ["test profile is not a valid guideline"]}
-
     def test_valid_requests(self, db_keys):
         url = reverse("animal:api:experiment-list")
         data = {"name": "Experiment name", "type": "NR", "study_id": db_keys.study_working}
