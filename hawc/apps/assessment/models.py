@@ -282,7 +282,7 @@ class Assessment(models.Model):
         help_text="What term should be used to refer to risk of bias/study evaluation questions?",
     )
     vocabulary = models.PositiveSmallIntegerField(
-        choices=VocabularyNamespace.display_choices(),
+        choices=VocabularyNamespace.choices,
         default=VocabularyNamespace.EHV,
         blank=True,
         null=True,
@@ -1383,6 +1383,9 @@ class Label(AssessmentRootMixin, MP_Node):
     def get_nested_name(self) -> str:
         return "<root-node>" if self.is_root() else f"{'━ ' * (self.depth - 1)}{self.name}"
 
+    def get_labelled_items_url(self):
+        return reverse("assessment:labeled-items", args=(self.assessment_id,)) + f"?label={self.id}"
+
     def get_absolute_url(self):
         return reverse("assessment:label-htmx", args=(self.pk, "read"))
 
@@ -1391,6 +1394,29 @@ class Label(AssessmentRootMixin, MP_Node):
 
     def get_delete_url(self):
         return reverse("assessment:label-htmx", args=(self.pk, "delete"))
+
+    def can_change_published(self) -> tuple[bool, str]:
+        """Check that the item can be published or unpublished
+
+        Returns:
+            tuple[bool, str]: boolean, status message if false
+        """
+        next = not self.published
+        if next:
+            if self.depth == 1:
+                # any depth of 1 tag can be published
+                return True, ""
+            parent_published = self.get_parent().published
+            return (
+                parent_published,
+                "" if parent_published else "Parent must be published to publish child",
+            )
+        else:
+            all_unpublished = all(child.published is False for child in self.get_children())
+            return (
+                all_unpublished,
+                "" if all_unpublished else "All children must be unpublished to unpublish",
+            )
 
 
 class LabeledItem(models.Model):
@@ -1409,6 +1435,7 @@ class LabeledItem(models.Model):
                 fields=["label", "content_type", "object_id"], name="label_item"
             )
         ]
+        ordering = ("content_type", "object_id", "label__path")
 
     def __str__(self):
         return f"{self.label} on {self.content_object}"
