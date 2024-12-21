@@ -72,7 +72,7 @@ class Bmd3Store {
     @computed get doseUnitsText() {
         return getLabel(this.settings.dose_units_id, this.doseUnitChoices);
     }
-    @computed get variableModelText() {
+    @computed get varianceModelText() {
         return _.isNumber(this.settings.variance_model)
             ? getLabel(this.settings.variance_model, this.varianceModelChoices)
             : "";

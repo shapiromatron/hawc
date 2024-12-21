@@ -11,6 +11,7 @@ import {ff, fractionalFormatter} from "../formatters";
 import DatasetTable from "./DatasetTable";
 import DoseResponsePlot from "./DoseResponsePlot";
 import ModelModal from "./ModelModal";
+import {SettingsTable} from "./SettingsTab";
 
 const RecommendationTd = function({results, model_index}) {
     const bin = results.model_bin[model_index],
@@ -180,20 +181,12 @@ class SummaryTable extends React.Component {
                 <tfoot>
                     <tr>
                         <td colSpan={9}>
-                            <p className="text-sm m-0">{store.bmrText}</p>
-                            {store.variableModelText ? (
-                                <p className="text-sm m-0">
-                                    Variance Model {store.variableModelText}
-                                </p>
-                            ) : null}
                             {selected_model_index >= 0 ? (
                                 <p className="text-sm m-0">* Selected model</p>
                             ) : null}
                             {selected_model_index < 0 && recommended_model_index >= 0 ? (
                                 <p className="text-sm m-0">† Recommended model</p>
                             ) : null}
-                            <p className="text-sm m-0">pybmds version {store.pybmdsVersion}</p>
-                            <p className="text-sm m-0">Execution date {store.executionDate}</p>
                         </td>
                     </tr>
                 </tfoot>
@@ -209,7 +202,8 @@ SummaryTable.propTypes = {
 @observer
 class ResultTab extends React.Component {
     render() {
-        const {store} = this.props;
+        const {store} = this.props,
+            readOnly = !store.config.edit;
 
         if (store.hasErrors) {
             return (
@@ -247,10 +241,13 @@ class ResultTab extends React.Component {
         return (
             <div className="container-fluid">
                 <div className="row">
-                    <div className="col-lg-5 pt-5">
+                    <div className="col-lg-5">
+                        <h3>Settings</h3>
+                        <SettingsTable showRunMetadata={true} />
+                        <h3>Dataset</h3>
                         <DatasetTable withResults={true} />
                     </div>
-                    <div className="col-lg-7">
+                    <div className="col-lg-7 d-flex align-items-end justify-content-center">
                         <div style={{height: "400px"}}>
                             <WaitLoad>
                                 <DoseResponsePlot
@@ -262,7 +259,9 @@ class ResultTab extends React.Component {
                         </div>
                     </div>
                     <div className="col-lg-12 pt-3">
+                        <h3>Model Results</h3>
                         <SummaryTable />
+                        {!readOnly ? <h3>Model Selection</h3> : null}
                         <ModelSelection />
                     </div>
                 </div>

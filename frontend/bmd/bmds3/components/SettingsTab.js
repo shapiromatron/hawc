@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
@@ -8,49 +9,38 @@ import WaitLoad from "shared/components/WaitLoad";
 
 import DatasetTable from "./DatasetTable";
 import DoseResponsePlot from "./DoseResponsePlot";
+import Table from "./Table";
 
 @inject("store")
 @observer
 class SettingsTable extends React.Component {
     render() {
-        const {store} = this.props,
+        const {store, showRunMetadata} = this.props,
             {settings, isContinuous} = store;
         return (
-            <table className="table table-sm table-striped">
-                <thead>
-                    <tr>
-                        <th>Setting</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Dose units</td>
-                        <td>{store.doseUnitsText}</td>
-                    </tr>
-                    {settings.num_doses_dropped > 0 ? (
-                        <tr>
-                            <td>Doses dropped</td>
-                            <td>{settings.num_doses_dropped}</td>
-                        </tr>
-                    ) : null}
-                    <tr>
-                        <td>BMR</td>
-                        <td>{store.bmrText}</td>
-                    </tr>
-                    {isContinuous ? (
-                        <tr>
-                            <td>Variance model</td>
-                            <td>{store.variableModelText}</td>
-                        </tr>
-                    ) : null}
-                </tbody>
-            </table>
+            <Table
+                colWidths={[40, 60]}
+                colNames={["Setting", "Value"]}
+                data={_.compact([
+                    ["Dose Units", store.doseUnitsText],
+                    ["BMR", store.bmrText],
+                    isContinuous ? ["Variance Model", store.varianceModelText] : null,
+                    settings.num_doses_dropped > 0
+                        ? ["Doses Dropped", settings.num_doses_dropped]
+                        : null,
+                    showRunMetadata ? ["pybmds Version", store.pybmdsVersion] : null,
+                    showRunMetadata ? ["Execution Date", store.executionDate] : null,
+                ])}
+            />
         );
     }
 }
 SettingsTable.propTypes = {
     store: PropTypes.object,
+    showRunMetadata: PropTypes.bool,
+};
+SettingsTable.defaultProps = {
+    showRunMetadata: false,
 };
 
 @inject("store")
@@ -174,3 +164,4 @@ SettingsTab.propTypes = {
 };
 
 export default SettingsTab;
+export {SettingsTable};
