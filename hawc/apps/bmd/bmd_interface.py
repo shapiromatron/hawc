@@ -1,8 +1,13 @@
 import pybmds
+from django.utils import timezone
+from django.utils.text import slugify
 from pybmds.datasets.base import DatasetBase
+from pybmds.reporting.styling import Report
 
+from ...tools import word
 from ..animal.constants import DataType
 from ..animal.models import Endpoint
+from ..common.helper import ReportExport
 
 
 def version():
@@ -58,3 +63,21 @@ def build_and_execute(endpoint, inputs):
     inputs.add_models(session)
     session.execute_and_recommend()
     return session
+
+
+def create_report(session: pybmds.Session, name: str, url: str, versions: dict) -> ReportExport:
+    report = Report.build_default()
+    report.document.add_heading(name, 1)
+    # add report generation timestamp
+    timestamp = timezone.now().strftime("%Y-%b-%d %H:%m %Z")
+    word.write_setting_p(report.document, "Report Generated: ", timestamp)
+    # add URL to analysis
+    p = report.document.add_paragraph()
+    p.add_run("Analysis URL: ").bold = True
+    word.add_url_hyperlink(p, url, "View")
+    # add pybmds version information
+    version_str = f"pybmds {versions['python']}; bmdscore {versions['dll']}"
+    word.write_setting_p(report.document, "BMDS Version: ", version_str)
+    # add report data
+    report = session.to_docx(report=report, header_level=1, all_models=True)
+    return ReportExport(docx=report, filename=slugify(name))

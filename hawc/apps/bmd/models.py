@@ -2,11 +2,13 @@ import traceback
 
 import pybmds
 from django.db import models
+from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
 from reversion import revisions as reversion
 
 from ..animal.models import Endpoint
+from ..common.helper import ReportExport
 from . import bmd_interface, constants, managers
 
 
@@ -149,6 +151,13 @@ class Session(models.Model):
         if self.is_bmds_version2():
             raise ValueError("Cannot build session")
         return pybmds.Session.from_serialized(self.outputs)
+
+    def create_report(self, request: HttpRequest) -> ReportExport:
+        session = self.get_session()
+        name = self.endpoint.name
+        url = request.build_absolute_uri(self.get_absolute_url())
+        versions = self.outputs["version"]
+        return bmd_interface.create_report(session, name, url, versions)
 
 
 reversion.register(Session)
