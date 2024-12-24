@@ -4,6 +4,7 @@ from rest_framework.response import Response
 
 from ..assessment.api import BaseAssessmentViewSet
 from ..assessment.constants import AssessmentViewSetPermissions
+from ..common.renderers import DocxRenderer
 from ..common.serializers import UnusedSerializer
 from . import models, serializers
 
@@ -27,9 +28,9 @@ class Session(BaseAssessmentViewSet):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        if instance.version.startswith("BMDS2"):
+        if instance.is_bmds_version2():
             raise exceptions.ValidationError("Cannot modify legacy BMD analyses")
-        serializer = serializers.SessionBmd3UpdateSerializer(instance, data=request.data)
+        serializer = serializers.SessionBmdUpdateSerializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
         action = request.data.get("action")
         if action == "execute":
@@ -50,7 +51,7 @@ class Session(BaseAssessmentViewSet):
     )
     def execute_status(self, request, pk=None):
         instance = self.get_object()
-        if instance.version.startswith("BMDS2"):
+        if instance.is_bmds_version2():
             raise exceptions.ValidationError("Cannot modify legacy BMD analyses")
         SerializerClass = (
             serializers.SessionBmd3Serializer
@@ -59,3 +60,17 @@ class Session(BaseAssessmentViewSet):
         )
         serializer = SerializerClass(instance)
         return Response(serializer.data)
+
+    @action(
+        detail=True,
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=[DocxRenderer],
+    )
+    def report(self, request, pk):
+        instance = self.get_object()
+        if instance.is_bmds_version2():
+            raise exceptions.ValidationError("Cannot modify legacy BMD analyses")
+        if not instance.has_results:
+            raise exceptions.ValidationError("Must be executed to create a report")
+        export = instance.create_report(request=request._request)
+        return Response(export)

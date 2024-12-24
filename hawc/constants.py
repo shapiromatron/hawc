@@ -16,7 +16,6 @@ class FeatureFlags(BaseModel):
     ALLOW_RIS_IMPORTS: bool = True
     FAKE_IMPORTS: bool = False
     ANONYMOUS_ACCOUNT_CREATION: bool = True
-    ENABLE_BMDS_33: bool = False
     ENABLE_WIP_VISUALS: bool = False
     ENABLE_FILTER_DOWNLOADS: bool = False
     ENABLE_UDF: bool = False

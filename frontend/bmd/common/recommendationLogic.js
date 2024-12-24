@@ -1,8 +1,7 @@
 import * as d3 from "d3";
 import _ from "lodash";
 
-import h from "/shared/utils/helpers";
-
+import {ff} from "../bmds3/formatters";
 import {CONTINUOUS, DICHOTOMOUS, DICHOTOMOUS_CANCER} from "./constants";
 
 /*
@@ -34,7 +33,7 @@ const SUFFICIENTLY_CLOSE_BMDL = 3,
         if (value > threshold) {
             return returnFailure(
                 failure_bin,
-                `${varname} (=${h.ff(value)}) is greater-than than threshold value (${threshold})`
+                `${varname} (=${ff(value)}) is greater-than than threshold value (${threshold})`
             );
         }
     },
@@ -42,7 +41,7 @@ const SUFFICIENTLY_CLOSE_BMDL = 3,
         if (value < threshold) {
             return returnFailure(
                 failure_bin,
-                `${varname} (=${h.ff(value)}) is less-than than threshold value (${threshold})`
+                `${varname} (=${ff(value)}) is less-than than threshold value (${threshold})`
             );
         }
     },

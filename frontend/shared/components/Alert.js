@@ -22,7 +22,7 @@ Alert.propTypes = {
 Alert.defaultProps = {
     className: "alert-danger",
     icon: "fa-exclamation-triangle",
-    message: "An error ocurred. If the error continues to occur please contact us.",
+    message: "An error occurred. If the error continues to occur please contact us.",
     testId: "error",
 };
 
