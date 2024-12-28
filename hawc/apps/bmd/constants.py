@@ -5,7 +5,7 @@ from typing import Annotated, Literal
 
 import pybmds
 from django.db.models import IntegerChoices
-from pybmds.constants import Dtype, Models
+from pybmds.constants import Dtype, Models, PriorClass
 from pydantic import BaseModel, Field
 
 from ..animal.constants import DataType
@@ -41,15 +41,50 @@ class DichotomousInputSettings(BaseModel):
 
     def add_models(self, session):
         settings = {"bmr_type": self.bmr_type, "bmr": self.bmr_value}
-        session.add_model(Models.DichotomousHill, settings)
-        session.add_model(Models.Gamma, settings)
-        session.add_model(Models.Logistic, settings)
-        session.add_model(Models.LogLogistic, settings)
-        session.add_model(Models.LogProbit, settings)
-        session.add_model(Models.Multistage, settings)
-        session.add_model(Models.Probit, settings)
-        session.add_model(Models.QuantalLinear, settings)
-        session.add_model(Models.Weibull, settings)
+        session.add_model(
+            Models.DichotomousHill,
+            {"priors": PriorClass.frequentist_restricted, **settings},
+        )
+        session.add_model(
+            Models.Gamma,
+            {"priors": PriorClass.frequentist_restricted, **settings},
+        )
+        session.add_model(
+            Models.Logistic,
+            {"priors": PriorClass.frequentist_unrestricted, **settings},
+        )
+        session.add_model(
+            Models.LogLogistic,
+            {"priors": PriorClass.frequentist_restricted, **settings},
+        )
+        session.add_model(
+            Models.LogProbit,
+            {"priors": PriorClass.frequentist_unrestricted, **settings},
+        )
+        session.add_model(
+            Models.Multistage,
+            {"priors": PriorClass.frequentist_restricted, "degree": 1, **settings},
+        )
+        session.add_model(
+            Models.Multistage,
+            {"priors": PriorClass.frequentist_restricted, "degree": 2, **settings},
+        )
+        session.add_model(
+            Models.Multistage,
+            {"priors": PriorClass.frequentist_restricted, "degree": 3, **settings},
+        )
+        session.add_model(
+            Models.Probit,
+            {"priors": PriorClass.frequentist_unrestricted, **settings},
+        )
+        session.add_model(
+            Models.QuantalLinear,
+            {"priors": PriorClass.frequentist_unrestricted, **settings},
+        )
+        session.add_model(
+            Models.Weibull,
+            {"priors": PriorClass.frequentist_restricted, **settings},
+        )
 
 
 class ContinuousInputSettings(BaseModel):
@@ -65,12 +100,34 @@ class ContinuousInputSettings(BaseModel):
             "bmr": self.bmr_value,
             "disttype": self.variance_model,
         }
-        session.add_model(Models.ExponentialM3, settings)
-        session.add_model(Models.ExponentialM5, settings)
-        session.add_model(Models.Hill, settings)
-        session.add_model(Models.Linear, settings)
-        session.add_model(Models.Polynomial, settings)
-        session.add_model(Models.Power, settings)
+        session.add_model(
+            Models.ExponentialM3,
+            {"priors": PriorClass.frequentist_restricted, **settings},
+        )
+        session.add_model(
+            Models.ExponentialM5,
+            {"priors": PriorClass.frequentist_restricted, **settings},
+        )
+        session.add_model(
+            Models.Hill,
+            {"priors": PriorClass.frequentist_restricted, **settings},
+        )
+        session.add_model(
+            Models.Linear,
+            {"priors": PriorClass.frequentist_unrestricted, **settings},
+        )
+        session.add_model(
+            Models.Polynomial,
+            {"priors": PriorClass.frequentist_restricted, "degree": 2, **settings},
+        )
+        session.add_model(
+            Models.Polynomial,
+            {"priors": PriorClass.frequentist_restricted, "degree": 3, **settings},
+        )
+        session.add_model(
+            Models.Power,
+            {"priors": PriorClass.frequentist_restricted, **settings},
+        )
 
 
 class BmdInputSettings(BaseModel):

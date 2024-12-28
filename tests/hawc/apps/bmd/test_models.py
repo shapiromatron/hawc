@@ -19,7 +19,7 @@ class TestBmdSession:
         assert session.date_executed is None
         session.execute()
         assert session.date_executed is not None
-        assert len(session.outputs["models"]) == 9
+        assert len(session.outputs["models"]) == 11
 
         # select model
         assert session.active is False
@@ -41,7 +41,7 @@ class TestBmdSession:
         assert session.date_executed is None
         session.execute()
         assert session.date_executed is not None
-        assert len(session.outputs["models"]) == 6
+        assert len(session.outputs["models"]) == 7
 
         # select model
         assert session.active is False
