@@ -25,7 +25,7 @@ class TestSummary(PlaywrightTestCase):
         # /ani/assessment/:id/heatmap-study-design/
         page.goto(self.live_server_url + "/ani/assessment/2/heatmap-study-design/")
         expect(page.locator("svg")).not_to_have_count(0)
-        expect(page.locator(".exp_heatmap_cell")).to_have_count(6)
+        expect(page.locator(".exp_heatmap_cell")).to_have_count(8)
 
     def test_browsing(self):
         """

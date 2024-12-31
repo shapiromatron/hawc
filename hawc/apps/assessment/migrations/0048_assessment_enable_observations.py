@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("assessment", "0046_assessmentvalue_value_type_qualifier"),
+        ("assessment", "0047_alter_labeleditem_options"),
     ]
 
     operations = [
