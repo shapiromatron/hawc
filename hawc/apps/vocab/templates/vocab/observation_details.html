@@ -111,7 +111,7 @@
         var hiddenInput = $(this);
         var isDefault = hiddenInput.val();
         var td = hiddenInput.closest('tr').find('.default-obs');
-        td.html(isDefault);
+        td.text(isDefault);
       });
       document.body.addEventListener('htmx:afterSwap', function(evt) {
         $(evt.target).find('.hidden-default').trigger('change');
