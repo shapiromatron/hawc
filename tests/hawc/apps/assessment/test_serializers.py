@@ -28,7 +28,7 @@ class TestRelatedEffectTagSerializer:
 @pytest.mark.django_db
 class TestGrowthPlotSerializer:
     def test_create_figure(self):
-        for model, group in [["user", "A"], ["assessment", "Q"], ["study", "M"]]:
+        for model, group in [["user", "YE"], ["assessment", "QE"], ["study", "ME"]]:
             serializer = GrowthPlotSerializer(data={"model": model, "grouper": group})
             assert serializer.is_valid()
             fig = serializer.create_figure()
