@@ -87,7 +87,7 @@ class PandasHtmlRenderer(PandasBaseRenderer):
 
     def render_dataframe(self, export: FlatExport, response: Response) -> str:
         with pd.option_context("display.max_colwidth", None):
-            return export.df.fillna("-").to_html(index=False)
+            return export.df.to_html(index=False)
 
 
 class PandasCsvRenderer(PandasBaseRenderer):
