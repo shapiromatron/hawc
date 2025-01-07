@@ -19,7 +19,6 @@ class FeatureFlags(BaseModel):
     ENABLE_BMDS_33: bool = False
     ENABLE_WIP_VISUALS: bool = False
     ENABLE_FILTER_DOWNLOADS: bool = False
-    ENABLE_UDF: bool = False
     ENABLE_DOCS_LINK: bool = False
     ENABLE_NEW_HERO: bool = False
 
