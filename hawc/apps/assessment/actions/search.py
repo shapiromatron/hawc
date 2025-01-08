@@ -8,11 +8,11 @@ from ..models import Assessment, Label, LabeledItem
 
 
 def search_studies(
-    query: str = "",
+    query: str,
     all_public: bool = False,
-    public: list[Assessment] | None = None,
+    public: QuerySet[Assessment] | None = None,
     all_internal: bool = False,
-    internal: list[Assessment] | None = None,
+    internal: QuerySet[Assessment] | None = None,
     user: HAWCUser | None = None,
 ) -> QuerySet[Study]:
     filters = Q()
@@ -45,11 +45,11 @@ def search_studies(
 
 
 def search_visuals(
-    query: str = "",
+    query: str,
     all_public: bool = False,
-    public: list[Assessment] | None = None,
+    public: QuerySet[Assessment] | None = None,
     all_internal: bool = False,
-    internal: list[Assessment] | None = None,
+    internal: QuerySet[Assessment] | None = None,
     user: HAWCUser | None = None,
 ) -> QuerySet[Visual]:
     filters = Q()

@@ -6,8 +6,10 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from hawc.apps.assessment.filterset import LogFilterSet
-from hawc.apps.assessment.forms import AssessmentValueForm, DatasetForm
+from hawc.apps.assessment.forms import AssessmentValueForm, DatasetForm, SearchForm
 from hawc.apps.assessment.models import Assessment, Dataset, DatasetRevision
+
+from ..test_utils import get_user
 
 IRIS_DATA_CSV = (
     Path(__file__).parents[3] / "data/private-data/assessment/dataset-revision/iris.csv"
@@ -236,3 +238,35 @@ class TestAssessmentValueForm:
             form = AssessmentValueForm(data=valid_data, parent=assessment)
             assert form.is_valid() is False
             assert "extra" in form.errors
+
+
+@pytest.mark.django_db
+class TestSearchForm:
+    def test_init(self):
+        anon = get_user()
+        form = SearchForm(data={}, user=anon)
+        assert "all_internal" not in form.fields
+
+        pm = get_user("pm")
+        form = SearchForm(data={}, user=pm)
+        assert "all_internal" in form.fields
+
+    def test_search(self):
+        pm = get_user("pm")
+
+        # check visual
+        form = SearchForm(
+            data={"type": "visual", "query": "plotly", "all_public": "on"},
+            user=pm,
+        )
+        assert form.is_valid()
+        qs = form.search()
+        assert qs.count() == 1
+
+        form = SearchForm(
+            data={"type": "study", "query": "biesemeier", "all_public": "on"},
+            user=pm,
+        )
+        assert form.is_valid()
+        qs = form.search()
+        assert qs.count() == 1
