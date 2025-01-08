@@ -572,8 +572,27 @@ class SearchForm(forms.Form):
         queryset=models.Assessment.objects.all(),
         required=False,
     )
-    type = forms.ChoiceField(required=True, choices=(("visual", "Visuals"), ("study", "Studies")))
+    type = forms.ChoiceField(
+        required=True, label="Search for", choices=(("visual", "Visuals"), ("study", "Studies"))
+    )
+    order_by = forms.ChoiceField(
+        required=True,
+        initial="-last_updated",
+        choices=(
+            ("name", "↑ Title"),
+            ("-name", "↓ Title"),
+            ("last_updated", "↑ Last Updated"),
+            ("-last_updated", "↓ Last Updated"),
+        ),
+    )
     query = forms.CharField(max_length=128, required=False)
+
+    order_by_override = {
+        ("visual", "name"): "title",
+        ("visual", "-name"): "-title",
+        ("study", "name"): "short_citation",
+        ("study", "-name"): "-short_citation",
+    }
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop("user")
@@ -591,19 +610,27 @@ class SearchForm(forms.Form):
     def helper(self):
         helper = BaseFormHelper(self)
         helper.form_method = "GET"
+        helper.form_class = "p-3"
 
         internal_fields = tuple() if self.user.is_anonymous else ("all_internal", "internal")
 
         helper.layout = cfl.Layout(
             cfl.Row(
-                cfl.Column("all_public", "public"),
-                cfl.Column(*internal_fields),
+                cfl.Column("query", css_class="col-6"),
+                cfl.Column("type", css_class="col-3"),
+                cfl.Column("order_by", css_class="col-3"),
+            ),
+            cfl.Fieldset(
+                "Assessment Search Options",
+                cfl.Row(
+                    cfl.Column("all_public", "public"),
+                    cfl.Column(*internal_fields),
+                ),
             ),
             cfl.Row(
-                cfl.Column("query", css_class="col-6"),
-                cfl.Column("type", css_class="col-4"),
                 cfl.Column(
-                    cfl.Submit("search", "Search", css_class="btn-block py-4"), css_class="col-2"
+                    cfl.Submit("search", "Search", css_class="btn-block py-4"),
+                    css_class="col-md-6 offset-md-3",
                 ),
             ),
         )
@@ -621,16 +648,22 @@ class SearchForm(forms.Form):
 
     def search(self):
         data = self.cleaned_data
+        order_by = self.order_by_override.get((data["type"], data["order_by"]), data["order_by"])
         match data["type"]:
             case "study":
-                return search.search_studies(
-                    query=data["query"],
-                    all_public=data["all_public"],
-                    public=data["public"],
-                    all_internal=data.get("all_internal", False),
-                    internal=data.get("internal", None),
-                    user=self.user if self.user.is_authenticated else None,
-                ).select_related("assessment")
+                return (
+                    search.search_studies(
+                        query=data["query"],
+                        all_public=data["all_public"],
+                        public=data["public"],
+                        all_internal=data.get("all_internal", False),
+                        internal=data.get("internal", None),
+                        user=self.user if self.user.is_authenticated else None,
+                    )
+                    .select_related("assessment")
+                    .prefetch_related("identifiers")
+                    .order_by(order_by)
+                )
             case "visual":
                 return (
                     search.search_visuals(
@@ -643,6 +676,7 @@ class SearchForm(forms.Form):
                     )
                     .select_related("assessment")
                     .prefetch_related("labels")
+                    .order_by(order_by)
                 )
             case _:
                 raise ValueError("Unknown Type")

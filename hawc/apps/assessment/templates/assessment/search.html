@@ -10,17 +10,11 @@
       {% if form.is_bound %}
         {% if form.type.value == 'study' %}
           <table class="table table-sm table-striped">
-            {% bs4_colgroup '20,20,40,20' %}
-            {% bs4_thead 'Assessment,Study,Full Citation,Last Updated' %}
+            {% bs4_colgroup '20,40,20,20' %}
+            {% bs4_thead 'Study,Full Citation,Assessment,Last Updated' %}
             <tbody>
               {% for object in object_list %}
                 <tr>
-                  <td>
-                    <a href="{{ object.assessment.get_absolute_url }}">{{object.assessment}}</a>
-                    {% if object.assessment.public_on is None %}
-                      <i class="fa fa-eye-slash" title="Not Public" aria-hidden="true"></i>
-                    {% endif %}
-                  </td>
                   <td>
                     <a href="{{ object.get_absolute_url }}">{{object.short_citation}}</a>
                     {% if not object.published %}
@@ -28,6 +22,12 @@
                     {% endif %}
                   </td>
                   <td>{{object.full_citation}}</td>
+                  <td>
+                    <a href="{{ object.assessment.get_absolute_url }}">{{object.assessment}}</a>
+                    {% if object.assessment.public_on is None %}
+                      <i class="fa fa-eye-slash" title="Not Public" aria-hidden="true"></i>
+                    {% endif %}
+                  </td>
                   <td>{{object.last_updated}}</td>
                 </tr>
               {% empty %}
@@ -40,24 +40,26 @@
           {% include "includes/paginator.html" with plural_object_name="studies" %}
         {% elif form.type.value == 'visual' %}
           <table class="table table-sm table-striped">
-            {% bs4_colgroup '20,20,40,20' %}
-            {% bs4_thead 'Assessment,Title,Caption,Last Updated' %}
+            {% bs4_colgroup '40,20,20,20' %}
+            {% bs4_thead 'Title,Type,Assessment,Last Updated' %}
             <tbody>
               {% for object in object_list %}
                 <tr>
-                  <td>
-                    <a href="{{ object.assessment.get_absolute_url }}">{{object.assessment}}</a>
-                    {% if object.assessment.public_on is None %}
-                      <i class="fa fa-eye-slash" title="Not Public" aria-hidden="true"></i>
-                    {% endif %}
-                  </td>
                   <td>
                     <a href="{{ object.get_absolute_url }}">{{object.title}}</a>
                     {% if not object.published %}
                       <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
                     {% endif %}
                   </td>
-                  <td>{{object.caption|safe}}</td>
+                  <td>
+                    {{object.get_visual_type_display}}
+                  </td>
+                  <td>
+                    <a href="{{ object.assessment.get_absolute_url }}">{{object.assessment}}</a>
+                    {% if object.assessment.public_on is None %}
+                      <i class="fa fa-eye-slash" title="Not Public" aria-hidden="true"></i>
+                    {% endif %}
+                  </td>
                   <td>{{object.last_updated}}</td>
                 </tr>
               {% empty %}
