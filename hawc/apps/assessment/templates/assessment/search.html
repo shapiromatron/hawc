@@ -1,5 +1,6 @@
 {% extends 'crumbless.html' %}
 
+{% block title %}Search | HAWC{% endblock title %}
 
 {% block content %}
   <h2>Search</h2>
@@ -12,7 +13,7 @@
             {% bs4_colgroup '20,20,40,20' %}
             {% bs4_thead 'Assessment,Study,Full Citation,Last Updated' %}
             <tbody>
-              {% for object in results %}
+              {% for object in object_list %}
                 <tr>
                   <td>
                     <a href="{{ object.assessment.get_absolute_url }}">{{object.assessment}}</a>
@@ -31,17 +32,18 @@
                 </tr>
               {% empty %}
                 <tr>
-                  <td colspan="4">None found</td>
+                  <td colspan="4">No studies found</td>
                 </tr>
               {% endfor %}
             </tbody>
           </table>
+          {% include "includes/paginator.html" with plural_object_name="studies" %}
         {% elif form.type.value == 'visual' %}
           <table class="table table-sm table-striped">
             {% bs4_colgroup '20,20,40,20' %}
             {% bs4_thead 'Assessment,Title,Caption,Last Updated' %}
             <tbody>
-              {% for object in results %}
+              {% for object in object_list %}
                 <tr>
                   <td>
                     <a href="{{ object.assessment.get_absolute_url }}">{{object.assessment}}</a>
@@ -60,11 +62,12 @@
                 </tr>
               {% empty %}
                 <tr>
-                  <td colspan="4">None found</td>
+                  <td colspan="4">No visuals found</td>
                 </tr>
               {% endfor %}
             </tbody>
           </table>
+          {% include "includes/paginator.html" with plural_object_name="visuals" %}
         {% endif %}
       {% endif %}
     </div>

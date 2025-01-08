@@ -26,7 +26,7 @@ from django.views.generic.edit import CreateView
 
 from ...services.utils.rasterize import get_styles_svg_definition
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig, cacheable
+from ..common.helper import WebappConfig, cacheable, paginate
 from ..common.htmx import HtmxView, HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
@@ -175,7 +175,7 @@ class Search(FormView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         if context["form"].is_valid():
-            context.update(results=context["form"].search())
+            context.update(paginate(context["form"].search(), self.request))
         return context
 
 

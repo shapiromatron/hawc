@@ -436,7 +436,7 @@ class TestSearch:
         url = reverse("search")
         resp = anon.get(url, data={"all_public": "on", "query": "plotly", "type": "visual"})
         assert resp.status_code == 200
-        assert len(resp.context["results"]) == 1
+        assert resp.context["object_list"].count() == 1
 
 
 @pytest.mark.django_db
