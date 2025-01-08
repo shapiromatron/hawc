@@ -55,9 +55,6 @@ def search_visuals(
     filters = Q()
 
     ct = ContentType.objects.get_for_model(Visual)
-    items = LabeledItem.objects.filter(
-        label__in=Label.objects.filter(name__icontains=query), content_type=ct
-    ).values_list("object_id", flat=True)
 
     if all_public or public:
         filters1 = dict(
@@ -65,10 +62,12 @@ def search_visuals(
             assessment__public_on__isnull=False,
             assessment__hide_from_public_page=False,
         )
+        published_labeled_items = LabeledItem.objects.filter(
+            label__in=Label.objects.filter(name__icontains=query, published=True), content_type=ct
+        ).values_list("object_id", flat=True)
         if not all_public and public:
             filters1.update(assessment__in=public)
-
-        filters |= (Q(title__icontains=query) | Q(id__in=items)) & Q(**filters1)
+        filters |= (Q(title__icontains=query) | Q(id__in=published_labeled_items)) & Q(**filters1)
 
     if user and (all_internal or internal):
         internal_assessments = Assessment.objects.all().user_can_view(user)
@@ -77,7 +76,10 @@ def search_visuals(
         filters2 = dict(
             assessment__in=internal_assessments,
         )
-        filters |= (Q(title__icontains=query) | Q(id__in=items)) & Q(**filters2)
+        labeled_items = LabeledItem.objects.filter(
+            label__in=Label.objects.filter(name__icontains=query), content_type=ct
+        ).values_list("object_id", flat=True)
+        filters |= (Q(title__icontains=query) | Q(id__in=labeled_items)) & Q(**filters2)
 
     if not bool(filters):
         return Visual.objects.none()
