@@ -21,7 +21,18 @@
                       <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
                     {% endif %}
                   </td>
-                  <td>{{object.full_citation}}</td>
+                  <td>
+                    {{object.full_citation}}
+                    {% for ident in object.identifiers.all %}
+                      {% with url=ident.get_url %}
+                        {% if url %}
+                          <a class="badge badge-secondary" target="_blank" href="{{url}}">
+                            {{ident.get_database_display}}
+                          </a>
+                        {% endif %}
+                      {% endwith %}
+                    {% endfor %}
+                  </td>
                   <td>
                     <a href="{{ object.assessment.get_absolute_url }}">{{object.assessment}}</a>
                     {% if object.assessment.public_on is None %}
