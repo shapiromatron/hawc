@@ -15,7 +15,7 @@ import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.core.paginator import Page, Paginator
+from django.core.paginator import Paginator
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Choices, QuerySet
 from django.http import HttpRequest, QueryDict

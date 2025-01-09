@@ -256,7 +256,7 @@ class TestSearchForm:
 
         # check visual
         form = SearchForm(
-            data={"type": "visual", "query": "plotly", "all_public": "on"},
+            data={"type": "visual", "query": "plotly", "all_public": "on", "order_by": "name"},
             user=pm,
         )
         assert form.is_valid()
@@ -264,7 +264,7 @@ class TestSearchForm:
         assert qs.count() == 1
 
         form = SearchForm(
-            data={"type": "study", "query": "biesemeier", "all_public": "on"},
+            data={"type": "study", "query": "biesemeier", "all_public": "on", "order_by": "name"},
             user=pm,
         )
         assert form.is_valid()

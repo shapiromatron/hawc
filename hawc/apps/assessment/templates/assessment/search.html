@@ -49,7 +49,7 @@
             </tbody>
           </table>
           {% include "includes/paginator.html" with plural_object_name="studies" %}
-        {% elif form.type.value == 'visual' %}
+        {% elif form.type.value == 'visual' or form.type.value == 'data-pivot' %}
           <table class="table table-sm table-striped">
             {% bs4_colgroup '40,20,20,20' %}
             {% bs4_thead 'Title,Type,Assessment,Last Updated' %}

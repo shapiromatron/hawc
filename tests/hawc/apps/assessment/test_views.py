@@ -434,7 +434,9 @@ class TestSearch:
     def test_success(self):
         anon = get_client()
         url = reverse("search")
-        resp = anon.get(url, data={"all_public": "on", "query": "plotly", "type": "visual"})
+        resp = anon.get(
+            url, data={"all_public": "on", "query": "plotly", "type": "visual", "order_by": "name"}
+        )
         assert resp.status_code == 200
         assert resp.context["object_list"].count() == 1
 

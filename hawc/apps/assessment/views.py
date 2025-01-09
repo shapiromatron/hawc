@@ -178,7 +178,10 @@ class Search(FormView):
         context = super().get_context_data(**kwargs)
         if context["form"].is_valid():
             context.update(paginate(context["form"].search(), self.request))
-            if context["object_list"].model in (summary_models.Visual,):
+            if context["object_list"].model in (
+                summary_models.Visual,
+                summary_models.DataPivotQuery,
+            ):
                 self.set_visible_labels(self.request.user, context["object_list"])
         return context
 
