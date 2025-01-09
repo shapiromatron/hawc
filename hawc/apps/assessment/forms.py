@@ -675,7 +675,7 @@ class SearchForm(forms.Form):
                         user=self.user if self.user.is_authenticated else None,
                     )
                     .select_related("assessment")
-                    .prefetch_related("labels")
+                    .prefetch_related("labels__label")
                     .order_by(order_by)
                 )
             case _:

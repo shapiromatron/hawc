@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
+from django.db.models import QuerySet
 from django.http import (
     Http404,
     HttpRequest,
@@ -45,6 +46,7 @@ from ..common.views import (
 )
 from ..materialized.models import refresh_all_mvs
 from ..mgmt.analytics.overall import compute_object_counts
+from ..summary import models as summary_models
 from . import constants, filterset, forms, models, serializers
 
 logger = logging.getLogger(__name__)
@@ -176,7 +178,30 @@ class Search(FormView):
         context = super().get_context_data(**kwargs)
         if context["form"].is_valid():
             context.update(paginate(context["form"].search(), self.request))
+            if context["object_list"].model in (summary_models.Visual,):
+                self.set_visible_labels(self.request.user, context["object_list"])
         return context
+
+    def set_visible_labels(self, user, qs: QuerySet):
+        # filter labels to only show those a user can view
+        show_all = self.request.user.is_superuser
+        can_view_visible = (
+            set(
+                user.assessment_pms.all()
+                .union(user.assessment_teams.all())
+                .values_list("id", flat=True)
+            )
+            if user.is_authenticated
+            else set()
+        )
+        for item in qs:
+            item.shown_labels = [
+                label
+                for label in item.labels.all()
+                if label.label.published
+                or show_all
+                or label.label.assessment_id in can_view_visible
+            ]
 
 
 # Assessment Object
