@@ -1011,10 +1011,8 @@ class Dataset(models.Model):
         return self.name
 
     def user_can_view(self, user) -> bool:
-        return (
-            self.published
-            and self.assessment.user_can_view_object(user)
-            or self.assessment.user_can_edit_object(user)
+        return self.assessment.user_can_edit_object(user) or (
+            self.published and self.assessment.user_can_view_object(user)
         )
 
     def get_absolute_url(self) -> str:
