@@ -476,6 +476,10 @@ class Assessment(models.Model):
         return apps.get_model(app, model).objects.filter(**{filter: self}).count() > 0
 
     @property
+    def is_public(self) -> bool:
+        return self.public_on is not None
+
+    @property
     def has_lit_data(self) -> bool:
         return self._has_data("lit", "Reference", filter="assessment")
 
