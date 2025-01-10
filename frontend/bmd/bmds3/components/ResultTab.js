@@ -78,7 +78,7 @@ class ModelSelection extends React.Component {
                     </button>
                     {store.showSelectedSaveNotification ? (
                         <Alert
-                            className="alert-success"
+                            className="alert-success mt-3"
                             icon="fa-check"
                             message="Save successful!"
                             testId="select-model-confirmation"

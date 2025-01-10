@@ -118,7 +118,7 @@ class SettingsForm extends React.Component {
                     </button>
                     {store.isExecuting ? (
                         <Alert
-                            className="alert-info"
+                            className="alert-info d-flex align-items-center"
                             icon="fa-spinner fa-spin fa-2x"
                             message="Executing, please wait ..."
                             testId="executing-spinner"
