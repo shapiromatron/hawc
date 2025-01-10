@@ -570,11 +570,11 @@ class SearchForm(forms.Form):
         required=False,
         label="Public Assessments",
     )
-    all_internal = forms.BooleanField(required=False, initial=True, label="All internal assessments")
+    all_internal = forms.BooleanField(
+        required=False, initial=True, label="All internal assessments"
+    )
     internal = forms.ModelMultipleChoiceField(
-        queryset=models.Assessment.objects.all(),
-        required=False,
-        label="Internal assessments"
+        queryset=models.Assessment.objects.all(), required=False, label="Internal assessments"
     )
     type = forms.ChoiceField(
         required=True,
@@ -646,7 +646,9 @@ class SearchForm(forms.Form):
             cfl.Row(
                 cfl.Column(
                     cfl.Submit("search", "Search", css_class="btn-block"),
-                    cfl.HTML("""<i class="fa fa-spinner fa-spin htmx-indicator align-items-center d-flex ml-2" id="spinner" aria-hidden="true"></i>"""),
+                    cfl.HTML(
+                        """<i class="fa fa-spinner fa-spin htmx-indicator align-items-center d-flex ml-2" id="spinner" aria-hidden="true"></i>"""
+                    ),
                     css_class="col-md-5 offset-md-4",
                 ),
             ),
