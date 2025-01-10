@@ -6,7 +6,7 @@
       <h2 class="m-0">
         <a href="{% url 'home' %}">Health Assessment Workspace Collaborative (HAWC)</a>
       </h2>
-      <ul id="navbarSupportedContent" class="nav text-right m-0">
+      <ul class="nav text-right m-0">
         {% if user.is_authenticated %}
           {% include "includes/_navigation_links.html" with contact_only=False %}
         {% else %}
@@ -19,11 +19,7 @@
       <a class="ml-3 navbar-brand" href="{% url 'home' %}">
         <img alt="The website logo" src="{% if user.is_authenticated %}{% static 'img/HAWC-dark.svg' %}{% else %}{% static 'img/HAWC.svg' %}{% endif %}"  width="80" />
       </a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <ul id="navbarSupportedContent" class="nav navbar-nav collapse navbar-collapse justify-content-end" >
+      <ul class="nav navbar-nav collapse navbar-collapse justify-content-end" >
         {% include "includes/_navigation_links.html" with contact_only=False %}
       </ul>
     </nav>
