@@ -15,9 +15,9 @@
       </ul>
     </nav>
   {% else %}
-    <nav class="navbar navbar-expand-sm navbar-light {% if user.is_authenticated %} navbar-authenticated {% endif %}">
+    <nav class="navbar navbar-expand-sm  {% if user.is_authenticated %} navbar-dark bg-dark {% else %} navbar-light bg-light {% endif %} ">
       <a class="ml-3 navbar-brand" href="{% url 'home' %}">
-        <img alt="The website logo" src="{% static 'img/HAWC-400.png' %}"  width="68" />
+        <img alt="The website logo" src="{% if user.is_authenticated %}{% static 'img/HAWC-dark.svg' %}{% else %}{% static 'img/HAWC.svg' %}{% endif %}"  width="80" />
       </a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
               aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">

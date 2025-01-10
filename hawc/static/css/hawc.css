@@ -49,13 +49,11 @@ input[type="submit"].btn, section button.btn, section input[type="button"].btn, 
     font-weight: normal;
 }
 
-.navbar-authenticated {
-    background-color: #eeeef2;
+/* authenticated navbar */
+.navbar {
+    padding: 0.5rem 1rem;
 }
 
-.navbar {
-    padding: 0.75rem 1rem;
-}
 /* end sidebar */
 .tny {
     font-size: 0.75rem !important;
