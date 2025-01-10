@@ -2,7 +2,7 @@
 
 {% block navbar_outer %}
   {% if flavor == "EPA" %}
-    <nav class="navbar hawc-header justify-content-between d-flex align-items-center {% if user.is_authenticated %} navbar-authenticated {% endif %}">
+    <nav class="navbar hawc-header justify-content-between d-flex align-items-center {% if user.is_authenticated %} navbar-dark bg-dark {% endif %}">
       <h2 class="m-0">
         <a href="{% url 'home' %}">Health Assessment Workspace Collaborative (HAWC)</a>
       </h2>

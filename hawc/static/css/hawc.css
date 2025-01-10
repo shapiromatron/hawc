@@ -972,11 +972,6 @@ div.udf-info-row>p, div.udf-info-row>div.card>p {
     background-color: #ec744c;
     border-color: #ec744c;
 }
-.unstyled-action-button {
-    background: none;
-    border: none;
-    padding: 0;
-}
 .smaller {
     font-size: .8em;
     font-weight: 400;

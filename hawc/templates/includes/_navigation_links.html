@@ -15,10 +15,6 @@
       <a class="nav-link" href="{% url 'wagtail_serve' '' %}">Documentation</a>
     </li>
   {% endif %}
-  <li class="nav-item">
-    <a class="nav-link" href="{% url 'assessment:public_list' %}">Public Assessments</a>
-  </li>
-
   {% if user.is_authenticated %}
     <li class="nav-item dropdown">
       <a href="#" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
@@ -42,6 +38,9 @@
       </div>
     </li>
   {% else %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'assessment:public_list' %}">Public Assessments</a>
+    </li>
     <li class="nav-item">
       <a class="nav-link" href="{% url 'user:login' %}?next={{request.path}}">Login</a>
     </li>
