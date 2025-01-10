@@ -195,7 +195,8 @@ class LiteratureAssessmentViewSet(BaseAssessmentViewSet):
         assessment = self.get_object()
         queryset = (
             models.Reference.objects.get_qs(assessment)
-            .prefetch_related("identifiers", "tags")
+            .with_identifiers()
+            .prefetch_related("tags")
             .order_by("id")
         )
         fs = filterset.ReferenceExportFilterSet(
@@ -240,7 +241,7 @@ class LiteratureAssessmentViewSet(BaseAssessmentViewSet):
             .prefetch_related("tags", "reference__identifiers")
             .order_by("reference_id", "id")
         )
-        exporter = exports.ReferenceFlatComplete(
+        exporter = exports.ReferenceFlatComplete(  # TODO - what do do about this?
             qs,
             filename=f"references-user-tags-{assessment.name}",
             assessment=assessment,

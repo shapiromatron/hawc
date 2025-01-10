@@ -46,9 +46,9 @@ class ReferenceFlatComplete(FlatFileExporter):
     def _get_reference_data(self, ref: models.Reference) -> list:
         return [
             ref.pk,
-            ref.get_hero_id(),
-            ref.get_pubmed_id(),
-            ref.get_doi_id(),
+            ref.hero_id,
+            ref.pubmed_id,
+            ref.doi,
             ref.ref_short_citation,
             ref.ref_full_citation,
             ref.title,
@@ -123,7 +123,7 @@ class TableBuilderFormat(FlatFileExporter):
     def _get_data_rows(self):
         return [
             [
-                ref.get_pubmed_id(),
+                ref.pubmed_id,
                 ref.ref_short_citation,
                 ref.ref_full_citation,
                 None,
