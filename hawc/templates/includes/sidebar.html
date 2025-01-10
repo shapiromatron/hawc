@@ -1,9 +1,9 @@
 <ul class="{{ul_class}}">
   <li class="{{li_class}}">
-    <a class="{{a_class}}"  href="{% url 'home' %}">HAWC Home</a>
+    <a class="{{a_class}}"  href="{% url 'home' %}">Home</a>
   </li>
   <li class="{{li_class}}">
-    <a class="{{a_class}}" href="{% url 'assessment:public_list' %}">Public Assessments</a>
+    <a class="{{a_class}}" href="{% url 'assessment:public_list' %}">Assessments</a>
   </li>
   {% if assessment %}
     <li class="{{li_class}}">
@@ -63,11 +63,11 @@
       {% include 'docs/components/sidebar_docs_tree.html' %}
     {% else %}
       <li class="{{li_class}}">
-        <a class="{{a_class}}" href="{% url 'wagtail_serve' '' %}">HAWC Documentation</a>
+        <a class="{{a_class}}" href="{% url 'wagtail_serve' '' %}">Documentation</a>
       </li>
     {% endif %}
   {% endif %}
 
-  <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'about' %}">About HAWC</a></li>
-  <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'resources' %}">HAWC Resources</a></li>
+  <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'about' %}">About</a></li>
+  <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'resources' %}">Resources</a></li>
 </ul>
