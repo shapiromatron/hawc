@@ -564,15 +564,17 @@ class ContactForm(forms.Form):
 
 
 class SearchForm(forms.Form):
-    all_public = forms.BooleanField(required=False, initial=True)
+    all_public = forms.BooleanField(required=False, initial=True, label="All public assessments")
     public = forms.ModelMultipleChoiceField(
         queryset=models.Assessment.objects.all(),
         required=False,
+        label="Public Assessments",
     )
-    all_internal = forms.BooleanField(required=False, initial=True)
+    all_internal = forms.BooleanField(required=False, initial=True, label="All internal assessments")
     internal = forms.ModelMultipleChoiceField(
         queryset=models.Assessment.objects.all(),
         required=False,
+        label="Internal assessments"
     )
     type = forms.ChoiceField(
         required=True,
@@ -644,7 +646,8 @@ class SearchForm(forms.Form):
             cfl.Row(
                 cfl.Column(
                     cfl.Submit("search", "Search", css_class="btn-block"),
-                    css_class="col-md-6 offset-md-3",
+                    cfl.HTML("""<i class="fa fa-spinner fa-spin htmx-indicator align-items-center d-flex ml-2" id="spinner" aria-hidden="true"></i>"""),
+                    css_class="col-md-5 offset-md-4",
                 ),
             ),
         )
@@ -656,6 +659,7 @@ class SearchForm(forms.Form):
                 "hx-select": "#results",
                 "hx-trigger": "submit",
                 "hx-push-url": "true",
+                "hx-indicator": "#spinner",
             }
         )
         return helper
