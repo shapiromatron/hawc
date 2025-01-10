@@ -2,11 +2,11 @@
 
 {% block navbar_outer %}
   {% if flavor == "EPA" %}
-    <nav class="navbar hawc-header justify-content-between">
-      <h2>
+    <nav class="navbar hawc-header justify-content-between d-flex align-items-center {% if user.is_authenticated %} navbar-authenticated {% endif %}">
+      <h2 class="m-0">
         <a href="{% url 'home' %}">Health Assessment Workspace Collaborative (HAWC)</a>
       </h2>
-      <ul id="navbarSupportedContent" class="nav text-right">
+      <ul id="navbarSupportedContent" class="nav text-right m-0">
         {% if user.is_authenticated %}
           {% include "includes/_navigation_links.html" with contact_only=False %}
         {% else %}
@@ -15,7 +15,7 @@
       </ul>
     </nav>
   {% else %}
-    <nav class="navbar navbar-expand-sm navbar-light bg-light">
+    <nav class="navbar navbar-expand-sm navbar-light {% if user.is_authenticated %} navbar-authenticated {% endif %}">
       <a class="ml-3 navbar-brand" href="{% url 'home' %}">
         <img alt="The website logo" src="{% static 'img/HAWC-400.png' %}"  width="68" />
       </a>
