@@ -48,6 +48,12 @@ input[type="submit"].btn, section button.btn, section input[type="button"].btn, 
     padding-left: 2rem;
     font-weight: normal;
 }
+
+/* authenticated navbar */
+.navbar {
+    padding: 0.5rem 1rem;
+}
+
 /* end sidebar */
 .tny {
     font-size: 0.75rem !important;
@@ -965,11 +971,6 @@ div.udf-info-row>p, div.udf-info-row>div.card>p {
 .betatester {
     background-color: #ec744c;
     border-color: #ec744c;
-}
-.unstyled-action-button {
-    background: none;
-    border: none;
-    padding: 0;
 }
 .smaller {
     font-size: .8em;
