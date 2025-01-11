@@ -9,8 +9,6 @@ from .dev import *
 DEBUG = True
 
 # enable feature flags for tests
-HAWC_FEATURES.ENABLE_BMDS_33 = True
-HAWC_FEATURES.ENABLE_UDF = True
 HAWC_FEATURES.ENABLE_DOCS_LINK = True
 
 # remove toolbar for integration tests
