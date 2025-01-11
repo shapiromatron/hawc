@@ -476,6 +476,10 @@ class Assessment(models.Model):
         return apps.get_model(app, model).objects.filter(**{filter: self}).count() > 0
 
     @property
+    def is_public(self) -> bool:
+        return self.public_on is not None
+
+    @property
     def has_lit_data(self) -> bool:
         return self._has_data("lit", "Reference", filter="assessment")
 
@@ -1007,10 +1011,8 @@ class Dataset(models.Model):
         return self.name
 
     def user_can_view(self, user) -> bool:
-        return (
-            self.published
-            and self.assessment.user_can_view_object(user)
-            or self.assessment.user_can_edit_object(user)
+        return self.assessment.user_can_edit_object(user) or (
+            self.published and self.assessment.user_can_view_object(user)
         )
 
     def get_absolute_url(self) -> str:
