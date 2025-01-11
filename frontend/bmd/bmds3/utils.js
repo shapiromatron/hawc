@@ -1,5 +1,7 @@
 import _ from "lodash";
 
+import {ff} from "./formatters";
+
 const getLabel = function(value, items) {
         for (let index = 0; index < items.length; index++) {
             const item = items[index];
@@ -68,6 +70,92 @@ const getLabel = function(value, items) {
         // return output model content or null, based on model index. If value is -1, return
         // null; this is the default case when no model is selected.
         return model_index >= 0 ? models[model_index] : null;
+    },
+    hexToRgbA = (hex, alpha) => {
+        var c;
+        if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+            c = hex.substring(1).split("");
+            if (c.length == 3) {
+                c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+            }
+            c = "0x" + c.join("");
+            return "rgba(" + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(",") + `,${alpha})`;
+        }
+        throw new Error("Bad Hex");
+    },
+    getBmdDiamond = function(name, bmd, bmdl, bmdu, bmd_y, hexColor) {
+        const hasBmd = bmd > 0;
+
+        // prettier-ignore
+        const template = `<b>${name}</b><br />BMD: ${ff(bmd)}<br />BMDL: ${ff(bmdl)}<br />BMDU: ${ff(bmdu)}<br />BMR: ${ff(bmd_y)}<extra></extra>`;
+
+        if (hasBmd) {
+            return {
+                x: [bmd],
+                y: [bmd_y],
+                mode: "markers",
+                type: "scatter",
+                hoverinfo: "x",
+                hovertemplate: template,
+                marker: {
+                    color: hexColor,
+                    size: 16,
+                    symbol: "diamond-tall",
+                    line: {
+                        color: "white",
+                        width: 2,
+                    },
+                },
+                legendgroup: name,
+                showlegend: false,
+                error_x: {
+                    array: [bmdu > 0 ? bmdu - bmd : 0],
+                    arrayminus: [bmdl > 0 ? bmd - bmdl : 0],
+                    color: hexToRgbA(hexColor, 0.6),
+                    thickness: 12,
+                    width: 0,
+                },
+            };
+        }
+    },
+    getPlotlyDrCurve = function(model, hexColor) {
+        // https://plotly.com/python/marker-style/
+        // https://plotly.com/javascript/reference/scatter/
+        const data = [
+            {
+                x: model.results.plotting.dr_x,
+                y: model.results.plotting.dr_y,
+                mode: "lines",
+                name: model.name,
+                hoverinfo: "y",
+                line: {
+                    color: hexToRgbA(hexColor, 0.8),
+                    width: 4,
+                    opacity: 0.5,
+                },
+                legendgroup: model.name,
+            },
+        ];
+
+        const diamond = getBmdDiamond(
+            model.name,
+            model.results.bmd,
+            model.results.bmdl,
+            model.results.bmdu,
+            model.results.plotting.bmd_y,
+            hexColor
+        );
+        if (diamond) {
+            data.push(diamond);
+        }
+        return data;
     };
 
-export {addDoseUnitsToModels, bmrLabel, doseDropOptions, getLabel, getModelFromIndex};
+export {
+    addDoseUnitsToModels,
+    bmrLabel,
+    doseDropOptions,
+    getLabel,
+    getModelFromIndex,
+    getPlotlyDrCurve,
+};
