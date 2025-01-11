@@ -1008,10 +1008,8 @@ class Dataset(models.Model):
 
     def user_can_view(self, user) -> bool:
         return (
-            self.published
-            and self.assessment.user_can_view_object(user)
-            or self.assessment.user_can_edit_object(user)
-        )
+            self.published and self.assessment.user_can_view_object(user)
+        ) or self.assessment.user_can_edit_object(user)
 
     def get_absolute_url(self) -> str:
         return reverse("assessment:dataset_detail", args=(self.id,))
