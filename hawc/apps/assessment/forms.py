@@ -10,6 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
 from django.db import transaction
 from django.db.models import QuerySet
+from django.db.models.base import ModelBase
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
@@ -30,8 +31,10 @@ from ..common.helper import new_window_a
 from ..common.widgets import DateCheckboxInput
 from ..myuser.autocomplete import UserAutocomplete
 from ..study.autocomplete import StudyAutocomplete
+from ..summary import models as summary_models
 from ..vocab.constants import VocabularyNamespace
 from . import autocomplete, constants, models
+from .actions import search
 
 
 class AssessmentForm(forms.ModelForm):
@@ -558,6 +561,146 @@ class ContactForm(forms.Form):
         if self.enable_turnstile:
             self.turnstile.validate(self.data)
         return self.cleaned_data
+
+
+class SearchForm(forms.Form):
+    all_public = forms.BooleanField(required=False, initial=True, label="All public assessments")
+    public = forms.ModelMultipleChoiceField(
+        queryset=models.Assessment.objects.all(),
+        required=False,
+        label="Public Assessments",
+    )
+    all_internal = forms.BooleanField(
+        required=False, initial=True, label="All internal assessments"
+    )
+    internal = forms.ModelMultipleChoiceField(
+        queryset=models.Assessment.objects.all(), required=False, label="Internal assessments"
+    )
+    type = forms.ChoiceField(
+        required=True,
+        label="Search for",
+        choices=(
+            ("study", "Studies"),
+            ("visual", "Visuals"),
+            ("data-pivot", "Data Pivots"),
+        ),
+    )
+    order_by = forms.ChoiceField(
+        required=True,
+        initial="-last_updated",
+        choices=(
+            ("name", "↑ Title"),
+            ("-name", "↓ Title"),
+            ("last_updated", "↑ Last Updated"),
+            ("-last_updated", "↓ Last Updated"),
+        ),
+    )
+    query = forms.CharField(max_length=128, required=False)
+
+    order_by_override = {
+        ("visual", "name"): "title",
+        ("visual", "-name"): "-title",
+        ("data-pivot", "name"): "title",
+        ("data-pivot", "-name"): "-title",
+        ("study", "name"): "short_citation",
+        ("study", "-name"): "-short_citation",
+    }
+    model_class: dict[str, ModelBase] = {
+        "visual": summary_models.Visual,
+        "data-pivot": summary_models.DataPivotQuery,
+    }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+        self.fields["public"].queryset = self.fields["public"].queryset.public().order_by("name")
+        if self.user.is_anonymous:
+            self.fields.pop("all_internal")
+            self.fields.pop("internal")
+        else:
+            self.fields["internal"].queryset = (
+                self.fields["internal"].queryset.user_can_view(self.user).order_by("name")
+            )
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_method = "GET"
+        helper.form_class = "p-3"
+
+        internal_fields = tuple() if self.user.is_anonymous else ("all_internal", "internal")
+
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("query", css_class="col-6"),
+                cfl.Column("type", css_class="col-3"),
+                cfl.Column("order_by", css_class="col-3"),
+            ),
+            cfl.Fieldset(
+                "Assessment Search Options",
+                cfl.Row(
+                    cfl.Column("all_public", "public"),
+                    cfl.Column(*internal_fields),
+                ),
+            ),
+            cfl.Row(
+                cfl.Column(
+                    cfl.Submit("search", "Search", css_class="btn-block"),
+                    cfl.HTML(
+                        """<i class="fa fa-spinner fa-spin htmx-indicator align-items-center d-flex ml-2" id="spinner" aria-hidden="true"></i>"""
+                    ),
+                    css_class="col-md-5 offset-md-4",
+                ),
+            ),
+        )
+        helper.attrs.update(
+            **{
+                "hx-get": ".",
+                "hx-target": "#results",
+                "hx-swap": "outerHTML",
+                "hx-select": "#results",
+                "hx-trigger": "submit",
+                "hx-push-url": "true",
+                "hx-indicator": "#spinner",
+            }
+        )
+        return helper
+
+    def search(self):
+        data = self.cleaned_data
+        order_by = self.order_by_override.get((data["type"], data["order_by"]), data["order_by"])
+        match data["type"]:
+            case "study":
+                return (
+                    search.search_studies(
+                        query=data["query"],
+                        all_public=data["all_public"],
+                        public=data["public"],
+                        all_internal=data.get("all_internal", False),
+                        internal=data.get("internal", None),
+                        user=self.user if self.user.is_authenticated else None,
+                    )
+                    .select_related("assessment")
+                    .prefetch_related("identifiers")
+                    .order_by(order_by)
+                )
+            case "visual" | "data-pivot":
+                return (
+                    search.search_visuals(
+                        model_cls=self.model_class[data["type"]],
+                        query=data["query"],
+                        all_public=data["all_public"],
+                        public=data["public"],
+                        all_internal=data.get("all_internal", False),
+                        internal=data.get("internal", None),
+                        user=self.user if self.user.is_authenticated else None,
+                    )
+                    .select_related("assessment")
+                    .prefetch_related("labels__label")
+                    .order_by(order_by)
+                )
+            case _:
+                raise ValueError("Unknown Type")
 
 
 class DatasetForm(forms.ModelForm):

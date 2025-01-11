@@ -15,6 +15,7 @@ import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.paginator import Paginator
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Choices, QuerySet
 from django.http import HttpRequest, QueryDict
@@ -626,3 +627,28 @@ def get_contrasting_text_color(bg: str) -> str:
     a_type = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in a_type]
     luminance = 0.2126 * a_type[0] + 0.7152 * a_type[1] + 0.0722 * a_type[2]
     return "#ffffff" if luminance < 0.179 else "#000000"
+
+
+def paginate(
+    qs: QuerySet, request: HttpRequest, n_items: int = 50, page_param: str = "page"
+) -> dict:
+    """
+    Paginate a QuerySet. Returns a dictionary of items that are available in the BaseList class
+    based view, so that the paginator.html template works as expected.
+
+    Args:
+        qs (QuerySet): _description_
+        request (HttpRequest): _description_
+        n_items (int, optional): _description_. Defaults to 50.
+        page_param (str, optional): _description_. Defaults to "page".
+
+    """
+    paginator = Paginator(qs, n_items)
+    page_number = request.GET.get(page_param)
+    page = paginator.get_page(page_number)
+    return {
+        "paginator": paginator,
+        "page_obj": page,
+        "is_paginated": True,
+        "object_list": page.object_list,
+    }

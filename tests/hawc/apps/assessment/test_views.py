@@ -430,12 +430,25 @@ class TestRasterizeCss:
 
 
 @pytest.mark.django_db
+class TestSearch:
+    def test_success(self):
+        anon = get_client()
+        url = reverse("search")
+        resp = anon.get(
+            url, data={"all_public": "on", "query": "plotly", "type": "visual", "order_by": "name"}
+        )
+        assert resp.status_code == 200
+        assert resp.context["object_list"].count() == 1
+
+
+@pytest.mark.django_db
 def test_get_200():
     client = get_client("admin")
     main = 1
     log_content_type = 16
     log_obj_id = 1
     urls = [
+        reverse("search"),
         reverse("assessment:full_list"),
         reverse("assessment:public_list"),
         reverse("assessment:detail", args=(main,)),
