@@ -5,7 +5,10 @@
   "caption": "<p>example</p>",
   "created": "2020-05-08T15:37:19.255703-04:00",
   "data_url": "/summary/api/visual/4/data/",
+  "dataset": null,
   "dose_units": 1,
+  "dp_id": null,
+  "dp_slug": "",
   "endpoints": [
     {
       "FEL": -999,

@@ -5,7 +5,10 @@
   "caption": "",
   "created": "2020-11-25T13:32:07.260499-05:00",
   "data_url": "/summary/api/visual/10/data/",
+  "dataset": null,
   "dose_units": 1,
+  "dp_id": null,
+  "dp_slug": "",
   "endpoints": [
     {
       "FEL": -999,
