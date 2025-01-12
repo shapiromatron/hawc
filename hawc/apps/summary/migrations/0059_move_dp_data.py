@@ -160,7 +160,7 @@ def forward(apps, schema_editor):
 def backward(apps, schema_editor):
     Dataset = apps.get_model("summary", "Visual")
     Visual = apps.get_model("summary", "Visual")
-    Dataset.objects_filter(
+    Dataset.objects.filter(
         id__in=Visual.objects.filter(visual_type=VisualType.DATA_PIVOT_FILE).values_list(
             "dataset_id", flat=True
         )
