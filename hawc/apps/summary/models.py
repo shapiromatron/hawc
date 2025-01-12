@@ -228,7 +228,10 @@ class Visual(models.Model):
         null=True,
         help_text="Upload an image file. Valid formats: png, jpg, jpeg. Must be > 10KB and < 3MB in size.",
     )
-    legacy_id = models.BigIntegerField(blank=True, null=True)
+    dp_id = models.BigIntegerField(
+        editable=False, blank=True, null=True, help_text="data pivot migration"
+    )
+    dp_slug = models.SlugField(editable=False, blank=True, help_text="data pivot migration")
     dataset = models.ForeignKey(
         "assessment.Dataset", on_delete=models.PROTECT, blank=True, null=True
     )
