@@ -36,7 +36,7 @@ from . import autocomplete, constants, models, prefilters
 class SummaryTableForm(forms.ModelForm):
     class Meta:
         model = models.SummaryTable
-        exclude = ("assessment", "table_type")
+        fields = ("title", "slug", "content", "published", "caption")
         field_classes = {"caption": QuillField}
 
     def __init__(self, *args, **kwargs):
@@ -121,10 +121,6 @@ class SummaryTableCopySelectorForm(CopyForm):
 
 
 class VisualForm(forms.ModelForm):
-    class Meta:
-        model = models.Visual
-        exclude = ("assessment", "visual_type", "evidence_type", "prefilters")
-
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
         visual_type = kwargs.pop("visual_type", None)
@@ -230,15 +226,7 @@ class EndpointAggregationForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        exclude = (
-            "assessment",
-            "visual_type",
-            "evidence_type",
-            "settings",
-            "prefilters",
-            "studies",
-            "image",
-        )
+        fields = ("title", "slug", "dose_units", "endpoints", "caption", "published")
 
 
 class CrossviewForm(VisualForm):
@@ -266,7 +254,7 @@ class CrossviewForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "evidence_type", "endpoints", "studies", "image")
+        fields = ("title", "slug", "dose_units", "settings", "caption", "published")
 
 
 class RoBForm(VisualForm):
@@ -291,7 +279,7 @@ class RoBForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        exclude = ("assessment", "visual_type", "evidence_type", "dose_units", "endpoints", "image")
+        fields = ("title", "slug", "settings", "caption", "published")
 
 
 class TagtreeForm(VisualForm):
@@ -467,17 +455,10 @@ class ExternalSiteForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        fields = (
-            "title",
-            "slug",
-            "caption",
-            "published",
-        )
+        fields = ("title", "slug", "caption", "published")
 
     DOMAIN_TABLEAU = "public.tableau.com"
-    VALID_DOMAINS = {
-        DOMAIN_TABLEAU,
-    }
+    VALID_DOMAINS = {DOMAIN_TABLEAU}
 
     def clean_external_url(self):
         external_url = self.cleaned_data.get("external_url")
@@ -515,13 +496,7 @@ class ExploreHeatmapForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        fields = (
-            "title",
-            "slug",
-            "settings",
-            "caption",
-            "published",
-        )
+        fields = ("title", "slug", "settings", "caption", "published")
 
 
 class PlotlyVisualForm(VisualForm):
@@ -535,13 +510,7 @@ class PlotlyVisualForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        fields = (
-            "title",
-            "slug",
-            "settings",
-            "caption",
-            "published",
-        )
+        fields = ("title", "slug", "settings", "caption", "published")
 
     def clean_settings(self):
         # we remove <extra> tag; by default it's included in plotly visuals but it doesn't pass
