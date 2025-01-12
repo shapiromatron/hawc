@@ -60,3 +60,40 @@ class TestAssessmentDetail:
 
         obj = models.AssessmentDetail(peer_review_status=constants.PeerReviewType.OTHER)
         assert obj.get_peer_review_status_display() == ""
+
+
+@pytest.mark.django_db
+class TestLabel:
+    def test_get_labelled_items_url(self):
+        assessment = models.Assessment.objects.get(id=1)
+        root = models.Label.get_assessment_root(assessment.id)
+        root.add_child(name="test", published=False, assessment=assessment)
+        assert "/labeled-items/" in root.get_labelled_items_url()
+
+    def test_can_change_published(self):
+        assessment = models.Assessment.objects.get(id=1)
+        root = models.Label.get_assessment_root(assessment.id)
+        a = root.add_child(name="a", published=False, assessment=assessment)
+        a1 = a.add_child(name="a1", published=False, assessment=assessment)
+
+        # can change parent but not child
+        status, _ = a.can_change_published()
+        assert status is True
+        status, _ = a1.can_change_published()
+        assert status is False
+        a.published = True
+        a.save()
+
+        # can change child now
+        status, _ = a.can_change_published()
+        assert status is True
+        status, _ = a1.can_change_published()
+        assert status is True
+        a1.published = True
+        a1.save()
+
+        # can change child but not parent
+        status, _ = a.can_change_published()
+        assert status is False
+        status, _ = a1.can_change_published()
+        assert status is True

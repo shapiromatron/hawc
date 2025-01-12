@@ -20,6 +20,16 @@ class AssessmentClient(BaseClient):
         url = f"{self.session.root_url}/assessment/api/assessment/public/"
         return self.session.get(url).json()
 
+    def team_member(self) -> list[dict]:
+        """
+        Retrieves assessments where use is a team member or project manager
+
+        Returns:
+            list[dict]: Public assessment data
+        """
+        url = f"{self.session.root_url}/assessment/api/assessment/team-member/"
+        return self.session.get(url).json()
+
     def create_value(self, data: dict) -> dict:
         """
         Create an assessment value.

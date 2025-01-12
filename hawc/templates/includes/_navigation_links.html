@@ -15,10 +15,6 @@
       <a class="nav-link" href="{% url 'wagtail_serve' '' %}">Documentation</a>
     </li>
   {% endif %}
-  <li class="nav-item">
-    <a class="nav-link" href="{% url 'assessment:public_list' %}">Public Assessments</a>
-  </li>
-
   {% if user.is_authenticated %}
     <li class="nav-item dropdown">
       <a href="#" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
@@ -35,13 +31,16 @@
           <a class="dropdown-item" href="{% url 'assessment:full_list' %}">View all assessments</a>
         {% endif %}
         <div class="dropdown-divider"></div>
-        <form class="dropdown-item" method="post" action="{% url 'user:logout' %}">
+        <form method="post" action="{% url 'user:logout' %}">
           {% csrf_token %}
-          <button class="unstyled-action-button logout-btn" type="submit">Logout</button>
+          <button class="dropdown-item logout-btn" type="submit">Logout</button>
         </form>
       </div>
     </li>
   {% else %}
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'assessment:public_list' %}">Public Assessments</a>
+    </li>
     <li class="nav-item">
       <a class="nav-link" href="{% url 'user:login' %}?next={{request.path}}">Login</a>
     </li>

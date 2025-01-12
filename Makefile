@@ -102,6 +102,7 @@ test-js:  ## Run javascript tests
 	@npm --prefix ./frontend run test
 
 coverage:  ## Run coverage and create html report
+	rm -rf coverage_html
 	coverage run -m pytest
 	coverage html -d coverage_html -i
 	@echo "Report ready: ./coverage_html/index.html"

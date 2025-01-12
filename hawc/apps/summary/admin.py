@@ -24,7 +24,7 @@ class VisualAdmin(admin.ModelAdmin):
 
     @admin.display(description="URL")
     def show_url(self, obj):
-        return format_html(f"<a href='{obj.get_absolute_url()}'>{obj.id}</a>")
+        return format_html("<a href='{}'>{}</a>", obj.get_absolute_url(), obj.id)
 
 
 class DataPivotAdmin(admin.ModelAdmin):
@@ -42,7 +42,7 @@ class DataPivotAdmin(admin.ModelAdmin):
 
     @admin.display(description="URL")
     def show_url(self, obj):
-        return format_html(f"<a href='{obj.get_absolute_url()}'>{obj.id}</a>")
+        return format_html("<a href='{}'>{}</a>", obj.get_absolute_url(), obj.id)
 
 
 class DataPivotQueryAdmin(DataPivotAdmin):

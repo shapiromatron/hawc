@@ -278,7 +278,7 @@ class Assessment(models.Model):
         help_text="What term should be used to refer to risk of bias/study evaluation questions?",
     )
     vocabulary = models.PositiveSmallIntegerField(
-        choices=VocabularyNamespace.display_choices(),
+        choices=VocabularyNamespace.choices,
         default=VocabularyNamespace.EHV,
         blank=True,
         null=True,
@@ -476,6 +476,10 @@ class Assessment(models.Model):
         return apps.get_model(app, model).objects.filter(**{filter: self}).count() > 0
 
     @property
+    def is_public(self) -> bool:
+        return self.public_on is not None
+
+    @property
     def has_lit_data(self) -> bool:
         return self._has_data("lit", "Reference", filter="assessment")
 
@@ -604,12 +608,17 @@ class AssessmentValue(models.Model):
         choices=constants.ValueType,
         help_text="Type of derived value",
     )
+    value_type_qualifier = models.CharField(
+        blank=True,
+        max_length=64,
+        help_text="A optional qualifier displayed with the Value Type. E.g., Adult-based. This value is typically used to clarify when a value has an adjustment applied like an ADAF.",
+    )
     value = models.FloatField(
         help_text="The derived value (e.g., 2.1E-09)",
     )
     value_unit = models.CharField(verbose_name="Value units", max_length=32)
     adaf = models.BooleanField(
-        verbose_name="Apply ADAF?",
+        verbose_name="ADAF has been applied?",
         default=False,
         help_text="When checked, the ADAF note will appear as a footnote for the value. Add supporting information about ADAF in the comments.",
     )
@@ -697,6 +706,11 @@ class AssessmentValue(models.Model):
 
     class Meta:
         verbose_name_plural = "values"
+
+    @property
+    def get_combined_value_type_display(self) -> str:
+        text = self.get_value_type_display()
+        return f"{self.value_type_qualifier} {text}" if self.value_type_qualifier else text
 
     @property
     def show_cancer_fields(self):
@@ -997,10 +1011,8 @@ class Dataset(models.Model):
         return self.name
 
     def user_can_view(self, user) -> bool:
-        return (
-            self.published
-            and self.assessment.user_can_view_object(user)
-            or self.assessment.user_can_edit_object(user)
+        return self.assessment.user_can_edit_object(user) or (
+            self.published and self.assessment.user_can_view_object(user)
         )
 
     def get_absolute_url(self) -> str:
@@ -1369,6 +1381,9 @@ class Label(AssessmentRootMixin, MP_Node):
     def get_nested_name(self) -> str:
         return "<root-node>" if self.is_root() else f"{'━ ' * (self.depth - 1)}{self.name}"
 
+    def get_labelled_items_url(self):
+        return reverse("assessment:labeled-items", args=(self.assessment_id,)) + f"?label={self.id}"
+
     def get_absolute_url(self):
         return reverse("assessment:label-htmx", args=(self.pk, "read"))
 
@@ -1377,6 +1392,29 @@ class Label(AssessmentRootMixin, MP_Node):
 
     def get_delete_url(self):
         return reverse("assessment:label-htmx", args=(self.pk, "delete"))
+
+    def can_change_published(self) -> tuple[bool, str]:
+        """Check that the item can be published or unpublished
+
+        Returns:
+            tuple[bool, str]: boolean, status message if false
+        """
+        next = not self.published
+        if next:
+            if self.depth == 1:
+                # any depth of 1 tag can be published
+                return True, ""
+            parent_published = self.get_parent().published
+            return (
+                parent_published,
+                "" if parent_published else "Parent must be published to publish child",
+            )
+        else:
+            all_unpublished = all(child.published is False for child in self.get_children())
+            return (
+                all_unpublished,
+                "" if all_unpublished else "All children must be unpublished to unpublish",
+            )
 
 
 class LabeledItem(models.Model):
@@ -1395,6 +1433,7 @@ class LabeledItem(models.Model):
                 fields=["label", "content_type", "object_id"], name="label_item"
             )
         ]
+        ordering = ("content_type", "object_id", "label__path")
 
     def __str__(self):
         return f"{self.label} on {self.content_object}"

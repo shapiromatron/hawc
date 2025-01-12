@@ -4,6 +4,7 @@ import re
 from collections import defaultdict
 from collections.abc import Callable, Iterable
 from datetime import timedelta
+from io import BytesIO
 from itertools import chain
 from math import inf
 from typing import Any, NamedTuple, TypeVar
@@ -14,6 +15,7 @@ import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.paginator import Paginator
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Choices, QuerySet
 from django.http import HttpRequest, QueryDict
@@ -31,6 +33,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError as DRFValidationError
 
+from ...tools.excel import get_writer, write_worksheet
 from .middleware import _local_thread
 
 logger = logging.getLogger(__name__)
@@ -265,6 +268,8 @@ class SerializerHelper:
     @classmethod
     def _serialize(cls, obj, json=False):
         serializer = cls.serializers.get(obj.__class__)
+        if serializer is None:
+            raise ValueError(f"Serializer not found: {obj.__class__}")
         serialized = serializer(obj).data
         if json:
             serialized = JSONRenderer().render(serialized).decode("utf8")
@@ -331,6 +336,14 @@ class FlatExport(NamedTuple):
     ) -> Response:
         export = cls(df=df, filename=filename, metadata=metadata)
         return Response(export)
+
+    def to_excel(self) -> BytesIO:
+        f, writer = get_writer()
+        with writer:
+            write_worksheet(writer, "data", self.df)
+            if self.metadata is not None:
+                write_worksheet(writer, "metadata", self.metadata)
+        return f
 
 
 class FlatFileExporter:
@@ -614,3 +627,28 @@ def get_contrasting_text_color(bg: str) -> str:
     a_type = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in a_type]
     luminance = 0.2126 * a_type[0] + 0.7152 * a_type[1] + 0.0722 * a_type[2]
     return "#ffffff" if luminance < 0.179 else "#000000"
+
+
+def paginate(
+    qs: QuerySet, request: HttpRequest, n_items: int = 50, page_param: str = "page"
+) -> dict:
+    """
+    Paginate a QuerySet. Returns a dictionary of items that are available in the BaseList class
+    based view, so that the paginator.html template works as expected.
+
+    Args:
+        qs (QuerySet): _description_
+        request (HttpRequest): _description_
+        n_items (int, optional): _description_. Defaults to 50.
+        page_param (str, optional): _description_. Defaults to "page".
+
+    """
+    paginator = Paginator(qs, n_items)
+    page_number = request.GET.get(page_param)
+    page = paginator.get_page(page_number)
+    return {
+        "paginator": paginator,
+        "page_obj": page,
+        "is_paginated": True,
+        "object_list": page.object_list,
+    }

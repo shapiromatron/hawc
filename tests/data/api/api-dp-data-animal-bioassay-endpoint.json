@@ -192,8 +192,8 @@
     "trend test value": null
   },
   {
-    "BMD": 744.8868751526,
-    "BMDL": 596.3773593095,
+    "BMD": null,
+    "BMDL": null,
     "Dose 1": 0.0,
     "Dose 2": 1.0,
     "Dose 3": 10.0,
@@ -256,8 +256,8 @@
     "trend test value": null
   },
   {
-    "BMD": 12.7628191902,
-    "BMDL": 5.230337793,
+    "BMD": null,
+    "BMDL": null,
     "Dose 1": 0.0,
     "Dose 2": 1.0,
     "Dose 3": 10.0,

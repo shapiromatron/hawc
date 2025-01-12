@@ -47,7 +47,7 @@ def user_growth():
 
     df1 = (
         df.set_index("date_joined")
-        .groupby(pd.Grouper(freq="M"))
+        .groupby(pd.Grouper(freq="ME"))
         .count()["domain"]
         .reset_index()
         .rename(columns={"domain": "n"})
