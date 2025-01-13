@@ -1,0 +1,115 @@
+<div id="src-assessment-details-fragment">
+  {% if success_msg %}
+    <div class="col alert alert-success success">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      {{ success_msg }}
+    </div>
+  {% endif %}
+  {% if src_studies %}
+    <h4>Select studies</h4>
+    <table id="src-studies-table" class='table table-sm table-striped'>
+      {% bs4_colgroup '40,20,20,20' %}
+      {% bs4_thead 'Short citation,Bioassay,Epi*,Risk of Bias' %}
+      <tbody>
+        {% for study in src_studies %}
+          <tr id="{{study.id}}">
+            <td>
+              <input type="checkbox" id="study_{{study.id}}" name="study">
+              <label style="font-weight: normal;" for="study_{{study.id}}">&nbsp;{{study}}</label>
+            </td>
+            <td>
+              <input
+                {% if not study.bioassay %}
+                  disabled
+                {% endif %}
+                type="checkbox" name="bioassay">
+            </td>
+            <td>
+              <input
+                {% if not study.epi %}
+                  disabled
+                {% elif not assessment.epi_version == 2 or not study.assessment.epi_version == 2 %}
+                  disabled
+                {% endif %}
+                type="checkbox" name="epi">
+            </td>
+            <td>
+              <input
+                {% if not study.rob %}
+                  disabled
+                {% endif %}
+                type="checkbox" name="rob">
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="100%" class="text-muted">
+            * Only assessments using epidemiology schema version 2 are eligible to be cloned.
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+    {% if src_metrics %}
+      <div id="metrics" class="hidden">
+        <br>
+        <h4>Map metrics</h4>
+        {% if dst_metrics %}
+          <table id="metric-map-table" class='table table-sm table-striped'>
+            {% bs4_colgroup '50,50' %}
+            {% bs4_thead 'Source Metric,Destination Metric' %}
+            <tbody>
+              {% for metric in src_metrics %}
+                <tr>
+                  <td>
+                    <p value="{{ metric.id }}">{{ metric.name }}</p>
+                  </td>
+                  <td>
+                    <select class="custom-select">
+                      <option selected hidden value=""></option>
+                      <option value="">N/A</option>
+                      {% for dst_metric in dst_metrics %}
+                        <option value="{{ dst_metric.id }}">{{ dst_metric.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          {% include 'riskofbias/_arob_none_alert.html' %}
+        {% endif %}
+      </div>
+    {% endif %}
+    <input hidden type="text" id="src-studies-clone" name="src-studies" value="">
+    <input hidden type="text" id="metric-map-clone" name="metric-map" value="">
+    <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto"
+       hx-post="{% url 'study:clone_from_assessment-htmx' assessment.pk 'clone' %}"
+       hx-trigger="click"
+       hx-indicator="#spinner-{{object.pk}}"
+       hx-target="#src-assessment-details"
+       hx-encoding="multipart/form-data"
+       onclick="submitSrcDetails()">
+      Clone
+    </a>
+
+    <script type="text/javascript">
+      $('#src-studies-table input').on('change', (e) => {
+        let study_input = $(e.target).closest("tr").find('input[name="study"]');
+        let row_inputs = $(e.target).closest("tr").find('input');
+        if ($(e.target).is(":checked"))
+          study_input.prop('checked', true);
+        else if (!study_input.is(":checked"))
+        row_inputs.prop('checked', false);
+
+        if ($('input[name="rob"]').is(":checked"))
+          $("#metrics").show();
+        else
+          $("#metrics").hide();
+      });
+    </script>
+  {% endif %}
+</div>
+
