@@ -636,7 +636,25 @@ class VisualSettingsForm(forms.ModelForm):
 class DataPivotUploadForm(VisualForm):
     class Meta:
         model = models.Visual
-        exclude = ("assessment",)
+        fields = (
+            "title",
+            "slug",
+            "published",
+            "dataset",
+            "caption",
+            "settings",
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["dataset"].required = True
+        self.fields["dataset"].queryset = self.fields["dataset"].queryset.filter(
+            assessment=self.instance.assessment_id
+        )
+        self.fields["dataset"].label_from_instance = (
+            lambda obj: f"{obj} ({'published' if obj.published else 'unpublished'})"
+        )
+        self.helper = self.setHelper()
 
     def clean(self):
         cleaned_data = super().clean()
