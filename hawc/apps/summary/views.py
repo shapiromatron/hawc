@@ -1,6 +1,4 @@
-import itertools
 import json
-import re
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -230,74 +228,6 @@ class VisualizationList(BaseFilterList):
     breadcrumb_active_name = "Visualizations"
     filterset_class = filterset.VisualFilterSet
 
-    @property
-    def visual_fs(self):
-        if not hasattr(self, "_visual_fs"):
-            data = self.request.GET.copy()
-            # only include type if it is a visual type
-            if "type" in data:
-                match = re.search(r"v-(\d+)$", data["type"])
-                if match:
-                    data["type"] = match.group(1)
-            self._visual_fs = filterset.VisualFilterSet(
-                data=data, request=self.request, assessment=self.assessment
-            )
-        return self._visual_fs
-
-    @property
-    def data_pivot_fs(self):
-        if not hasattr(self, "_data_pivot_fs"):
-            data = self.request.GET.copy()
-            # only include type if it is a data pivot type
-            if "type" in data:
-                match = re.search(r"dp-(\d+)$", data["type"])
-                if match:
-                    data["type"] = match.group(1)
-            self._data_pivot_fs = filterset.DataPivotFilterSet(
-                data=data, request=self.request, assessment=self.assessment
-            )
-        return self._data_pivot_fs
-
-    @property
-    def form(self):
-        if not hasattr(self, "_form"):
-            fs = filterset.VisualFilterSet(
-                data=self.request.GET,
-                request=self.request,
-                assessment=self.assessment,
-                form_kwargs=self.get_filterset_form_kwargs(),
-            )
-            form = fs.form
-            # combine type choices for both visual and data pivot
-            form.fields["type"].choices = [
-                (f"v-{choice}", _)
-                for choice, _ in self.visual_fs.form.fields["type"].choices
-                if choice != ""
-            ] + [
-                (f"dp-{choice}", _)
-                for choice, _ in self.data_pivot_fs.form.fields["type"].choices
-                if choice != ""
-            ]
-            self._form = form
-        return self._form
-
-    def get_item_list(self):
-        self.form.is_valid()
-        # prefilter by type, ie if it is a visual type or data pivot type
-        choice = self.form.cleaned_data.get("type", "")
-        if choice != "":
-            if choice.startswith("v-"):
-                items = self.visual_fs.qs.select_related("assessment")
-            else:
-                items = self.data_pivot_fs.qs
-        else:
-            items = list(
-                itertools.chain(
-                    self.visual_fs.qs.select_related("assessment"), self.data_pivot_fs.qs
-                )
-            )
-        return sorted(items, key=lambda d: d.title.lower())
-
     def get_filterset_form_kwargs(self):
         if self.assessment.user_is_team_member_or_higher(self.request.user):
             return dict(
@@ -310,13 +240,6 @@ class VisualizationList(BaseFilterList):
                 appended_fields=["type", "label"],
                 dynamic_fields=["title", "type", "label"],
             )
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["objects"] = self.get_item_list()
-        context["n_objects"] = len(context["objects"])
-        context["form"] = self.form
-        return context
 
 
 class VisualizationByIdDetail(RedirectView):
@@ -340,7 +263,12 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
         return context
 
     def get_template_names(self):
-        if self.object.visual_type == constants.VisualType.PLOTLY:
+        if self.object.visual_type in (
+            constants.VisualType.DATA_PIVOT_QUERY,
+            constants.VisualType.DATA_PIVOT_FILE,
+        ):
+            return "summary/visual_detail_dp.html"
+        elif self.object.visual_type == constants.VisualType.PLOTLY:
             return "summary/visual_detail_plotly.html"
         elif self.object.visual_type == constants.VisualType.IMAGE:
             return "summary/visual_detail_image.html"

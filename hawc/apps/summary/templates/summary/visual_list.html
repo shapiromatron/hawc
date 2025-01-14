@@ -21,7 +21,7 @@
     {% bs4_colgroup "50,26,12,12" %}
     {% bs4_thead "Visual,Type,Created,Modified" %}
     <tbody>
-      {% for object in objects %}
+      {% for object in object_list %}
         <tr>
           <td>
             <div>
@@ -45,7 +45,7 @@
       {% endfor %}
     </tbody>
   </table>
-  <p><b>{{n_objects}}</b> visual{{n_objects|pluralize}} found.</p>
+  {% include 'includes/paginator.html' with plural_object_name='visualizations' %}
 {% endblock content %}
 
 {% block extrajs %}
