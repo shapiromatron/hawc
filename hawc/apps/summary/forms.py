@@ -612,6 +612,12 @@ def get_visual_form(visual_type):
         raise ValueError() from exc
 
 
+class VisualSettingsForm(forms.ModelForm):
+    class Meta:
+        model = models.Visual
+        fields = ("settings",)
+
+
 class DataPivotForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
@@ -770,12 +776,6 @@ class DataPivotQueryForm(DataPivotForm):
                 "Outcome/Result level export not implemented for this data-type."
             )
         return export_style
-
-
-class DataPivotSettingsForm(forms.ModelForm):
-    class Meta:
-        model = models.DataPivot
-        fields = ("settings",)
 
 
 class DataPivotSelectorForm(CopyForm):

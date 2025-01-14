@@ -23,7 +23,7 @@ from ..common.views import (
     add_csrf,
 )
 from ..riskofbias.models import RiskOfBiasMetric
-from . import constants, filterset, forms, models, prefilters, serializers
+from . import constants, filterset, forms, models, serializers
 
 
 def get_visual_list_crumb(assessment) -> Breadcrumb:
@@ -480,10 +480,10 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
 
 
 class VisualizationUpdateSettings(GetVisualizationObjectMixin, BaseUpdate):
-    success_message = "Data Pivot updated."
+    success_message = "Visualization updated."
     model = models.Visual
-    form_class = forms.DataPivotSettingsForm
-    template_name = "summary/datapivot_update_settings.html"
+    form_class = forms.VisualSettingsForm
+    template_name = "summary/visual_update_settings.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -491,7 +491,7 @@ class VisualizationUpdateSettings(GetVisualizationObjectMixin, BaseUpdate):
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )
         context["config"] = {
-            "data_url": self.object.get_data_url(),
+            "data_url": self.object.get_data_url() + "?format=tsv",
             "settings": self.object.settings,
         }
         return context
@@ -500,205 +500,6 @@ class VisualizationUpdateSettings(GetVisualizationObjectMixin, BaseUpdate):
 class VisualizationDelete(GetVisualizationObjectMixin, BaseDelete):
     success_message = "Visualization deleted."
     model = models.Visual
-
-    def get_success_url(self):
-        return reverse_lazy("summary:visualization_list", kwargs={"pk": self.assessment.pk})
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"].insert(
-            len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
-        )
-        return context
-
-
-# DATA-PIVOT
-class DataPivotNewPrompt(BaseDetail):
-    """
-    Select if you wish to upload a file or use a query.
-    """
-
-    model = Assessment
-    template_name = "summary/datapivot_type_selector.html"
-    breadcrumb_active_name = "Data Pivot selector"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["evidence_type"] = constants.StudyType
-        context["breadcrumbs"].insert(
-            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
-        )
-        return context
-
-
-class DataPivotNew(BaseCreate):
-    # abstract view; extended below for actual use
-    parent_model = Assessment
-    parent_template_name = "assessment"
-    success_message = "Data Pivot created."
-    template_name = "summary/datapivot_form.html"
-
-    def get_success_url(self):
-        super().get_success_url()  # trigger TimeSpentOnPageMixin
-        return self.object.get_visualization_update_url()
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        reset_rows = self.request.GET.get("reset_row_overrides")
-        settings = kwargs["initial"].get("settings")
-        if reset_rows and settings:
-            models.DataPivot.reset_row_overrides(settings)
-        return kwargs
-
-
-class DataPivotQueryNew(DataPivotNew):
-    model = models.DataPivotQuery
-    form_class = forms.DataPivotQueryForm
-    template_name = "summary/datapivot_form.html"
-
-    def get_evidence_type(self) -> constants.StudyType:
-        try:
-            evidence_type = constants.StudyType(self.kwargs["study_type"])
-            _ = prefilters.get_prefilter_cls(None, evidence_type, self.assessment)
-        except (KeyError, ValueError) as err:
-            raise Http404 from err
-        return evidence_type
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["evidence_type"] = self.get_evidence_type()
-        return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["file_loader"] = False
-        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["breadcrumbs"].insert(
-            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
-        )
-        return context
-
-
-class DataPivotFileNew(DataPivotNew):
-    model = models.DataPivotUpload
-    form_class = forms.DataPivotUploadForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["file_loader"] = True
-        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["breadcrumbs"].insert(
-            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
-        )
-        return context
-
-
-class DataPivotCopyAsNewSelector(BaseCopyForm):
-    copy_model = models.DataPivot
-    form_class = forms.DataPivotSelectorForm
-    model = Assessment
-
-    def get_form_kwargs(self):
-        kw = super().get_form_kwargs()
-        kw.update(user=self.request.user)
-        return kw
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"] = Breadcrumb.build_crumbs(
-            self.request.user,
-            "Copy existing",
-            [Breadcrumb.from_object(self.assessment), get_visual_list_crumb(self.assessment)],
-        )
-        return context
-
-
-class GetDataPivotObjectMixin:
-    def get_object(self):
-        slug = self.kwargs.get("slug")
-        assessment = self.kwargs.get("pk")
-        obj = get_object_or_404(models.DataPivot, assessment=assessment, slug=slug)
-        obj = obj.datapivotquery if hasattr(obj, "datapivotquery") else obj.datapivotupload
-        obj = super().get_object(object=obj)
-        check_published_status(self.request.user, obj.published, self.assessment)
-        return obj
-
-
-class DataPivotByIdDetail(RedirectView):
-    """
-    Redirect to standard data pivot page; useful for developers referencing by database id.
-    """
-
-    def get_redirect_url(*args, **kwargs):
-        return get_object_or_404(models.DataPivot, id=kwargs.get("pk")).get_absolute_url()
-
-
-class DataPivotDetail(GetDataPivotObjectMixin, BaseDetail):
-    model = models.DataPivot
-    template_name = "summary/datapivot_detail.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"].insert(
-            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
-        )
-        return context
-
-
-class DataPivotUpdateSettings(GetDataPivotObjectMixin, BaseUpdate):
-    success_message = "Data Pivot updated."
-    model = models.DataPivot
-    form_class = forms.DataPivotSettingsForm
-    template_name = "summary/datapivot_update_settings.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["breadcrumbs"].insert(
-            len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
-        )
-        context["config"] = {
-            "data_url": self.object.get_data_url(),
-            "settings": self.object.settings,
-        }
-        return context
-
-
-class DataPivotUpdateQuery(GetDataPivotObjectMixin, BaseUpdate):
-    success_message = "Data Pivot updated."
-    model = models.DataPivotQuery
-    form_class = forms.DataPivotQueryForm
-    template_name = "summary/datapivot_form.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["file_loader"] = False
-        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["breadcrumbs"].insert(
-            len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
-        )
-        return context
-
-
-class DataPivotUpdateFile(GetDataPivotObjectMixin, BaseUpdate):
-    success_message = "Data Pivot updated."
-    model = models.DataPivotUpload
-    form_class = forms.DataPivotUploadForm
-    template_name = "summary/datapivot_form.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["file_loader"] = True
-        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["breadcrumbs"].insert(
-            len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
-        )
-        return context
-
-
-class DataPivotDelete(GetDataPivotObjectMixin, BaseDelete):
-    success_message = "Data Pivot deleted."
-    model = models.DataPivot
-    template_name = "summary/datapivot_confirm_delete.html"
 
     def get_success_url(self):
         return reverse_lazy("summary:visualization_list", kwargs={"pk": self.assessment.pk})
