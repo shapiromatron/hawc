@@ -745,58 +745,10 @@ class DataPivot(models.Model):
         unique_together = (("assessment", "slug"),)
         ordering = ("title",)
 
-    def __str__(self):
-        return self.title
-
     def save(self, **kw):
         if self.settings is None:
             self.settings = {}
         return super().save(**kw)
-
-    @staticmethod
-    def get_list_url(assessment_id):
-        return reverse("summary:visualization_list", args=[str(assessment_id)])
-
-    def get_absolute_url(self):
-        return reverse("summary:dp_detail", args=(self.assessment_id, self.slug))
-
-    def get_visualization_update_url(self):
-        return reverse("summary:dp_update", args=(self.assessment_id, self.slug))
-
-    def get_assessment(self):
-        return self.assessment
-
-    def get_api_detail(self):
-        return reverse("summary:api:data_pivot-detail", args=(self.id,))
-
-    def get_download_url(self):
-        return reverse("summary:api:data_pivot-data", args=(self.id,))
-
-    def get_data_url(self):
-        return self.get_download_url() + "?format=tsv"
-
-    def get_dataset(self) -> FlatExport:
-        if hasattr(self, "datapivotupload"):
-            return self.datapivotupload.get_dataset()
-        else:
-            return self.datapivotquery.get_dataset()
-
-    @property
-    def visual_type(self):
-        if hasattr(self, "datapivotupload"):
-            return self.datapivotupload.visual_type
-        else:
-            return self.datapivotquery.visual_type
-
-    @property
-    def visible_labels(self):
-        if hasattr(self, "datapivotupload"):
-            return self.datapivotupload.visible_upload_labels
-        else:
-            return self.datapivotquery.visible_query_labels
-
-    def get_visual_type_display(self):
-        return self.visual_type
 
     @staticmethod
     def reset_row_overrides(settings: dict) -> None:
@@ -819,10 +771,6 @@ class DataPivotUpload(DataPivot):
         blank=True,
     )
     labels = GenericRelation(LabeledItem, related_query_name="datapivot_uploads")
-
-    @property
-    def visual_type(self):
-        return "Data pivot (file upload)"
 
 
 class DataPivotQuery(DataPivot):
