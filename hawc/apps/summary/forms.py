@@ -6,6 +6,7 @@ from zipfile import BadZipFile
 import pandas as pd
 import plotly.io as pio
 from django import forms
+from django.contrib.postgres.forms import SimpleArrayField
 from django.urls import reverse
 from openpyxl import load_workbook
 from openpyxl.utils.exceptions import InvalidFileException
@@ -634,7 +635,7 @@ class VisualSettingsForm(forms.ModelForm):
 
 class DataPivotUploadForm(VisualForm):
     class Meta:
-        model = models.DataPivotUpload
+        model = models.Visual
         exclude = ("assessment",)
 
     def clean(self):
@@ -675,8 +676,22 @@ class DataPivotUploadForm(VisualForm):
 
 
 class DataPivotQueryForm(VisualForm):
+    export_style = forms.TypedChoiceField(
+        coerce=int,
+        choices=constants.ExportStyle,
+        label="Export Style",
+        help_text="The export style changes the level at which the data are aggregated, and therefore which columns and types of data are presented in the export, for use in the visual.",
+        required=True,
+    )
+    preferred_units = SimpleArrayField(
+        forms.IntegerField(),
+        label="Preferred Units",
+        required=True,
+        help_text="List of preferred dose-values, in order of preference. If empty, dose-units will be random for each endpoint presented. This setting may used for comparing percent-response, where dose-units are not needed, or for creating one plot similar, but not identical, dose-units.",
+    )
+
     class Meta:
-        model = models.DataPivotQuery
+        model = models.Visual
         fields = (
             "title",
             "slug",
@@ -689,10 +704,19 @@ class DataPivotQueryForm(VisualForm):
         )
 
     def _get_prefilter_form(self, data, **form_kwargs):
-        # TODO - refactor here in in other calls; identical code
+        unpacked_data = data
+        if "prefilters-prefilters" in data:
+            # because we're overloading the prefilters JSON field in the db, we have to
+            # unpack the data on the GET, and use it as-is on the POST
+            unpacked_data = {
+                f"prefilters-{k}": v for k, v in data.get("prefilters-prefilters", {}).items()
+            }
         prefix = form_kwargs.pop("prefix", None)
         prefilter = self.prefilter_cls(
-            data=data, prefix=prefix, assessment=self.instance.assessment, form_kwargs=form_kwargs
+            data=unpacked_data,
+            prefix=prefix,
+            assessment=self.instance.assessment,
+            form_kwargs=form_kwargs,
         )
         form = prefilter.form
         prefilter.set_form_options(form)
@@ -703,6 +727,12 @@ class DataPivotQueryForm(VisualForm):
         super().__init__(*args, **kwargs)
         if self.instance.id is None:
             self.instance.evidence_type = evidence_type
+
+        data = self.instance.prefilters
+        if "export_style" in data:
+            self.fields["export_style"].initial = data["export_style"]
+        if "preferred_units" in data:
+            self.fields["preferred_units"].initial = data["preferred_units"]
 
         self.prefilter_cls = prefilters.get_prefilter_cls(
             None, self.instance.evidence_type, self.instance.assessment
@@ -731,7 +761,13 @@ class DataPivotQueryForm(VisualForm):
         self.helper = self.setHelper()
 
     def save(self, commit=True):
-        self.instance.preferred_units = self.cleaned_data.get("preferred_units", [])
+        self.instance.prefilters = {
+            "prefilters": self.cleaned_data.get("prefilters", {}),
+            "export_style": self.cleaned_data.get(
+                "export_style", constants.ExportStyle.EXPORT_GROUP.value
+            ),
+            "preferred_units": self.cleaned_data.get("preferred_units", []),
+        }
         return super().save(commit=commit)
 
     def clean_export_style(self):
