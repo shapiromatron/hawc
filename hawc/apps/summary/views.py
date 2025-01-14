@@ -491,7 +491,6 @@ class VisualizationDelete(GetVisualizationObjectMixin, BaseDelete):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )
-        context.update(config=add_csrf(self.object.read_config(), self.request))
         return context
 
 
