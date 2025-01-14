@@ -619,6 +619,8 @@ def get_visual_form(visual_type):
             constants.VisualType.PLOTLY: PlotlyVisualForm,
             constants.VisualType.IMAGE: ImageVisualForm,
             constants.VisualType.PRISMA: PrismaVisualForm,
+            constants.VisualType.DATA_PIVOT_QUERY: DataPivotQueryForm,
+            constants.VisualType.DATA_PIVOT_FILE: DataPivotUploadForm,
         }[visual_type]
     except Exception as exc:
         raise ValueError() from exc
@@ -630,52 +632,7 @@ class VisualSettingsForm(forms.ModelForm):
         fields = ("settings",)
 
 
-class DataPivotForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
-        if assessment:
-            self.instance.assessment = assessment
-        self.helper = self.setHelper()
-
-    def setHelper(self):
-        if self.instance.id:
-            inputs = {
-                "legend_text": f"Update {self.instance}",
-                "help_text": "Update an existing data-pivot.",
-                "cancel_url": self.instance.get_absolute_url(),
-            }
-        else:
-            inputs = {
-                "legend_text": "Create new data-pivot",
-                "help_text": """
-                    Create a custom-visualization for this assessment.
-                    Generally, you will select a subset of available data, then
-                    customize the visualization the next-page.
-                """,
-                "cancel_url": self.instance.get_list_url(self.instance.assessment_id),
-            }
-            if hasattr(self.instance, "evidence_type"):
-                inputs["legend_text"] += f" ({self.instance.get_evidence_type_display()})"
-
-        helper = BaseFormHelper(self, **inputs)
-        helper.set_textarea_height(("settings",), n_rows=2)
-        helper.form_id = "dataPivotForm"
-        return helper
-
-    def clean_slug(self):
-        return check_unique_for_assessment(self, "slug")
-
-    def clean_title(self):
-        return check_unique_for_assessment(self, "title")
-
-    def clean_caption(self):
-        caption = self.cleaned_data["caption"]
-        validators.validate_hyperlinks(caption)
-        return sanitize_html.clean_html(caption)
-
-
-class DataPivotUploadForm(DataPivotForm):
+class DataPivotUploadForm(VisualForm):
     class Meta:
         model = models.DataPivotUpload
         exclude = ("assessment",)
@@ -717,7 +674,7 @@ class DataPivotUploadForm(DataPivotForm):
                 self.add_error("excel_file", "Must contain at least 2 columns.")
 
 
-class DataPivotQueryForm(DataPivotForm):
+class DataPivotQueryForm(VisualForm):
     class Meta:
         model = models.DataPivotQuery
         fields = (

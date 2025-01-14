@@ -277,7 +277,7 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
             return super().get_template_names()
 
 
-class VisualizationCreateSelector(BaseDetail):
+class VisualizationCreateSelector(BaseDetail):  # TODO
     model = Assessment
     template_name = "summary/visual_selector.html"
     breadcrumb_active_name = "Visualization selector"
@@ -295,7 +295,7 @@ class VisualizationCreateSelector(BaseDetail):
         return context
 
 
-class VisualizationCreate(BaseCreate):
+class VisualizationCreate(BaseCreate):  # TODO
     success_message = "Visualization created."
     parent_model = Assessment
     parent_template_name = "assessment"
@@ -377,7 +377,7 @@ class VisualizationCreate(BaseCreate):
         return instance
 
 
-class VisualizationCreateTester(VisualizationCreate):
+class VisualizationCreateTester(VisualizationCreate):  # TODO
     parent_model = Assessment
     http_method_names = ("post",)
 
@@ -389,7 +389,7 @@ class VisualizationCreateTester(VisualizationCreate):
         return JsonResponse(response)
 
 
-class VisualizationCopySelector(BaseDetail):
+class VisualizationCopySelector(BaseDetail):  # TODO
     model = Assessment
     template_name = "summary/visual_selector.html"
     breadcrumb_active_name = "Visualization selector"
@@ -408,7 +408,7 @@ class VisualizationCopySelector(BaseDetail):
         return context
 
 
-class VisualizationCopy(BaseCopyForm):
+class VisualizationCopy(BaseCopyForm):  # TODO
     copy_model = models.Visual
     form_class = forms.VisualSelectorForm
     model = Assessment
@@ -430,7 +430,7 @@ class VisualizationCopy(BaseCopyForm):
         return context
 
 
-class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
+class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):  # TODO
     success_message = "Visualization updated."
     model = models.Visual
 
@@ -444,7 +444,12 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         visual_type = self.object.visual_type
         if visual_type in [] and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
             raise PermissionDenied()
-        if visual_type in {
+        if visual_type in (
+            constants.VisualType.DATA_PIVOT_QUERY,
+            constants.VisualType.DATA_PIVOT_FILE,
+        ):
+            return ["summary/visual_form_dp.html"]
+        elif visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
