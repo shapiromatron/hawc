@@ -479,6 +479,24 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         return context
 
 
+class VisualizationUpdateSettings(GetVisualizationObjectMixin, BaseUpdate):
+    success_message = "Data Pivot updated."
+    model = models.Visual
+    form_class = forms.DataPivotSettingsForm
+    template_name = "summary/datapivot_update_settings.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"].insert(
+            len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
+        )
+        context["config"] = {
+            "data_url": self.object.get_data_url(),
+            "settings": self.object.settings,
+        }
+        return context
+
+
 class VisualizationDelete(GetVisualizationObjectMixin, BaseDelete):
     success_message = "Visualization deleted."
     model = models.Visual

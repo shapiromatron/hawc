@@ -96,6 +96,11 @@ urlpatterns = [
         name="visualization_update",
     ),
     path(
+        "data-pivot/assessment/<int:pk>/<slug:slug>/update-settings/",
+        views.VisualizationUpdateSettings.as_view(),
+        name="visualization_update_settings",
+    ),
+    path(
         "visual/assessment/<int:pk>/<slug:slug>/delete/",
         views.VisualizationDelete.as_view(),
         name="visualization_delete",

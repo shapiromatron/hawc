@@ -268,6 +268,11 @@ class Visual(models.Model):
     def get_data_url(self):
         return reverse("summary:api:visual-data", args=(self.id,))
 
+    def get_dp_update_settings(self):
+        return reverse(
+            "summary:visualization_update_settings", args=(self.assessment_id, self.slug)
+        )
+
     def get_api_heatmap_datasets(self):
         return reverse("summary:api:assessment-heatmap-datasets", args=(self.assessment_id,))
 
