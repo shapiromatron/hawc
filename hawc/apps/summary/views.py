@@ -267,13 +267,13 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
             constants.VisualType.DATA_PIVOT_QUERY,
             constants.VisualType.DATA_PIVOT_FILE,
         ):
-            return "summary/visual_detail_dp.html"
+            return ["summary/visual_detail_dp.html"]
         elif self.object.visual_type == constants.VisualType.PLOTLY:
-            return "summary/visual_detail_plotly.html"
+            return ["summary/visual_detail_plotly.html"]
         elif self.object.visual_type == constants.VisualType.IMAGE:
-            return "summary/visual_detail_image.html"
+            return ["summary/visual_detail_image.html"]
         elif self.object.visual_type == constants.VisualType.PRISMA:
-            return "summary/visual_detail_prisma.html"
+            return ["summary/visual_detail_prisma.html"]
         else:
             return super().get_template_names()
 
@@ -349,7 +349,7 @@ class VisualizationCreate(BaseCreate):
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
         }:
-            return "summary/visual_form_django.html"
+            return ["summary/visual_form_django.html"]
         return super().get_template_names()
 
     def get_context_data(self, **kwargs):
@@ -455,7 +455,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
         }:
-            return "summary/visual_form_django.html"
+            return ["summary/visual_form_django.html"]
         return super().get_template_names()
 
     def get_context_data(self, **kwargs):
