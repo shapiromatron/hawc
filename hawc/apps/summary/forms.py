@@ -29,6 +29,7 @@ from ..common.forms import (
 from ..common.helper import new_window_a
 from ..common.validators import validate_html_tags, validate_hyperlinks, validate_json_pydantic
 from ..lit.models import ReferenceFilterTag
+from ..riskofbias.models import RiskOfBiasMetric
 from ..study.autocomplete import StudyAutocomplete
 from . import autocomplete, constants, models, prefilters
 
@@ -178,6 +179,10 @@ class VisualForm(forms.ModelForm):
                 f"Invalid evidence type {evidence_type} for visual {visual_type}."
             )
 
+    def update_context(self, context):
+        # Add any additional html view context required for the form
+        pass
+
 
 class VisualModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
@@ -276,6 +281,13 @@ class RoBForm(VisualForm):
             prefix="prefilters", form_class=self._get_prefilter_form, label=""
         )
         self.helper = self.setHelper()
+
+    def update_context(self, context):
+        context.update(
+            rob_metrics=json.dumps(
+                list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.instance.assessment.id))
+            )
+        )
 
     class Meta:
         model = models.Visual

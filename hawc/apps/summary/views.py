@@ -22,7 +22,6 @@ from ..common.views import (
     BaseUpdate,
     add_csrf,
 )
-from ..riskofbias.models import RiskOfBiasMetric
 from . import constants, filterset, forms, models, serializers
 
 
@@ -356,17 +355,14 @@ class VisualizationCreate(BaseCreate):
         context = super().get_context_data(**kwargs)
         visual = self.get_initial_visual(context)
         context.update(
-            dose_units=models.Visual.get_dose_units(),
             instance={},
             visual_type=visual.visual_type,
             evidence_type=visual.evidence_type,
             initial_data=json.dumps(serializers.VisualSerializer().to_representation(visual)),
             smart_tag_form=forms.SmartTagForm(assessment_id=self.assessment.id),
-            rob_metrics=json.dumps(
-                list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
-            ),
             **visual.update_config(),
         )
+        context["form"].update_context(context)
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
@@ -462,17 +458,14 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         context = super().get_context_data(**kwargs)
         visual = self.object
         context.update(
-            dose_units=models.Visual.get_dose_units(),
             instance=visual.get_json(),
             visual_type=visual.visual_type,
             evidence_type=visual.evidence_type,
             initial_data=json.dumps(serializers.VisualSerializer().to_representation(visual)),
             smart_tag_form=forms.SmartTagForm(assessment_id=self.assessment.id),
-            rob_metrics=json.dumps(
-                list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
-            ),
             **visual.update_config(),
         )
+        context["form"].update_context(context)
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )
