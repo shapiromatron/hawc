@@ -148,7 +148,9 @@ class DynamicFormWidget(Widget):
 
     def format_value(self, value):
         """Value used in rendering."""
-        value = json.loads(value)
+        #import pdb; pdb.set_trace()
+        if value is not None:
+            value = json.loads(value)
         if value:
             value = {self.add_prefix(k): v for k, v in value.items()}
         return self.form_class(data=value, **self.form_kwargs)

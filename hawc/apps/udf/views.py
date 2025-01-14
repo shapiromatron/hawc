@@ -59,6 +59,7 @@ class CreateUDFView(LoginRequiredMixin, MessageMixin, CreateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update(user=self.request.user)
+        #kwargs.update(data={"fields":["a","b","c"]})
         return kwargs
 
 
