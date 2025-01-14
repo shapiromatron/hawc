@@ -12,7 +12,9 @@
     {% include "assessment/fragments/label_indicators.html" %}
     {% include "common/unpublished_badge.html" %}
     {% actions %}
+      {% comment %}
       <a class="dropdown-item" href="{{object.get_download_url|safe}}?format=xlsx">Download data file</a>
+      {% endcomment %}
       {% if obj_perms.edit %}
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="{% url 'summary:dp_update' assessment.pk object.slug %}">Edit display settings</a>

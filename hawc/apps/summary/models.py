@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 
 import pandas as pd
 from django.contrib.contenttypes.fields import GenericRelation
@@ -601,7 +600,7 @@ class Visual(models.Model):
             case constants.VisualType.DATA_PIVOT_QUERY:
                 return self._data_df_dpq().df
             case constants.VisualType.DATA_PIVOT_FILE:
-                return pd.DataFrame(data=[[1, 2], [3, 4]], columns=("a", "b"))
+                return self._data_df_dpf()
             case _:
                 raise ValueError("Not supported for this visual type")
 
@@ -691,6 +690,9 @@ class Visual(models.Model):
         qs = get_queryset()
         exporter = get_dataset_exporter(qs)
         return exporter.build_export()
+
+    def _data_df_dpf(self) -> pd.DataFrame:
+        return self.dataset.get_latest_df()
 
 
 class DataPivot(models.Model):
@@ -805,12 +807,6 @@ class DataPivotUpload(DataPivot):
     @property
     def visual_type(self):
         return "Data pivot (file upload)"
-
-    def get_dataset(self) -> FlatExport:
-        worksheet_name = self.worksheet_name if len(self.worksheet_name) > 0 else 0
-        df = pd.read_excel(self.excel_file.file, sheet_name=worksheet_name)
-        filename = os.path.splitext(os.path.basename(self.excel_file.file.name))[0]
-        return FlatExport(df=df, filename=filename)
 
 
 class DataPivotQuery(DataPivot):
