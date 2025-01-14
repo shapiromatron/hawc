@@ -10,25 +10,27 @@
     <div class="row">
       <div class="col-md-9">
         <select id="vis_selector" class="form-control col-md-12">
-          <option value="4" data-url="{% url viz_url_pattern assessment.id 4 %}">
+          <option value="4" data-url="{% url url_copy assessment.id 4 %}">
             Literature tagtree</option>
-          <option value="6" data-url="{% url viz_url_pattern assessment.id 6 %}">
+          <option value="6" data-url="{% url url_copy assessment.id 6 %}">
             Exploratory heatmap</option>
-          <option value="5" data-url="{% url viz_url_pattern assessment.id 5 %}">
+          <option value="5" data-url="{% url url_copy assessment.id 5 %}">
             Embedded external website</option>
-          <option value="7" data-url="{% url viz_url_pattern assessment.id 7 %}">
+          <option value="7" data-url="{% url url_copy assessment.id 7 %}">
             Plotly visual</option>
-          <option value="9" data-url="{% url viz_url_pattern assessment.id 9 %}">
+          <option value="9" data-url="{% url url_copy assessment.id 9 %}">
             PRISMA visual</option>
-          <option value="2" data-url="{% url viz_url_pattern assessment.id 2 %}">
+          <option value="2" data-url="{% url url_copy assessment.id 2 %}">
             {{assessment.get_rob_name_display}} heatmap</option>
-          <option value="3" data-url="{% url viz_url_pattern assessment.id 3 %}">
+          <option value="3" data-url="{% url url_copy assessment.id 3 %}">
             {{assessment.get_rob_name_display}} barchart</option>
-          <option value="100" data-url="{% url dp_url_pattern assessment.id %}">
-            Data pivot</option>
-          <option value="1" data-url="{% url viz_url_pattern assessment.id 1 %}">
+          <option value="10" data-url="{% url url_copy assessment.id 10 %}">
+            Data pivot query</option>
+          <option value="10" data-url="{% url url_copy assessment.id 11 %}">
+            Data pivot file</option>
+          <option value="1" data-url="{% url url_copy assessment.id 1 %}">
             Bioassay endpoint crossview</option>
-          <option value="8" data-url="{% url viz_url_pattern assessment.id 8 %}">
+          <option value="8" data-url="{% url url_copy assessment.id 8 %}">
             Static image</option>
         </select>
       </div>
@@ -68,7 +70,7 @@
           between non-control dose-groups, and 2+ are required to create a line).
         </p>
       </div>
-      <div id="detail-100" class="col-md-12" >
+      <div id="detail-10" class="col-md-12" >
         <h3>Data Pivot</h3>
         <div class="row">
           <img alt="Image of a data pivot linechart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot.png' %}">

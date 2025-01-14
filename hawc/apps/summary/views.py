@@ -397,18 +397,14 @@ class VisualizationCreateTester(VisualizationCreate):  # TODO
         return JsonResponse(response)
 
 
-class VisualizationCopySelector(BaseDetail):  # TODO
+class VisualizationCopySelector(BaseDetail):
     model = Assessment
     template_name = "summary/visual_selector.html"
     breadcrumb_active_name = "Visualization selector"
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     def get_context_data(self, **kwargs):
-        kwargs.update(
-            action="Copy",
-            viz_url_pattern="summary:visualization_copy",
-            dp_url_pattern="summary:dp_copy_selector",
-        )
+        kwargs.update(action="Copy", url_copy="summary:visualization_copy")
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
@@ -416,15 +412,18 @@ class VisualizationCopySelector(BaseDetail):  # TODO
         return context
 
 
-class VisualizationCopy(BaseCopyForm):  # TODO
+class VisualizationCopy(BaseCopyForm):
     copy_model = models.Visual
     form_class = forms.VisualSelectorForm
     model = Assessment
 
     def get_form_kwargs(self):
         kw = super().get_form_kwargs()
-        kw["queryset"] = models.Visual.objects.clonable_queryset(self.request.user).filter(
-            visual_type=self.kwargs["visual_type"]
+        kw.update(
+            visual_type=self.kwargs["visual_type"],
+            queryset=models.Visual.objects.clonable_queryset(self.request.user).filter(
+                visual_type=self.kwargs["visual_type"]
+            ),
         )
         return kw
 
@@ -438,7 +437,7 @@ class VisualizationCopy(BaseCopyForm):  # TODO
         return context
 
 
-class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):  # TODO
+class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
     success_message = "Visualization updated."
     model = models.Visual
 

@@ -194,22 +194,39 @@ class VisualSelectorForm(CopyForm):
     legend_text = "Copy visualization"
     help_text = "Select an existing visualization from this assessment to copy as a template for a new one. This will include all model-settings, and the selected dataset."
     create_url_pattern = "summary:visualization_create"
+
     selector = forms.ModelChoiceField(
         queryset=models.Visual.objects.all(), label="Select template", widget=HawcModelSelect2()
+    )
+    reset_row_overrides = forms.BooleanField(
+        help_text="Reset all row-level customization in visualization copy",
+        required=False,
+        initial=True,
     )
 
     def __init__(self, *args, **kw):
         queryset = kw.pop("queryset")
+        visual_type = kw.pop("visual_type")
         super().__init__(*args, **kw)
-        self.fields["selector"].queryset = queryset.order_by("assessment", "title")
+        self.fields["selector"].queryset = queryset
         self.fields["selector"].label_from_instance = lambda obj: f"{obj.assessment} | {obj}"
+
+        if visual_type not in (
+            constants.VisualType.DATA_PIVOT_QUERY,
+            constants.VisualType.DATA_PIVOT_FILE,
+        ):
+            self.fields.pop("reset_row_overrides")
 
     def get_success_url(self):
         visual = self.cleaned_data["selector"]
-        return (
-            reverse("summary:visualization_create", args=(self.parent.id, visual.visual_type))
-            + f"?initial={visual.pk}"
-        )
+        url = reverse("summary:visualization_create", args=(self.parent.id, visual.visual_type))
+        url += f"?initial={visual.pk}"
+
+        reset_row_overrides = self.cleaned_data.get("reset_row_overrides")
+        if reset_row_overrides:
+            url += "&reset_row_overrides=1"
+
+        return url
 
     def get_cancel_url(self):
         return reverse("summary:visualization_list", args=(self.parent.id,))
@@ -799,55 +816,6 @@ class DataPivotQueryForm(VisualForm):
                 "Outcome/Result level export not implemented for this data-type."
             )
         return export_style
-
-
-class DataPivotSelectorForm(CopyForm):
-    legend_text = "Copy data pivot"
-    help_text = """
-        Select an existing data pivot and copy as a new data pivot. This includes all
-        model-settings, and the selected dataset. You will be taken to a new view to
-        create a new data pivot, but the form will be pre-populated using the values from
-        the currently-selected data pivot."""
-    create_url_pattern = "summary:visualization_create"
-    selector = forms.ModelChoiceField(
-        queryset=models.DataPivot.objects.all(), label="Select template", widget=HawcModelSelect2()
-    )
-    reset_row_overrides = forms.BooleanField(
-        help_text="Reset all row-level customization in the data-pivot copy",
-        required=False,
-        initial=True,
-    )
-
-    def __init__(self, *args, **kw):
-        user = kw.pop("user")
-        super().__init__(*args, **kw)
-        self.fields["selector"].queryset = (
-            models.DataPivot.objects.clonable_queryset(user)
-            .select_related("assessment")
-            .order_by("assessment", "title")
-        )
-        self.fields["selector"].label_from_instance = lambda obj: f"{obj.assessment} | {obj}"
-
-    def get_success_url(self):
-        dp = self.cleaned_data["selector"]
-        reset_row_overrides = self.cleaned_data["reset_row_overrides"]
-
-        if hasattr(dp, "datapivotupload"):
-            url = reverse("summary:dp_new-file", args=(self.parent.id,))
-        else:
-            url = reverse(
-                "summary:dp_new-query", args=(self.parent.id, dp.datapivotquery.evidence_type)
-            )
-
-        url += f"?initial={dp.pk}"
-
-        if reset_row_overrides:
-            url += "&reset_row_overrides=1"
-
-        return url
-
-    def get_cancel_url(self):
-        return reverse("summary:visualization_list", args=(self.parent.id,))
 
 
 class SmartTagForm(forms.Form):
