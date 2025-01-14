@@ -1,15 +1,11 @@
 import json
 from pathlib import Path
 from urllib.parse import urlparse, urlunparse
-from zipfile import BadZipFile
 
-import pandas as pd
 import plotly.io as pio
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
 from django.urls import reverse
-from openpyxl import load_workbook
-from openpyxl.utils.exceptions import InvalidFileException
 
 from ..animal.autocomplete import EndpointAutocomplete
 from ..animal.forms import MultipleEndpointChoiceField
@@ -671,43 +667,12 @@ class DataPivotUploadForm(VisualForm):
         self.fields["dataset"].label_from_instance = (
             lambda obj: f"{obj} ({'published' if obj.published else 'unpublished'})"
         )
+        self.fields["settings"].required = False
         self.helper = self.setHelper()
 
-    def clean(self):
-        cleaned_data = super().clean()
-        excel_file = cleaned_data.get("excel_file")
-        worksheet_name = cleaned_data.get("worksheet_name", "")
-
-        if excel_file:
-            cannot_read = "Unable to read Excel file. Please upload an Excel file in XLSX format."
-
-            # ensure it has correct extension
-            if not excel_file.name.endswith(".xlsx"):
-                self.add_error("excel_file", cannot_read)
-                return
-
-            # see if it loads
-            try:
-                wb = load_workbook(excel_file, read_only=True)
-            except (BadZipFile, InvalidFileException):
-                self.add_error("excel_file", cannot_read)
-                return
-
-            # check worksheet name
-            if worksheet_name and worksheet_name not in wb.sheetnames:
-                self.add_error("worksheet_name", f"Worksheet name {worksheet_name} not found.")
-                return
-            else:
-                worksheet_name = wb.sheetnames[0]
-
-            df = pd.read_excel(excel_file, sheet_name=worksheet_name)
-
-            # check data
-            if df.shape[0] < 2:
-                self.add_error("excel_file", "Must contain at least 2 rows of data.")
-
-            if df.shape[1] < 2:
-                self.add_error("excel_file", "Must contain at least 2 columns.")
+    def clean_settings(self):
+        # if settings is None make it an empty dictionary
+        return self.cleaned_data["settings"] or {}
 
 
 class DataPivotQueryForm(VisualForm):

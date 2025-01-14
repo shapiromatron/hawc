@@ -353,6 +353,11 @@ class VisualizationCreate(BaseCreate):  # TODO
             constants.VisualType.IMAGE,
         }:
             return ["summary/visual_form_django.html"]
+        elif visual_type in (
+            constants.VisualType.DATA_PIVOT_QUERY,
+            constants.VisualType.DATA_PIVOT_FILE,
+        ):
+            return ["summary/visual_form_dp.html"]
         return super().get_template_names()
 
     def get_context_data(self, **kwargs):
