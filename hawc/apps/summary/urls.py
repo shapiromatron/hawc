@@ -105,6 +105,11 @@ urlpatterns = [
         views.VisualizationDelete.as_view(),
         name="visualization_delete",
     ),
+    path(
+        "data-pivot/assessment/<int:pk>/<slug:slug>/",
+        views.LegacyDataPivotRedirect.as_view(),
+        name="dp_detail",
+    ),
     # HELP TEXT
     path(
         "dataset-interactivity/",

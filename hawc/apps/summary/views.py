@@ -250,6 +250,14 @@ class VisualizationByIdDetail(RedirectView):
         return get_object_or_404(models.Visual, id=kwargs.get("pk")).get_absolute_url()
 
 
+class LegacyDataPivotRedirect(RedirectView):
+    def get_redirect_url(*args, **kwargs):
+        obj = get_object_or_404(
+            models.Visual, assessment=kwargs.get("pk"), dp_slug=kwargs.get("slug")
+        )
+        return obj.get_absolute_url()
+
+
 class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
     model = models.Visual
 
