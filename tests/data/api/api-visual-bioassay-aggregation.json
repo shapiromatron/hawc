@@ -116,6 +116,7 @@
           "description": "<p>comments</p>",
           "dtxsid": null,
           "guideline_compliance": "guideline",
+          "guideline_profile": null,
           "has_multiple_generations": true,
           "id": 3,
           "is_generational": true,
