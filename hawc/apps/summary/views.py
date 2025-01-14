@@ -285,17 +285,13 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
             return super().get_template_names()
 
 
-class VisualizationCreateSelector(BaseDetail):  # TODO
+class VisualizationCreateSelector(BaseDetail):
     model = Assessment
     template_name = "summary/visual_selector.html"
     breadcrumb_active_name = "Visualization selector"
 
     def get_context_data(self, **kwargs):
-        kwargs.update(
-            action="Create",
-            viz_url_pattern="summary:visualization_create",
-            dp_url_pattern="summary:dp_new-prompt",
-        )
+        kwargs.update(action="Create", url_copy="summary:visualization_create")
         context = super().get_context_data(**kwargs)
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
