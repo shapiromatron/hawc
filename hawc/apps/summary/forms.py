@@ -705,7 +705,7 @@ class DataPivotQueryForm(VisualForm):
 
     def _get_prefilter_form(self, data, **form_kwargs):
         unpacked_data = data
-        if "prefilters-prefilters" in data:
+        if data and "prefilters-prefilters" in data:
             # because we're overloading the prefilters JSON field in the db, we have to
             # unpack the data on the GET, and use it as-is on the POST
             unpacked_data = {
@@ -725,6 +725,9 @@ class DataPivotQueryForm(VisualForm):
     def __init__(self, *args, **kwargs):
         evidence_type = kwargs.pop("evidence_type", None)
         super().__init__(*args, **kwargs)
+
+        self.fields["settings"].required = False
+
         if self.instance.id is None:
             self.instance.evidence_type = evidence_type
 
@@ -781,6 +784,10 @@ class DataPivotQueryForm(VisualForm):
                 "Outcome/Result level export not implemented for this data-type."
             )
         return export_style
+
+    def clean_settings(self):
+        # if settings is None make it an empty dictionary
+        return self.cleaned_data["settings"] or {}
 
 
 class SmartTagForm(forms.Form):

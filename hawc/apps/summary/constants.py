@@ -35,6 +35,13 @@ class VisualType(models.IntegerChoices):
 VISUAL_EVIDENCE_CHOICES = {
     VisualType.BIOASSAY_AGGREGATION: {StudyType.BIOASSAY},
     VisualType.BIOASSAY_CROSSVIEW: {StudyType.BIOASSAY},
+    VisualType.DATA_PIVOT_QUERY: {
+        StudyType.BIOASSAY,
+        StudyType.EPI,
+        StudyType.EPI_META,
+        StudyType.IN_VITRO,
+        StudyType.ECO,
+    },
     VisualType.DATA_PIVOT_FILE: {StudyType.OTHER},
     VisualType.ROB_HEATMAP: {StudyType.BIOASSAY, StudyType.EPI, StudyType.IN_VITRO},
     VisualType.ROB_BARCHART: {StudyType.BIOASSAY, StudyType.EPI, StudyType.IN_VITRO},
