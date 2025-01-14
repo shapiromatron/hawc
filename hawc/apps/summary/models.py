@@ -278,6 +278,17 @@ class Visual(models.Model):
             or self.visual_type == constants.VisualType.ROB_BARCHART
         ) and self.assessment.rob_name == RobName.SE:
             label = label.replace("risk of bias", "study evaluation")
+        elif self.visual_type == constants.VisualType.DATA_PIVOT_QUERY:
+            if self.evidence_type == constants.StudyType.BIOASSAY:
+                label = "Data pivot (animal bioassay)"
+            elif self.evidence_type == constants.StudyType.EPI:
+                label = "Data pivot (epidemiology)"
+            elif self.evidence_type == constants.StudyType.EPI_META:
+                label = "Data pivot (epidemiology meta-analysis/pooled-analysis)"
+            elif self.evidence_type == constants.StudyType.IN_VITRO:
+                label = "Data pivot (in vitro)"
+            elif self.evidence_type == constants.StudyType.ECO:
+                label = "Data pivot (ecology)"
         return label
 
     @classmethod
@@ -858,21 +869,6 @@ class DataPivotQuery(DataPivot):
                 data filters more restrictive.
             """
             raise ValidationError(err)
-
-    @property
-    def visual_type(self):
-        if self.evidence_type == constants.StudyType.BIOASSAY:
-            return "Data pivot (animal bioassay)"
-        elif self.evidence_type == constants.StudyType.EPI:
-            return "Data pivot (epidemiology)"
-        elif self.evidence_type == constants.StudyType.EPI_META:
-            return "Data pivot (epidemiology meta-analysis/pooled-analysis)"
-        elif self.evidence_type == constants.StudyType.IN_VITRO:
-            return "Data pivot (in vitro)"
-        elif self.evidence_type == constants.StudyType.ECO:
-            return "Data pivot (ecology)"
-        else:
-            raise ValueError("Unknown type")
 
 
 reversion.register(SummaryTable)
