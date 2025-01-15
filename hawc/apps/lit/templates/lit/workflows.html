@@ -4,17 +4,18 @@
   <div class="d-flex">
     <h2 class="mb-2">Workflows</h2>
     {% if obj_perms.edit_assessment %}
-      <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'lit:workflow-htmx' assessment.pk 'create' %}" hx-trigger="click" hx-target="#workflow-list" hx-swap="afterbegin" href="/">Create new workflow</a>
+      <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'lit:workflow-htmx' assessment.pk 'create' %}" hx-trigger="click" hx-target=".create-row" hx-swap="outerHTML" href="/">Create new workflow</a>
     {% endif %}
   </div>
   <p class="text-muted vw75 mt-0 mb-2">
     Literature workflows define groups of references in a specific state of tagging. References must match all admission criteria and none of the removal criteria to fit in a workflow. Workflows filter references on the reference tagging page and optionally the conflict resolution page. Workflow tiles can be added to the Literature Review page for quick access.
   </p>
   <div id="workflow-list">
+    <div class="create-row hidden"></div>
     {% for object in object_list %}
       {% include "lit/fragments/workflow_row.html" %}
     {% endfor %}
-    <div class="alert alert-info text-center show-only-child">No workflows created (yet).</div>
+    {% alert type="info" classes="text-center show-only-child" %}No workflows created (yet).{% endalert %}
   </div>
 {% endblock %}
 

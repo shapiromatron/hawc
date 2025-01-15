@@ -21,6 +21,7 @@ class TestViewPermissions:
             reverse("lit:tag-status", args=(3,)),
             reverse("lit:tag-conflicts", args=(db_keys.assessment_working,)),
             reverse("lit:workflows", args=(db_keys.assessment_working,)),
+            reverse("lit:overview", args=(db_keys.assessment_conflict_resolution,)),
         ]
         for client in clients:
             c = Client()
@@ -36,6 +37,7 @@ class TestViewPermissions:
             (reverse("lit:tag-status", args=(3,)), 403),
             (reverse("lit:tag-conflicts", args=(db_keys.assessment_working,)), 403),
             (reverse("lit:workflows", args=(db_keys.assessment_working,)), 403),
+            (reverse("lit:overview", args=(db_keys.assessment_working,)), 403),
         ]
         for url, status in views:
             response = c.get(url)
@@ -163,6 +165,21 @@ class TestTagsCopy:
         assertTemplateUsed(resp, "lit/tags_update.html")
 
         assert ReferenceFilterTag.get_assessment_qs(a_id).filter(name="Tier III Demo").exists()
+
+
+@pytest.mark.django_db
+class TestAssessmentInteractive:
+    def test_index(self):
+        c = get_client("team")
+        url = reverse("lit:interactive", args=(2,))
+        assert c.get(url).status_code == 404
+
+    def test_venn_reference_list(self):
+        c = get_client("team")
+        url = reverse("lit:interactive", args=(2,))
+        resp = c.post(url + "?action=venn_reference_list", {"ids": "5,8"})
+        assert resp.status_code == 200
+        assert resp.context["qs"].count() == 2
 
 
 @pytest.mark.django_db

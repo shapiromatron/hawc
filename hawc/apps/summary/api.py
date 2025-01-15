@@ -14,10 +14,10 @@ from ..assessment.api import (
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import DisabledPagination
-from ..common.helper import FlatExport, cacheable
+from ..common.helper import FlatExport, PydanticToDjangoError, cacheable
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
-from . import models, serializers, table_serializers
+from . import models, schemas, serializers, table_serializers
 
 
 class UnpublishedFilter(BaseFilterBackend):
@@ -49,6 +49,20 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
         instance = self.get_object()
         datasets = models.Visual.get_heatmap_datasets(instance).model_dump()
         return Response(datasets)
+
+    @action(
+        detail=True,
+        methods=("post",),
+        action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
+    )
+    def json_data(self, request, pk):
+        """Get json data for a Visual using a configuration given in the payload."""
+        assessment = self.get_object()
+        with PydanticToDjangoError(drf=True):
+            config = schemas.VisualDataRequest.model_validate(request.data.get("config", {}))
+        instance = config.mock_visual(assessment)
+        data = instance.get_data()
+        return Response(data)
 
 
 class DataPivotViewSet(AssessmentViewSet):
@@ -130,17 +144,12 @@ class VisualViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
             )
         return FlatExport.api_response(df, obj.slug)
 
-
-class SummaryTextViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
-    edit_check_keys = ["assessment"]
-    assessment_filter_args = "assessment"
-    model = models.SummaryText
-    pagination_class = DisabledPagination
-    filter_backends = (InAssessmentFilter,)
-    serializer_class = serializers.SummaryTextSerializer
-
-    def get_queryset(self):
-        return self.model.objects.all()
+    @action(detail=True, action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT)
+    def json_data(self, request, pk):
+        """Get json data export for a visual."""
+        instance = self.get_object()
+        data = instance.get_data()
+        return Response(data)
 
 
 class SummaryTableViewSet(AssessmentEditViewSet):

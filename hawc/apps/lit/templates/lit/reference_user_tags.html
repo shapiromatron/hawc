@@ -10,9 +10,9 @@
       </li>
     {% empty %}
       <li class="list-group-item">
-        <div class="alert alert-success">
+        {% alert type="success" %}
           <i class='fa fa-fw fa-check mr-1'></i>&nbsp;No reference user tags found.
-        </div>
+        {% endalert %}
       </li>
     {% endfor %}
   </ul>

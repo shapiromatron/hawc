@@ -90,13 +90,13 @@ class UDFForm(forms.ModelForm):
 
     @property
     def helper(self):
-        self.fields["description"].widget.attrs["rows"] = 8
         legend_text = (
             "Update User Defined Fields (UDF)"
             if self.instance.id
             else "Create a set of User Defined Fields (UDF)"
         )
         helper = BaseFormHelper(self)
+        helper.set_textarea_height(("description",), 8)
         helper.layout = cfl.Layout(
             cfl.Fieldset(
                 legend_text,
@@ -152,7 +152,8 @@ class ModelBindingForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("parent", None)
         user = kwargs.pop("user", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"model-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if self.instance.id is None:
             # include assessment for unique_together validation
             self.fields["assessment"].initial = self.assessment
@@ -191,7 +192,8 @@ class TagBindingForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.assessment = kwargs.pop("parent", None)
         user = kwargs.pop("user", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"tag-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if self.instance.id is None:
             # include assessment for unique_together validation
             self.fields["assessment"].initial = self.assessment

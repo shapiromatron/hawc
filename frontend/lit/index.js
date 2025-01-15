@@ -6,6 +6,7 @@ import BulkTagReferencesMain from "./BulkTagReferences/Main";
 import BulkTagReferencesMainStore from "./BulkTagReferences/store";
 import ReferenceComponent from "./components/Reference";
 import ReferenceTable from "./components/ReferenceTable";
+import Venn from "./components/Venn";
 import Reference from "./Reference";
 import ReferenceTreeMain from "./ReferenceTreeBrowse/Main";
 import ReferenceTreeMainStore from "./ReferenceTreeBrowse/store";
@@ -77,5 +78,8 @@ export default {
         tagtree.rename_top_level_node(config.assessment_name);
         tagtree.add_references(config.references);
         new TagTreeViz(tagtree, el, config.title, settings);
+    },
+    startupVenn(el, config) {
+        ReactDOM.render(<Venn data={config} />, el);
     },
 };

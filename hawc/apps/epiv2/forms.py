@@ -73,7 +73,8 @@ class ChemicalForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"chemical-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
 
@@ -98,16 +99,18 @@ class ExposureForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"exposure-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
+        self.fields["measurement_type"].widget.attrs["data-name"] = "measurement_type"
+        self.fields["biomonitoring_matrix"].widget.attrs["data-name"] = "biomonitoring_matrix"
         if design:
             self.instance.design = design
 
     @property
     def helper(self):
-        for fld in ["measurement_method", "comments"]:
-            self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
         helper.form_tag = False
+        helper.set_textarea_height(("measurement_method", "comments"))
         helper.add_row("name", 2, "col-md-6")
         helper.add_row("biomonitoring_matrix", 2, "col-md-6")
         helper.add_row("measurement_timing", 4, "col-md-3")
@@ -126,7 +129,8 @@ class ExposureLevelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"exposurelevel-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
         self.fields["chemical"].queryset = self.instance.design.chemicals.all()
@@ -152,13 +156,12 @@ class ExposureLevelForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ["comments"]:
-            self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(
             self,
             help_text="The exposure levels entered in this subform will be linked to a specific result below. If exposure levels are reported separately for sub-populations (e.g., exposed and unexposed) and results are also reported separately, create a separate entry for each sub-population. If exposure levels are reported separately but results are reported for the full population, only one entry will be linked to the result, so information on the remaining sub-group may be captured in the comment field.",
         )
         helper.form_tag = False
+        helper.set_textarea_height(("comments",))
         helper.add_row("name", 4, "col-md-3")
         helper.add_row("median", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"])
         helper.add_row("ci_lcl", 5, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-4"])
@@ -174,15 +177,15 @@ class AdjustmentFactorForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"adjustmentfactor-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
 
     @property
     def helper(self):
         helper = BaseFormHelper(self)
-        for fld in ["description", "comments"]:
-            self.fields[fld].widget.attrs["rows"] = 3
+        helper.set_textarea_height(("description", "comments"))
         helper.add_row("name", 3, "col-md-4")
         helper.form_tag = False
         return helper
@@ -206,14 +209,15 @@ class OutcomeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"outcome-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
 
     @property
     def helper(self):
-        self.fields["comments"].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
+        helper.set_textarea_height(("comments",))
         helper.add_row("system", 4, "col-md-3")
         helper.form_tag = False
         return helper
@@ -237,7 +241,8 @@ class DataExtractionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"dataextraction-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
         self.fields["outcome"].queryset = self.instance.design.outcomes.all()
@@ -246,7 +251,6 @@ class DataExtractionForm(forms.ModelForm):
 
     def clean(self):
         data = super().clean()
-
         variance_type = data["variance_type"]
         variance = data["variance"]
         if variance and variance_type == constants.VarianceType.NA:
@@ -264,9 +268,8 @@ class DataExtractionForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ["effect_description", "statistical_method", "comments"]:
-            self.fields[fld].widget.attrs["rows"] = 3
         helper = BaseFormHelper(self)
+        helper.set_textarea_height(("effect_description", "statistical_method", "comments"))
         helper.add_row("outcome", 4, "col-md-3")
         helper.add_row("effect_estimate_type", 6, "col-md-2")
         helper.add_row(

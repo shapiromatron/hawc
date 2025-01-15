@@ -149,11 +149,6 @@ class StudyPopulationForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -168,7 +163,7 @@ class StudyPopulationForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("name", 2, "col-md-6")
         helper.add_row("age_profile", 2, "col-md-6")
         helper.add_row("countries", 3, "col-md-4")
@@ -270,11 +265,6 @@ class ExposureForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -289,7 +279,7 @@ class ExposureForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("name", 2, "col-md-6")
         helper.add_row("inhalation", 6, "col-md-2")
         helper.add_row("measured", 3, "col-md-4")
@@ -375,11 +365,6 @@ class OutcomeForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -394,7 +379,7 @@ class OutcomeForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("name", 2, "col-md-6")
         helper.add_row("system", 3, "col-md-4")
         helper.add_row("diagnostic", 2, "col-md-6")
@@ -433,9 +418,9 @@ class ComparisonSet(forms.ModelForm):
         self.parent = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
         if self.parent:
-            if type(self.parent) == models.StudyPopulation:
+            if isinstance(self.parent, models.StudyPopulation):
                 self.instance.study_population = self.parent
-            elif type(self.parent) == models.Outcome:
+            elif isinstance(self.parent, models.Outcome):
                 self.instance.outcome = self.parent
 
         filters = {}
@@ -447,11 +432,6 @@ class ComparisonSet(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             if self.instance.outcome:
                 url = self.instance.outcome.get_absolute_url()
@@ -470,7 +450,7 @@ class ComparisonSet(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         return helper
 
 
@@ -515,11 +495,6 @@ class SingleGroupForm(GroupForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         inputs = {
             "legend_text": f"Update {self.instance}",
             "help_text": self.HELP_TEXT_UPDATE,
@@ -527,7 +502,7 @@ class SingleGroupForm(GroupForm):
         }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("name", 3, "col-md-4")
         helper.add_row("sex", 2, "col-md-6")
         helper.add_row("eligible_n", 3, "col-md-4")
@@ -695,11 +670,6 @@ class ResultForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) == forms.Textarea:
-                widget.attrs["rows"] = 3
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -714,7 +684,7 @@ class ResultForm(forms.ModelForm):
             }
 
         helper = BaseFormHelper(self, **inputs)
-
+        helper.set_textarea_height()
         helper.add_row("name", 2, "col-md-6")
         helper.add_row("metric", 3, "col-md-4")
         helper.add_row("data_location", 2, "col-md-6")

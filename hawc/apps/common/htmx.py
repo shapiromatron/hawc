@@ -6,6 +6,7 @@ from typing import Any
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
 from django.http import (
+    Http404,
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseNotAllowed,
@@ -153,8 +154,8 @@ class HtmxViewSet(View):
             object = get_object_or_404(self.model, pk=self.kwargs.get(self.pk_url_kwarg))
         try:
             assessment: Assessment = parent.get_assessment() if parent else object.get_assessment()
-        except AssessmentNotFound:
-            raise PermissionDenied()
+        except AssessmentNotFound as err:
+            raise PermissionDenied() from err
         return Item(object=object, parent=parent, assessment=assessment)
 
     def get_context_data(self, **kwargs):
@@ -207,6 +208,9 @@ class HtmxView(View):
     actions: set[str]
     default_action: str = "index"
 
+    def index(self, request: HttpRequest, *args, **kwargs):
+        raise Http404()
+
     def get_handler(self, request: HttpRequest):
         request.action = request.GET.get("action", "")
         if request.action not in self.actions:
@@ -238,7 +242,7 @@ class HtmxGetMixin:
         return getattr(self, request.action, self.http_method_not_allowed)
 
     def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        context = self.get_context_data(object=self.object)
+        self.object = super().get_object()
+        context = super().get_context_data(object=self.object)
         handler = self.get_handler(request)
         return handler(request, context)

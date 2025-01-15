@@ -4,6 +4,7 @@ import re
 from collections import defaultdict
 from collections.abc import Callable, Iterable
 from datetime import timedelta
+from io import BytesIO
 from itertools import chain
 from math import inf
 from typing import Any, NamedTuple, TypeVar
@@ -14,6 +15,7 @@ import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.paginator import Paginator
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Choices, QuerySet
 from django.http import HttpRequest, QueryDict
@@ -31,6 +33,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError as DRFValidationError
 
+from ...tools.excel import get_writer, write_worksheet
 from .middleware import _local_thread
 
 logger = logging.getLogger(__name__)
@@ -142,22 +145,61 @@ def map_enum(df: pd.DataFrame, field: str, choices: Choices, replace: bool = Fal
         df.rename(columns={key: field}, inplace=True)
 
 
-def df_move_column(df: pd.DataFrame, target: str, after: str | None = None) -> pd.DataFrame:
+def reorder_list(items: list, target: Any, after: Any | None = None, n_cols: int = 1) -> list:
+    """Returns a copy of a list with elements reordered.
+
+    Args:
+        items (list): a list of items
+        target (Any): the key to move
+        after (Any | None, default None): the key to move target after.
+        n_cols (int, default 1): the number of sequential targets to move.
+
+    Raises:
+        NotImplementedError: _description_
+
+    Returns:
+        list: _description_
+    """
+    target_index = items.index(target)
+    target_index_max = target_index + n_cols
+    insert_index = (-1 if after is None else items.index(after)) + 1
+
+    if target_index == insert_index:
+        return items
+    elif target_index > (insert_index):
+        return (
+            items[:insert_index]
+            + items[target_index:target_index_max]
+            + items[insert_index:target_index]
+            + items[target_index_max:]
+        )
+    elif target_index_max < insert_index:
+        return (
+            items[:target_index]
+            + items[target_index_max:insert_index]
+            + items[target_index:target_index_max]
+            + items[insert_index:]
+        )
+    else:
+        raise NotImplementedError("Unreachable code")
+
+
+def df_move_column(
+    df: pd.DataFrame, target: str, after: str | None = None, n_cols: int = 1
+) -> pd.DataFrame:
     """Move target column after another column.
 
     Args:
         df (pd.DataFrame): The dataframe to modify.
         target (str): Name of the column to move
-        after (Optional[str], optional): Name of column to move after; if None, puts first.
+        after (Optional[str], optional): Name of column to move after; if None, puts first
+        n_cols (int): Number of target columns to move; defaults to 1
 
     Returns:
         pd.DataFrame: The mutated dataframe.
     """
-    cols = df.columns.tolist()
-    target_name = cols.pop(cols.index(target))
-    insert_index = cols.index(after) + 1 if after else 0
-    cols.insert(insert_index, target_name)
-    return df[cols]
+    new_cols = reorder_list(df.columns.tolist(), target, after, n_cols)
+    return df[new_cols]
 
 
 def url_query(path: str, query: dict) -> str:
@@ -226,6 +268,8 @@ class SerializerHelper:
     @classmethod
     def _serialize(cls, obj, json=False):
         serializer = cls.serializers.get(obj.__class__)
+        if serializer is None:
+            raise ValueError(f"Serializer not found: {obj.__class__}")
         serialized = serializer(obj).data
         if json:
             serialized = JSONRenderer().render(serialized).decode("utf8")
@@ -292,6 +336,14 @@ class FlatExport(NamedTuple):
     ) -> Response:
         export = cls(df=df, filename=filename, metadata=metadata)
         return Response(export)
+
+    def to_excel(self) -> BytesIO:
+        f, writer = get_writer()
+        with writer:
+            write_worksheet(writer, "data", self.df)
+            if self.metadata is not None:
+                write_worksheet(writer, "metadata", self.metadata)
+        return f
 
 
 class FlatFileExporter:
@@ -548,3 +600,55 @@ def get_current_request() -> HttpRequest:
 def get_current_user():
     """Returns the current request user"""
     return get_current_request().user
+
+
+def unique_text_list(items: list[str]) -> list[str]:
+    """Return a list of unique items in a text list"""
+    items = items.copy()
+    duplicates = {}
+    for i, item in enumerate(items):
+        if item in duplicates:
+            duplicates[item] += 1
+            items[i] = f"{item} ({duplicates[item]})"
+        else:
+            duplicates[item] = 1
+    return items
+
+
+def get_contrasting_text_color(bg: str) -> str:
+    """Returns black or white as text color depending on background color hue.
+
+    Args:
+        bg (str): A hex color code, e.g., #123456
+    """
+    # https://stackoverflow.com/a/41491220/906385
+    (r, g, b) = tuple(int(bg[i : i + 2], 16) for i in (1, 3, 5))
+    a_type = [r / 255.0, g / 255.0, b / 255.0]
+    a_type = [v / 12.92 if v <= 0.03928 else ((v + 0.055) / 1.055) ** 2.4 for v in a_type]
+    luminance = 0.2126 * a_type[0] + 0.7152 * a_type[1] + 0.0722 * a_type[2]
+    return "#ffffff" if luminance < 0.179 else "#000000"
+
+
+def paginate(
+    qs: QuerySet, request: HttpRequest, n_items: int = 50, page_param: str = "page"
+) -> dict:
+    """
+    Paginate a QuerySet. Returns a dictionary of items that are available in the BaseList class
+    based view, so that the paginator.html template works as expected.
+
+    Args:
+        qs (QuerySet): _description_
+        request (HttpRequest): _description_
+        n_items (int, optional): _description_. Defaults to 50.
+        page_param (str, optional): _description_. Defaults to "page".
+
+    """
+    paginator = Paginator(qs, n_items)
+    page_number = request.GET.get(page_param)
+    page = paginator.get_page(page_number)
+    return {
+        "paginator": paginator,
+        "page_obj": page,
+        "is_paginated": True,
+        "object_list": page.object_list,
+    }

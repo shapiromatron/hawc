@@ -5,6 +5,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from django.apps import apps
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -17,11 +18,12 @@ from ..assessment.models import Assessment, BaseEndpoint, DSSTox
 from ..common.helper import (
     HAWCDjangoJSONEncoder,
     SerializerHelper,
-    cleanHTML,
     df_move_column,
     tryParseInt,
 )
 from ..study.models import Study
+from ..udf.models import ModelUDFContent
+from ..vocab.constants import VocabularyNamespace
 from ..vocab.models import Term
 from . import constants, managers
 
@@ -138,46 +140,6 @@ class Experiment(models.Model):
     def get_assessment(self):
         return self.study.get_assessment()
 
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "experiment-id",
-            "experiment-url",
-            "experiment-name",
-            "experiment-type",
-            "experiment-has_multiple_generations",
-            "experiment-chemical",
-            "experiment-cas",
-            "experiment-dtxsid",
-            "experiment-chemical_source",
-            "experiment-purity_available",
-            "experiment-purity_qualifier",
-            "experiment-purity",
-            "experiment-vehicle",
-            "experiment-guideline_compliance",
-            "experiment-description",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser):
-        return (
-            ser["id"],
-            ser["url"],
-            ser["name"],
-            ser["type"],
-            ser["has_multiple_generations"],
-            ser["chemical"],
-            ser["cas"],
-            ser["dtxsid"],
-            ser["chemical_source"],
-            ser["purity_available"],
-            ser["purity_qualifier"],
-            ser["purity"],
-            ser["vehicle"],
-            ser["guideline_compliance"],
-            cleanHTML(ser["description"]),
-        )
-
     @classmethod
     def delete_caches(cls, ids):
         Endpoint.delete_caches(
@@ -274,6 +236,8 @@ class AnimalGroup(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    udfs = GenericRelation(ModelUDFContent, related_query_name="animal_groups")
+
     BREADCRUMB_PARENT = "experiment"
 
     def __str__(self):
@@ -313,47 +277,9 @@ class AnimalGroup(models.Model):
     def get_generation_short(cls, value) -> str:
         return "Other" if value == "Ot" else value
 
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "animal_group-id",
-            "animal_group-url",
-            "animal_group-name",
-            "animal_group-sex",
-            "animal_group-animal_source",
-            "animal_group-lifestage_exposed",
-            "animal_group-lifestage_assessed",
-            "animal_group-siblings",
-            "animal_group-parents",
-            "animal_group-generation",
-            "animal_group-comments",
-            "animal_group-diet",
-            "species-name",
-            "strain-name",
-        )
-
     @classmethod
     def get_relation_id(cls, rel):
         return str(rel["id"]) if rel else None
-
-    @classmethod
-    def flat_complete_data_row(cls, ser):
-        return (
-            ser["id"],
-            ser["url"],
-            ser["name"],
-            ser["sex"],
-            ser["animal_source"],
-            ser["lifestage_exposed"],
-            ser["lifestage_assessed"],
-            cls.get_relation_id(ser["siblings"]),
-            "|".join([cls.get_relation_id(p) for p in ser["parents"]]),
-            ser["generation"],
-            cleanHTML(ser["comments"]),
-            ser["diet"],
-            ser["species"],
-            ser["strain"],
-        )
 
     @classmethod
     def delete_caches(cls, ids):
@@ -471,40 +397,6 @@ class DosingRegime(models.Model):
     def isAnimalsDosed(self, animal_group):
         return self.dosed_animals == animal_group
 
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "dosing_regime-id",
-            "dosing_regime-dosed_animals",
-            "dosing_regime-route_of_exposure",
-            "dosing_regime-duration_exposure",
-            "dosing_regime-duration_exposure_text",
-            "dosing_regime-duration_observation",
-            "dosing_regime-num_dose_groups",
-            "dosing_regime-positive_control",
-            "dosing_regime-negative_control",
-            "dosing_regime-description",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser):
-        return (
-            (
-                ser["id"],
-                AnimalGroup.get_relation_id(ser["dosed_animals"]),
-                ser["route_of_exposure"],
-                ser["duration_exposure"],
-                ser["duration_exposure_text"],
-                ser["duration_observation"],
-                ser["num_dose_groups"],
-                ser["positive_control"],
-                ser["negative_control"],
-                cleanHTML(ser["description"]),
-            )
-            if ser
-            else (None for _ in range(10))
-        )
-
     def can_delete(self) -> bool:
         # can delete only if no animals others than those dosed are related
         return self.animalgroup_set.exclude(id=self.dosed_animals_id).count() == 0
@@ -541,21 +433,6 @@ class DoseGroup(models.Model):
 
     def __str__(self):
         return f"{self.dose} {self.dose_units}"
-
-    @staticmethod
-    def flat_complete_data_row(ser_full, units, idx):
-        cols = []
-        ser = [v for v in ser_full if v["dose_group_id"] == idx]
-        for unit in units:
-            v = None
-            for s in ser:
-                if s["dose_units"]["name"] == unit:
-                    v = s["dose"]
-                    break
-
-            cols.append(v)
-
-        return cols
 
 
 class Endpoint(BaseEndpoint):
@@ -760,6 +637,8 @@ class Endpoint(BaseEndpoint):
     )
     additional_fields = models.TextField(default="{}")
 
+    udfs = GenericRelation(ModelUDFContent, related_query_name="endpoints")
+
     BREADCRUMB_PARENT = "animal_group"
 
     class Meta:
@@ -934,11 +813,11 @@ class Endpoint(BaseEndpoint):
 
     @classmethod
     def get_vocabulary_settings(cls, assessment: Assessment, form: ModelForm) -> str:
+        vocab = VocabularyNamespace(assessment.vocabulary) if assessment.vocabulary else None
         return json.dumps(
             {
-                "debug": False,
-                "vocabulary": assessment.vocabulary,
-                "vocabulary_display": assessment.get_vocabulary_display(),
+                "vocabulary": vocab.value if vocab else None,
+                "vocabulary_display": vocab.display_name if vocab else None,
                 "object": {
                     "system": form["system"].value() or "",
                     "organ": form["organ"].value() or "",
@@ -1039,88 +918,6 @@ class Endpoint(BaseEndpoint):
         for i in range(1, len(resps)):
             change += resps[i] - resps[0]
         return change >= 0
-
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "endpoint-id",
-            "endpoint-url",
-            "endpoint-name",
-            "endpoint-effects",
-            "endpoint-system",
-            "endpoint-organ",
-            "endpoint-effect",
-            "endpoint-effect_subtype",
-            "endpoint-name_term_id",
-            "endpoint-system_term_id",
-            "endpoint-organ_term_id",
-            "endpoint-effect_term_id",
-            "endpoint-effect_subtype_term_id",
-            "endpoint-litter_effects",
-            "endpoint-litter_effect_notes",
-            "endpoint-observation_time",
-            "endpoint-observation_time_units",
-            "endpoint-observation_time_text",
-            "endpoint-data_location",
-            "endpoint-response_units",
-            "endpoint-data_type",
-            "endpoint-variance_type",
-            "endpoint-confidence_interval",
-            "endpoint-data_reported",
-            "endpoint-data_extracted",
-            "endpoint-values_estimated",
-            "endpoint-expected_adversity_direction",
-            "endpoint-monotonicity",
-            "endpoint-statistical_test",
-            "endpoint-trend_value",
-            "endpoint-trend_result",
-            "endpoint-diagnostic",
-            "endpoint-power_notes",
-            "endpoint-results_notes",
-            "endpoint-endpoint_notes",
-            "endpoint-additional_fields",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser):
-        return (
-            ser["id"],
-            ser["url"],
-            ser["name"],
-            "|".join([d["name"] for d in ser["effects"]]),
-            ser["system"],
-            ser["organ"],
-            ser["effect"],
-            ser["effect_subtype"],
-            ser["name_term"],
-            ser["system_term"],
-            ser["organ_term"],
-            ser["effect_term"],
-            ser["effect_subtype_term"],
-            ser["litter_effects"],
-            ser["litter_effect_notes"],
-            ser["observation_time"],
-            ser["observation_time_units"],
-            ser["observation_time_text"],
-            ser["data_location"],
-            ser["response_units"],
-            ser["data_type"],
-            ser["variance_name"],
-            ser["confidence_interval"],
-            ser["data_reported"],
-            ser["data_extracted"],
-            ser["values_estimated"],
-            ser["expected_adversity_direction_text"],
-            ser["monotonicity"],
-            ser["statistical_test"],
-            ser["trend_value"],
-            ser["trend_result"],
-            ser["diagnostic"],
-            ser["power_notes"],
-            cleanHTML(ser["results_notes"]),
-            cleanHTML(ser["endpoint_notes"]),
-            json.dumps(ser["additional_fields"]),
-        )
 
     @staticmethod
     def setMaximumPercentControlChange(ep):
@@ -1390,44 +1187,6 @@ class EndpointGroup(ConfidenceIntervalsMixin, models.Model):
                 return str(nmin)
         else:
             return f"{nmin}-{nmax}"
-
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "endpoint_group-id",
-            "endpoint_group-dose_group_id",
-            "endpoint_group-n",
-            "endpoint_group-incidence",
-            "endpoint_group-response",
-            "endpoint_group-variance",
-            "endpoint_group-lower_ci",
-            "endpoint_group-upper_ci",
-            "endpoint_group-significant",
-            "endpoint_group-significance_level",
-            "endpoint_group-treatment_effect",
-            "endpoint_group-NOEL",
-            "endpoint_group-LOEL",
-            "endpoint_group-FEL",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser, endpoint):
-        return (
-            ser["id"],
-            ser["dose_group_id"],
-            ser["n"],
-            ser["incidence"],
-            ser["response"],
-            ser["variance"],
-            ser["lower_ci"],
-            ser["upper_ci"],
-            ser["significant"],
-            ser["significance_level"],
-            ser["treatment_effect"],
-            ser["dose_group_id"] == endpoint["NOEL"],
-            ser["dose_group_id"] == endpoint["LOEL"],
-            ser["dose_group_id"] == endpoint["FEL"],
-        )
 
 
 reversion.register(Experiment)

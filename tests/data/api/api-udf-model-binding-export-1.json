@@ -1,0 +1,24 @@
+[
+  {
+    "content_type-app": "study",
+    "content_type-model": "study",
+    "model_binding-assessment": 4,
+    "model_binding-created": 1694923829880,
+    "model_binding-creator": 2,
+    "model_binding-form_id": 1,
+    "model_binding-form_schema": {
+      "fields": [
+        {
+          "name": "field1",
+          "type": "char"
+        },
+        {
+          "name": "field2",
+          "type": "integer"
+        }
+      ]
+    },
+    "model_binding-last_updated": 1694924133309,
+    "model_binding-pk": 1
+  }
+]

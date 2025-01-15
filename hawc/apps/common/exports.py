@@ -1,7 +1,20 @@
 import pandas as pd
 from django.db.models import QuerySet
+from django.utils import timezone
 
 from .helper import FlatExport
+
+
+def clean_html(series: pd.Series):
+    """Vectorized method to clean html."""
+    return (
+        series.str.replace("\n", " ")
+        .str.replace("\r", "")
+        .str.replace("<br>", "\n")
+        .str.replace("&nbsp;", " ")
+        .str.replace(r"<[^>]*>", "", regex=True)  # strip tags
+        .str.replace(r"&(?:\w+|#\d+);", "", regex=True)  # strip entities
+    )
 
 
 class ModelExport:
@@ -14,18 +27,10 @@ class ModelExport:
         include: tuple[str, ...] | None = None,
         exclude: tuple[str, ...] | None = None,
     ):
-        """Instantiate an exporter instance for a given django model.
-
-        Args:
-            key_prefix (str, optional): The model name to prepend to data frame columns.
-            query_prefix (str, optional): The model prefix in the ORM.
-            include (tuple | None, optional): If included, only these items are added.
-            exclude (tuple | None, optional): If specified, items are removed from base.
-        """
         self.key_prefix = key_prefix + "-" if key_prefix else key_prefix
         self.query_prefix = query_prefix + "__" if query_prefix else query_prefix
-        self.include = (key_prefix + field for field in include) if include else tuple()
-        self.exclude = (key_prefix + field for field in exclude) if exclude else tuple()
+        self.include = tuple(self.key_prefix + field for field in include) if include else tuple()
+        self.exclude = tuple(self.key_prefix + field for field in exclude) if exclude else tuple()
 
     @property
     def value_map(self) -> dict:
@@ -153,6 +158,15 @@ class ModelExport:
         """
         return df
 
+    def format_time(self, df: pd.DataFrame) -> pd.DataFrame:
+        if df.empty:
+            return df
+        tz = timezone.get_default_timezone()
+        for key in [self.get_column_name("created"), self.get_column_name("last_updated")]:
+            if key in df.columns and not df[key].isnull().all():
+                df[key] = df[key].dt.tz_convert(tz).dt.strftime("%Y-%m-%dT%H:%M:%S.%f%z")
+        return df
+
     def get_df(self, qs: QuerySet) -> pd.DataFrame:
         """Get dataframe export from queryset.
 
@@ -209,12 +223,15 @@ class Exporter:
         return df
 
     @classmethod
+    def build_metadata(cls, df: pd.DataFrame) -> pd.DataFrame | None:
+        return None
+
+    @classmethod
     def flat_export(cls, qs: QuerySet, filename: str) -> FlatExport:
         """Return an instance of a FlatExport.
-
         Args:
             qs (QuerySet): the initial QuerySet
             filename (str): the filename for the export
         """
         df = cls().get_df(qs)
-        return FlatExport(df=df, filename=filename)
+        return FlatExport(df=df, filename=filename, metadata=cls.build_metadata(df))

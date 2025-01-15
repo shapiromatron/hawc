@@ -2,15 +2,13 @@
 
 import logging
 
-from hawc.constants import AuthProvider
+from ...constants import AuthProvider
 
 from .dev import *
 
 DEBUG = True
 
 # enable feature flags for tests
-HAWC_FEATURES.ENABLE_BMDS_33 = True
-HAWC_FEATURES.ENABLE_UDF = True
 HAWC_FEATURES.ENABLE_DOCS_LINK = True
 
 # remove toolbar for integration tests
@@ -40,5 +38,8 @@ ACCEPT_LICENSE_REQUIRED = True
 EXTERNAL_CONTACT_US = None
 EXTERNAL_ABOUT = None
 EXTERNAL_RESOURCES = None
+
+if HERO_API_KEY is None:
+    HERO_API_KEY = "secret"
 
 logging.disable(logging.CRITICAL)

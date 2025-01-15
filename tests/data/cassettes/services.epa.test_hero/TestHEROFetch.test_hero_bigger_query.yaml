@@ -3,13 +3,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: GET
     uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/50000,50001,50002,50003,50004,50005,50006,50007,50008,50009,50010,50011,50012,50013,50014,50015,50016,50017,50018,50019,50020,50021,50022,50023,50024,50025,50026,50027,50028,50029,50030,50031,50032,50033,50034,50035,50036,50037,50038,50039,50040,50041,50042,50043,50044,50045,50046,50047,50048,50049,50050,50051,50052,50053,50054,50055,50056,50057,50058,50059,50060,50061,50062,50063,50064,50065,50066,50067,50068,50069,50070,50071,50072,50073,50074,50075,50076,50077,50078,50079,50080,50081,50082,50083,50084,50085,50086,50087,50088,50089,50090,50091,50092,50093,50094,50095,50096,50097,50098,50099/recordsperpage/100.json
   response:
@@ -116,18 +116,22 @@ interactions:
         O3 are high enough to significantly affect yield of sensitive potato cultivars,
         our results indicate no significant effect of ambient O3 concentrations on
         Colorado potato beetle populations.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50076\",\"hasPDF\":true,\"YEAR\":2001,\"allAuthors\":[\"Costa,
-        SD; Kennedy, GG; Heagle, AS\"],\"HEROID\":50076,\"id\":\"50076\",\"project_key\":[14,2516,2702,2737],\"referencetype\":[\"journal
+        SD; Kennedy, GG; Heagle, AS\"],\"HEROID\":50076,\"id\":\"50076\",\"project_key\":[14,2516,2702,2737,4844],\"referencetype\":[\"journal
         article\"],\"type\":\"reference\",\"pdfURL\":\"http://openurl.ingenta.com/content/xref?genre=article&issn=0046-225x&volume=30&issue=5&spage=824\",\"doi\":\"10.1603/0046-225x-30.5.824\",\"sortYear\":2001,\"tag_path_text\":[\"NAAQS|ISA-Ozone
         (2020 Final Project Page)|Full-Text Screening Included|References from Other
         Sources\",\"NAAQS|ISA-Ozone (2020 Final Project Page)|Included in ISA First
         Draft|Appendix 8\",\"NAAQS|ISA-Ozone (2020 Final Project Page)|Included in
-        ISA Final Draft|Appendix 8\",\"NAAQS|LitSearch-O3\",\"NAAQS|Ozone Level 1
-        Screening|Cited in 2019 ISA\",\"NAAQS|Ozone Level 1 Screening|References from
-        Other Sources\",\"Other|Citation Mapping|ISA Ozone|30% to end\",\"Other|Citation
+        ISA Final Draft|Appendix 8\",\"NAAQS|LitSearch-O3\",\"NAAQS|Litsearch-O3 2025|Forward
+        Citation Search|Ecology|Seeds|Herbivores and Plant/Insect Signaling\",\"NAAQS|Ozone
+        Level 1 Screening|Cited in 2019 ISA\",\"NAAQS|Ozone Level 1 Screening|References
+        from Other Sources\",\"Other|Citation Mapping|ISA Ozone|30% to end\",\"Other|Citation
         Mapping|Ozone 2006\"],\"category_key\":[1,18],\"PROJECTS\":[{\"PROJECT\":\"Ozone
         Level 1 Screening\",\"PROJECT_ID\":2702,\"USAGES\":[{\"USAGE_ID\":\"17036\",\"USAGE\":\"References
         from Other Sources\",\"USAGES\":[]},{\"USAGE_ID\":\"22937\",\"USAGE\":\"Cited
-        in 2019 ISA\",\"USAGES\":[]}]},{\"PROJECT\":\"LitSearch-O3\",\"PROJECT_ID\":14,\"USAGES\":[]},{\"PROJECT\":\"ISA-Ozone
+        in 2019 ISA\",\"USAGES\":[]}]},{\"PROJECT\":\"LitSearch-O3\",\"PROJECT_ID\":14,\"USAGES\":[]},{\"PROJECT\":\"Litsearch-O3
+        2025\",\"PROJECT_ID\":4844,\"USAGES\":[{\"USAGE_ID\":\"44629\",\"USAGE\":\"Forward
+        Citation Search\",\"USAGES\":[{\"USAGE_ID\":\"44633\",\"USAGE\":\"Ecology\",\"USAGES\":[{\"USAGE_ID\":\"44732\",\"USAGE\":\"Seeds\",\"USAGES\":[{\"USAGE_ID\":\"44737\",\"USAGE\":\"Herbivores
+        and Plant/Insect Signaling\",\"USAGES\":[]}]}]}]}]},{\"PROJECT\":\"ISA-Ozone
         (2020 Final Project Page)\",\"PROJECT_ID\":2737,\"USAGES\":[{\"USAGE_ID\":\"19090\",\"USAGE\":\"Included
         in ISA First Draft\",\"USAGES\":[{\"USAGE_ID\":\"19097\",\"USAGE\":\"Appendix
         8\",\"USAGES\":[]}]},{\"USAGE_ID\":\"24487\",\"USAGE\":\"Included in ISA Final
@@ -135,12 +139,12 @@ interactions:
         Screening Included\",\"USAGES\":[{\"USAGE_ID\":\"19131\",\"USAGE\":\"References
         from Other Sources\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Citation Mapping\",\"PROJECT_ID\":2516,\"USAGES\":[{\"USAGE_ID\":\"8575\",\"USAGE\":\"Ozone
         2006\",\"USAGES\":[]},{\"USAGE_ID\":\"8566\",\"USAGE\":\"ISA Ozone\",\"USAGES\":[{\"USAGE_ID\":\"8574\",\"USAGE\":\"30%
-        to end\",\"USAGES\":[]}]}]}],\"tag_path_key\":[\"1|2737|19129|19131\",\"1|2737|19090|19097\",\"1|2737|24487|24497\",\"1|14\",\"1|2702|22937\",\"1|2702|17036\",\"18|2516|8566|8574\",\"18|2516|8575\"],\"firstAuthor\":\"Costa\",\"AUTHORS\":\"Costa,
-        SD; Kennedy, GG; Heagle, AS\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Environmental
+        to end\",\"USAGES\":[]}]}]}],\"tag_path_key\":[\"1|2737|19129|19131\",\"1|2737|19090|19097\",\"1|2737|24487|24497\",\"1|14\",\"1|4844|44629|44633|44732|44737\",\"1|2702|22937\",\"1|2702|17036\",\"18|2516|8566|8574\",\"18|2516|8575\"],\"firstAuthor\":\"Costa\",\"AUTHORS\":\"Costa,
+        SD; Kennedy, GG; Heagle, AS\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project\",\"category|project|usage|usage|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Environmental
         Entomology 30:824-831.\",\"wosid\":\"WOS:000171801700004\",\"TITLE\":\"Effect
-        of host plant ozone stress on Colorado potato beetles\",\"modified\":\"2022-06-06T22:16:54Z\",\"PMID\":\"\",\"keywords\":[\"Leptinotarsa
+        of host plant ozone stress on Colorado potato beetles\",\"modified\":\"2024-04-23T19:06:44Z\",\"PMID\":\"\",\"keywords\":[\"Leptinotarsa
         decemlineata; potato; air pollution; ozone; Colorado potato beetle; host stress\"],\"journalTitle\":\"Environmental
-        Entomology\",\"_version_\":1734925420644532224},{\"REFERENCE_ID\":50026,\"ABSTRACT\":\"In
+        Entomology\",\"_version_\":1797153574617088000},{\"REFERENCE_ID\":50026,\"ABSTRACT\":\"In
         mice, styrene is pneumotoxic, and there is some evidence of tumorigenicity.
         This toxicity is thought to be related to its bioactivation to styrene oxide
         in lung. To determine if human tissues have this capacity, the metabolism
@@ -150,15 +154,25 @@ interactions:
         tissues metabolized benzene to phenol. The data suggest that human lung has
         low styrene metabolizing activity and may be much less of a target organ than
         in mouse.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50026\",\"hasPDF\":true,\"YEAR\":2000,\"allAuthors\":[\"Carlson,
-        GP; Mantick, NA; Powley, MW\"],\"HEROID\":50026,\"id\":\"50026\",\"project_key\":[27,35,1406,2190,2969,4066],\"referencetype\":[\"journal
-        article\"],\"type\":\"reference\",\"doi\":\"10.1080/009841000156600\",\"sortYear\":2000,\"tag_path_text\":[\"IRIS|Phenol\",\"IRIS|Styrene\",\"IRIS|Styrene
+        GP; Mantick, NA; Powley, MW\"],\"HEROID\":50026,\"id\":\"50026\",\"project_key\":[27,35,1406,2190,2969,4066,4868,4869],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"pdfURL\":\"https://www.proquest.com/scholarly-journals/metabolism-styrene-human-liver-lung/docview/71147986/se-2?accountid=171501\",\"doi\":\"10.1080/009841000156600\",\"sortYear\":2000,\"tag_path_text\":[\"IRIS|Phenol\",\"IRIS|Styrene\",\"IRIS|Styrene
         2020|LitSearch: July 2020|PubMed\",\"IRIS|Styrene 2020|LitSearch: July 2020|WoS\",\"IRIS|Styrene
         Oxide\",\"NCD|Epoxides|Literature Search|Database - Human Health - Jan 2022|PubMed\",\"NCD|Epoxides|Literature
-        Search|Database - Human Health - Jan 2022|WOS\",\"Other|Mouse Lung Tumor|Cited\",\"Other|Mouse
-        Lung Tumor|Session 3 \u2013 Biological Mechanisms|Metabolism & Excretion\",\"Other|Mouse
-        Lung Tumor|PBPK\",\"Other|Mouse Lung Tumor|Mouse Lung Tumor Initial Search
-        Sept-Oct 2023|PubMed\",\"Other|Mouse Lung Tumor|Mouse Lung Tumor Initial Search
-        Sept-Oct 2023|WoS\"],\"category_key\":[2,18,34],\"PROJECTS\":[{\"PROJECT\":\"Mouse
+        Search|Database - Human Health - Jan 2022|WOS\",\"OPPT REs|OPPT Evidence Map:
+        Benzene|Peer-Reviewed Literature|Literature Search: May 2024|ProQuest\",\"OPPT
+        REs|OPPT Evidence Map: Benzene|Peer-Reviewed Literature|Literature Search:
+        May 2024|PubMed\",\"OPPT REs|OPPT Evidence Map: Benzene|Peer-Reviewed Literature|Literature
+        Search: May 2024|Scopus\",\"OPPT REs|OPPT Evidence Map: Benzene|Peer-Reviewed
+        Literature|Literature Search: May 2024|WoS\",\"OPPT REs|OPPT Evidence Map:
+        Styrene|Peer-Reviewed Literature|Initial Search: May 2024|ProQuest\",\"OPPT
+        REs|OPPT Evidence Map: Styrene|Peer-Reviewed Literature|Initial Search: May
+        2024|PubMed\",\"OPPT REs|OPPT Evidence Map: Styrene|Peer-Reviewed Literature|Initial
+        Search: May 2024|Scopus\",\"OPPT REs|OPPT Evidence Map: Styrene|Peer-Reviewed
+        Literature|Initial Search: May 2024|WoS\",\"Other|Mouse Lung Tumor Workshop
+        2014|Cited\",\"Other|Mouse Lung Tumor Workshop 2014|Session 3 \u2013 Biological
+        Mechanisms|Metabolism & Excretion\",\"Other|Mouse Lung Tumor Workshop 2014|PBPK\",\"Other|Mouse
+        Lung Tumor Workshop 2014|Mouse Lung Tumor Initial Search Sept-Oct 2023|PubMed\",\"Other|Mouse
+        Lung Tumor Workshop 2014|Mouse Lung Tumor Initial Search Sept-Oct 2023|WoS\"],\"category_key\":[2,18,32,34],\"PROJECTS\":[{\"PROJECT\":\"Mouse
         Lung Tumor Workshop 2014\",\"PROJECT_ID\":2190,\"USAGES\":[{\"USAGE_ID\":\"4419\",\"USAGE\":\"Cited\",\"USAGES\":[]},{\"USAGE_ID\":\"3805\",\"USAGE\":\"Session
         3 \u2013 Biological Mechanisms\",\"USAGES\":[{\"USAGE_ID\":\"1934\",\"USAGE\":\"Metabolism
         & Excretion\",\"USAGES\":[]}]},{\"USAGE_ID\":\"44461\",\"USAGE\":\"Mouse Lung
@@ -166,12 +180,23 @@ interactions:
         Search\",\"USAGES\":[{\"USAGE_ID\":\"35160\",\"USAGE\":\"Database - Human
         Health - Jan 2022\",\"USAGES\":[{\"USAGE_ID\":\"35162\",\"USAGE\":\"WOS\",\"USAGES\":[]},{\"USAGE_ID\":\"35161\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Styrene\",\"PROJECT_ID\":27,\"USAGES\":[]},{\"PROJECT\":\"Styrene
         2020\",\"PROJECT_ID\":2969,\"USAGES\":[{\"USAGE_ID\":\"25528\",\"USAGE\":\"LitSearch:
-        July 2020\",\"USAGES\":[{\"USAGE_ID\":\"25529\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"25530\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Styrene
-        Oxide\",\"PROJECT_ID\":1406,\"USAGES\":[]}],\"tag_path_key\":[\"2|35\",\"2|27\",\"2|2969|25528|25530\",\"2|2969|25528|25529\",\"2|1406\",\"34|4066|35158|35160|35161\",\"34|4066|35158|35160|35162\",\"18|2190|4419\",\"18|2190|3805|1934\",\"18|2190|1937\",\"18|2190|44461|44462\",\"18|2190|44461|44463\"],\"firstAuthor\":\"Carlson\",\"AUTHORS\":\"Carlson,
-        GP; Mantick, NA; Powley, MW\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project\",\"category|project\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Journal
+        July 2020\",\"USAGES\":[{\"USAGE_ID\":\"25529\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"25530\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT
+        Evidence Map: Benzene\",\"PROJECT_ID\":4868,\"USAGES\":[{\"USAGE_ID\":\"45104\",\"USAGE\":\"Peer-Reviewed
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"45105\",\"USAGE\":\"Literature Search:
+        May 2024\",\"USAGES\":[{\"USAGE_ID\":\"45112\",\"USAGE\":\"Scopus\",\"USAGES\":[]},{\"USAGE_ID\":\"45114\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"45110\",\"USAGE\":\"PubMed\",\"USAGES\":[]},{\"USAGE_ID\":\"45109\",\"USAGE\":\"ProQuest\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Styrene
+        Oxide\",\"PROJECT_ID\":1406,\"USAGES\":[]},{\"PROJECT\":\"OPPT Evidence Map:
+        Styrene\",\"PROJECT_ID\":4869,\"USAGES\":[{\"USAGE_ID\":\"45473\",\"USAGE\":\"Peer-Reviewed
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"45474\",\"USAGE\":\"Initial Search:
+        May 2024\",\"USAGES\":[{\"USAGE_ID\":\"45479\",\"USAGE\":\"PubMed\",\"USAGES\":[]},{\"USAGE_ID\":\"45478\",\"USAGE\":\"ProQuest\",\"USAGES\":[]},{\"USAGE_ID\":\"45481\",\"USAGE\":\"Scopus\",\"USAGES\":[]},{\"USAGE_ID\":\"45483\",\"USAGE\":\"WoS\",\"USAGES\":[]}]}]}]}],\"tag_path_key\":[\"2|35\",\"2|27\",\"2|2969|25528|25530\",\"2|2969|25528|25529\",\"2|1406\",\"34|4066|35158|35160|35161\",\"34|4066|35158|35160|35162\",\"32|4868|45104|45105|45109\",\"32|4868|45104|45105|45110\",\"32|4868|45104|45105|45112\",\"32|4868|45104|45105|45114\",\"32|4869|45473|45474|45478\",\"32|4869|45473|45474|45479\",\"32|4869|45473|45474|45481\",\"32|4869|45473|45474|45483\",\"18|2190|4419\",\"18|2190|3805|1934\",\"18|2190|1937\",\"18|2190|44461|44462\",\"18|2190|44461|44463\"],\"firstAuthor\":\"Carlson\",\"AUTHORS\":\"Carlson,
+        GP; Mantick, NA; Powley, MW\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project\",\"category|project\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Journal
         of Toxicology and Environmental Health, Part A: Current Issues A59:591-595.\",\"wosid\":\"WOS:000086739100001\",\"TITLE\":\"Metabolism
-        of styrene by human liver and lung\",\"modified\":\"2023-10-13T14:04:15Z\",\"PMID\":10839494,\"journalTitle\":\"Journal
-        of Toxicology and Environmental Health, Part A: Current Issues\",\"_version_\":1779649343662325761},{\"REFERENCE_ID\":50037,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50037\",\"hasPDF\":false,\"YEAR\":1999,\"allAuthors\":[\"Filser,
+        of styrene by human liver and lung\",\"modified\":\"2024-05-21T17:35:07Z\",\"PMID\":10839494,\"keywords\":[\"Carcinogens;
+        Epoxy Compounds; 339NCG44TV; Styrene; 44LJ2U959V; styrene oxide; 9QH06NGT6O;
+        Benzene; J64922108F; Index Medicus; Middle Aged; Chromatography, High Pressure
+        Liquid; Phenol -- metabolism; Carcinogens -- metabolism; Epoxy Compounds --
+        metabolism; Animals; Aged, 80 and over; Benzene -- metabolism; Lung -- metabolism;
+        Styrene -- metabolism; Microsomes, Liver -- metabolism\"],\"journalTitle\":\"Journal
+        of Toxicology and Environmental Health, Part A: Current Issues\",\"_version_\":1799684523912331265},{\"REFERENCE_ID\":50037,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50037\",\"hasPDF\":false,\"YEAR\":1999,\"allAuthors\":[\"Filser,
         JG; Oberste-Freilinghaus, HR; Dhawan-Robl, M; et al\"],\"HEROID\":50037,\"id\":\"50037\",\"project_key\":[27],\"referencetype\":[\"technical
         report\"],\"type\":\"reference\",\"sortYear\":1999,\"tag_path_text\":[\"IRIS|Styrene\"],\"category_key\":[2],\"PROJECTS\":[{\"PROJECT\":\"Styrene\",\"PROJECT_ID\":27,\"USAGES\":[]}],\"tag_path_key\":[\"2|27\"],\"firstAuthor\":\"Filser\",\"AUTHORS\":\"Filser,
         JG; Oberste-Freilinghaus, HR; Dhawan-Robl, M; et al\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project\"],\"isPeerReviewed\":false,\"code\":\"re\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"\",\"TITLE\":\"A
@@ -402,47 +427,7 @@ interactions:
         Repair 285:117-124.\",\"wosid\":\"WOS:A1993KF72100017\",\"TITLE\":\"The genotoxicity
         of lead\",\"modified\":\"2022-06-06T22:16:54Z\",\"PMID\":\"\",\"keywords\":[\"LEAD;
         CHROMOSOMAL ABERRATIONS; SISTER-CHROMATID EXCHANGE\"],\"journalTitle\":\"DNA
-        Repair\",\"_version_\":1734925420642435072},{\"REFERENCE_ID\":50098,\"ABSTRACT\":\"We
-        have studied the erythrocytes from 24 workers occupationally exposed to inorganic
-        lead, one asymptomatic lead worker showing exceptionally high exposure, and
-        eight control subjects (blood lead 300-750, 1800, and < 100 micrograms/L,
-        respectively). High performance protein chromatography, electrophoresis, and
-        trace metal analysis have identified a low M.Wt., copper, and zinc-containing
-        protein in all cases. This protein (designated protein M) bound lead on in
-        vitro incubation with buffered lead nitrate. Purified samples of protein M
-        were found to show characteristics consistent with metallothionein (M.Wt.
-        approximately 6500, low pI, and greater UV absorbance at 254 nm). Amino acid
-        analysis found a composition of 33% cysteine but no aromatic amino acids.
-        The highly exposed subject showed endogenous lead binding to protein M, which
-        on further purification by ion exchange was found to be associated with one
-        particular constituent (protein M5). Protein M5 was present in much lower
-        quantities in control subjects. These findings suggest the existence of a
-        metallothionein-like protein in erythrocytes which binds lead, sequestering
-        it into a nonbioavailable form and hence protects against lead toxicity.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50098\",\"hasPDF\":true,\"YEAR\":1993,\"allAuthors\":[\"Church,
-        HJ; Day, JP; Braithwaite, RA; Brown, SS\"],\"HEROID\":50098,\"id\":\"50098\",\"project_key\":[1570,1588,1678,2968],\"referencetype\":[\"journal
-        article\"],\"type\":\"reference\",\"doi\":\"10.1016/0162-0134(93)80048-e\",\"sortYear\":1993,\"tag_path_text\":[\"NAAQS|ISA-Lead
-        (2013 Final Project Page)|Considered\",\"NAAQS|ISA-Lead (2013 Final Project
-        Page)|Cited|1st Draft\",\"NAAQS|ISA-Lead (2013 Final Project Page)|Cited|2nd
-        Draft\",\"NAAQS|ISA-Lead (2013 Final Project Page)|Cited|3rd Draft\",\"NAAQS|ISA-Lead
-        (2013 Final Project Page)|Cited|Final\",\"NAAQS|ISA-Lead (2013 Final Project
-        Page)|Health Effects\",\"NAAQS|Litsearch-Lead ISA 2020|2013 Lead ISA Refs|Chapter
-        4\",\"NAAQS|Litsearch-Lead ISA 2020|Citation Mapping (July 2020)|Chapter 4|Top
-        10%\",\"NAAQS|Litsearch-Lead ISA 2020|Classification|Health|Tox\",\"NAAQS|Litsearch-Lead
-        ISA 2020|SWIFT-AS Seeds\",\"NAAQS|x_Pb 2nd ERD\",\"NAAQS|x_Pb Cited 2006\"],\"category_key\":[1],\"PROJECTS\":[{\"PROJECT\":\"ISA-Lead
-        (2013 Final Project Page)\",\"PROJECT_ID\":1678,\"USAGES\":[{\"USAGE_ID\":\"1704\",\"USAGE\":\"Cited\",\"USAGES\":[{\"USAGE_ID\":\"198\",\"USAGE\":\"1st
-        Draft\",\"USAGES\":[]},{\"USAGE_ID\":\"2755\",\"USAGE\":\"Final\",\"USAGES\":[]},{\"USAGE_ID\":\"1980\",\"USAGE\":\"3rd
-        Draft\",\"USAGES\":[]},{\"USAGE_ID\":\"290\",\"USAGE\":\"2nd Draft\",\"USAGES\":[]}]},{\"USAGE_ID\":\"294\",\"USAGE\":\"Health
-        Effects\",\"USAGES\":[]},{\"USAGE_ID\":\"197\",\"USAGE\":\"Considered\",\"USAGES\":[]}]},{\"PROJECT\":\"x_Pb
-        2nd ERD\",\"PROJECT_ID\":1588,\"USAGES\":[]},{\"PROJECT\":\"x_Pb Cited 2006\",\"PROJECT_ID\":1570,\"USAGES\":[]},{\"PROJECT\":\"Litsearch-Lead
-        ISA 2020\",\"PROJECT_ID\":2968,\"USAGES\":[{\"USAGE_ID\":\"29692\",\"USAGE\":\"Classification\",\"USAGES\":[{\"USAGE_ID\":\"29693\",\"USAGE\":\"Health\",\"USAGES\":[{\"USAGE_ID\":\"29695\",\"USAGE\":\"Tox\",\"USAGES\":[]}]}]},{\"USAGE_ID\":\"25531\",\"USAGE\":\"Citation
-        Mapping (July 2020)\",\"USAGES\":[{\"USAGE_ID\":\"25534\",\"USAGE\":\"Chapter
-        4\",\"USAGES\":[{\"USAGE_ID\":\"25658\",\"USAGE\":\"Top 10%\",\"USAGES\":[]}]}]},{\"USAGE_ID\":\"25302\",\"USAGE\":\"2013
-        Lead ISA Refs\",\"USAGES\":[{\"USAGE_ID\":\"25305\",\"USAGE\":\"Chapter 4\",\"USAGES\":[]}]},{\"USAGE_ID\":\"25868\",\"USAGE\":\"SWIFT-AS
-        Seeds\",\"USAGES\":[]}]}],\"tag_path_key\":[\"1|1678|197\",\"1|1678|1704|198\",\"1|1678|1704|290\",\"1|1678|1704|1980\",\"1|1678|1704|2755\",\"1|1678|294\",\"1|2968|25302|25305\",\"1|2968|25531|25534|25658\",\"1|2968|29692|29693|29695\",\"1|2968|25868\",\"1|1588\",\"1|1570\"],\"firstAuthor\":\"Church\",\"AUTHORS\":\"Church,
-        HJ; Day, JP; Braithwaite, RA; Brown, SS\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage\",\"category|project\",\"category|project\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Journal
-        of Inorganic Biochemistry 49:55-68.\",\"wosid\":\"WOS:A1993KG88300005\",\"TITLE\":\"Binding
-        of lead to a metallothionein-like protein in human erythrocytes\",\"modified\":\"2022-06-06T22:16:54Z\",\"PMID\":8433087,\"journalTitle\":\"Journal
-        of Inorganic Biochemistry\",\"_version_\":1734925420646629376},{\"REFERENCE_ID\":50099,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50099\",\"hasPDF\":false,\"YEAR\":1993,\"allAuthors\":[\"Ruiz,
+        Repair\",\"_version_\":1734925420642435072},{\"REFERENCE_ID\":50099,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50099\",\"hasPDF\":false,\"YEAR\":1993,\"allAuthors\":[\"Ruiz,
         BL; Frutos, G; Pedrero, PS; Martin, JP\"],\"HEROID\":50099,\"id\":\"50099\",\"referencetype\":[\"journal
         article\"],\"type\":\"reference\",\"sortYear\":1993,\"PROJECTS\":[],\"firstAuthor\":\"Ruiz\",\"AUTHORS\":\"Ruiz,
         BL; Frutos, G; Pedrero, PS; Martin, JP\",\"noPDFAvailable\":false,\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"\",\"TITLE\":\"Use
@@ -525,33 +510,7 @@ interactions:
         using steel plant granulated slag\",\"modified\":\"2022-06-09T06:13:14Z\",\"PMID\":\"\",\"keywords\":[\"MERCURY;
         COPPER; LEAD; ZINC; STEEL SLAG; ELECTROCHEMICAL REDUCTION\"],\"journalTitle\":\"Journal
         of Environmental Science and Health, Part A: Toxic/Hazardous Substances &
-        Environmental Engineering\",\"_version_\":1735136582904578049},{\"bookTitle\":\"Butadiene
-        and styrene: Assessment of health hazards\",\"REFERENCE_ID\":50057,\"ABSTRACT\":\"One
-        female and one male volunteer were exposed to styrene vapour (2 h; 50 W) at
-        four different concentrations (26, 77, 201 and 386 ppm). Styrene levels were
-        measured in arterialized capillary blood during and after exposure by head-space
-        gas chromatography, and the levels of mandelic acid in urine were analysed
-        by high-performance liquid chromatography. Non-linear relationships between
-        the level of exposure to styrene and the concentration of styrene in arterial
-        blood and 0-5 h cumulative excretion of mandelic acid indicated metabolic
-        saturation. A physiologically based pharmacokinetic model was used to estimate
-        the maximum metabolic rate (Vmax) of styrene from data on blood styrene. According
-        to the model, the Vmax is 2.9 mmol/h, and metabolic saturation occurs at concentrations
-        of 100-200 ppm styrene, depending on the level of physical activity. To our
-        knowledge, this is the first time that dose-dependent kinetics of styrene
-        has been shown in humans.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50057\",\"hasPDF\":true,\"isbn\":\"9789283221272\",\"YEAR\":1993,\"allAuthors\":[\"L\xF6f,
-        A; Johanson, G\",\"Sorsa, M; Peltonen, K; Vainio, H; Hemminki, K\"],\"HEROID\":50057,\"id\":\"50057\",\"project_key\":[27,1770,2714,2969],\"referencetype\":[\"book/book
-        chapter\"],\"type\":\"reference\",\"sortYear\":1993,\"tag_path_text\":[\"IRIS|Styrene\",\"IRIS|Styrene
-        2020|LitSearch: July 2020|PubMed\",\"IRIS|Styrene 2020|LitSearch: July 2020|WoS\",\"Other|PBPK
-        Knowledgebase (Lu 2016)\",\"Other|PBPK Models\"],\"category_key\":[2,18],\"PROJECTS\":[{\"PROJECT\":\"Styrene\",\"PROJECT_ID\":27,\"USAGES\":[]},{\"PROJECT\":\"PBPK
-        Models\",\"PROJECT_ID\":1770,\"USAGES\":[]},{\"PROJECT\":\"Styrene 2020\",\"PROJECT_ID\":2969,\"USAGES\":[{\"USAGE_ID\":\"25528\",\"USAGE\":\"LitSearch:
-        July 2020\",\"USAGES\":[{\"USAGE_ID\":\"25529\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"25530\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}]},{\"PROJECT\":\"PBPK
-        Knowledgebase (Lu 2016)\",\"PROJECT_ID\":2714,\"USAGES\":[]}],\"tag_path_key\":[\"2|27\",\"2|2969|25528|25530\",\"2|2969|25528|25529\",\"18|2714\",\"18|1770\"],\"firstAuthor\":\"L\xF6f\",\"AUTHORS\":\"L\xF6f,
-        A; Johanson, G\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project\",\"category|project\"],\"isPeerReviewed\":false,\"code\":\"bk\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"In
-        Sorsa, M; Peltonen, K; Vainio, H; Hemminki, K (Eds.), Butadiene and styrene:
-        Assessment of health hazards (pp. 89-99). Lyon, France: International Agency
-        for Research on Cancer.\",\"wosid\":\"MEDLINE:8070890\",\"TITLE\":\"Dose-dependent
-        kinetics of inhaled styrene in man\",\"modified\":\"2022-09-01T13:58:21Z\",\"PMID\":8070890,\"_version_\":1742775991412981760},{\"REFERENCE_ID\":50087,\"ABSTRACT\":\"During
+        Environmental Engineering\",\"_version_\":1735136582904578049},{\"REFERENCE_ID\":50087,\"ABSTRACT\":\"During
         a comprehensive total diet study extending from 1985 to 1988, foods were collected
         in 6 Canadian cities (in one of them, a pilot study was conducted twice).
         For each of the 7 collections, foods were processed into 112 composites (105
@@ -649,7 +608,85 @@ interactions:
         Properties (1970- )</kw>; <?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?><kw>Toxicology-Foods</kw>;
         <?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?><kw>Pediatrics</kw>; <?xml
         version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?><kw>Hominidae</kw>\"],\"journalTitle\":\"Journal
-        of AOAC International\",\"_version_\":1743798412238651393},{\"REFERENCE_ID\":50002,\"ABSTRACT\":\"Da
+        of AOAC International\",\"_version_\":1743798412238651393},{\"bookTitle\":\"Butadiene
+        and styrene: Assessment of health hazards\",\"REFERENCE_ID\":50057,\"ABSTRACT\":\"One
+        female and one male volunteer were exposed to styrene vapour (2 h; 50 W) at
+        four different concentrations (26, 77, 201 and 386 ppm). Styrene levels were
+        measured in arterialized capillary blood during and after exposure by head-space
+        gas chromatography, and the levels of mandelic acid in urine were analysed
+        by high-performance liquid chromatography. Non-linear relationships between
+        the level of exposure to styrene and the concentration of styrene in arterial
+        blood and 0-5 h cumulative excretion of mandelic acid indicated metabolic
+        saturation. A physiologically based pharmacokinetic model was used to estimate
+        the maximum metabolic rate (Vmax) of styrene from data on blood styrene. According
+        to the model, the Vmax is 2.9 mmol/h, and metabolic saturation occurs at concentrations
+        of 100-200 ppm styrene, depending on the level of physical activity. To our
+        knowledge, this is the first time that dose-dependent kinetics of styrene
+        has been shown in humans.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50057\",\"hasPDF\":true,\"isbn\":\"9789283221272\",\"YEAR\":1993,\"allAuthors\":[\"L\xF6f,
+        A; Johanson, G\",\"Sorsa, M; Peltonen, K; Vainio, H; Hemminki, K\"],\"HEROID\":50057,\"id\":\"50057\",\"project_key\":[27,1770,2714,2969,4869],\"referencetype\":[\"book/book
+        chapter\"],\"type\":\"reference\",\"pdfURL\":\"https://www.scopus.com/inward/record.uri?eid=2-s2.0-0027828160&partnerid=40&md5=29d6a572097a6699f57923ae01f8f2df\",\"sortYear\":1993,\"tag_path_text\":[\"IRIS|Styrene\",\"IRIS|Styrene
+        2020|LitSearch: July 2020|PubMed\",\"IRIS|Styrene 2020|LitSearch: July 2020|WoS\",\"OPPT
+        REs|OPPT Evidence Map: Styrene|Peer-Reviewed Literature|Initial Search: May
+        2024|PubMed\",\"OPPT REs|OPPT Evidence Map: Styrene|Peer-Reviewed Literature|Initial
+        Search: May 2024|Scopus\",\"Other|PBPK Knowledgebase (Lu 2016)\",\"Other|PBPK
+        Models\"],\"category_key\":[2,18,32],\"PROJECTS\":[{\"PROJECT\":\"Styrene\",\"PROJECT_ID\":27,\"USAGES\":[]},{\"PROJECT\":\"PBPK
+        Models\",\"PROJECT_ID\":1770,\"USAGES\":[]},{\"PROJECT\":\"Styrene 2020\",\"PROJECT_ID\":2969,\"USAGES\":[{\"USAGE_ID\":\"25528\",\"USAGE\":\"LitSearch:
+        July 2020\",\"USAGES\":[{\"USAGE_ID\":\"25529\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"25530\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT
+        Evidence Map: Styrene\",\"PROJECT_ID\":4869,\"USAGES\":[{\"USAGE_ID\":\"45473\",\"USAGE\":\"Peer-Reviewed
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"45474\",\"USAGE\":\"Initial Search:
+        May 2024\",\"USAGES\":[{\"USAGE_ID\":\"45479\",\"USAGE\":\"PubMed\",\"USAGES\":[]},{\"USAGE_ID\":\"45481\",\"USAGE\":\"Scopus\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"PBPK
+        Knowledgebase (Lu 2016)\",\"PROJECT_ID\":2714,\"USAGES\":[]}],\"tag_path_key\":[\"2|27\",\"2|2969|25528|25530\",\"2|2969|25528|25529\",\"32|4869|45473|45474|45479\",\"32|4869|45473|45474|45481\",\"18|2714\",\"18|1770\"],\"firstAuthor\":\"L\xF6f\",\"AUTHORS\":\"L\xF6f,
+        A; Johanson, G\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project\",\"category|project\"],\"isPeerReviewed\":true,\"code\":\"bk\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"In
+        Sorsa, M; Peltonen, K; Vainio, H; Hemminki, K (Eds.), Butadiene and styrene:
+        Assessment of health hazards (pp. 89-99). Lyon, France: International Agency
+        for Research on Cancer.\",\"wosid\":\"MEDLINE:8070890\",\"TITLE\":\"Dose-dependent
+        kinetics of inhaled styrene in man\",\"modified\":\"2024-06-26T10:19:49Z\",\"PMID\":8070890,\"journalTitle\":\"IARC
+        Scientific Publications\",\"_version_\":1802918630499811328},{\"REFERENCE_ID\":50098,\"ABSTRACT\":\"We
+        have studied the erythrocytes from 24 workers occupationally exposed to inorganic
+        lead, one asymptomatic lead worker showing exceptionally high exposure, and
+        eight control subjects (blood lead 300-750, 1800, and < 100 micrograms/L,
+        respectively). High performance protein chromatography, electrophoresis, and
+        trace metal analysis have identified a low M.Wt., copper, and zinc-containing
+        protein in all cases. This protein (designated protein M) bound lead on in
+        vitro incubation with buffered lead nitrate. Purified samples of protein M
+        were found to show characteristics consistent with metallothionein (M.Wt.
+        approximately 6500, low pI, and greater UV absorbance at 254 nm). Amino acid
+        analysis found a composition of 33% cysteine but no aromatic amino acids.
+        The highly exposed subject showed endogenous lead binding to protein M, which
+        on further purification by ion exchange was found to be associated with one
+        particular constituent (protein M5). Protein M5 was present in much lower
+        quantities in control subjects. These findings suggest the existence of a
+        metallothionein-like protein in erythrocytes which binds lead, sequestering
+        it into a nonbioavailable form and hence protects against lead toxicity.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50098\",\"hasPDF\":true,\"YEAR\":1993,\"allAuthors\":[\"Church,
+        HJ; Day, JP; Braithwaite, RA; Brown, SS\"],\"HEROID\":50098,\"id\":\"50098\",\"project_key\":[1570,1588,1678,2367,2968],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"doi\":\"10.1016/0162-0134(93)80048-e\",\"sortYear\":1993,\"tag_path_text\":[\"IRIS|Nitrate/Nitrite|Supplemental
+        LitSearch Update 1900-2015|New to project\",\"IRIS|Nitrate/Nitrite|Supplemental
+        LitSearch Update 1900-2015|PubMed\",\"IRIS|Nitrate/Nitrite|Supplemental LitSearch
+        Update 1900-2015|WoS\",\"NAAQS|ISA-Lead (2013 Final Project Page)|Considered\",\"NAAQS|ISA-Lead
+        (2013 Final Project Page)|Cited|1st Draft\",\"NAAQS|ISA-Lead (2013 Final Project
+        Page)|Cited|2nd Draft\",\"NAAQS|ISA-Lead (2013 Final Project Page)|Cited|3rd
+        Draft\",\"NAAQS|ISA-Lead (2013 Final Project Page)|Cited|Final\",\"NAAQS|ISA-Lead
+        (2013 Final Project Page)|Health Effects\",\"NAAQS|Litsearch-Lead ISA 2020|2013
+        Lead ISA Refs|Chapter 4\",\"NAAQS|Litsearch-Lead ISA 2020|Citation Mapping
+        (July 2020)|Chapter 4|Top 10%\",\"NAAQS|Litsearch-Lead ISA 2020|Classification|Health|Tox\",\"NAAQS|Litsearch-Lead
+        ISA 2020|SWIFT-AS Seeds\",\"NAAQS|x_Pb 2nd ERD\",\"NAAQS|x_Pb Cited 2006\"],\"category_key\":[1,2],\"PROJECTS\":[{\"PROJECT\":\"ISA-Lead
+        (2013 Final Project Page)\",\"PROJECT_ID\":1678,\"USAGES\":[{\"USAGE_ID\":\"1704\",\"USAGE\":\"Cited\",\"USAGES\":[{\"USAGE_ID\":\"198\",\"USAGE\":\"1st
+        Draft\",\"USAGES\":[]},{\"USAGE_ID\":\"2755\",\"USAGE\":\"Final\",\"USAGES\":[]},{\"USAGE_ID\":\"1980\",\"USAGE\":\"3rd
+        Draft\",\"USAGES\":[]},{\"USAGE_ID\":\"290\",\"USAGE\":\"2nd Draft\",\"USAGES\":[]}]},{\"USAGE_ID\":\"294\",\"USAGE\":\"Health
+        Effects\",\"USAGES\":[]},{\"USAGE_ID\":\"197\",\"USAGE\":\"Considered\",\"USAGES\":[]}]},{\"PROJECT\":\"x_Pb
+        2nd ERD\",\"PROJECT_ID\":1588,\"USAGES\":[]},{\"PROJECT\":\"Nitrate/Nitrite\",\"PROJECT_ID\":2367,\"USAGES\":[{\"USAGE_ID\":\"45658\",\"USAGE\":\"Supplemental
+        LitSearch Update 1600-2015\",\"USAGES\":[{\"USAGE_ID\":\"45722\",\"USAGE\":\"New
+        to project\",\"USAGES\":[]},{\"USAGE_ID\":\"45660\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"45659\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}]},{\"PROJECT\":\"x_Pb
+        Cited 2006\",\"PROJECT_ID\":1570,\"USAGES\":[]},{\"PROJECT\":\"Litsearch-Lead
+        ISA 2020\",\"PROJECT_ID\":2968,\"USAGES\":[{\"USAGE_ID\":\"29692\",\"USAGE\":\"Classification\",\"USAGES\":[{\"USAGE_ID\":\"29693\",\"USAGE\":\"Health\",\"USAGES\":[{\"USAGE_ID\":\"29695\",\"USAGE\":\"Tox\",\"USAGES\":[]}]}]},{\"USAGE_ID\":\"25531\",\"USAGE\":\"Citation
+        Mapping (July 2020)\",\"USAGES\":[{\"USAGE_ID\":\"25534\",\"USAGE\":\"Chapter
+        4\",\"USAGES\":[{\"USAGE_ID\":\"25658\",\"USAGE\":\"Top 10%\",\"USAGES\":[]}]}]},{\"USAGE_ID\":\"25302\",\"USAGE\":\"2013
+        Lead ISA Refs\",\"USAGES\":[{\"USAGE_ID\":\"25305\",\"USAGE\":\"Chapter 4\",\"USAGES\":[]}]},{\"USAGE_ID\":\"25868\",\"USAGE\":\"SWIFT-AS
+        Seeds\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|2367|45658|45722\",\"2|2367|45658|45659\",\"2|2367|45658|45660\",\"1|1678|197\",\"1|1678|1704|198\",\"1|1678|1704|290\",\"1|1678|1704|1980\",\"1|1678|1704|2755\",\"1|1678|294\",\"1|2968|25302|25305\",\"1|2968|25531|25534|25658\",\"1|2968|29692|29693|29695\",\"1|2968|25868\",\"1|1588\",\"1|1570\"],\"firstAuthor\":\"Church\",\"AUTHORS\":\"Church,
+        HJ; Day, JP; Braithwaite, RA; Brown, SS\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage\",\"category|project\",\"category|project\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Journal
+        of Inorganic Biochemistry 49:55-68.\",\"wosid\":\"WOS:A1993KG88300005\",\"TITLE\":\"Binding
+        of lead to a metallothionein-like protein in human erythrocytes\",\"modified\":\"2024-06-26T17:04:19Z\",\"PMID\":8433087,\"journalTitle\":\"Journal
+        of Inorganic Biochemistry\",\"_version_\":1802944083984908288},{\"REFERENCE_ID\":50002,\"ABSTRACT\":\"Da
         MEDLINE: Data on Cd sources in food are presented and the effects are discussed
         of the raised environmental level of Cd concentration in some foods. Information
         is also presented on normal dietary intakes of this element and how these
@@ -690,28 +727,7 @@ interactions:
         JL; Turcotte, F; Lefebvre, M; Therrien, F; Weber, JP\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Science
         of the Total Environment 127:167-172.\",\"TITLE\":\"Blood and urinary cadmium
         levels in Inuit living in Kuujjuaq, Canada\",\"modified\":\"2022-06-06T22:26:26Z\",\"PMID\":1362287,\"journalTitle\":\"Science
-        of the Total Environment\",\"_version_\":1734926021248942080},{\"REFERENCE_ID\":50031,\"ABSTRACT\":\"Cholesterol
-        distribution in tumoral tissues and lipid composition in the plasma compartment
-        were determined in patients affected by different histologic types of lung
-        cancer. The results showed that tumoral lung tissues contained 2-fold more
-        total cholesterol and 3.5-fold more esterified cholesterol than normal lung
-        tissues. In the patients the alterations in intracellular cholesterol were
-        also associated with peculiar changes in cholesterol distribution in the plasma
-        compartment. Serum high-density lipoprotein (HDL) cholesterol levels were
-        markedly lower in than in controls. No significant changes in other lipid
-        parameters were observed in these patients. We suggest that the reduced levels
-        of serum HDL cholesterol observed in patients with lung tumors may be a consequence
-        of the disease, probably mediated by the greater utilization of cholesterol
-        for new membrane biogenesis and by the accumulation of esterified cholesterol
-        in tumoral tissues.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50031\",\"hasPDF\":false,\"YEAR\":1992,\"allAuthors\":[\"Dessi,
-        S; Batetta, B; Pulisci, D; Spano, O; Cherchi, R; Lanfranco, G; Tessitore,
-        L; Costelli, P; Baccino, FM; Anchisi, C; Pani, P\"],\"HEROID\":50031,\"id\":\"50031\",\"referencetype\":[\"journal
-        article\"],\"type\":\"reference\",\"sortYear\":1992,\"PROJECTS\":[],\"firstAuthor\":\"Dessi\",\"AUTHORS\":\"Dessi,
-        S; Batetta, B; Pulisci, D; Spano, O; Cherchi, R; Lanfranco, G; Tessitore,
-        L; Costelli, P; Baccino, FM; Anchisi, C; Pani, P\",\"noPDFAvailable\":false,\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Oncology:
-        International Journal of Cancer Research and Treatment 49:436-441.\",\"TITLE\":\"Altered
-        pattern of lipid metabolism in patients with lung cancer\",\"modified\":\"2022-06-06T23:25:23Z\",\"PMID\":1465281,\"journalTitle\":\"Oncology:
-        International Journal of Cancer Research and Treatment\",\"_version_\":1734929730404089857},{\"REFERENCE_ID\":50010,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50010\",\"hasPDF\":false,\"YEAR\":1992,\"allAuthors\":[\"Schanne,
+        of the Total Environment\",\"_version_\":1734926021248942080},{\"REFERENCE_ID\":50010,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50010\",\"hasPDF\":false,\"YEAR\":1992,\"allAuthors\":[\"Schanne,
         FAX; Gupta, RK; Rosen, JF\"],\"HEROID\":50010,\"id\":\"50010\",\"project_key\":[1570,2968],\"referencetype\":[\"journal
         article\"],\"type\":\"reference\",\"doi\":\"10.1016/0925-4439(92)90067-w\",\"sortYear\":1992,\"tag_path_text\":[\"NAAQS|Litsearch-Lead
         ISA 2020|Citation Mapping (July 2020)|Chapter 4|Top 10%\",\"NAAQS|Litsearch-Lead
@@ -725,65 +741,7 @@ interactions:
         inhibits 1,25-dihydroxyvitamin D-3 regulation of calcium metabolism in osteoblastic
         osteosarcoma cells (ROS 17/28)\",\"modified\":\"2022-06-06T22:17:25Z\",\"PMID\":\"\",\"keywords\":[\"LEAD;
         CALCIUM; 1,25-DIHYDROXYVITAMIN-D-3; NMR; (ROS-17/2.8 CELL)\"],\"journalTitle\":\"Biochimica
-        et Biophysica Acta\",\"_version_\":1734925453119979520},{\"REFERENCE_ID\":50011,\"ABSTRACT\":\"Tumors
-        were induced in eastern oysters (Crassostrea virginica) by a mixture of aromatic
-        hydrocarbons, an aromatic amine, polychlorinated biphenyls, chlorinated hydrocarbons,
-        a nitrosoamine and heavy metals. Kidney and enteric tumors developed in oysters
-        following exposure to a mixture containing 3,4-benzopyrene, 1,2-benzanthracene,
-        2-aminofluorene, N-nitrosodiethylamine, technical chlordane, Aroclors 1242
-        and 1254, p,p'-DDE, cadmium (CdCl2), chromium (K2CrO4) and lead (Pb(NO3)2).
-        The chemical concentrations added to a reference sediment from Long Island
-        Sound were 1 x and 10 x the measured level in sediment from Black Rock Harbor
-        (BRH), Bridgeport, Connecticut (normalized for total organic carbon and acid
-        volatile sulfide content for organic and inorganic compounds, respectively).
-        2-Aminoflourene and N-nitrosodiethylamine, not measured in BRH sediment, were
-        both added at 0.6 and 6.0 mug/g dry sediment. A 3% prevalence of low-grade
-        renal and gastrointestinal tumors developed after 30 days in oysters fed water-column
-        suspended sediment particulate spiked with the mixture of chemicals. Disease
-        progression was most advanced in enteric adenomas. Both types are comparable
-        to those produced after 30 days in the same organs by chemically contaminated
-        Black Rock Harbor sediment. The action of chemical pollutants reported here
-        represents initial findings in a series of studies designed to test sediment
-        contaminants as causal factors for tumors in oysters.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50011\",\"hasPDF\":true,\"YEAR\":1992,\"allAuthors\":[\"Gardner,
-        GR; Pruell, RJ; Malcolm, AR\"],\"HEROID\":50011,\"id\":\"50011\",\"project_key\":[384,1976,2301,2806,2932,3066,3067],\"referencetype\":[\"journal
-        article\"],\"type\":\"reference\",\"doi\":\"10.1016/0141-1136(92)90083-x\",\"sortYear\":1992,\"tag_path_text\":[\"IRIS|PAH
-        RPF Approach|Database Searches (11/2013)|Toxline\",\"IRIS|PAH RPF Approach|Database
-        Searches (11/2013)|Merged reference set\",\"IRIS|PAH RPF Approach|Secondary
-        Refinement|Excluded\",\"IRIS|PAH RPF Approach|Literature Update 7/2017|Excluded|Previously
-        Covered\",\"IRIS|PAH RPF Approach|Literature Update 7/2017|Toxnet\",\"IRIS|PCBs|Litsearches|Remaining\",\"IRIS|PCBs|Litsearches|LitSearch
-        August 2015|Toxline\",\"IRIS|PCBs|Litsearches|LitSearch August 2015|WoS\",\"IRIS|PCBs|Considered\",\"IRIS|SIREN:
-        Benzopyrene|Literature Search: May 2019|ToxNet\",\"IRIS|SIREN: Benzopyrene|Literature
-        Search: May 2019|WoS\",\"Other|PCB Support Projects|PCB Commercial Mixture
-        Congener Profiles|Screened (TIAB in SWIFT)|Included studies (TIAB)\",\"Other|PCB
-        Support Projects|PCB Congener Coelutions|Air studies|Lit Search November 2020|WOS\",\"PPRTV|Anthracene
-        2021|Literature Search 5/13/2021|Scopus\",\"PPRTV|Pyrene 2021|Literature Search
-        May 2021|Scopus (July 2021)\",\"PPRTV|p,p'-DDE|Search (12/2015)|Toxline\",\"PPRTV|p,p'-DDE|Search
-        (12/2015)|WOS\"],\"category_key\":[2,18,21],\"PROJECTS\":[{\"PROJECT\":\"p,p'-DDE\",\"PROJECT_ID\":1976,\"USAGES\":[{\"USAGE_ID\":\"7804\",\"USAGE\":\"Search
-        (12/2015)\",\"USAGES\":[{\"USAGE_ID\":\"7807\",\"USAGE\":\"WOS\",\"USAGES\":[]},{\"USAGE_ID\":\"7806\",\"USAGE\":\"Toxline\",\"USAGES\":[]}]}]},{\"PROJECT\":\"PCB
-        Support Projects\",\"PROJECT_ID\":2932,\"USAGES\":[{\"USAGE_ID\":\"29304\",\"USAGE\":\"PCB
-        Congener Coelutions\",\"USAGES\":[{\"USAGE_ID\":\"29305\",\"USAGE\":\"Air
-        studies\",\"USAGES\":[{\"USAGE_ID\":\"29306\",\"USAGE\":\"Lit Search November
-        2020\",\"USAGES\":[{\"USAGE_ID\":\"29308\",\"USAGE\":\"WOS\",\"USAGES\":[]}]}]}]},{\"USAGE_ID\":\"29718\",\"USAGE\":\"PCB
-        Commercial Mixture Congener Profiles\",\"USAGES\":[{\"USAGE_ID\":\"29950\",\"USAGE\":\"Screened
-        (TIAB in SWIFT)\",\"USAGES\":[{\"USAGE_ID\":\"29951\",\"USAGE\":\"Included
-        studies (TIAB)\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"PAH RPF Approach\",\"PROJECT_ID\":2301,\"USAGES\":[{\"USAGE_ID\":\"4583\",\"USAGE\":\"Secondary
-        Refinement\",\"USAGES\":[{\"USAGE_ID\":\"4676\",\"USAGE\":\"Excluded\",\"USAGES\":[]}]},{\"USAGE_ID\":\"4421\",\"USAGE\":\"Database
-        Searches (11/2013)\",\"USAGES\":[{\"USAGE_ID\":\"4424\",\"USAGE\":\"Toxline\",\"USAGES\":[]},{\"USAGE_ID\":\"4426\",\"USAGE\":\"Merged
-        reference set\",\"USAGES\":[]}]},{\"USAGE_ID\":\"11730\",\"USAGE\":\"Literature
-        Update 7/2017\",\"USAGES\":[{\"USAGE_ID\":\"11734\",\"USAGE\":\"Excluded\",\"USAGES\":[{\"USAGE_ID\":\"11735\",\"USAGE\":\"Previously
-        Covered\",\"USAGES\":[]}]},{\"USAGE_ID\":\"11733\",\"USAGE\":\"Toxnet\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Anthracene
-        2021\",\"PROJECT_ID\":3067,\"USAGES\":[{\"USAGE_ID\":\"32908\",\"USAGE\":\"Literature
-        Search 5/13/2021\",\"USAGES\":[{\"USAGE_ID\":\"34074\",\"USAGE\":\"Scopus\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Pyrene
-        2021\",\"PROJECT_ID\":3066,\"USAGES\":[{\"USAGE_ID\":\"32835\",\"USAGE\":\"Literature
-        Search May 2021\",\"USAGES\":[{\"USAGE_ID\":\"34063\",\"USAGE\":\"Scopus (July
-        2021)\",\"USAGES\":[]}]}]},{\"PROJECT\":\"SIREN: Benzopyrene\",\"PROJECT_ID\":2806,\"USAGES\":[{\"USAGE_ID\":\"18728\",\"USAGE\":\"Literature
-        Search: May 2019\",\"USAGES\":[{\"USAGE_ID\":\"18730\",\"USAGE\":\"ToxNet\",\"USAGES\":[]},{\"USAGE_ID\":\"18731\",\"USAGE\":\"WoS\",\"USAGES\":[]}]}]},{\"PROJECT\":\"PCBs\",\"PROJECT_ID\":384,\"USAGES\":[{\"USAGE_ID\":\"7109\",\"USAGE\":\"Litsearches\",\"USAGES\":[{\"USAGE_ID\":\"7110\",\"USAGE\":\"LitSearch
-        August 2015\",\"USAGES\":[{\"USAGE_ID\":\"7112\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"7113\",\"USAGE\":\"Toxline\",\"USAGES\":[]}]},{\"USAGE_ID\":\"7127\",\"USAGE\":\"Remaining\",\"USAGES\":[]}]},{\"USAGE_ID\":\"4737\",\"USAGE\":\"Considered\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|2301|4421|4424\",\"2|2301|4421|4426\",\"2|2301|4583|4676\",\"2|2301|11730|11734|11735\",\"2|2301|11730|11733\",\"2|384|7109|7127\",\"2|384|7109|7110|7113\",\"2|384|7109|7110|7112\",\"2|384|4737\",\"2|2806|18728|18730\",\"2|2806|18728|18731\",\"18|2932|29718|29950|29951\",\"18|2932|29304|29305|29306|29308\",\"21|3067|32908|34074\",\"21|3066|32835|34063\",\"21|1976|7804|7806\",\"21|1976|7804|7807\"],\"firstAuthor\":\"Gardner\",\"AUTHORS\":\"Gardner,
-        GR; Pruell, RJ; Malcolm, AR\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Marine
-        Environmental Research 34:59-63.\",\"wosid\":\"WOS:A1992KB00500011\",\"TITLE\":\"Chemical
-        induction of tumors in oysters by a mixture of aromatic and chlorinated hydrocarbons,
-        amines and metals\",\"modified\":\"2022-06-06T22:17:25Z\",\"PMID\":\"\",\"journalTitle\":\"Marine
-        Environmental Research\",\"_version_\":1734925453121028096},{\"REFERENCE_ID\":50033,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50033\",\"hasPDF\":false,\"YEAR\":1992,\"allAuthors\":[\"Whincup,
+        et Biophysica Acta\",\"_version_\":1734925453119979520},{\"REFERENCE_ID\":50033,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50033\",\"hasPDF\":false,\"YEAR\":1992,\"allAuthors\":[\"Whincup,
         PH; Cook, DG; Papacosta, O\"],\"HEROID\":50033,\"id\":\"50033\",\"referencetype\":[\"journal
         article\"],\"type\":\"reference\",\"sortYear\":1992,\"PROJECTS\":[],\"firstAuthor\":\"Whincup\",\"AUTHORS\":\"Whincup,
         PH; Cook, DG; Papacosta, O\",\"noPDFAvailable\":false,\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"\",\"TITLE\":\"Do
@@ -1403,43 +1361,7 @@ interactions:
         article\"],\"type\":\"reference\",\"sortYear\":1992,\"PROJECTS\":[],\"firstAuthor\":\"Wasserman\",\"AUTHORS\":\"Wasserman,
         RC; Croft, CA; Brotherton, SE\",\"noPDFAvailable\":false,\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Pediatrics
         90:1001. [Erratum]\",\"TITLE\":\"Preschool vision screening in pediatric practice:
-        A study from the pediatric research in office settings (PROS) network\",\"modified\":\"2022-06-08T08:19:51Z\",\"PMID\":1579390,\"journalTitle\":\"Pediatrics\",\"_version_\":1735053952927399936},{\"REFERENCE_ID\":50061,\"ABSTRACT\":\"Contaminated
-        cattle feed was imported into the UK in 1989 and resulted in lead toxicity
-        in some animals. Rapid analyses for lead and several other possible contaminating
-        elements were required for feed and cattle tissues. Microwave dissolution
-        of samples with measurement by ICP-MS was used for multi-element determinations.
-        Lead was found to be the major contaminant. Lead levels in milk samples were
-        measured by several laboratories during the crisis and an analytical quality
-        assurance scheme was devised to monitor the quality of the data. The scheme
-        allowed any poorly performing laboratories to be rapidly identified and excluded
-        from the survey.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50061\",\"hasPDF\":false,\"YEAR\":1992,\"allAuthors\":[\"Crews,
-        HM; Baxter, MJ; Bigwood, T; Burrell, JA; Owen, LM; Robinson, C; Wright, C;
-        Massey, RC\"],\"HEROID\":50061,\"id\":\"50061\",\"project_key\":[30,2211,2489,2698],\"referencetype\":[\"journal
-        article\"],\"type\":\"reference\",\"doi\":\"10.1080/02652039209374083\",\"sortYear\":1992,\"tag_path_text\":[\"IRIS|Arsenic
-        (Inorganic)|1. Literature|PubMed\",\"IRIS|Arsenic Hazard ID|1. Initial Lit
-        Search|PubMed\",\"IRIS|Arsenic Hazard ID|Cluster|250, Prior Assessment\",\"IRIS|Arsenic
-        Hazard ID|Cluster|500, Prior Assessment\",\"IRIS|Arsenic Hazard ID|4. Considered
-        through Oct 2015\",\"IRIS|Arsenic Hazard ID|6. Cluster Filter through Oct
-        2015\",\"IRIS|Arsenic PECO|1. Literature|Pubmed\",\"IRIS|Arsenic, Legacy|PubMed\",\"IRIS|Arsenic,
-        Legacy|Types of Studies|Animal\",\"IRIS|Arsenic, Legacy|Types of Studies|Peer-Reviewed
-        Research\"],\"category_key\":[2],\"PROJECTS\":[{\"PROJECT\":\"Arsenic (Inorganic)\",\"PROJECT_ID\":2489,\"USAGES\":[{\"USAGE_ID\":\"7743\",\"USAGE\":\"1.
-        Literature\",\"USAGES\":[{\"USAGE_ID\":\"7748\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic
-        PECO\",\"PROJECT_ID\":2698,\"USAGES\":[{\"USAGE_ID\":\"15592\",\"USAGE\":\"1.
-        Literature\",\"USAGES\":[{\"USAGE_ID\":\"15593\",\"USAGE\":\"Pubmed\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic
-        Hazard ID\",\"PROJECT_ID\":2211,\"USAGES\":[{\"USAGE_ID\":\"2327\",\"USAGE\":\"4.
-        Considered through Oct 2015\",\"USAGES\":[]},{\"USAGE_ID\":\"2308\",\"USAGE\":\"1.
-        Initial Lit Search\",\"USAGES\":[{\"USAGE_ID\":\"2309\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]},{\"USAGE_ID\":\"2725\",\"USAGE\":\"6.
-        Cluster Filter through Oct 2015\",\"USAGES\":[]},{\"USAGE_ID\":\"2318\",\"USAGE\":\"Cluster\",\"USAGES\":[{\"USAGE_ID\":\"2317\",\"USAGE\":\"500,
-        Prior Assessment\",\"USAGES\":[]},{\"USAGE_ID\":\"2313\",\"USAGE\":\"250,
-        Prior Assessment\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic, Legacy\",\"PROJECT_ID\":30,\"USAGES\":[{\"USAGE_ID\":\"1774\",\"USAGE\":\"Types
-        of Studies\",\"USAGES\":[{\"USAGE_ID\":\"1776\",\"USAGE\":\"Animal\",\"USAGES\":[]},{\"USAGE_ID\":\"1858\",\"USAGE\":\"Peer-Reviewed
-        Research\",\"USAGES\":[]}]},{\"USAGE_ID\":\"1603\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|2489|7743|7748\",\"2|2211|2308|2309\",\"2|2211|2318|2313\",\"2|2211|2318|2317\",\"2|2211|2327\",\"2|2211|2725\",\"2|2698|15592|15593\",\"2|30|1603\",\"2|30|1774|1776\",\"2|30|1774|1858\"],\"firstAuthor\":\"Crews\",\"AUTHORS\":\"Crews,
-        HM; Baxter, MJ; Bigwood, T; Burrell, JA; Owen, LM; Robinson, C; Wright, C;
-        Massey, RC\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Food
-        Additives and Contaminants 9:365-378.\",\"TITLE\":\"Lead in feed incident--multi-element
-        analysis of cattle feed and tissues by inductively coupled plasma-mass spectrometry
-        and co-operative quality assurance scheme for lead analysis of milk\",\"modified\":\"2022-06-08T07:47:22Z\",\"PMID\":1337328,\"journalTitle\":\"Food
-        Additives and Contaminants\",\"_version_\":1735051908947640320},{\"REFERENCE_ID\":50063,\"ABSTRACT\":\"A
+        A study from the pediatric research in office settings (PROS) network\",\"modified\":\"2022-06-08T08:19:51Z\",\"PMID\":1579390,\"journalTitle\":\"Pediatrics\",\"_version_\":1735053952927399936},{\"REFERENCE_ID\":50063,\"ABSTRACT\":\"A
         method is presented by which blood lead concentrations can be estimated from
         environmental concentrations using a multipathway analysis. For the ingestion
         and dermal uptake pathways the incremental increase in blood lead concentration
@@ -1707,102 +1629,7 @@ interactions:
         J; Brekke, E; Englestad, F\",\"noPDFAvailable\":false,\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"\",\"TITLE\":\"Earthworms
         for toxicity testing; species differences in response towards cholinesterase
         inhibiting insecticides\",\"modified\":\"2022-09-13T19:23:40Z\",\"PMID\":\"\",\"journalTitle\":\"Soil
-        Biology and Biochemistry\",\"_version_\":1743883624379318272},{\"REFERENCE_ID\":50067,\"ABSTRACT\":\"The
-        use of metabolic patterns as a basis for the interpretation of toxic effects
-        of metal compounds was reviewed.  Most metals were transformed in mammalian
-        tissues by reduction/oxidation, conjugation, or alkylation/dealkylation processes.
-        \ It occurred in liver and other organs as well as in the gut lumen in which
-        case intestinal microflora were involved.  Studies with mercurials showed
-        that marked metabolic differences existed between organic (alkyl, aryl, and
-        alkoxyalkyl) and inorganic compounds.  The lower toxicity of the last two
-        types was due to their rapid conversion to inorganic mercury (7439976) which
-        was mediated by a cytosolic enzyme in the liver.  The reduction of hexavalent
-        chromium (7440473) to the trivalent form by both rat liver preparations and
-        human erythrocyte lysate through the microsomal system was discussed.  The
-        involvement of cytochrome-P450 dependent monoxygenases in the conversion of
-        tin (7440315) and lead (7439921) compounds was addressed.  The biotransformation
-        of arsenic (7440382) was strikingly different between species.  The metabolism
-        of inorganic and certain organic selenium (7782492) compounds in mammals was
-        based on common pathways.  Theoretically, the biotransformation of metal could
-        alter toxicity or kinetics, or both.  Conjugation with glutathione could activate
-        or reduce carcinogenic potential.  Examples of pollutant metals, their metabolism
-        and associated toxic effects included the demethylation of methyl-mercury
-        (22967926) and neurotoxicity, the immunotoxicity of tributyltin (688733) and
-        its neurotoxic effects, the limited biochemical reduction of pentavalent vanadium
-        (7440622) to the tetravalent form, and the unreduced vanadate causing toxicity,
-        and the reduction of pentavalent arsenic to the trivalent carcinogenic form.
-        \ The authors conclude that a better knowledge of metal biotransformation
-        can lead to significant advances in interpreting toxicological changes.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50067\",\"hasPDF\":true,\"YEAR\":1992,\"allAuthors\":[\"Manzo,
-        L; Costa, LG; Tonini, M; Minoia, C; Sabbioni, E\"],\"HEROID\":50067,\"id\":\"50067\",\"project_key\":[2005,2139,2208,2211,2233,2377,2489,2521,2589,2671,2698],\"referencetype\":[\"journal
-        article\"],\"type\":\"reference\",\"pdfURL\":\"http://linkinghub.elsevier.com/retrieve/pii/037842749290247h\",\"doi\":\"10.1016/0378-4274(92)90247-h\",\"sortYear\":1992,\"tag_path_text\":[\"IRIS|Arsenic
-        (Inorganic)|1. Literature|Toxline, TSCATS, & DART\",\"IRIS|Arsenic (Inorganic)|1.
-        Literature|Web of Science\",\"IRIS|Arsenic (Inorganic)|2. Initial Filter|Non
-        peer-reviewed\",\"IRIS|Arsenic (Inorganic)|5. Susceptibility Screening|Excluded/Not
-        relevant\",\"IRIS|Arsenic Gene Keyword Analysis|Gene|ARAF/ID: 369\",\"IRIS|Arsenic
-        Gene Keyword Analysis|Gene|MAPK1/ID: 5594\",\"IRIS|Arsenic Gene Keyword Analysis|Keywords|Cell
-        proliferation\",\"IRIS|Arsenic Gene Keyword Analysis|Keywords|Epigenetic\",\"IRIS|Arsenic
-        Gene Keyword Analysis|Keywords|Neoplasm\",\"IRIS|Arsenic Gene Keyword Analysis|Keywords|Reactive
-        oxygen species\",\"IRIS|Arsenic Hazard ID|1. Initial Lit Search|WOS\",\"IRIS|Arsenic
-        Hazard ID|1. Initial Lit Search|ToxNet\",\"IRIS|Arsenic Hazard ID|Cluster|250,
-        NCEA\",\"IRIS|Arsenic Hazard ID|Cluster|250, Prior Assessment\",\"IRIS|Arsenic
-        Hazard ID|Cluster|250, Health Effects\",\"IRIS|Arsenic Hazard ID|Cluster|500,
-        Health Effects\",\"IRIS|Arsenic Hazard ID|Cluster|1000, Prior Assessment\",\"IRIS|Arsenic
-        Hazard ID|3. Initial Filter through Oct 2015|Non Peer-Reviewed\",\"IRIS|Arsenic
-        Hazard ID|4. Considered through Oct 2015\",\"IRIS|Arsenic Hazard ID|6. Cluster
-        Filter through Oct 2015\",\"IRIS|Arsenic PECO|1. Literature|Toxline, TSCATS
-        & DART\",\"IRIS|Arsenic PECO|1. Literature|Web of Science\",\"IRIS|Arsenic
-        PECO|2. Initial Filter|Non-Peer Reviewed\",\"IRIS|Arsenic Susceptibility|1.
-        Susceptibility Literature Screening|Keyword Search\",\"IRIS|Arsenic Susceptibility|2.
-        Excluded|Not Relevant\",\"IRIS|Chromium VI|Considered|Potentially Relevant
-        Supplemental Material|Reviews\",\"IRIS|Chromium VI|Considered Studies\",\"IRIS|Inorganic
-        Mercury Salts|Litsearch Update 1999-2018|Exclusions|Conf Proc/Abstracts\",\"IRIS|Inorganic
-        Mercury Salts|Litsearch Update 1999-2018|Exclusions|Pre-1999\",\"IRIS|Methylmercury|ADME
-        Search: Jan 1990 - Nov 2018|WoS\",\"Other|Arsenic Citation Mapping Addition\",\"PPRTV|Dimethylmercury|Databases
-        Searched (4/2014)|WOS\",\"PPRTV|Thallium and compounds|Search (9/2017)|WOS\",\"PPRTV|Thallium
-        and compounds|Search (9/2017)|Toxline\"],\"category_key\":[2,18,21],\"PROJECTS\":[{\"PROJECT\":\"Thallium
-        and compounds\",\"PROJECT_ID\":2139,\"USAGES\":[{\"USAGE_ID\":\"13784\",\"USAGE\":\"Search
-        (9/2017)\",\"USAGES\":[{\"USAGE_ID\":\"13786\",\"USAGE\":\"WOS\",\"USAGES\":[]},{\"USAGE_ID\":\"13787\",\"USAGE\":\"Toxline\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Methylmercury\",\"PROJECT_ID\":2589,\"USAGES\":[{\"USAGE_ID\":\"17915\",\"USAGE\":\"ADME
-        Search: Jan 1990 - Nov 2018\",\"USAGES\":[{\"USAGE_ID\":\"17917\",\"USAGE\":\"WoS\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic
-        (Inorganic)\",\"PROJECT_ID\":2489,\"USAGES\":[{\"USAGE_ID\":\"7743\",\"USAGE\":\"1.
-        Literature\",\"USAGES\":[{\"USAGE_ID\":\"7750\",\"USAGE\":\"Web of Science\",\"USAGES\":[]},{\"USAGE_ID\":\"7749\",\"USAGE\":\"Toxline,
-        TSCATS, & DART\",\"USAGES\":[]}]},{\"USAGE_ID\":\"7744\",\"USAGE\":\"2. Initial
-        Filter\",\"USAGES\":[{\"USAGE_ID\":\"7754\",\"USAGE\":\"Non peer-reviewed\",\"USAGES\":[]}]},{\"USAGE_ID\":\"7747\",\"USAGE\":\"5.
-        Susceptibility Screening\",\"USAGES\":[{\"USAGE_ID\":\"7765\",\"USAGE\":\"Excluded/Not
-        relevant\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic PECO\",\"PROJECT_ID\":2698,\"USAGES\":[{\"USAGE_ID\":\"15592\",\"USAGE\":\"1.
-        Literature\",\"USAGES\":[{\"USAGE_ID\":\"15595\",\"USAGE\":\"Web of Science\",\"USAGES\":[]},{\"USAGE_ID\":\"15594\",\"USAGE\":\"Toxline,
-        TSCATS & DART\",\"USAGES\":[]}]},{\"USAGE_ID\":\"15598\",\"USAGE\":\"2. Initial
-        Filter\",\"USAGES\":[{\"USAGE_ID\":\"15599\",\"USAGE\":\"Non-Peer Reviewed\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Dimethylmercury\",\"PROJECT_ID\":2005,\"USAGES\":[{\"USAGE_ID\":\"5200\",\"USAGE\":\"Databases
-        Searched (4/2014)\",\"USAGES\":[{\"USAGE_ID\":\"5203\",\"USAGE\":\"WOS\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic
-        Gene Keyword Analysis\",\"PROJECT_ID\":2521,\"USAGES\":[{\"USAGE_ID\":\"9048\",\"USAGE\":\"Gene\",\"USAGES\":[{\"USAGE_ID\":\"9049\",\"USAGE\":\"ARAF/ID:
-        369\",\"USAGES\":[]},{\"USAGE_ID\":\"9075\",\"USAGE\":\"MAPK1/ID: 5594\",\"USAGES\":[]}]},{\"USAGE_ID\":\"9032\",\"USAGE\":\"Keywords\",\"USAGES\":[{\"USAGE_ID\":\"9045\",\"USAGE\":\"Neoplasm\",\"USAGES\":[]},{\"USAGE_ID\":\"9040\",\"USAGE\":\"Epigenetic\",\"USAGES\":[]},{\"USAGE_ID\":\"9043\",\"USAGE\":\"Cell
-        proliferation\",\"USAGES\":[]},{\"USAGE_ID\":\"9041\",\"USAGE\":\"Reactive
-        oxygen species\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic Susceptibility\",\"PROJECT_ID\":2377,\"USAGES\":[{\"USAGE_ID\":\"7553\",\"USAGE\":\"1.
-        Susceptibility Literature Screening\",\"USAGES\":[{\"USAGE_ID\":\"7554\",\"USAGE\":\"Keyword
-        Search\",\"USAGES\":[]}]},{\"USAGE_ID\":\"7558\",\"USAGE\":\"2. Excluded\",\"USAGES\":[{\"USAGE_ID\":\"7560\",\"USAGE\":\"Not
-        Relevant\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic Hazard ID\",\"PROJECT_ID\":2211,\"USAGES\":[{\"USAGE_ID\":\"2327\",\"USAGE\":\"4.
-        Considered through Oct 2015\",\"USAGES\":[]},{\"USAGE_ID\":\"2326\",\"USAGE\":\"3.
-        Initial Filter through Oct 2015\",\"USAGES\":[{\"USAGE_ID\":\"2330\",\"USAGE\":\"Non
-        Peer-Reviewed\",\"USAGES\":[]}]},{\"USAGE_ID\":\"2308\",\"USAGE\":\"1. Initial
-        Lit Search\",\"USAGES\":[{\"USAGE_ID\":\"2311\",\"USAGE\":\"ToxNet\",\"USAGES\":[]},{\"USAGE_ID\":\"2310\",\"USAGE\":\"WOS\",\"USAGES\":[]}]},{\"USAGE_ID\":\"2318\",\"USAGE\":\"Cluster\",\"USAGES\":[{\"USAGE_ID\":\"2313\",\"USAGE\":\"250,
-        Prior Assessment\",\"USAGES\":[]},{\"USAGE_ID\":\"2312\",\"USAGE\":\"250,
-        NCEA\",\"USAGES\":[]},{\"USAGE_ID\":\"2343\",\"USAGE\":\"1000, Prior Assessment\",\"USAGES\":[]},{\"USAGE_ID\":\"2364\",\"USAGE\":\"500,
-        Health Effects\",\"USAGES\":[]},{\"USAGE_ID\":\"2362\",\"USAGE\":\"250, Health
-        Effects\",\"USAGES\":[]}]},{\"USAGE_ID\":\"2725\",\"USAGE\":\"6. Cluster Filter
-        through Oct 2015\",\"USAGES\":[]}]},{\"PROJECT\":\"Chromium VI\",\"PROJECT_ID\":2233,\"USAGES\":[{\"USAGE_ID\":\"3532\",\"USAGE\":\"Considered
-        Studies\",\"USAGES\":[]},{\"USAGE_ID\":\"36544\",\"USAGE\":\"Considered\",\"USAGES\":[{\"USAGE_ID\":\"3549\",\"USAGE\":\"Potentially
-        Relevant Supplemental Material\",\"USAGES\":[{\"USAGE_ID\":\"3543\",\"USAGE\":\"Reviews\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Inorganic
-        Mercury Salts\",\"PROJECT_ID\":2671,\"USAGES\":[{\"USAGE_ID\":\"14654\",\"USAGE\":\"Litsearch
-        Update 1999-2018\",\"USAGES\":[{\"USAGE_ID\":\"14658\",\"USAGE\":\"Exclusions\",\"USAGES\":[{\"USAGE_ID\":\"14661\",\"USAGE\":\"Conf
-        Proc/Abstracts\",\"USAGES\":[]},{\"USAGE_ID\":\"14760\",\"USAGE\":\"Pre-1999\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Arsenic
-        Citation Mapping Addition\",\"PROJECT_ID\":2208,\"USAGES\":[]}],\"tag_path_key\":[\"2|2489|7743|7749\",\"2|2489|7743|7750\",\"2|2489|7744|7754\",\"2|2489|7747|7765\",\"2|2521|9048|9049\",\"2|2521|9048|9075\",\"2|2521|9032|9043\",\"2|2521|9032|9040\",\"2|2521|9032|9045\",\"2|2521|9032|9041\",\"2|2211|2308|2310\",\"2|2211|2308|2311\",\"2|2211|2318|2312\",\"2|2211|2318|2313\",\"2|2211|2318|2362\",\"2|2211|2318|2364\",\"2|2211|2318|2343\",\"2|2211|2326|2330\",\"2|2211|2327\",\"2|2211|2725\",\"2|2698|15592|15594\",\"2|2698|15592|15595\",\"2|2698|15598|15599\",\"2|2377|7553|7554\",\"2|2377|7558|7560\",\"2|2233|36544|3549|3543\",\"2|2233|3532\",\"2|2671|14654|14658|14661\",\"2|2671|14654|14658|14760\",\"2|2589|17915|17917\",\"18|2208\",\"21|2005|5200|5203\",\"21|2139|13784|13786\",\"21|2139|13784|13787\"],\"firstAuthor\":\"Manzo\",\"AUTHORS\":\"Manzo,
-        L; Costa, LG; Tonini, M; Minoia, C; Sabbioni, E\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Toxicology
-        Letters 64-65:677-686.\",\"wosid\":\"WOS:A1992KE52600082\",\"TITLE\":\"Metabolic
-        studies as a basis for the interpretation of metal toxicity\",\"modified\":\"2023-01-18T23:35:34Z\",\"PMID\":1471222,\"keywords\":[\"mercury;
-        tin; arsenic; selenium; lead; gold; thallium; methylmercury; demethylation
-        process; organomercurials; chromium; glutathione; demethylarsinic acid; arsenobetaine;
-        vanadium; biomonitoring; ruthenium complexes; organic boron derivatives; p-dihydroxyboryl
-        phenylalanine (bpa); organotin complexes\"],\"journalTitle\":\"Toxicology
-        Letters\",\"_version_\":1755405291672829952},{\"REFERENCE_ID\":50074,\"ABSTRACT\":\"The
+        Biology and Biochemistry\",\"_version_\":1743883624379318272},{\"REFERENCE_ID\":50074,\"ABSTRACT\":\"The
         principal environmental health issue for American children is pervasive lead
         poisoning from the many decades of lead contamination. Available scientific
         evidence cementing lead's premiere ranking is voluminous, multifaceted, and
@@ -1850,8 +1677,8 @@ interactions:
         3\",\"USAGES\":[{\"USAGE_ID\":\"25653\",\"USAGE\":\"Top 20%\",\"USAGES\":[]}]},{\"USAGE_ID\":\"25535\",\"USAGE\":\"Chapter
         5\",\"USAGES\":[{\"USAGE_ID\":\"25669\",\"USAGE\":\"Bottom 50%\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Best
         Practices to Account for Susceptibility/Vulnerability in EPA\u2019s Human
-        Health Risk Assessments for Chemicals\",\"PROJECT_ID\":4759,\"USAGES\":[{\"USAGE_ID\":\"43099\",\"USAGE\":\"Peer
-        Review\",\"USAGES\":[{\"USAGE_ID\":\"43101\",\"USAGE\":\"Search Results\",\"USAGES\":[{\"USAGE_ID\":\"43103\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}]}]}],\"tag_path_key\":[\"1|2968|25531|25533|25653\",\"1|2968|25531|25534|25658\",\"1|2968|25531|25535|25669\",\"1|2968|29692|29693|29694\",\"1|4216|40409|41618|41722\",\"18|4759|43099|43101|43103\"],\"firstAuthor\":\"Mushak\",\"AUTHORS\":\"Mushak,
+        Health Risk Assessments for Chemicals\",\"PROJECT_ID\":4759,\"USAGES\":[{\"USAGE_ID\":\"43099\",\"USAGE\":\"Database
+        Search\",\"USAGES\":[{\"USAGE_ID\":\"43101\",\"USAGE\":\"Search Results\",\"USAGES\":[{\"USAGE_ID\":\"43103\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}]}]}],\"tag_path_key\":[\"1|2968|25531|25533|25653\",\"1|2968|25531|25534|25658\",\"1|2968|25531|25535|25669\",\"1|2968|29692|29693|29694\",\"1|4216|40409|41618|41722\",\"18|4759|43099|43101|43103\"],\"firstAuthor\":\"Mushak\",\"AUTHORS\":\"Mushak,
         P\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Environmental
         Research 59:281-309.\",\"wosid\":\"WOS:A1992KF83900002\",\"TITLE\":\"Defining
         lead as the premiere environmental health issue for children in America: criteria
@@ -1872,106 +1699,107 @@ interactions:
         4\",\"USAGES\":[{\"USAGE_ID\":\"25659\",\"USAGE\":\"Top 20%\",\"USAGES\":[]}]}]}]}],\"tag_path_key\":[\"1|2968|25531|25534|25659\",\"1|2968|29692|29693|29694\",\"1|4216|40409|40411\",\"1|4216|40409|40410\",\"1|4216|40409|43284\",\"40|2721\"],\"firstAuthor\":\"Cummins\",\"AUTHORS\":\"Cummins,
         SK; Goldman, LR\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Pediatrics
         90:995-997. [Comment]\",\"wosid\":\"WOS:A1992KF50400031\",\"TITLE\":\"Even
-        advantaged children show cognitive deficits from low-level lead toxicity\",\"modified\":\"2023-05-03T17:50:20Z\",\"PMID\":1437444,\"journalTitle\":\"Pediatrics\",\"_version_\":1764896256897843200},{\"REFERENCE_ID\":50050,\"ABSTRACT\":\"Observed
-        variation between populations in fertility-timing distributions has been thought
-        to contribute to infant mortality differentials. This hypothesis is based,
-        in part, on the belief that the 20s through early 30s constitute \\\"prime\\\"
-        childbearing ages that are low-risk relative to younger or older ages. However,
-        when stratified by racial identification over the predominant first child-bearing
-        ages, maternal age patterns of neonatal mortality vary between groups. Unlike
-        non-Hispanic white infants, African-American infants with teen mothers experience
-        a survival advantage relative to infants whose mothers are older. The black-white
-        infant mortality differential is larger at older maternal ages than at younger
-        ages. While African Americans and non-Hispanic whites differ on which maternal
-        ages are associated with the lowest risk of neonatal mortality, within each
-        population, first births are most frequent at its lowest-risk maternal ages.
-        As a possible explanation for racial variation in maternal age patterns of
-        births and birth outcomes, the \\\"weathering hypothesis\\\" is proposed:
-        namely, that the health of African-American women may begin to deteriorate
-        in early adulthood as a physical consequence of cumulative socioeconomic disadvantage.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50050\",\"hasPDF\":false,\"YEAR\":1992,\"allAuthors\":[\"Geronimus,
-        AT\"],\"HEROID\":50050,\"id\":\"50050\",\"project_key\":[4776],\"referencetype\":[\"journal
-        article\"],\"type\":\"reference\",\"sortYear\":1992,\"tag_path_text\":[\"NAAQS|Lead
-        Cardiovascular Effects Systematic Review|Literature Search May 2023|Classifier:
-        Epidemiology\",\"NAAQS|Lead Cardiovascular Effects Systematic Review|Literature
-        Search May 2023|Pubmed|Mesh w/ exclusion\",\"NAAQS|Lead Cardiovascular Effects
-        Systematic Review|Literature Search May 2023|Pubmed|Text w/ exclusion\"],\"category_key\":[1],\"PROJECTS\":[{\"PROJECT\":\"Lead
-        Cardiovascular Effects Systematic Review\",\"PROJECT_ID\":4776,\"USAGES\":[{\"USAGE_ID\":\"43649\",\"USAGE\":\"Literature
-        Search May 2023\",\"USAGES\":[{\"USAGE_ID\":\"43650\",\"USAGE\":\"Pubmed\",\"USAGES\":[{\"USAGE_ID\":\"43652\",\"USAGE\":\"Text
-        w/ exclusion\",\"USAGES\":[]},{\"USAGE_ID\":\"43654\",\"USAGE\":\"Mesh w/
-        exclusion\",\"USAGES\":[]}]},{\"USAGE_ID\":\"43746\",\"USAGE\":\"Classifier:
-        Epidemiology\",\"USAGES\":[]}]}]}],\"tag_path_key\":[\"1|4776|43649|43746\",\"1|4776|43649|43650|43654\",\"1|4776|43649|43650|43652\"],\"firstAuthor\":\"Geronimus\",\"AUTHORS\":\"Geronimus,
-        AT\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"2:207-221.\",\"TITLE\":\"The
-        weathering hypothesis and the health of African-American women and infants:
-        evidence and speculations\",\"modified\":\"2023-09-07T15:07:27Z\",\"PMID\":1467758,\"journalTitle\":\"Ethnicity
-        & Disease\",\"_version_\":1776392220082962439},{\"REFERENCE_ID\":50055,\"ABSTRACT\":\"Exposure
-        to lead (Pb) continues to be a source of concern for the U.S. Food and Drug
-        Administration and other federal regulatory agencies. Blood lead levels as
-        low as 10 micrograms Pb/dl have been associated with impaired neurobehavioral
-        development in children and infants. Because of exposure to the fetus, blood
-        lead levels of 10 micrograms Pb/dl are also of concern in pregnant women.
-        Blood lead levels of 30 micrograms Pb/dl have been associated with elevated
-        blood pressure and other adverse effects in adults. The dietary exposure that
-        results in these blood levels of concern were estimated to be 60 micrograms
-        Pb/day for children age 6 years or younger, 150 micrograms Pb/day for children
-        age 7 years or older, 250 micrograms Pb/day for pregnant women, and 750 micrograms
-        Pb/day for adults. A provisional tolerable total dietary intake was derived
-        by applying a factor of 10 to obtain an exposure level that would include
-        some margin of safety.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50055\",\"hasPDF\":true,\"YEAR\":1992,\"allAuthors\":[\"Carrington,
-        CD; Bolger, PM\"],\"HEROID\":50055,\"id\":\"50055\",\"project_key\":[2370,2968,4216,4776],\"referencetype\":[\"journal
-        article\"],\"type\":\"reference\",\"pdfURL\":\"https://www.scopus.com/inward/record.uri?eid=2-s2.0-0027090022&doi=10.1016%2f0273-2300%2892%2990006-u&partnerid=40&md5=eb58d2d752aa4e03b46e686caa7fc2b0\",\"doi\":\"10.1016/0273-2300(92)90006-u\",\"sortYear\":1992,\"tag_path_text\":[\"NAAQS|Lead
-        Cardiovascular Effects Systematic Review|Literature Search May 2023|Classifier:
-        Epidemiology\",\"NAAQS|Lead Cardiovascular Effects Systematic Review|Literature
-        Search May 2023|Pubmed|Text w/ exclusion\",\"NAAQS|Litsearch-Lead ISA 2020|Citation
-        Mapping (July 2020)|Chapter 3|Bottom 50%\",\"NAAQS|Litsearch-Lead ISA 2020|Citation
-        Mapping (July 2020)|Chapter 4|Top 20%\",\"NAAQS|Litsearch-Lead ISA 2020|Classification|Health|Epi\",\"NAAQS|Low
-        Blood Lead-IQ Search|Literature Search October 2022|BIOSIS\",\"NAAQS|Low Blood
-        Lead-IQ Search|Literature Search October 2022|PubMed\",\"NAAQS|Low Blood Lead-IQ
-        Search|Literature Search October 2022|Scopus (March 2023)\",\"Other|In Utero
-        Exposures|Initial Lit Search|All results\",\"Other|In Utero Exposures|Initial
-        Lit Search|Considered\"],\"category_key\":[1,18],\"PROJECTS\":[{\"PROJECT\":\"Lead
-        Cardiovascular Effects Systematic Review\",\"PROJECT_ID\":4776,\"USAGES\":[{\"USAGE_ID\":\"43649\",\"USAGE\":\"Literature
-        Search May 2023\",\"USAGES\":[{\"USAGE_ID\":\"43650\",\"USAGE\":\"Pubmed\",\"USAGES\":[{\"USAGE_ID\":\"43652\",\"USAGE\":\"Text
-        w/ exclusion\",\"USAGES\":[]}]},{\"USAGE_ID\":\"43746\",\"USAGE\":\"Classifier:
-        Epidemiology\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Low Blood Lead-IQ Search\",\"PROJECT_ID\":4216,\"USAGES\":[{\"USAGE_ID\":\"40409\",\"USAGE\":\"Literature
-        Search October 2022\",\"USAGES\":[{\"USAGE_ID\":\"40412\",\"USAGE\":\"BIOSIS\",\"USAGES\":[]},{\"USAGE_ID\":\"40411\",\"USAGE\":\"PubMed\",\"USAGES\":[]},{\"USAGE_ID\":\"43284\",\"USAGE\":\"Scopus
-        (March 2023)\",\"USAGES\":[]}]}]},{\"PROJECT\":\"In Utero Exposures\",\"PROJECT_ID\":2370,\"USAGES\":[{\"USAGE_ID\":\"6809\",\"USAGE\":\"Initial
-        Lit Search\",\"USAGES\":[{\"USAGE_ID\":\"6810\",\"USAGE\":\"All results\",\"USAGES\":[]},{\"USAGE_ID\":\"6811\",\"USAGE\":\"Considered\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Litsearch-Lead
-        ISA 2020\",\"PROJECT_ID\":2968,\"USAGES\":[{\"USAGE_ID\":\"29692\",\"USAGE\":\"Classification\",\"USAGES\":[{\"USAGE_ID\":\"29693\",\"USAGE\":\"Health\",\"USAGES\":[{\"USAGE_ID\":\"29694\",\"USAGE\":\"Epi\",\"USAGES\":[]}]}]},{\"USAGE_ID\":\"25531\",\"USAGE\":\"Citation
-        Mapping (July 2020)\",\"USAGES\":[{\"USAGE_ID\":\"25534\",\"USAGE\":\"Chapter
-        4\",\"USAGES\":[{\"USAGE_ID\":\"25659\",\"USAGE\":\"Top 20%\",\"USAGES\":[]}]},{\"USAGE_ID\":\"25533\",\"USAGE\":\"Chapter
-        3\",\"USAGES\":[{\"USAGE_ID\":\"25657\",\"USAGE\":\"Bottom 50%\",\"USAGES\":[]}]}]}]}],\"tag_path_key\":[\"1|4776|43649|43746\",\"1|4776|43649|43650|43652\",\"1|2968|25531|25533|25657\",\"1|2968|25531|25534|25659\",\"1|2968|29692|29693|29694\",\"1|4216|40409|40412\",\"1|4216|40409|40411\",\"1|4216|40409|43284\",\"18|2370|6809|6810\",\"18|2370|6809|6811\"],\"firstAuthor\":\"Carrington\",\"AUTHORS\":\"Carrington,
-        CD; Bolger, PM\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Regulatory
-        Toxicology and Pharmacology 16:265-272. [Review]\",\"wosid\":\"WOS:A1992KF48200006\",\"TITLE\":\"An
-        assessment of the hazards of lead in food\",\"modified\":\"2023-09-07T15:07:27Z\",\"PMID\":1293643,\"journalTitle\":\"Regulatory
-        Toxicology and Pharmacology\",\"_version_\":1776392220082962441},{\"REFERENCE_ID\":50006,\"ABSTRACT\":\"Male
-        Sprague-Dawley rats received for 14 months 0, 15, 30 and 60 micrograms/ml
-        of lead in drinking water. Both blood pressure and tissue lead were augmented
-        with a dose-response effect, while cardiac inotropism was increased only in
-        the rats treated with 60 ppm of lead. In the exposed animals, zinc and copper
-        were unchanged in kidneys and testicles and augmented in the brain, while
-        copper, but not zinc, was reduced in the heart. These data suggest a possible
-        relation between the modifications of copper and zinc metabolism and the effects
-        of lead on cardiovascular homeostasis.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50006\",\"hasPDF\":true,\"YEAR\":1992,\"allAuthors\":[\"Boscolo,
-        P; Camignani, M; Carelli, G; Finelli, VN; Giuliano, G\"],\"HEROID\":50006,\"id\":\"50006\",\"project_key\":[1570,4776],\"referencetype\":[\"journal
-        article\"],\"type\":\"reference\",\"doi\":\"10.1016/0378-4274(92)90004-4\",\"sortYear\":1992,\"tag_path_text\":[\"NAAQS|Lead
-        Cardiovascular Effects Systematic Review|Literature Search May 2023|Classifier:
-        Animal Toxicology\",\"NAAQS|Lead Cardiovascular Effects Systematic Review|Literature
-        Search May 2023|Pubmed|Mesh w/ exclusion\",\"NAAQS|Lead Cardiovascular Effects
-        Systematic Review|Literature Search May 2023|Pubmed|Text w/ exclusion\",\"NAAQS|Lead
-        Cardiovascular Effects Systematic Review|Literature Search May 2023|Web of
-        Science|w/ exclusion\",\"NAAQS|x_Pb Cited 2006\"],\"category_key\":[1],\"PROJECTS\":[{\"PROJECT\":\"Lead
-        Cardiovascular Effects Systematic Review\",\"PROJECT_ID\":4776,\"USAGES\":[{\"USAGE_ID\":\"43649\",\"USAGE\":\"Literature
-        Search May 2023\",\"USAGES\":[{\"USAGE_ID\":\"43650\",\"USAGE\":\"Pubmed\",\"USAGES\":[{\"USAGE_ID\":\"43652\",\"USAGE\":\"Text
-        w/ exclusion\",\"USAGES\":[]},{\"USAGE_ID\":\"43654\",\"USAGE\":\"Mesh w/
-        exclusion\",\"USAGES\":[]}]},{\"USAGE_ID\":\"43745\",\"USAGE\":\"Classifier:
-        Animal Toxicology\",\"USAGES\":[]},{\"USAGE_ID\":\"43658\",\"USAGE\":\"Web
-        of Science\",\"USAGES\":[{\"USAGE_ID\":\"43659\",\"USAGE\":\"w/ exclusion\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"x_Pb
-        Cited 2006\",\"PROJECT_ID\":1570,\"USAGES\":[]}],\"tag_path_key\":[\"1|4776|43649|43745\",\"1|4776|43649|43650|43654\",\"1|4776|43649|43650|43652\",\"1|4776|43649|43658|43659\",\"1|1570\"],\"firstAuthor\":\"Boscolo\",\"AUTHORS\":\"Boscolo,
-        P; Camignani, M; Carelli, G; Finelli, VN; Giuliano, G\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Toxicology
-        Letters 63:135-139.\",\"wosid\":\"WOS:A1992KB67700004\",\"TITLE\":\"Zinc and
-        copper in tissues of rats with blood hypertension induced by long-term lead
-        exposure\",\"modified\":\"2023-09-07T15:07:27Z\",\"PMID\":1455445,\"journalTitle\":\"Toxicology
-        Letters\",\"_version_\":1776392220082962433},{\"REFERENCE_ID\":50038,\"ABSTRACT\":\"To
+        advantaged children show cognitive deficits from low-level lead toxicity\",\"modified\":\"2023-05-03T17:50:20Z\",\"PMID\":1437444,\"journalTitle\":\"Pediatrics\",\"_version_\":1764896256897843200},{\"REFERENCE_ID\":50067,\"ABSTRACT\":\"The
+        use of metabolic patterns as a basis for the interpretation of toxic effects
+        of metal compounds was reviewed.  Most metals were transformed in mammalian
+        tissues by reduction/oxidation, conjugation, or alkylation/dealkylation processes.
+        \ It occurred in liver and other organs as well as in the gut lumen in which
+        case intestinal microflora were involved.  Studies with mercurials showed
+        that marked metabolic differences existed between organic (alkyl, aryl, and
+        alkoxyalkyl) and inorganic compounds.  The lower toxicity of the last two
+        types was due to their rapid conversion to inorganic mercury (7439976) which
+        was mediated by a cytosolic enzyme in the liver.  The reduction of hexavalent
+        chromium (7440473) to the trivalent form by both rat liver preparations and
+        human erythrocyte lysate through the microsomal system was discussed.  The
+        involvement of cytochrome-P450 dependent monoxygenases in the conversion of
+        tin (7440315) and lead (7439921) compounds was addressed.  The biotransformation
+        of arsenic (7440382) was strikingly different between species.  The metabolism
+        of inorganic and certain organic selenium (7782492) compounds in mammals was
+        based on common pathways.  Theoretically, the biotransformation of metal could
+        alter toxicity or kinetics, or both.  Conjugation with glutathione could activate
+        or reduce carcinogenic potential.  Examples of pollutant metals, their metabolism
+        and associated toxic effects included the demethylation of methyl-mercury
+        (22967926) and neurotoxicity, the immunotoxicity of tributyltin (688733) and
+        its neurotoxic effects, the limited biochemical reduction of pentavalent vanadium
+        (7440622) to the tetravalent form, and the unreduced vanadate causing toxicity,
+        and the reduction of pentavalent arsenic to the trivalent carcinogenic form.
+        \ The authors conclude that a better knowledge of metal biotransformation
+        can lead to significant advances in interpreting toxicological changes.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50067\",\"hasPDF\":true,\"YEAR\":1992,\"allAuthors\":[\"Manzo,
+        L; Costa, LG; Tonini, M; Minoia, C; Sabbioni, E\"],\"HEROID\":50067,\"id\":\"50067\",\"project_key\":[2005,2139,2208,2211,2233,2377,2489,2521,2589,2671,2698,4870],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"pdfURL\":\"http://linkinghub.elsevier.com/retrieve/pii/037842749290247h\",\"doi\":\"10.1016/0378-4274(92)90247-h\",\"sortYear\":1992,\"tag_path_text\":[\"IRIS|Arsenic
+        (Inorganic)|1. Literature|Toxline, TSCATS, & DART\",\"IRIS|Arsenic (Inorganic)|1.
+        Literature|Web of Science\",\"IRIS|Arsenic (Inorganic)|2. Initial Filter|Non
+        peer-reviewed\",\"IRIS|Arsenic (Inorganic)|5. Susceptibility Screening|Excluded/Not
+        relevant\",\"IRIS|Arsenic Gene Keyword Analysis|Gene|ARAF/ID: 369\",\"IRIS|Arsenic
+        Gene Keyword Analysis|Gene|MAPK1/ID: 5594\",\"IRIS|Arsenic Gene Keyword Analysis|Keywords|Cell
+        proliferation\",\"IRIS|Arsenic Gene Keyword Analysis|Keywords|Epigenetic\",\"IRIS|Arsenic
+        Gene Keyword Analysis|Keywords|Neoplasm\",\"IRIS|Arsenic Gene Keyword Analysis|Keywords|Reactive
+        oxygen species\",\"IRIS|Arsenic Hazard ID|1. Initial Lit Search|WOS\",\"IRIS|Arsenic
+        Hazard ID|1. Initial Lit Search|ToxNet\",\"IRIS|Arsenic Hazard ID|Cluster|250,
+        NCEA\",\"IRIS|Arsenic Hazard ID|Cluster|250, Prior Assessment\",\"IRIS|Arsenic
+        Hazard ID|Cluster|250, Health Effects\",\"IRIS|Arsenic Hazard ID|Cluster|500,
+        Health Effects\",\"IRIS|Arsenic Hazard ID|Cluster|1000, Prior Assessment\",\"IRIS|Arsenic
+        Hazard ID|3. Initial Filter through Oct 2015|Non Peer-Reviewed\",\"IRIS|Arsenic
+        Hazard ID|4. Considered through Oct 2015\",\"IRIS|Arsenic Hazard ID|6. Cluster
+        Filter through Oct 2015\",\"IRIS|Arsenic PECO|1. Literature|Toxline, TSCATS
+        & DART\",\"IRIS|Arsenic PECO|1. Literature|Web of Science\",\"IRIS|Arsenic
+        PECO|2. Initial Filter|Non-Peer Reviewed\",\"IRIS|Arsenic Susceptibility|1.
+        Susceptibility Literature Screening|Keyword Search\",\"IRIS|Arsenic Susceptibility|2.
+        Excluded|Not Relevant\",\"IRIS|Chromium VI|Considered|Potentially Relevant
+        Supplemental Material|Reviews\",\"IRIS|Chromium VI|Considered Studies\",\"IRIS|Inorganic
+        Mercury Salts|Litsearch Update 1999-2018|Exclusions|Conf Proc/Abstracts\",\"IRIS|Inorganic
+        Mercury Salts|Litsearch Update 1999-2018|Exclusions|Pre-1999\",\"IRIS|Methylmercury|ADME
+        Search: Jan 1990 - Nov 2018|WoS\",\"OPPT REs|OPPT Evidence Map: Bisphenol
+        A (BPA)|Peer-Reviewed Literature|Literature Search: May 2024|WoS\",\"Other|Arsenic
+        Citation Mapping Addition\",\"PPRTV|Dimethylmercury|Databases Searched (4/2014)|WOS\",\"PPRTV|Thallium
+        and compounds|Search (9/2017)|WOS\",\"PPRTV|Thallium and compounds|Search
+        (9/2017)|Toxline\"],\"category_key\":[2,18,21,32],\"PROJECTS\":[{\"PROJECT\":\"OPPT
+        Evidence Map: Bisphenol A (BPA)\",\"PROJECT_ID\":4870,\"USAGES\":[{\"USAGE_ID\":\"45227\",\"USAGE\":\"Peer-Reviewed
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"45228\",\"USAGE\":\"Literature Search:
+        May 2024\",\"USAGES\":[{\"USAGE_ID\":\"45237\",\"USAGE\":\"WoS\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Inorganic
+        Mercury Salts\",\"PROJECT_ID\":2671,\"USAGES\":[{\"USAGE_ID\":\"14654\",\"USAGE\":\"Litsearch
+        Update 1999-2018\",\"USAGES\":[{\"USAGE_ID\":\"14658\",\"USAGE\":\"Exclusions\",\"USAGES\":[{\"USAGE_ID\":\"14661\",\"USAGE\":\"Conf
+        Proc/Abstracts\",\"USAGES\":[]},{\"USAGE_ID\":\"14760\",\"USAGE\":\"Pre-1999\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Thallium
+        and compounds\",\"PROJECT_ID\":2139,\"USAGES\":[{\"USAGE_ID\":\"13784\",\"USAGE\":\"Search
+        (9/2017)\",\"USAGES\":[{\"USAGE_ID\":\"13786\",\"USAGE\":\"WOS\",\"USAGES\":[]},{\"USAGE_ID\":\"13787\",\"USAGE\":\"Toxline\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Methylmercury\",\"PROJECT_ID\":2589,\"USAGES\":[{\"USAGE_ID\":\"17915\",\"USAGE\":\"ADME
+        Search: Jan 1990 - Nov 2018\",\"USAGES\":[{\"USAGE_ID\":\"17917\",\"USAGE\":\"WoS\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic
+        (Inorganic)\",\"PROJECT_ID\":2489,\"USAGES\":[{\"USAGE_ID\":\"7743\",\"USAGE\":\"1.
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"7750\",\"USAGE\":\"Web of Science\",\"USAGES\":[]},{\"USAGE_ID\":\"7749\",\"USAGE\":\"Toxline,
+        TSCATS, & DART\",\"USAGES\":[]}]},{\"USAGE_ID\":\"7744\",\"USAGE\":\"2. Initial
+        Filter\",\"USAGES\":[{\"USAGE_ID\":\"7754\",\"USAGE\":\"Non peer-reviewed\",\"USAGES\":[]}]},{\"USAGE_ID\":\"7747\",\"USAGE\":\"5.
+        Susceptibility Screening\",\"USAGES\":[{\"USAGE_ID\":\"7765\",\"USAGE\":\"Excluded/Not
+        relevant\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic PECO\",\"PROJECT_ID\":2698,\"USAGES\":[{\"USAGE_ID\":\"15592\",\"USAGE\":\"1.
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"15595\",\"USAGE\":\"Web of Science\",\"USAGES\":[]},{\"USAGE_ID\":\"15594\",\"USAGE\":\"Toxline,
+        TSCATS & DART\",\"USAGES\":[]}]},{\"USAGE_ID\":\"15598\",\"USAGE\":\"2. Initial
+        Filter\",\"USAGES\":[{\"USAGE_ID\":\"15599\",\"USAGE\":\"Non-Peer Reviewed\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Dimethylmercury\",\"PROJECT_ID\":2005,\"USAGES\":[{\"USAGE_ID\":\"5200\",\"USAGE\":\"Databases
+        Searched (4/2014)\",\"USAGES\":[{\"USAGE_ID\":\"5203\",\"USAGE\":\"WOS\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic
+        Gene Keyword Analysis\",\"PROJECT_ID\":2521,\"USAGES\":[{\"USAGE_ID\":\"9048\",\"USAGE\":\"Gene\",\"USAGES\":[{\"USAGE_ID\":\"9049\",\"USAGE\":\"ARAF/ID:
+        369\",\"USAGES\":[]},{\"USAGE_ID\":\"9075\",\"USAGE\":\"MAPK1/ID: 5594\",\"USAGES\":[]}]},{\"USAGE_ID\":\"9032\",\"USAGE\":\"Keywords\",\"USAGES\":[{\"USAGE_ID\":\"9045\",\"USAGE\":\"Neoplasm\",\"USAGES\":[]},{\"USAGE_ID\":\"9040\",\"USAGE\":\"Epigenetic\",\"USAGES\":[]},{\"USAGE_ID\":\"9043\",\"USAGE\":\"Cell
+        proliferation\",\"USAGES\":[]},{\"USAGE_ID\":\"9041\",\"USAGE\":\"Reactive
+        oxygen species\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic Susceptibility\",\"PROJECT_ID\":2377,\"USAGES\":[{\"USAGE_ID\":\"7553\",\"USAGE\":\"1.
+        Susceptibility Literature Screening\",\"USAGES\":[{\"USAGE_ID\":\"7554\",\"USAGE\":\"Keyword
+        Search\",\"USAGES\":[]}]},{\"USAGE_ID\":\"7558\",\"USAGE\":\"2. Excluded\",\"USAGES\":[{\"USAGE_ID\":\"7560\",\"USAGE\":\"Not
+        Relevant\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic Hazard ID\",\"PROJECT_ID\":2211,\"USAGES\":[{\"USAGE_ID\":\"2327\",\"USAGE\":\"4.
+        Considered through Oct 2015\",\"USAGES\":[]},{\"USAGE_ID\":\"2326\",\"USAGE\":\"3.
+        Initial Filter through Oct 2015\",\"USAGES\":[{\"USAGE_ID\":\"2330\",\"USAGE\":\"Non
+        Peer-Reviewed\",\"USAGES\":[]}]},{\"USAGE_ID\":\"2308\",\"USAGE\":\"1. Initial
+        Lit Search\",\"USAGES\":[{\"USAGE_ID\":\"2311\",\"USAGE\":\"ToxNet\",\"USAGES\":[]},{\"USAGE_ID\":\"2310\",\"USAGE\":\"WOS\",\"USAGES\":[]}]},{\"USAGE_ID\":\"2318\",\"USAGE\":\"Cluster\",\"USAGES\":[{\"USAGE_ID\":\"2313\",\"USAGE\":\"250,
+        Prior Assessment\",\"USAGES\":[]},{\"USAGE_ID\":\"2312\",\"USAGE\":\"250,
+        NCEA\",\"USAGES\":[]},{\"USAGE_ID\":\"2343\",\"USAGE\":\"1000, Prior Assessment\",\"USAGES\":[]},{\"USAGE_ID\":\"2364\",\"USAGE\":\"500,
+        Health Effects\",\"USAGES\":[]},{\"USAGE_ID\":\"2362\",\"USAGE\":\"250, Health
+        Effects\",\"USAGES\":[]}]},{\"USAGE_ID\":\"2725\",\"USAGE\":\"6. Cluster Filter
+        through Oct 2015\",\"USAGES\":[]}]},{\"PROJECT\":\"Chromium VI\",\"PROJECT_ID\":2233,\"USAGES\":[{\"USAGE_ID\":\"3532\",\"USAGE\":\"Considered
+        Studies\",\"USAGES\":[]},{\"USAGE_ID\":\"36544\",\"USAGE\":\"Considered\",\"USAGES\":[{\"USAGE_ID\":\"3549\",\"USAGE\":\"Potentially
+        Relevant Supplemental Material\",\"USAGES\":[{\"USAGE_ID\":\"3543\",\"USAGE\":\"Reviews\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Arsenic
+        Citation Mapping Addition\",\"PROJECT_ID\":2208,\"USAGES\":[]}],\"tag_path_key\":[\"2|2489|7743|7749\",\"2|2489|7743|7750\",\"2|2489|7744|7754\",\"2|2489|7747|7765\",\"2|2521|9048|9049\",\"2|2521|9048|9075\",\"2|2521|9032|9043\",\"2|2521|9032|9040\",\"2|2521|9032|9045\",\"2|2521|9032|9041\",\"2|2211|2308|2310\",\"2|2211|2308|2311\",\"2|2211|2318|2312\",\"2|2211|2318|2313\",\"2|2211|2318|2362\",\"2|2211|2318|2364\",\"2|2211|2318|2343\",\"2|2211|2326|2330\",\"2|2211|2327\",\"2|2211|2725\",\"2|2698|15592|15594\",\"2|2698|15592|15595\",\"2|2698|15598|15599\",\"2|2377|7553|7554\",\"2|2377|7558|7560\",\"2|2233|36544|3549|3543\",\"2|2233|3532\",\"2|2671|14654|14658|14661\",\"2|2671|14654|14658|14760\",\"2|2589|17915|17917\",\"32|4870|45227|45228|45237\",\"18|2208\",\"21|2005|5200|5203\",\"21|2139|13784|13786\",\"21|2139|13784|13787\"],\"firstAuthor\":\"Manzo\",\"AUTHORS\":\"Manzo,
+        L; Costa, LG; Tonini, M; Minoia, C; Sabbioni, E\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Toxicology
+        Letters 64-65:677-686.\",\"wosid\":\"WOS:A1992KE52600082\",\"TITLE\":\"Metabolic
+        studies as a basis for the interpretation of metal toxicity\",\"modified\":\"2024-05-08T22:13:13Z\",\"PMID\":1471222,\"keywords\":[\"mercury;
+        tin; arsenic; selenium; lead; gold; thallium; methylmercury; demethylation
+        process; organomercurials; chromium; glutathione; demethylarsinic acid; arsenobetaine;
+        vanadium; biomonitoring; ruthenium complexes; organic boron derivatives; p-dihydroxyboryl
+        phenylalanine (bpa); organotin complexes\"],\"journalTitle\":\"Toxicology
+        Letters\",\"_version_\":1798524262331449344},{\"REFERENCE_ID\":50038,\"ABSTRACT\":\"To
         examine the impact of lead (Pb) exposure during the ontogeny of dopaminergic
         (DA) systems on resultant DA function, rats were exposed postnatally (0\u201321
         days of age) via the lactating dam to 0, 100 or 350 ppm Pb acetate in drinking
@@ -2120,34 +1948,7 @@ interactions:
         Journal of Epidemiology 136:1091-1100.\",\"wosid\":\"WOS:A1992KD18300006\",\"TITLE\":\"Blood
         lead as a cardiovascular risk factor\",\"modified\":\"2023-09-26T16:10:17Z\",\"PMID\":1462969,\"keywords\":[\"BLOOD
         PRESSURE; CARDIOVASCULAR DISEASES; CORONARY DISEASE; LEAD; MORTALITY; PROSPECTIVE
-        STUDIES\"],\"journalTitle\":\"American Journal of Epidemiology\",\"_version_\":1778117113589792770},{\"REFERENCE_ID\":50054,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50054\",\"hasPDF\":true,\"YEAR\":1992,\"allAuthors\":[\"Needleman,
-        HL\"],\"HEROID\":50054,\"id\":\"50054\",\"project_key\":[2968,3008,3045],\"referencetype\":[\"journal
-        article\"],\"type\":\"reference\",\"sortYear\":1992,\"tag_path_text\":[\"NAAQS|Lead
-        Antisocial Behavior|Backward Citation Search April 2021|Scopus\",\"NAAQS|Litsearch-Lead
-        ISA 2020|Citation Mapping (July 2020)|Chapter 4|Bottom 50%\",\"Other|Scientific
-        Integrity Program|Lit Search Feb 2021|PubMed|Top 500\",\"Other|Scientific
-        Integrity Program|Lit Search Feb 2021|Scopus\",\"Other|Scientific Integrity
-        Program|Lit Search Feb 2021|WOS\"],\"category_key\":[1,18],\"PROJECTS\":[{\"PROJECT\":\"Scientific
-        Integrity Program\",\"PROJECT_ID\":3008,\"USAGES\":[{\"USAGE_ID\":\"29876\",\"USAGE\":\"Lit
-        Search Feb 2021\",\"USAGES\":[{\"USAGE_ID\":\"30021\",\"USAGE\":\"Scopus\",\"USAGES\":[]},{\"USAGE_ID\":\"29878\",\"USAGE\":\"PubMed\",\"USAGES\":[{\"USAGE_ID\":\"30022\",\"USAGE\":\"Top
-        500\",\"USAGES\":[]}]},{\"USAGE_ID\":\"29877\",\"USAGE\":\"WOS\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Lead
-        Antisocial Behavior\",\"PROJECT_ID\":3045,\"USAGES\":[{\"USAGE_ID\":\"32425\",\"USAGE\":\"Backward
-        Citation Search April 2021\",\"USAGES\":[{\"USAGE_ID\":\"32426\",\"USAGE\":\"Scopus\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Litsearch-Lead
-        ISA 2020\",\"PROJECT_ID\":2968,\"USAGES\":[{\"USAGE_ID\":\"25531\",\"USAGE\":\"Citation
-        Mapping (July 2020)\",\"USAGES\":[{\"USAGE_ID\":\"25534\",\"USAGE\":\"Chapter
-        4\",\"USAGES\":[{\"USAGE_ID\":\"25663\",\"USAGE\":\"Bottom 50%\",\"USAGES\":[]}]}]}]}],\"tag_path_key\":[\"1|3045|32425|32426\",\"1|2968|25531|25534|25663\",\"18|3008|29876|29878|30022\",\"18|3008|29876|30021\",\"18|3008|29876|29877\"],\"firstAuthor\":\"Needleman\",\"AUTHORS\":\"Needleman,
-        HL\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Pediatrics
-        90:977-981.\",\"wosid\":\"WOS:A1992KF50400025\",\"TITLE\":\"Salem comes to
-        the National Institutes of Health: notes from inside the crucible of scientific
-        integrity\",\"modified\":\"2023-09-26T16:10:17Z\",\"PMID\":1331947,\"keywords\":[\"lead;
-        behavior disorder; clinical feature; environmental exposure; human; intelligence
-        quotient; lead blood level; lead poisoning; legal liability; medical research;
-        note; occupational exposure; priority journal; psychosis; Biomedical and Behavioral
-        Research; Biomedical Research; Clinical Approach/Source; Due Process; Environmental
-        Protection Agency; Federal Government; Government Regulation; Health Hazards;
-        Legal Approach; National Institutes of Health; Office of Scientific Integrity;
-        Toxicity; United States; University of Pittsburgh; Scientific Misconduct;
-        United States; United States Office of Research Integrity\"],\"journalTitle\":\"Pediatrics\",\"_version_\":1778117113589792771},{\"REFERENCE_ID\":50065,\"ABSTRACT\":\"A
+        STUDIES\"],\"journalTitle\":\"American Journal of Epidemiology\",\"_version_\":1778117113589792770},{\"REFERENCE_ID\":50065,\"ABSTRACT\":\"A
         neurobehavioral screening battery consisting of a functional observational
         battery (FOB) and an automated measure of motor activity is the subject of
         an international collaborative study. Eight laboratories (four in Europe,
@@ -2235,7 +2036,257 @@ interactions:
         and Teratology 14:433-446.\",\"wosid\":\"WOS:A1992KE16300008\",\"TITLE\":\"Effects
         of 2,3,7,8-tetrachlorodibenzo-p-dioxin on behavior of monkeys in peer groups\",\"modified\":\"2023-11-15T18:17:28Z\",\"PMID\":1488038,\"keywords\":[\"2,3,7,8-TETRACHLORODIBENZO-P-DIOXIN;
         TCDD; MONKEY; PERINATAL EXPOSURE; PEER GROUP SOCIAL BEHAVIOR\"],\"journalTitle\":\"Neurotoxicology
-        and Teratology\",\"_version_\":1782654958072496128},{\"REFERENCE_ID\":50045,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50045\",\"hasPDF\":false,\"YEAR\":1991,\"allAuthors\":[\"U.S.
+        and Teratology\",\"_version_\":1782654958072496128},{\"REFERENCE_ID\":50050,\"ABSTRACT\":\"Observed
+        variation between populations in fertility-timing distributions has been thought
+        to contribute to infant mortality differentials. This hypothesis is based,
+        in part, on the belief that the 20s through early 30s constitute \\\"prime\\\"
+        childbearing ages that are low-risk relative to younger or older ages. However,
+        when stratified by racial identification over the predominant first child-bearing
+        ages, maternal age patterns of neonatal mortality vary between groups. Unlike
+        non-Hispanic white infants, African-American infants with teen mothers experience
+        a survival advantage relative to infants whose mothers are older. The black-white
+        infant mortality differential is larger at older maternal ages than at younger
+        ages. While African Americans and non-Hispanic whites differ on which maternal
+        ages are associated with the lowest risk of neonatal mortality, within each
+        population, first births are most frequent at its lowest-risk maternal ages.
+        As a possible explanation for racial variation in maternal age patterns of
+        births and birth outcomes, the \\\"weathering hypothesis\\\" is proposed:
+        namely, that the health of African-American women may begin to deteriorate
+        in early adulthood as a physical consequence of cumulative socioeconomic disadvantage.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50050\",\"hasPDF\":false,\"YEAR\":1992,\"allAuthors\":[\"Geronimus,
+        AT\"],\"HEROID\":50050,\"id\":\"50050\",\"project_key\":[4776],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"sortYear\":1992,\"tag_path_text\":[\"NAAQS|Lead
+        Cardiovascular Effects Systematic Review|Literature Search May 2023|Classifier:
+        Epidemiology\",\"NAAQS|Lead Cardiovascular Effects Systematic Review|Literature
+        Search May 2023|Pubmed|Mesh w/ exclusion\",\"NAAQS|Lead Cardiovascular Effects
+        Systematic Review|Literature Search May 2023|Pubmed|Text w/ exclusion\"],\"category_key\":[1],\"PROJECTS\":[{\"PROJECT\":\"Lead
+        Cardiovascular Effects Systematic Review\",\"PROJECT_ID\":4776,\"USAGES\":[{\"USAGE_ID\":\"43649\",\"USAGE\":\"Literature
+        Search May 2023\",\"USAGES\":[{\"USAGE_ID\":\"43650\",\"USAGE\":\"Pubmed\",\"USAGES\":[{\"USAGE_ID\":\"43652\",\"USAGE\":\"Text
+        w/ exclusion\",\"USAGES\":[]},{\"USAGE_ID\":\"43654\",\"USAGE\":\"Mesh w/
+        exclusion\",\"USAGES\":[]}]},{\"USAGE_ID\":\"43746\",\"USAGE\":\"Classifier:
+        Epidemiology\",\"USAGES\":[]}]}]}],\"tag_path_key\":[\"1|4776|43649|43746\",\"1|4776|43649|43650|43654\",\"1|4776|43649|43650|43652\"],\"firstAuthor\":\"Geronimus\",\"AUTHORS\":\"Geronimus,
+        AT\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"2:207-221.\",\"TITLE\":\"The
+        weathering hypothesis and the health of African-American women and infants:
+        evidence and speculations\",\"modified\":\"2023-09-07T15:07:27Z\",\"PMID\":1467758,\"journalTitle\":\"Ethnicity
+        & Disease\",\"_version_\":1776392220082962439},{\"REFERENCE_ID\":50055,\"ABSTRACT\":\"Exposure
+        to lead (Pb) continues to be a source of concern for the U.S. Food and Drug
+        Administration and other federal regulatory agencies. Blood lead levels as
+        low as 10 micrograms Pb/dl have been associated with impaired neurobehavioral
+        development in children and infants. Because of exposure to the fetus, blood
+        lead levels of 10 micrograms Pb/dl are also of concern in pregnant women.
+        Blood lead levels of 30 micrograms Pb/dl have been associated with elevated
+        blood pressure and other adverse effects in adults. The dietary exposure that
+        results in these blood levels of concern were estimated to be 60 micrograms
+        Pb/day for children age 6 years or younger, 150 micrograms Pb/day for children
+        age 7 years or older, 250 micrograms Pb/day for pregnant women, and 750 micrograms
+        Pb/day for adults. A provisional tolerable total dietary intake was derived
+        by applying a factor of 10 to obtain an exposure level that would include
+        some margin of safety.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50055\",\"hasPDF\":true,\"YEAR\":1992,\"allAuthors\":[\"Carrington,
+        CD; Bolger, PM\"],\"HEROID\":50055,\"id\":\"50055\",\"project_key\":[2370,2968,4216,4776],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"pdfURL\":\"https://www.scopus.com/inward/record.uri?eid=2-s2.0-0027090022&doi=10.1016%2f0273-2300%2892%2990006-u&partnerid=40&md5=eb58d2d752aa4e03b46e686caa7fc2b0\",\"doi\":\"10.1016/0273-2300(92)90006-u\",\"sortYear\":1992,\"tag_path_text\":[\"NAAQS|Lead
+        Cardiovascular Effects Systematic Review|Literature Search May 2023|Classifier:
+        Epidemiology\",\"NAAQS|Lead Cardiovascular Effects Systematic Review|Literature
+        Search May 2023|Pubmed|Text w/ exclusion\",\"NAAQS|Litsearch-Lead ISA 2020|Citation
+        Mapping (July 2020)|Chapter 3|Bottom 50%\",\"NAAQS|Litsearch-Lead ISA 2020|Citation
+        Mapping (July 2020)|Chapter 4|Top 20%\",\"NAAQS|Litsearch-Lead ISA 2020|Classification|Health|Epi\",\"NAAQS|Low
+        Blood Lead-IQ Search|Literature Search October 2022|BIOSIS\",\"NAAQS|Low Blood
+        Lead-IQ Search|Literature Search October 2022|PubMed\",\"NAAQS|Low Blood Lead-IQ
+        Search|Literature Search October 2022|Scopus (March 2023)\",\"Other|In Utero
+        Exposures|Initial Lit Search|All results\",\"Other|In Utero Exposures|Initial
+        Lit Search|Considered\"],\"category_key\":[1,18],\"PROJECTS\":[{\"PROJECT\":\"Lead
+        Cardiovascular Effects Systematic Review\",\"PROJECT_ID\":4776,\"USAGES\":[{\"USAGE_ID\":\"43649\",\"USAGE\":\"Literature
+        Search May 2023\",\"USAGES\":[{\"USAGE_ID\":\"43650\",\"USAGE\":\"Pubmed\",\"USAGES\":[{\"USAGE_ID\":\"43652\",\"USAGE\":\"Text
+        w/ exclusion\",\"USAGES\":[]}]},{\"USAGE_ID\":\"43746\",\"USAGE\":\"Classifier:
+        Epidemiology\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Low Blood Lead-IQ Search\",\"PROJECT_ID\":4216,\"USAGES\":[{\"USAGE_ID\":\"40409\",\"USAGE\":\"Literature
+        Search October 2022\",\"USAGES\":[{\"USAGE_ID\":\"40412\",\"USAGE\":\"BIOSIS\",\"USAGES\":[]},{\"USAGE_ID\":\"40411\",\"USAGE\":\"PubMed\",\"USAGES\":[]},{\"USAGE_ID\":\"43284\",\"USAGE\":\"Scopus
+        (March 2023)\",\"USAGES\":[]}]}]},{\"PROJECT\":\"In Utero Exposures\",\"PROJECT_ID\":2370,\"USAGES\":[{\"USAGE_ID\":\"6809\",\"USAGE\":\"Initial
+        Lit Search\",\"USAGES\":[{\"USAGE_ID\":\"6810\",\"USAGE\":\"All results\",\"USAGES\":[]},{\"USAGE_ID\":\"6811\",\"USAGE\":\"Considered\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Litsearch-Lead
+        ISA 2020\",\"PROJECT_ID\":2968,\"USAGES\":[{\"USAGE_ID\":\"29692\",\"USAGE\":\"Classification\",\"USAGES\":[{\"USAGE_ID\":\"29693\",\"USAGE\":\"Health\",\"USAGES\":[{\"USAGE_ID\":\"29694\",\"USAGE\":\"Epi\",\"USAGES\":[]}]}]},{\"USAGE_ID\":\"25531\",\"USAGE\":\"Citation
+        Mapping (July 2020)\",\"USAGES\":[{\"USAGE_ID\":\"25534\",\"USAGE\":\"Chapter
+        4\",\"USAGES\":[{\"USAGE_ID\":\"25659\",\"USAGE\":\"Top 20%\",\"USAGES\":[]}]},{\"USAGE_ID\":\"25533\",\"USAGE\":\"Chapter
+        3\",\"USAGES\":[{\"USAGE_ID\":\"25657\",\"USAGE\":\"Bottom 50%\",\"USAGES\":[]}]}]}]}],\"tag_path_key\":[\"1|4776|43649|43746\",\"1|4776|43649|43650|43652\",\"1|2968|25531|25533|25657\",\"1|2968|25531|25534|25659\",\"1|2968|29692|29693|29694\",\"1|4216|40409|40412\",\"1|4216|40409|40411\",\"1|4216|40409|43284\",\"18|2370|6809|6810\",\"18|2370|6809|6811\"],\"firstAuthor\":\"Carrington\",\"AUTHORS\":\"Carrington,
+        CD; Bolger, PM\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Regulatory
+        Toxicology and Pharmacology 16:265-272. [Review]\",\"wosid\":\"WOS:A1992KF48200006\",\"TITLE\":\"An
+        assessment of the hazards of lead in food\",\"modified\":\"2023-09-07T15:07:27Z\",\"PMID\":1293643,\"journalTitle\":\"Regulatory
+        Toxicology and Pharmacology\",\"_version_\":1776392220082962441},{\"REFERENCE_ID\":50006,\"ABSTRACT\":\"Male
+        Sprague-Dawley rats received for 14 months 0, 15, 30 and 60 micrograms/ml
+        of lead in drinking water. Both blood pressure and tissue lead were augmented
+        with a dose-response effect, while cardiac inotropism was increased only in
+        the rats treated with 60 ppm of lead. In the exposed animals, zinc and copper
+        were unchanged in kidneys and testicles and augmented in the brain, while
+        copper, but not zinc, was reduced in the heart. These data suggest a possible
+        relation between the modifications of copper and zinc metabolism and the effects
+        of lead on cardiovascular homeostasis.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50006\",\"hasPDF\":true,\"YEAR\":1992,\"allAuthors\":[\"Boscolo,
+        P; Camignani, M; Carelli, G; Finelli, VN; Giuliano, G\"],\"HEROID\":50006,\"id\":\"50006\",\"project_key\":[1570,4776],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"doi\":\"10.1016/0378-4274(92)90004-4\",\"sortYear\":1992,\"tag_path_text\":[\"NAAQS|Lead
+        Cardiovascular Effects Systematic Review|Literature Search May 2023|Classifier:
+        Animal Toxicology\",\"NAAQS|Lead Cardiovascular Effects Systematic Review|Literature
+        Search May 2023|Pubmed|Mesh w/ exclusion\",\"NAAQS|Lead Cardiovascular Effects
+        Systematic Review|Literature Search May 2023|Pubmed|Text w/ exclusion\",\"NAAQS|Lead
+        Cardiovascular Effects Systematic Review|Literature Search May 2023|Web of
+        Science|w/ exclusion\",\"NAAQS|x_Pb Cited 2006\"],\"category_key\":[1],\"PROJECTS\":[{\"PROJECT\":\"Lead
+        Cardiovascular Effects Systematic Review\",\"PROJECT_ID\":4776,\"USAGES\":[{\"USAGE_ID\":\"43649\",\"USAGE\":\"Literature
+        Search May 2023\",\"USAGES\":[{\"USAGE_ID\":\"43650\",\"USAGE\":\"Pubmed\",\"USAGES\":[{\"USAGE_ID\":\"43652\",\"USAGE\":\"Text
+        w/ exclusion\",\"USAGES\":[]},{\"USAGE_ID\":\"43654\",\"USAGE\":\"Mesh w/
+        exclusion\",\"USAGES\":[]}]},{\"USAGE_ID\":\"43745\",\"USAGE\":\"Classifier:
+        Animal Toxicology\",\"USAGES\":[]},{\"USAGE_ID\":\"43658\",\"USAGE\":\"Web
+        of Science\",\"USAGES\":[{\"USAGE_ID\":\"43659\",\"USAGE\":\"w/ exclusion\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"x_Pb
+        Cited 2006\",\"PROJECT_ID\":1570,\"USAGES\":[]}],\"tag_path_key\":[\"1|4776|43649|43745\",\"1|4776|43649|43650|43654\",\"1|4776|43649|43650|43652\",\"1|4776|43649|43658|43659\",\"1|1570\"],\"firstAuthor\":\"Boscolo\",\"AUTHORS\":\"Boscolo,
+        P; Camignani, M; Carelli, G; Finelli, VN; Giuliano, G\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Toxicology
+        Letters 63:135-139.\",\"wosid\":\"WOS:A1992KB67700004\",\"TITLE\":\"Zinc and
+        copper in tissues of rats with blood hypertension induced by long-term lead
+        exposure\",\"modified\":\"2023-09-07T15:07:27Z\",\"PMID\":1455445,\"journalTitle\":\"Toxicology
+        Letters\",\"_version_\":1776392220082962433},{\"REFERENCE_ID\":50011,\"ABSTRACT\":\"Tumors
+        were induced in eastern oysters (Crassostrea virginica) by a mixture of aromatic
+        hydrocarbons, an aromatic amine, polychlorinated biphenyls, chlorinated hydrocarbons,
+        a nitrosoamine and heavy metals. Kidney and enteric tumors developed in oysters
+        following exposure to a mixture containing 3,4-benzopyrene, 1,2-benzanthracene,
+        2-aminofluorene, N-nitrosodiethylamine, technical chlordane, Aroclors 1242
+        and 1254, p,p'-DDE, cadmium (CdCl2), chromium (K2CrO4) and lead (Pb(NO3)2).
+        The chemical concentrations added to a reference sediment from Long Island
+        Sound were 1 x and 10 x the measured level in sediment from Black Rock Harbor
+        (BRH), Bridgeport, Connecticut (normalized for total organic carbon and acid
+        volatile sulfide content for organic and inorganic compounds, respectively).
+        2-Aminoflourene and N-nitrosodiethylamine, not measured in BRH sediment, were
+        both added at 0.6 and 6.0 mug/g dry sediment. A 3% prevalence of low-grade
+        renal and gastrointestinal tumors developed after 30 days in oysters fed water-column
+        suspended sediment particulate spiked with the mixture of chemicals. Disease
+        progression was most advanced in enteric adenomas. Both types are comparable
+        to those produced after 30 days in the same organs by chemically contaminated
+        Black Rock Harbor sediment. The action of chemical pollutants reported here
+        represents initial findings in a series of studies designed to test sediment
+        contaminants as causal factors for tumors in oysters.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50011\",\"hasPDF\":true,\"YEAR\":1992,\"allAuthors\":[\"Gardner,
+        GR; Pruell, RJ; Malcolm, AR\"],\"HEROID\":50011,\"id\":\"50011\",\"project_key\":[384,1976,2301,2806,2932,3066,3067],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"doi\":\"10.1016/0141-1136(92)90083-x\",\"sortYear\":1992,\"tag_path_text\":[\"IRIS|PAH
+        RPF Approach|Database Searches (11/2013)|Toxline\",\"IRIS|PAH RPF Approach|Database
+        Searches (11/2013)|Merged reference set\",\"IRIS|PAH RPF Approach|Secondary
+        Refinement|Excluded\",\"IRIS|PAH RPF Approach|Literature Update 7/2017|Excluded|Previously
+        Covered\",\"IRIS|PAH RPF Approach|Literature Update 7/2017|Toxnet\",\"IRIS|PCBs|Litsearches|Remaining\",\"IRIS|PCBs|Litsearches|LitSearch
+        August 2015|Toxline\",\"IRIS|PCBs|Litsearches|LitSearch August 2015|WoS\",\"IRIS|PCBs|Considered\",\"IRIS|PCBs|Restored
+        references_April 2024\",\"IRIS|SIREN: Benzopyrene|Literature Search: May 2019|ToxNet\",\"IRIS|SIREN:
+        Benzopyrene|Literature Search: May 2019|WoS\",\"Other|PCB Support Projects|PCB
+        Commercial Mixture Congener Profiles|Screened (TIAB in SWIFT)|Included studies
+        (TIAB)\",\"Other|PCB Support Projects|PCB Congener Coelutions|Air studies|Lit
+        Search November 2020|WOS\",\"PPRTV|Anthracene 2021|Literature Search 5/13/2021|Scopus\",\"PPRTV|Pyrene
+        2021|Literature Search May 2021|Scopus (July 2021)\",\"PPRTV|p,p'-DDE|Search
+        (12/2015)|Toxline\",\"PPRTV|p,p'-DDE|Search (12/2015)|WOS\"],\"category_key\":[2,18,21],\"PROJECTS\":[{\"PROJECT\":\"p,p'-DDE\",\"PROJECT_ID\":1976,\"USAGES\":[{\"USAGE_ID\":\"7804\",\"USAGE\":\"Search
+        (12/2015)\",\"USAGES\":[{\"USAGE_ID\":\"7807\",\"USAGE\":\"WOS\",\"USAGES\":[]},{\"USAGE_ID\":\"7806\",\"USAGE\":\"Toxline\",\"USAGES\":[]}]}]},{\"PROJECT\":\"PCB
+        Support Projects\",\"PROJECT_ID\":2932,\"USAGES\":[{\"USAGE_ID\":\"29304\",\"USAGE\":\"PCB
+        Congener Coelutions\",\"USAGES\":[{\"USAGE_ID\":\"29305\",\"USAGE\":\"Air
+        studies\",\"USAGES\":[{\"USAGE_ID\":\"29306\",\"USAGE\":\"Lit Search November
+        2020\",\"USAGES\":[{\"USAGE_ID\":\"29308\",\"USAGE\":\"WOS\",\"USAGES\":[]}]}]}]},{\"USAGE_ID\":\"29718\",\"USAGE\":\"PCB
+        Commercial Mixture Congener Profiles\",\"USAGES\":[{\"USAGE_ID\":\"29950\",\"USAGE\":\"Screened
+        (TIAB in SWIFT)\",\"USAGES\":[{\"USAGE_ID\":\"29951\",\"USAGE\":\"Included
+        studies (TIAB)\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"PAH RPF Approach\",\"PROJECT_ID\":2301,\"USAGES\":[{\"USAGE_ID\":\"4583\",\"USAGE\":\"Secondary
+        Refinement\",\"USAGES\":[{\"USAGE_ID\":\"4676\",\"USAGE\":\"Excluded\",\"USAGES\":[]}]},{\"USAGE_ID\":\"4421\",\"USAGE\":\"Database
+        Searches (11/2013)\",\"USAGES\":[{\"USAGE_ID\":\"4424\",\"USAGE\":\"Toxline\",\"USAGES\":[]},{\"USAGE_ID\":\"4426\",\"USAGE\":\"Merged
+        reference set\",\"USAGES\":[]}]},{\"USAGE_ID\":\"11730\",\"USAGE\":\"Literature
+        Update 7/2017\",\"USAGES\":[{\"USAGE_ID\":\"11734\",\"USAGE\":\"Excluded\",\"USAGES\":[{\"USAGE_ID\":\"11735\",\"USAGE\":\"Previously
+        Covered\",\"USAGES\":[]}]},{\"USAGE_ID\":\"11733\",\"USAGE\":\"Toxnet\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Anthracene
+        2021\",\"PROJECT_ID\":3067,\"USAGES\":[{\"USAGE_ID\":\"32908\",\"USAGE\":\"Literature
+        Search 5/13/2021\",\"USAGES\":[{\"USAGE_ID\":\"34074\",\"USAGE\":\"Scopus\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Pyrene
+        2021\",\"PROJECT_ID\":3066,\"USAGES\":[{\"USAGE_ID\":\"32835\",\"USAGE\":\"Literature
+        Search May 2021\",\"USAGES\":[{\"USAGE_ID\":\"34063\",\"USAGE\":\"Scopus (July
+        2021)\",\"USAGES\":[]}]}]},{\"PROJECT\":\"SIREN: Benzopyrene\",\"PROJECT_ID\":2806,\"USAGES\":[{\"USAGE_ID\":\"18728\",\"USAGE\":\"Literature
+        Search: May 2019\",\"USAGES\":[{\"USAGE_ID\":\"18730\",\"USAGE\":\"ToxNet\",\"USAGES\":[]},{\"USAGE_ID\":\"18731\",\"USAGE\":\"WoS\",\"USAGES\":[]}]}]},{\"PROJECT\":\"PCBs\",\"PROJECT_ID\":384,\"USAGES\":[{\"USAGE_ID\":\"7109\",\"USAGE\":\"Litsearches\",\"USAGES\":[{\"USAGE_ID\":\"7110\",\"USAGE\":\"LitSearch
+        August 2015\",\"USAGES\":[{\"USAGE_ID\":\"7112\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"7113\",\"USAGE\":\"Toxline\",\"USAGES\":[]}]},{\"USAGE_ID\":\"7127\",\"USAGE\":\"Remaining\",\"USAGES\":[]}]},{\"USAGE_ID\":\"45636\",\"USAGE\":\"Restored
+        references_April 2024\",\"USAGES\":[]},{\"USAGE_ID\":\"4737\",\"USAGE\":\"Considered\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|2301|4421|4424\",\"2|2301|4421|4426\",\"2|2301|4583|4676\",\"2|2301|11730|11734|11735\",\"2|2301|11730|11733\",\"2|384|7109|7127\",\"2|384|7109|7110|7113\",\"2|384|7109|7110|7112\",\"2|384|4737\",\"2|384|45636\",\"2|2806|18728|18730\",\"2|2806|18728|18731\",\"18|2932|29718|29950|29951\",\"18|2932|29304|29305|29306|29308\",\"21|3067|32908|34074\",\"21|3066|32835|34063\",\"21|1976|7804|7806\",\"21|1976|7804|7807\"],\"firstAuthor\":\"Gardner\",\"AUTHORS\":\"Gardner,
+        GR; Pruell, RJ; Malcolm, AR\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Marine
+        Environmental Research 34:59-63.\",\"wosid\":\"WOS:A1992KB00500011\",\"TITLE\":\"Chemical
+        induction of tumors in oysters by a mixture of aromatic and chlorinated hydrocarbons,
+        amines and metals\",\"modified\":\"2024-05-21T19:14:23Z\",\"PMID\":\"\",\"journalTitle\":\"Marine
+        Environmental Research\",\"_version_\":1799690776725159937},{\"REFERENCE_ID\":50031,\"ABSTRACT\":\"Cholesterol
+        distribution in tumoral tissues and lipid composition in the plasma compartment
+        were determined in patients affected by different histologic types of lung
+        cancer. The results showed that tumoral lung tissues contained 2-fold more
+        total cholesterol and 3.5-fold more esterified cholesterol than normal lung
+        tissues. In the patients the alterations in intracellular cholesterol were
+        also associated with peculiar changes in cholesterol distribution in the plasma
+        compartment. Serum high-density lipoprotein (HDL) cholesterol levels were
+        markedly lower in than in controls. No significant changes in other lipid
+        parameters were observed in these patients. We suggest that the reduced levels
+        of serum HDL cholesterol observed in patients with lung tumors may be a consequence
+        of the disease, probably mediated by the greater utilization of cholesterol
+        for new membrane biogenesis and by the accumulation of esterified cholesterol
+        in tumoral tissues.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50031\",\"hasPDF\":false,\"YEAR\":1992,\"allAuthors\":[\"Dessi,
+        S; Batetta, B; Pulisci, D; Spano, O; Cherchi, R; Lanfranco, G; Tessitore,
+        L; Costelli, P; Baccino, FM; Anchisi, C; Pani, P\"],\"HEROID\":50031,\"id\":\"50031\",\"project_key\":[2367],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"sortYear\":1992,\"tag_path_text\":[\"IRIS|Nitrate/Nitrite|Supplemental
+        LitSearch Update 1900-2015|New to this search\",\"IRIS|Nitrate/Nitrite|Supplemental
+        LitSearch Update 1900-2015|WoS\"],\"category_key\":[2],\"PROJECTS\":[{\"PROJECT\":\"Nitrate/Nitrite\",\"PROJECT_ID\":2367,\"USAGES\":[{\"USAGE_ID\":\"45658\",\"USAGE\":\"Supplemental
+        LitSearch Update 1600-2015\",\"USAGES\":[{\"USAGE_ID\":\"45722\",\"USAGE\":\"New
+        to project\",\"USAGES\":[]},{\"USAGE_ID\":\"45660\",\"USAGE\":\"WoS\",\"USAGES\":[]}]}]}],\"tag_path_key\":[\"2|2367|45658|45722\",\"2|2367|45658|45660\"],\"firstAuthor\":\"Dessi\",\"AUTHORS\":\"Dessi,
+        S; Batetta, B; Pulisci, D; Spano, O; Cherchi, R; Lanfranco, G; Tessitore,
+        L; Costelli, P; Baccino, FM; Anchisi, C; Pani, P\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Oncology:
+        International Journal of Cancer Research and Treatment 49:436-441.\",\"wosid\":\"WOS:A1992KD54500006\",\"TITLE\":\"Altered
+        pattern of lipid metabolism in patients with lung cancer\",\"modified\":\"2024-06-25T15:34:47Z\",\"PMID\":1465281,\"journalTitle\":\"Oncology:
+        International Journal of Cancer Research and Treatment\",\"_version_\":1802847847740080128},{\"REFERENCE_ID\":50061,\"ABSTRACT\":\"Contaminated
+        cattle feed was imported into the UK in 1989 and resulted in lead toxicity
+        in some animals. Rapid analyses for lead and several other possible contaminating
+        elements were required for feed and cattle tissues. Microwave dissolution
+        of samples with measurement by ICP-MS was used for multi-element determinations.
+        Lead was found to be the major contaminant. Lead levels in milk samples were
+        measured by several laboratories during the crisis and an analytical quality
+        assurance scheme was devised to monitor the quality of the data. The scheme
+        allowed any poorly performing laboratories to be rapidly identified and excluded
+        from the survey.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50061\",\"hasPDF\":false,\"YEAR\":1992,\"allAuthors\":[\"Crews,
+        HM; Baxter, MJ; Bigwood, T; Burrell, JA; Owen, LM; Robinson, C; Wright, C;
+        Massey, RC\"],\"HEROID\":50061,\"id\":\"50061\",\"project_key\":[30,2211,2367,2489,2698],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"doi\":\"10.1080/02652039209374083\",\"sortYear\":1992,\"tag_path_text\":[\"IRIS|Arsenic
+        (Inorganic)|1. Literature|PubMed\",\"IRIS|Arsenic Hazard ID|1. Initial Lit
+        Search|PubMed\",\"IRIS|Arsenic Hazard ID|Cluster|250, Prior Assessment\",\"IRIS|Arsenic
+        Hazard ID|Cluster|500, Prior Assessment\",\"IRIS|Arsenic Hazard ID|4. Considered
+        through Oct 2015\",\"IRIS|Arsenic Hazard ID|6. Cluster Filter through Oct
+        2015\",\"IRIS|Arsenic PECO|1. Literature|Pubmed\",\"IRIS|Arsenic, Legacy|PubMed\",\"IRIS|Arsenic,
+        Legacy|Types of Studies|Animal\",\"IRIS|Arsenic, Legacy|Types of Studies|Peer-Reviewed
+        Research\",\"IRIS|Nitrate/Nitrite|Supplemental LitSearch Update 1900-2015|New
+        to project\",\"IRIS|Nitrate/Nitrite|Supplemental LitSearch Update 1900-2015|PubMed\"],\"category_key\":[2],\"PROJECTS\":[{\"PROJECT\":\"Arsenic
+        (Inorganic)\",\"PROJECT_ID\":2489,\"USAGES\":[{\"USAGE_ID\":\"7743\",\"USAGE\":\"1.
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"7748\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic
+        PECO\",\"PROJECT_ID\":2698,\"USAGES\":[{\"USAGE_ID\":\"15592\",\"USAGE\":\"1.
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"15593\",\"USAGE\":\"Pubmed\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Nitrate/Nitrite\",\"PROJECT_ID\":2367,\"USAGES\":[{\"USAGE_ID\":\"45658\",\"USAGE\":\"Supplemental
+        LitSearch Update 1600-2015\",\"USAGES\":[{\"USAGE_ID\":\"45722\",\"USAGE\":\"New
+        to project\",\"USAGES\":[]},{\"USAGE_ID\":\"45659\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic
+        Hazard ID\",\"PROJECT_ID\":2211,\"USAGES\":[{\"USAGE_ID\":\"2327\",\"USAGE\":\"4.
+        Considered through Oct 2015\",\"USAGES\":[]},{\"USAGE_ID\":\"2308\",\"USAGE\":\"1.
+        Initial Lit Search\",\"USAGES\":[{\"USAGE_ID\":\"2309\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]},{\"USAGE_ID\":\"2725\",\"USAGE\":\"6.
+        Cluster Filter through Oct 2015\",\"USAGES\":[]},{\"USAGE_ID\":\"2318\",\"USAGE\":\"Cluster\",\"USAGES\":[{\"USAGE_ID\":\"2317\",\"USAGE\":\"500,
+        Prior Assessment\",\"USAGES\":[]},{\"USAGE_ID\":\"2313\",\"USAGE\":\"250,
+        Prior Assessment\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Arsenic, Legacy\",\"PROJECT_ID\":30,\"USAGES\":[{\"USAGE_ID\":\"1774\",\"USAGE\":\"Types
+        of Studies\",\"USAGES\":[{\"USAGE_ID\":\"1776\",\"USAGE\":\"Animal\",\"USAGES\":[]},{\"USAGE_ID\":\"1858\",\"USAGE\":\"Peer-Reviewed
+        Research\",\"USAGES\":[]}]},{\"USAGE_ID\":\"1603\",\"USAGE\":\"PubMed\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|2489|7743|7748\",\"2|2211|2308|2309\",\"2|2211|2318|2313\",\"2|2211|2318|2317\",\"2|2211|2327\",\"2|2211|2725\",\"2|2698|15592|15593\",\"2|30|1603\",\"2|30|1774|1776\",\"2|30|1774|1858\",\"2|2367|45658|45722\",\"2|2367|45658|45659\"],\"firstAuthor\":\"Crews\",\"AUTHORS\":\"Crews,
+        HM; Baxter, MJ; Bigwood, T; Burrell, JA; Owen, LM; Robinson, C; Wright, C;
+        Massey, RC\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Food
+        Additives and Contaminants 9:365-378.\",\"TITLE\":\"Lead in feed incident--multi-element
+        analysis of cattle feed and tissues by inductively coupled plasma-mass spectrometry
+        and co-operative quality assurance scheme for lead analysis of milk\",\"modified\":\"2024-06-26T15:46:55Z\",\"PMID\":1337328,\"journalTitle\":\"Food
+        Additives and Contaminants\",\"_version_\":1802939211895013376},{\"REFERENCE_ID\":50054,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50054\",\"hasPDF\":true,\"YEAR\":1992,\"allAuthors\":[\"Needleman,
+        HL\"],\"HEROID\":50054,\"id\":\"50054\",\"project_key\":[2968,3008,3045],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"sortYear\":1992,\"tag_path_text\":[\"NAAQS|Lead
+        Antisocial Behavior|Backward Citation Search April 2021|Scopus\",\"NAAQS|Litsearch-Lead
+        ISA 2020|Citation Mapping (July 2020)|Chapter 4|Bottom 50%\",\"Other|Scientific
+        Integrity Program|Lit Search Feb 2021|PubMed|Top 500\",\"Other|Scientific
+        Integrity Program|Lit Search Feb 2021|Scopus\",\"Other|Scientific Integrity
+        Program|Lit Search Feb 2021|WOS\"],\"category_key\":[1,18],\"PROJECTS\":[{\"PROJECT\":\"Scientific
+        Integrity Program\",\"PROJECT_ID\":3008,\"USAGES\":[{\"USAGE_ID\":\"29876\",\"USAGE\":\"Lit
+        Search Feb 2021\",\"USAGES\":[{\"USAGE_ID\":\"30021\",\"USAGE\":\"Scopus\",\"USAGES\":[]},{\"USAGE_ID\":\"29878\",\"USAGE\":\"PubMed\",\"USAGES\":[{\"USAGE_ID\":\"30022\",\"USAGE\":\"Top
+        500\",\"USAGES\":[]}]},{\"USAGE_ID\":\"29877\",\"USAGE\":\"WOS\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Lead
+        Antisocial Behavior\",\"PROJECT_ID\":3045,\"USAGES\":[{\"USAGE_ID\":\"32425\",\"USAGE\":\"Backward
+        Citation Search April 2021\",\"USAGES\":[{\"USAGE_ID\":\"32426\",\"USAGE\":\"Scopus\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Litsearch-Lead
+        ISA 2020\",\"PROJECT_ID\":2968,\"USAGES\":[{\"USAGE_ID\":\"25531\",\"USAGE\":\"Citation
+        Mapping (July 2020)\",\"USAGES\":[{\"USAGE_ID\":\"25534\",\"USAGE\":\"Chapter
+        4\",\"USAGES\":[{\"USAGE_ID\":\"25663\",\"USAGE\":\"Bottom 50%\",\"USAGES\":[]}]}]}]}],\"tag_path_key\":[\"1|3045|32425|32426\",\"1|2968|25531|25534|25663\",\"18|3008|29876|29878|30022\",\"18|3008|29876|30021\",\"18|3008|29876|29877\"],\"firstAuthor\":\"Needleman\",\"AUTHORS\":\"Needleman,
+        HL\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Pediatrics
+        90:977-981.\",\"wosid\":\"WOS:A1992KF50400025\",\"TITLE\":\"Salem comes to
+        the National Institutes of Health: notes from inside the crucible of scientific
+        integrity\",\"modified\":\"2024-09-04T19:38:25Z\",\"PMID\":1331947,\"keywords\":[\"lead;
+        behavior disorder; clinical feature; environmental exposure; human; intelligence
+        quotient; lead blood level; lead poisoning; legal liability; medical research;
+        note; occupational exposure; priority journal; psychosis; Biomedical and Behavioral
+        Research; Biomedical Research; Clinical Approach/Source; Due Process; Environmental
+        Protection Agency; Federal Government; Government Regulation; Health Hazards;
+        Legal Approach; National Institutes of Health; Office of Scientific Integrity;
+        Toxicity; United States; University of Pittsburgh; Scientific Misconduct;
+        United States; United States Office of Research Integrity\"],\"journalTitle\":\"Pediatrics\",\"_version_\":1809295559609024512},{\"REFERENCE_ID\":50045,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/50045\",\"hasPDF\":false,\"YEAR\":1991,\"allAuthors\":[\"U.S.
         EPA\",\"U.S. EPA\",\"U.S. Environmental Protection Agency\"],\"HEROID\":50045,\"id\":\"50045\",\"referencetype\":[\"technical
         report\"],\"type\":\"reference\",\"pdfURL\":\"http://nepis.epa.gov/exe/zypurl.cgi?dockey=200060x4.txt\",\"sortYear\":1991,\"PROJECTS\":[],\"AUTHORS\":\"U.S.
         EPA\",\"noPDFAvailable\":false,\"isPeerReviewed\":false,\"code\":\"re\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"\",\"TITLE\":\"Advisory
@@ -2277,16 +2328,16 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Tue, 20 Feb 2024 16:42:11 GMT
+      - Thu, 05 Sep 2024 23:00:51 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
-      - Apache/2.4.58 (Win64) OpenSSL/3.1.5 mod_jk/1.2.46
+      - Apache/2.4.62 (Win64) OpenSSL/3.1.6 mod_jk/1.2.46
       Set-Cookie:
-      - CFID=14825969; Expires=Wed, 21 Feb 2024 16:42:11 GMT; Path=/; HttpOnly
-      - CFTOKEN=40609769; Expires=Wed, 21 Feb 2024 16:42:11 GMT; Path=/; HttpOnly
-      - JSESSIONID=D8C51938C6F1212B2C3795C4F1A7B892.cfusion; Path=/; Secure; HttpOnly
-      - LASTACCESSTIME=2024%2F02%2F20%2011%3A42%3A11; Path=/
+      - CFID=35158125; Expires=Fri, 06 Sep 2024 23:00:51 GMT; Path=/; HttpOnly
+      - CFTOKEN=88995450; Expires=Fri, 06 Sep 2024 23:00:51 GMT; Path=/; HttpOnly
+      - JSESSIONID=B68B3289485B2706804B315ACCEB0749.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F09%2F05%2019%3A00%3A51; Path=/
       Strict-Transport-Security:
       - max-age=63072000; includeSubDomains; preload
       Transfer-Encoding:

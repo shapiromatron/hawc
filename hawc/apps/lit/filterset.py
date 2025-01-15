@@ -191,8 +191,7 @@ class ReferenceFilterSet(BaseFilterSet):
                 queryset = queryset.annotate(
                     user_tag_count=Count(
                         "user_tags",
-                        filter=Q(user_tags__is_resolved=False)
-                        & Q(user_tags__user=self.request.user),
+                        Q(user_tags__user=self.request.user),
                     )
                 ).filter(user_tag_count=0)
             else:
@@ -205,7 +204,6 @@ class ReferenceFilterSet(BaseFilterSet):
                     mytag_count=Count(
                         "user_tags",
                         filter=Q(user_tags__tags__in=tag_ids)
-                        & Q(user_tags__is_resolved=False)
                         & Q(user_tags__user=self.request.user),
                     )
                 ).filter(mytag_count__gt=0)
@@ -217,7 +215,7 @@ class ReferenceFilterSet(BaseFilterSet):
         queryset = queryset.annotate(
             my_tag_count=Count(
                 "user_tags",
-                filter=Q(user_tags__is_resolved=False) & Q(user_tags__user=self.request.user),
+                Q(user_tags__user=self.request.user),
             )
         ).filter(my_tag_count__gt=0)
         return queryset.distinct()

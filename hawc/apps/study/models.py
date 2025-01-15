@@ -3,6 +3,7 @@ import os
 
 import pandas as pd
 from django.apps import apps
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db import models
 from django.http import Http404
@@ -10,8 +11,9 @@ from django.urls import reverse
 from reversion import revisions as reversion
 
 from ..assessment.models import Communication
-from ..common.helper import SerializerHelper, cleanHTML
+from ..common.helper import SerializerHelper
 from ..lit.models import Reference
+from ..udf.models import ModelUDFContent
 from . import constants, managers
 
 logger = logging.getLogger(__name__)
@@ -114,6 +116,10 @@ class Study(Reference):
         help_text="Project-managers and team-members are allowed to edit this study.",
     )
 
+    udfs = GenericRelation(ModelUDFContent, related_query_name="studies")
+
+    communications = GenericRelation(Communication, related_query_name="study_communications")
+
     BREADCRUMB_PARENT = "assessment"
 
     class Meta:
@@ -161,8 +167,8 @@ class Study(Reference):
     def get_final_rob_url(self):
         try:
             return self.get_final_rob().get_final_url()
-        except ObjectDoesNotExist:
-            raise Http404("Final RoB does not exist")
+        except ObjectDoesNotExist as err:
+            raise Http404("Final RoB does not exist") from err
 
     def get_assessment(self):
         return self.assessment
@@ -196,65 +202,6 @@ class Study(Reference):
             if getattr(self, field):
                 types.append(field)
         return types
-
-    @staticmethod
-    def flat_complete_header_row():
-        return (
-            "study-id",
-            "study-hero_id",
-            "study-pubmed_id",
-            "study-doi",
-            "study-url",
-            "study-short_citation",
-            "study-full_citation",
-            "study-coi_reported",
-            "study-coi_details",
-            "study-funding_source",
-            "study-bioassay",
-            "study-epi",
-            "study-epi_meta",
-            "study-in_vitro",
-            "study-eco",
-            "study-study_identifier",
-            "study-contact_author",
-            "study-ask_author",
-            "study-summary",
-            "study-editable",
-            "study-published",
-        )
-
-    @staticmethod
-    def flat_complete_data_row(ser, identifiers_df: pd.DataFrame | None = None) -> tuple:
-        try:
-            ident_row = (
-                identifiers_df.loc[ser["id"]] if isinstance(identifiers_df, pd.DataFrame) else None
-            )
-        except KeyError:
-            ident_row = None
-        return (
-            ser["id"],
-            # IDs can come from identifiers data frame if exists, else check study serializer
-            ident_row.hero_id if ident_row is not None else ser.get("hero_id", None),
-            ident_row.pubmed_id if ident_row is not None else ser.get("pubmed_id", None),
-            ident_row.doi if ident_row is not None else ser.get("doi", None),
-            ser["url"],
-            ser["short_citation"],
-            ser["full_citation"],
-            ser["coi_reported"],
-            ser["coi_details"],
-            ser["funding_source"],
-            ser["bioassay"],
-            ser["epi"],
-            ser["epi_meta"],
-            ser["in_vitro"],
-            ser["eco"],
-            ser["study_identifier"],
-            ser["contact_author"],
-            ser["ask_author"],
-            cleanHTML(ser["summary"]),
-            ser["editable"],
-            ser["published"],
-        )
 
     @classmethod
     def identifiers_df(cls, qs: models.QuerySet, relation: str) -> pd.DataFrame:
@@ -290,8 +237,8 @@ class Study(Reference):
             return self.riskofbiases.get(final=True, active=True)
         except ObjectDoesNotExist as err:
             raise err
-        except MultipleObjectsReturned:
-            raise ObjectDoesNotExist(f'Multiple active final RoB "{self}", expecting one')
+        except MultipleObjectsReturned as err:
+            raise ObjectDoesNotExist(f'Multiple active final RoB "{self}", expecting one') from err
 
     def get_final_qs(self):
         return self.riskofbiases.filter(active=True, final=True).prefetch_related(
@@ -351,7 +298,7 @@ class Study(Reference):
         Communication.set_message(self, text)
 
     def user_can_toggle_editable(self, user) -> bool:
-        return self.assessment.user_can_edit_assessment(user)
+        return self.assessment.user_is_project_manager_or_higher(user)
 
     def toggle_editable(self):
         self.editable = not self.editable

@@ -5,9 +5,9 @@ from typing import Any
 import requests
 from django.conf import settings
 
-from hawc.services.utils.doi import try_get_doi
-
-from ..utils.authors import get_author_short_text, normalize_authors
+from ...services.utils.doi import try_get_doi
+from ..utils.authors import get_author_short_text, get_first, normalize_authors
+from ..utils.sessions import get_session
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +26,40 @@ def _force_int(val, default=None) -> int | None:
         return int(val)
     except Exception:
         return default
+
+
+def format_source(content: dict) -> str:
+    """
+    Generate a reasonable source string that may be specific enough to find the original article.
+    This currently has custom logic for journal articles, otherwise it returns an empty string.
+    """
+    ref_type = content["type_of_reference"]
+    if ref_type == "Journal":
+        source = get_first(content, ["alternate_title2", "full_journal_name", "secondary_title"])
+        volume = content.get("volume", "")
+        pages = content.get("start_page", "")
+        if source:
+            source += f". {volume}"
+        if pages:
+            source += f":{pages}"
+        return source
+    return ""
+
+
+def parse_article_new(content: dict) -> dict:
+    authors = normalize_authors(content.get("authors", []))
+    return dict(
+        json=content,
+        HEROID=_force_int(content.get("id")),
+        PMID=_force_int(content.get("accession_number")),
+        doi=try_get_doi(content.get("doi", "")),
+        title=content.get("title", ""),
+        abstract=content.get("abstract", ""),
+        source=format_source(content),
+        year=_force_int(content.get("year")),
+        authors=authors,
+        authors_short=get_author_short_text(authors),
+    )
 
 
 def parse_article(content: dict) -> dict:
@@ -57,8 +91,6 @@ class HEROFetch:
     default_settings = {"recordsperpage": 100}
 
     def __init__(self, id_list: list[int], **kwargs):
-        if id_list is None:
-            raise Exception("List of IDs are required for a PubMed search")
         self.ids = id_list
         self.ids_count = len(id_list)
         self.content: list[dict] = []
@@ -90,24 +122,50 @@ class HEROFetch:
             self.failures = []
             return dict(success=self.content, failure=self.failures)
 
+        headers = {}
+        if settings.HAWC_FEATURES.ENABLE_NEW_HERO:
+            if settings.HERO_API_KEY is None:
+                raise ValueError("HERO_API_KEY required.")
+            headers = {"Authorization": f"Bearer {settings.HERO_API_KEY}"}
+
+        session = get_session(headers)
+
+        parse_func = parse_article_new if settings.HAWC_FEATURES.ENABLE_NEW_HERO else parse_article
         rng = list(range(0, self.ids_count, self.settings["recordsperpage"]))
         for recstart in rng:
             request_ids = self.ids[recstart : recstart + self.settings["recordsperpage"]]
             ids = ",".join([str(id_) for id_ in request_ids])
             rpp = self.settings["recordsperpage"]
-            url = f"https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/{ids}/recordsperpage/{rpp}.json"
-            try:
-                r = requests.get(url, timeout=30.0)
-                if r.status_code == 200:
-                    data = json.loads(r.text)
-                    for ref in data["results"]:
-                        self.content.append(parse_article(ref))
-                else:
+            results = []
+            if settings.HAWC_FEATURES.ENABLE_NEW_HERO:
+                url = "https://heronetnext.epa.gov/api/reference/export/json"
+                data = {"type": "hero", "id": request_ids}
+                try:
+                    r = session.post(url, json=data, timeout=30.0)
+                    if r.status_code == 200:
+                        results = r.json()
+                    else:
+                        logger.info(f"HERO request failure: {url}")
+                except requests.exceptions.Timeout:
+                    logger.info(f"HERO request timeout: {url}")
+                except json.JSONDecodeError:
                     logger.info(f"HERO request failure: {url}")
-            except requests.exceptions.Timeout:
-                logger.info(f"HERO request timeout: {url}")
-            except json.JSONDecodeError:
-                logger.info(f"HERO request failure: {url}")
+            else:
+                url = f"https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/{ids}/recordsperpage/{rpp}.json"
+                try:
+                    r = session.get(url, timeout=30.0)
+                    if r.status_code == 200:
+                        data = json.loads(r.text)
+                        results = data["results"]
+                    else:
+                        logger.info(f"HERO request failure: {url}")
+                except requests.exceptions.Timeout:
+                    logger.info(f"HERO request timeout: {url}")
+                except json.JSONDecodeError:
+                    logger.info(f"HERO request failure: {url}")
+
+            for ref in results:
+                self.content.append(parse_func(ref))
         self.failures = self._get_missing_ids()
         return dict(success=self.content, failure=self.failures)
 

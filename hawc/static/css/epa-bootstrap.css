@@ -47,13 +47,6 @@ a.btn-warning:visited, a.badge-warning:visited {
 .dropdown-menu a:visited{
   color: #212529;
 }
-.hawc-header a:visited,
-.breadcrumb-item a:visited{
-  color: var(--epa-primary);
-}
-.hawc-header .nav-link {
-  padding: 0 0 0 1em;
-}
 .dropdown-item.active,
 .dropdown-item:active, .logout-btn:active {
   color: #fff !important;

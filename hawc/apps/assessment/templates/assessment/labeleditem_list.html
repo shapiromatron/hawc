@@ -1,0 +1,47 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+
+  <div class="d-flex">
+    <h2 class="mb-0 d-flex align-items-center mb-2">Labeled Objects in {{assessment}}</h2>
+    {% if obj_perms.edit %}
+      <a class="btn btn-primary ml-auto flex-shrink-0 align-self-center" href="{% url 'assessment:manage-labels' assessment.pk %}">Manage Labels</a>
+    {% endif %}
+  </div>
+
+  {% include 'common/inline_filter_form.html' %}
+  <div class="list-group my-2 py-0">
+    {% for object in object_list %}
+      {% if object.content_object.published or obj_perms.edit %}
+        <a class="list-group-item clickable text-dark d-flex p-0" href="{{object.content_object.get_absolute_url}}">
+          <div class="col-auto bg-light py-2 font-weight-light text-center" style="width: 10rem;">{{object.content_object|model_verbose_name|title}}</div>
+          <div class="col py-2 d-flex align-items-center flex-wrap">
+            <div class="flex-shrink-0 mr-2">{{object.content_object}}</div>
+            {% if obj_perms.edit %}
+              <i class="text-secondary fa fa-{{ object.content_object.published|yesno:'eye,eye-slash' }} px-1 mr-2" title="{{object.content_object|model_verbose_name|title}} is {{ object.content_object.published|yesno:'published,unpublished' }}"></i>
+            {% endif %}
+            {% for labeled_item in object.content_object.labels.all %}
+              {% if labeled_item.label.published or obj_perms.edit %}
+                {% include "assessment/fragments/label.html" with label=labeled_item.label %}
+              {% endif %}
+            {% endfor %}
+          </div>
+        </a>
+      {% endif %}
+    {% empty %}
+      {% alert type="warning" classes="my-0" %} No objects found.{% endalert %}
+    {% endfor %}
+  </div>
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    $(document).ready(() => {
+      $(".label").click(function(e) {
+        url = $(this).attr("label_url")
+        window.location = url
+        e.preventDefault();
+      });
+    });
+  </script>
+{% endblock %}

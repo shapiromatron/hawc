@@ -3,12 +3,13 @@ from urllib.parse import urlparse
 import pytest
 from django.conf import settings
 from django.core.cache import cache
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.client import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from hawc.apps.assessment.forms import ContactForm
-from hawc.apps.assessment.models import Assessment
+from hawc.apps.assessment.models import Assessment, Label
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.study.models import Study
 
@@ -90,7 +91,7 @@ class TestAboutPage:
         url = reverse("about")
         response = client.get(url)
         assert "counts" in response.context
-        assert response.context["counts"]["assessments"] == 4
+        assert response.context["counts"]["assessments"] == 5
         assert response.context["counts"]["users"] == 5
 
     def test_settings_external(self):
@@ -112,25 +113,6 @@ class TestAboutPage:
         with pytest.raises(ValueError):
             client.get(url)
         settings.HAWC_FLAVOR = "PRIME"
-
-
-@pytest.mark.django_db
-def test_unsupported_browser():
-    """
-    Ensure our unsupported browser warning will appear with some user agents
-    """
-    WARNING = "Your current browser has not been tested extensively"
-
-    uas = [
-        ("ie11", False),
-        ("firefox", True),
-    ]
-
-    for ua, valid in uas:
-        c = Client(HTTP_USER_AGENT=ua)
-        response = c.get("/")
-        assert response.context["UA_SUPPORTED"] is valid
-        assert (WARNING in response.content.decode("utf8")) is (not valid)
 
 
 @pytest.mark.django_db
@@ -189,6 +171,73 @@ class TestResourcesPage:
         assert resp.status_code == 302
         assert urlparse(resp.url).path == "."
         settings.EXTERNAL_RESOURCES = ""
+
+
+@pytest.mark.django_db
+class TestAttachmentViewSet:
+    def test_crud(self):
+        client = get_client("pm", htmx=True)
+
+        # create
+        url = reverse("assessment:attachment-htmx", args=[1, "create"])
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/attachment_edit_row.html")
+
+        resp = client.post(
+            url,
+            {
+                "attachment-new-title": "test",
+                "attachment-new-description": "test",
+                "attachment-new-attachment": SimpleUploadedFile("zzzz.txt", b"test"),
+            },
+            follow=True,
+        )
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/attachment_row.html")
+
+        instance_id = resp.context["object"].id
+
+        # get (htmx)
+        url = reverse("assessment:attachment-htmx", args=[instance_id, "read"])
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/attachment_row.html")
+
+        # get (download)
+        client_no_htmx = get_client("admin")
+        resp = client_no_htmx.get(url)
+        assert resp.status_code == 302
+        assert resp.url.startswith(settings.MEDIA_URL) and "zzzz" in resp.url and ".txt" in resp.url
+
+        # update
+        url = reverse("assessment:attachment-htmx", args=[instance_id, "update"])
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/attachment_edit_row.html")
+
+        resp = client.post(
+            url,
+            {
+                f"attachment-{instance_id}-title": "test2",
+                f"attachment-{instance_id}-description": "test2",
+                f"attachment-{instance_id}-attachment": SimpleUploadedFile("test2.txt", b"test2"),
+            },
+            follow=True,
+        )
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/attachment_row.html")
+
+        # delete
+        url = reverse("assessment:attachment-htmx", args=[instance_id, "delete"])
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "assessment/fragments/attachment_row.html")
+        assert resp.context["action"] == "delete"
+
+        resp = client.post(url)
+        assert resp.status_code == 200
+        assert resp.content == b""
 
 
 @pytest.mark.django_db
@@ -339,6 +388,17 @@ class TestBulkPublishItems:
         study.refresh_from_db()
         assert study.published is False
 
+    def test_publish_label(self):
+        label = Label.objects.get(id=2)
+        assert label.published is True
+        url = reverse("assessment:publish-update", args=(1, "label", label.id))
+        pm = get_client("pm", api=False, htmx=True)
+        pm.post(url)
+        label.refresh_from_db()
+        assert label.published is False
+        label.published = True
+        label.save()
+
 
 @pytest.mark.django_db
 class TestUpdateSession:
@@ -370,12 +430,25 @@ class TestRasterizeCss:
 
 
 @pytest.mark.django_db
+class TestSearch:
+    def test_success(self):
+        anon = get_client()
+        url = reverse("search")
+        resp = anon.get(
+            url, data={"all_public": "on", "query": "plotly", "type": "visual", "order_by": "name"}
+        )
+        assert resp.status_code == 200
+        assert resp.context["object_list"].count() == 1
+
+
+@pytest.mark.django_db
 def test_get_200():
     client = get_client("admin")
     main = 1
     log_content_type = 16
     log_obj_id = 1
     urls = [
+        reverse("search"),
         reverse("assessment:full_list"),
         reverse("assessment:public_list"),
         reverse("assessment:detail", args=(main,)),
@@ -406,6 +479,9 @@ def test_get_200():
         reverse("assessment:content_types"),
         reverse("assessment:close_window"),
         reverse("assessment:clean_study_metrics", args=(main,)),
+        reverse("assessment:bulk-publish", args=(main,)),
+        reverse("assessment:labeled-items", args=(main,)),
+        reverse("assessment:manage-labels", args=(main,)),
         reverse("assessment:bulk-publish", args=(main,)),
     ]
     for url in urls:

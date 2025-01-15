@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 from django.apps import apps
 from django.contrib.postgres.aggregates import ArrayAgg
-from django.contrib.postgres.search import SearchQuery
 from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import Count, Q, QuerySet
@@ -15,14 +14,13 @@ from django.utils.timezone import now
 from taggit.managers import TaggableManager, _TaggableManager
 from taggit.utils import require_instance_manager
 
-from hawc.refml import tags as refmltags
-from hawc.services.utils.doi import get_doi_from_identifier
-
+from ...refml import tags as refmltags
 from ...services.epa import hero
 from ...services.nih import pubmed
+from ...services.utils.doi import get_doi_from_identifier
 from ..assessment.managers import published
 from ..common.helper import flatten
-from ..common.models import BaseManager, replace_null, str_m2m
+from ..common.models import BaseManager, replace_null, search_query, str_m2m
 from ..study.managers import study_df_annotations
 from . import constants
 
@@ -380,7 +378,7 @@ class IdentifiersManager(BaseManager):
                 (doi_dupes, "DOIs"),
                 (wos_dupes, "WoS IDs"),
             ]:
-                if dupes.shape[0] > 0:
+                if not dupes.empty:
                     error_msg.append(
                         f"The following HERO IDs have duplicate {id_type}: {dupes.HEROID.tolist()}. "
                     )
@@ -773,11 +771,40 @@ class ReferenceQuerySet(models.QuerySet):
             Queryset: The filtered ReferenceQueryset
         """
         return self.annotate(search=constants.REFERENCE_SEARCH_VECTOR).filter(
-            search=SearchQuery(search_text, search_type="websearch", config="english")
+            search=search_query(search_text)
         )
 
     def in_workflow(self, workflow: "Workflow"):
         return self.filter(workflow.reference_filter())
+
+    def with_identifiers(self):
+        Identifiers = apps.get_model("lit", "Identifiers")
+        return self.annotate(
+            pubmed_id=Cast(
+                models.Subquery(
+                    Identifiers.objects.filter(
+                        references=models.OuterRef("id"),
+                        database=constants.ReferenceDatabase.PUBMED,
+                    ).values("unique_id")[:1]
+                ),
+                models.IntegerField(),
+            ),
+            hero_id=Cast(
+                models.Subquery(
+                    Identifiers.objects.filter(
+                        references=models.OuterRef("id"),
+                        database=constants.ReferenceDatabase.HERO,
+                    ).values("unique_id")[:1]
+                ),
+                models.IntegerField(),
+            ),
+            doi=models.Subquery(
+                Identifiers.objects.filter(
+                    references=models.OuterRef("id"),
+                    database=constants.ReferenceDatabase.DOI,
+                ).values("unique_id")[:1]
+            ),
+        )
 
 
 class ReferenceManager(BaseManager):
@@ -807,6 +834,7 @@ class ReferenceManager(BaseManager):
             ReferenceTags.objects.filter(content_object__in=qs)
             .annotate(reference_id=models.F("content_object_id"))
             .values("reference_id", "tag_id")
+            .order_by("id")
         )
 
     def get_hero_references(self, search, identifiers):
@@ -1047,7 +1075,6 @@ class ReferenceManager(BaseManager):
         return df
 
     def heatmap_dataframe(self, assessment_id: int) -> pd.DataFrame:
-        Identifiers = apps.get_model("lit", "Identifiers")
         ReferenceFilterTag = apps.get_model("lit", "ReferenceFilterTag")
         ReferenceTags = apps.get_model("lit", "ReferenceTags")
 
@@ -1062,26 +1089,9 @@ class ReferenceManager(BaseManager):
             year="year",
             journal="journal",
         )
-        pubmed_qs = models.Subquery(
-            Identifiers.objects.filter(
-                references=models.OuterRef("id"), database=constants.ReferenceDatabase.PUBMED
-            ).values("unique_id")[:1]
-        )
-        hero_qs = models.Subquery(
-            Identifiers.objects.filter(
-                references=models.OuterRef("id"), database=constants.ReferenceDatabase.HERO
-            ).values("unique_id")[:1]
-        )
-        doi_qs = models.Subquery(
-            Identifiers.objects.filter(
-                references=models.OuterRef("id"), database=constants.ReferenceDatabase.DOI
-            ).values("unique_id")[:1]
-        )
         qs = (
             self.filter(assessment_id=assessment_id)
-            .annotate(pubmed_id=Cast(pubmed_qs, models.IntegerField()))
-            .annotate(hero_id=Cast(hero_qs, models.IntegerField()))
-            .annotate(doi=doi_qs)
+            .with_identifiers()
             .values_list(*values.keys())
             .order_by("id")
         )
@@ -1145,35 +1155,6 @@ class ReferenceTagsManager(BaseManager):
 
     def get_assessment_qs(self, assessment_id: int):
         return self.get_queryset().filter(content_object__assessment_id=assessment_id)
-
-    def delete_orphan_tags(self, assessment_id) -> tuple[int, int]:
-        """
-        Deletes all unreachable tags in an assessment's tag tree.
-        An assessment log is created detailing these deleted tags.
-
-        Args:
-            assessment_id (int): Assessment id
-
-        Returns:
-            tuple[int, int]: Number of tags deleted, followed by log ID.
-        """
-        from .models import ReferenceFilterTag
-
-        # queryset of tag tree associated with assessment
-        filter_tags = ReferenceFilterTag.get_assessment_qs(assessment_id)
-        # queryset of tags associated with assessment
-        tags = self.get_assessment_qs(assessment_id)
-        # delete tags that are not in the assessment tag tree
-        deleted_tags = tags.exclude(tag__in=filter_tags)
-        deleted_data = list(deleted_tags.values("content_object_id", "tag_id"))
-        number_deleted, _ = deleted_tags.delete()
-        # log the deleted tags
-        Log = apps.get_model("assessment", "Log")
-        log = Log.objects.create(
-            assessment_id=assessment_id,
-            message=json.dumps({"count": number_deleted, "data": deleted_data}),
-        )
-        return number_deleted, log.id
 
 
 class UserReferenceTagsManager(BaseManager):

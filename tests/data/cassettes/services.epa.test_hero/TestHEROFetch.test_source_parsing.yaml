@@ -1,0 +1,214 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - hawc
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/54501,5708371/recordsperpage/100.json
+  response:
+    body:
+      string: "{\"results\":[{\"REFERENCE_ID\":5708371,\"ABSTRACT\":\"\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/5708371\",\"hasPDF\":true,\"YEAR\":2019,\"allAuthors\":[\"ECHA\",\"ECHA\",\"European
+        Chemicals Agency\"],\"HEROID\":5708371,\"id\":\"5708371\",\"project_key\":[2826],\"referencetype\":[\"technical
+        report\"],\"type\":\"reference\",\"pdfURL\":\"https://echa.europa.eu/registration-dossier/-/registered-dossier/24656/7/9/3\",\"sortYear\":2019,\"tag_path_text\":[\"PFAS|PFAS
+        150|Literature Search August 2019|Other sources|ECHA\",\"PFAS|PFAS 150|Screened
+        Studies|Included|Include (TIAB)\",\"PFAS|PFAS 150|Screened Studies|Included|Include
+        (Full Text)\"],\"category_key\":[23],\"PROJECTS\":[{\"PROJECT\":\"PFAS 150\",\"PROJECT_ID\":2826,\"USAGES\":[{\"USAGE_ID\":\"25806\",\"USAGE\":\"Literature
+        Search August 2019\",\"USAGES\":[{\"USAGE_ID\":\"25810\",\"USAGE\":\"Other
+        sources\",\"USAGES\":[{\"USAGE_ID\":\"25812\",\"USAGE\":\"ECHA\",\"USAGES\":[]}]}]},{\"USAGE_ID\":\"25817\",\"USAGE\":\"Screened
+        Studies\",\"USAGES\":[{\"USAGE_ID\":\"29926\",\"USAGE\":\"Included\",\"USAGES\":[{\"USAGE_ID\":\"29928\",\"USAGE\":\"Include
+        (TIAB)\",\"USAGES\":[]},{\"USAGE_ID\":\"29927\",\"USAGE\":\"Include (Full
+        Text)\",\"USAGES\":[]}]}]}]}],\"tag_path_key\":[\"23|2826|25806|25810|25812\",\"23|2826|25817|29926|29928\",\"23|2826|25817|29926|29927\"],\"AUTHORS\":\"ECHA\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\"],\"isPeerReviewed\":false,\"code\":\"re\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"\",\"TITLE\":\"Registration
+        dossier: Triethoxy(3,3,4,4,5,5,6,6,7,7,8,8,8-tridecafluorooctyl)silane (CASRN:
+        51851-37-7): Developmental toxicity/teratogenicity: Key | Experimental\",\"modified\":\"2022-07-22T18:58:47Z\",\"PMID\":\"\",\"_version_\":1739080421851791360},{\"REFERENCE_ID\":54501,\"ABSTRACT\":\"In
+        our laboratory, chronically feeding cadmium to groups of rats has been reproducibly
+        associated with average increases of 15 to 20 mm Hg in systolic pressure.
+        A total of 497 female Long-Evans rats were continuously provided with drinking
+        water fortified with five essential elements and containing from 0.01 to 50
+        ppm cadmium, as the acetate, from weaning for as long as 30 months. These
+        rats, plus 311 matched control animals which received fortified water without
+        added cadmium, were fed a special low-cadmium diet. All 808 rats were weighed
+        at least monthly as a screen for cadmium toxicity, and their systolic pressures
+        were measured every 3 or 6 months. The two lowest concentrations of cadmium
+        tested (0.01 and 0.03 ppm) were not pressor; the three highest concentrations
+        (10, 25, and 50 ppm) ultimately proved to be toxic. All indirect systolic
+        pressures (each measured in triplicate) of all rats which received 0.1 to
+        5 ppm cadmium (i.e., nontoxic pressor doses) averaged 15.0 mm Hg more than
+        simultaneously measured pressures of control rats. This average increase over
+        the control pressure is extremely significant statistically, even though it
+        seems relatively small in absolute terms. Occasionally, however, some rats
+        had much larger than average increases in pressure; thus, 10 of 60 rats receiving
+        from 0.1 to 0.5 ppm cadmium for 18 months had systolic pressures that were
+        more than 50 mm Hg above the average pressure of the control rats. Cadmium-induced
+        hypertension is not limited to females or to a particular strain. Although
+        we have usually used one strain of female Long-Evans rat from a single source,
+        males of the same strain and female Sprague-Dawley rats have also developed
+        comparable hypertension. All subgroup II elements can apparently induce similar
+        increases in systolic pressure averaging 15 to 20 mm Hg, but cadmium is pressor
+        in much smaller amounts than mercury or zinc. Thus, to induce a demonstrable
+        increase in pressure requires more than ten times as much divalent mercuric
+        ion as cadmium and more than 1000 times as much zinc as cadmium. Exposure
+        to another metal along with cadmium can markedly alter the ability of cadmium
+        to induce hypertension. Selenium protects against the hypertension induced
+        by twice as much cadmium. Large excesses of both zinc and copper have also
+        inhibited the induction of hypertension by cadmium. In contrast, lead, which
+        like cadmium, can also induce hypertension, augments rather than inhibits
+        cadmium-induced hypertension; thus, lead and cadmium together can induce an
+        average increase in systolic pressure in excess of 40 mm Hg, at least twice
+        as large as is usually induced by either metal alone.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/54501\",\"hasPDF\":true,\"YEAR\":1979,\"allAuthors\":[\"Perry,
+        HM; Erlanger, M; Perry, EF\"],\"HEROID\":54501,\"id\":\"54501\",\"project_key\":[20,2366,2869,3589,4776],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"doi\":\"10.1289/ehp.7928251\",\"sortYear\":1979,\"tag_path_text\":[\"IRIS|Cadmium\",\"IRIS|Manganese
+        \u2014 Oral|Initial Lit Search 6/7/2021|Scopus\",\"NAAQS|Lead Cardiovascular
+        Effects Systematic Review|Literature Search May 2023|Classifier: Animal Toxicology\",\"NAAQS|Lead
+        Cardiovascular Effects Systematic Review|Literature Search May 2023|Pubmed|Mesh
+        w/ exclusion\",\"NAAQS|Lead Cardiovascular Effects Systematic Review|Literature
+        Search May 2023|Pubmed|Text w/ exclusion\",\"Other|Epigenetics and Environment|Literature
+        Search - August 2015 - Initial|Pubmed\",\"Other|Sex Differences--Nervous System
+        Effects--Air Pollution|Keyword Search - Sept. 25, 2019|Lead\",\"Other|Sex
+        Differences--Nervous System Effects--Air Pollution|Keyword Search - Sept.
+        25, 2019|PubMed\"],\"category_key\":[1,2,18],\"PROJECTS\":[{\"PROJECT\":\"Manganese
+        \u2014 Oral\",\"PROJECT_ID\":3589,\"USAGES\":[{\"USAGE_ID\":\"33085\",\"USAGE\":\"Initial
+        Lit Search 6/7/2021\",\"USAGES\":[{\"USAGE_ID\":\"33730\",\"USAGE\":\"Scopus\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Epigenetics
+        and Environment\",\"PROJECT_ID\":2366,\"USAGES\":[{\"USAGE_ID\":\"6784\",\"USAGE\":\"Literature
+        Search - August 2015 - Initial\",\"USAGES\":[{\"USAGE_ID\":\"6785\",\"USAGE\":\"Pubmed\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Lead
+        Cardiovascular Effects Systematic Review\",\"PROJECT_ID\":4776,\"USAGES\":[{\"USAGE_ID\":\"43649\",\"USAGE\":\"Literature
+        Search May 2023\",\"USAGES\":[{\"USAGE_ID\":\"43650\",\"USAGE\":\"Pubmed\",\"USAGES\":[{\"USAGE_ID\":\"43652\",\"USAGE\":\"Text
+        w/ exclusion\",\"USAGES\":[]},{\"USAGE_ID\":\"43654\",\"USAGE\":\"Mesh w/
+        exclusion\",\"USAGES\":[]}]},{\"USAGE_ID\":\"43745\",\"USAGE\":\"Classifier:
+        Animal Toxicology\",\"USAGES\":[]}]}]},{\"PROJECT\":\"Cadmium\",\"PROJECT_ID\":20,\"USAGES\":[]},{\"PROJECT\":\"Sex
+        Differences--Nervous System Effects--Air Pollution\",\"PROJECT_ID\":2869,\"USAGES\":[{\"USAGE_ID\":\"20179\",\"USAGE\":\"Keyword
+        Search - Sept. 25, 2019\",\"USAGES\":[{\"USAGE_ID\":\"20183\",\"USAGE\":\"PubMed\",\"USAGES\":[]},{\"USAGE_ID\":\"20180\",\"USAGE\":\"Lead\",\"USAGES\":[]}]}]}],\"tag_path_key\":[\"2|20\",\"2|3589|33085|33730\",\"1|4776|43649|43745\",\"1|4776|43649|43650|43654\",\"1|4776|43649|43650|43652\",\"18|2366|6784|6785\",\"18|2869|20179|20180\",\"18|2869|20179|20183\"],\"firstAuthor\":\"Perry\",\"AUTHORS\":\"Perry,
+        HM; Erlanger, M; Perry, EF\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Environmental
+        Health Perspectives 28:251-260.\",\"TITLE\":\"Increase in the systolic pressure
+        of rats chronically fed cadmium\",\"modified\":\"2023-09-07T15:07:27Z\",\"PMID\":488039,\"journalTitle\":\"Environmental
+        Health Perspectives\",\"_version_\":1776392220214034432}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Thu, 05 Sep 2024 23:00:53 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.62 (Win64) OpenSSL/3.1.6 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=35158128; Expires=Fri, 06 Sep 2024 23:00:53 GMT; Path=/; HttpOnly
+      - CFTOKEN=64409503; Expires=Fri, 06 Sep 2024 23:00:53 GMT; Path=/; HttpOnly
+      - JSESSIONID=E3FFA5D44BBD812FA5A45D58EC46087C.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F09%2F05%2019%3A00%3A53; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"type": "hero", "id": [54501, 5708371]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '40'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - hawc
+      authorization:
+      - <omitted>
+    method: POST
+    uri: https://heronetnext.epa.gov/api/reference/export/json
+  response:
+    body:
+      string: '[{"abstract": "In our laboratory, chronically feeding cadmium to groups
+        of rats has been reproducibly associated with average increases of 15 to 20
+        mm Hg in systolic pressure. A total of 497 female Long-Evans rats were continuously
+        provided with drinking water fortified with five essential elements and containing
+        from 0.01 to 50 ppm cadmium, as the acetate, from weaning for as long as 30
+        months. These rats, plus 311 matched control animals which received fortified
+        water without added cadmium, were fed a special low-cadmium diet. All 808
+        rats were weighed at least monthly as a screen for cadmium toxicity, and their
+        systolic pressures were measured every 3 or 6 months. The two lowest concentrations
+        of cadmium tested (0.01 and 0.03 ppm) were not pressor; the three highest
+        concentrations (10, 25, and 50 ppm) ultimately proved to be toxic. All indirect
+        systolic pressures (each measured in triplicate) of all rats which received
+        0.1 to 5 ppm cadmium (i.e., nontoxic pressor doses) averaged 15.0 mm Hg more
+        than simultaneously measured pressures of control rats. This average increase
+        over the control pressure is extremely significant statistically, even though
+        it seems relatively small in absolute terms. Occasionally, however, some rats
+        had much larger than average increases in pressure; thus, 10 of 60 rats receiving
+        from 0.1 to 0.5 ppm cadmium for 18 months had systolic pressures that were
+        more than 50 mm Hg above the average pressure of the control rats. Cadmium-induced
+        hypertension is not limited to females or to a particular strain. Although
+        we have usually used one strain of female Long-Evans rat from a single source,
+        males of the same strain and female Sprague-Dawley rats have also developed
+        comparable hypertension. All subgroup II elements can apparently induce similar
+        increases in systolic pressure averaging 15 to 20 mm Hg, but cadmium is pressor
+        in much smaller amounts than mercury or zinc. Thus, to induce a demonstrable
+        increase in pressure requires more than ten times as much divalent mercuric
+        ion as cadmium and more than 1000 times as much zinc as cadmium. Exposure
+        to another metal along with cadmium can markedly alter the ability of cadmium
+        to induce hypertension. Selenium protects against the hypertension induced
+        by twice as much cadmium. Large excesses of both zinc and copper have also
+        inhibited the induction of hypertension by cadmium. In contrast, lead, which
+        like cadmium, can also induce hypertension, augments rather than inhibits
+        cadmium-induced hypertension; thus, lead and cadmium together can induce an
+        average increase in systolic pressure in excess of 40 mm Hg, at least twice
+        as large as is usually induced by either metal alone.", "accession_number":
+        "488039", "authors": ["Perry, H. M.", "Erlanger, M.", "Perry, E. F."], "doi":
+        "10.1289/ehp.7928251", "id": "54501", "alternate_title2": "Environ Health
+        Perspect", "full_journal_name": "Environmental Health Perspectives", "language":
+        "English", "label": "54501", "year": "1979", "serial_number": ["ISSN 0091-6765",
+        "EISSN 1552-9924"], "start_page": "251-260", "secondary_title": "Environmental
+        Health Perspectives", "title": "Increase in the systolic pressure of rats
+        chronically fed cadmium", "type_of_reference": "Journal", "urls": ["http://dx.doi.org/10.1289/ehp.7928251"],
+        "volume": "28"}, {"authors": ["ECHA,"], "id": "5708371", "language": "English",
+        "label": "5708371", "year": "2019", "title": "Registration dossier: Triethoxy(3,3,4,4,5,5,6,6,7,7,8,8,8-tridecafluorooctyl)silane
+        (CASRN: 51851-37-7): Developmental toxicity/teratogenicity: Key | Experimental",
+        "type_of_reference": "Report", "urls": ["https://echa.europa.eu/registration-dossier/-/registered-dossier/24656/7/9/3"]}]'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '3699'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Thu, 05 Sep 2024 23:00:55 GMT
+      Strict-Transport-Security:
+      - max-age=15724800; includeSubDomains
+      content-security-policy:
+      - 'script-src-attr ''self'' ''unsafe-inline''; form-action ''self'' https://*.epa.gov;
+        script-src ''self'' ''unsafe-eval''; default-src ''self''; font-src ''self''
+        www.epa.gov; img-src ''self'' www.epa.gov data: blob:; style-src-attr ''self''
+        ''unsafe-inline''; script-src-elem ''self'' ''unsafe-inline''; base-uri ''self'';
+        style-src-elem ''self'' ''sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=''
+        ''sha256-vCpS8VyHtSqXbN/JkDhke+jauUq+p7lBAVCL+C75wZo=''; frame-ancestors ''self'''
+      cross-origin-opener-policy:
+      - same-origin
+      referrer-policy:
+      - same-origin
+      vary:
+      - Cookie
+      x-content-type-options:
+      - nosniff
+      x-frame-options:
+      - DENY
+    status:
+      code: 200
+      message: OK
+version: 1

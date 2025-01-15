@@ -23,8 +23,6 @@ from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
 
-from hawc.apps.udf.models import TagBinding, TagUDFContent
-
 from ...constants import ColorblindColors
 from ...services.nih import pubmed
 from ...services.utils import ris
@@ -37,6 +35,7 @@ from ..common.models import (
     NonUniqueTagBase,
 )
 from ..myuser.models import HAWCUser
+from ..udf.models import TagBinding, TagUDFContent
 from . import constants, managers, tasks
 
 logger = logging.getLogger(__name__)
@@ -228,7 +227,7 @@ class Search(models.Model):
     BREADCRUMB_PARENT = "assessment"
 
     class Meta:
-        verbose_name_plural = "searches"
+        verbose_name_plural = "searches / imports"
         unique_together = (("assessment", "slug"), ("assessment", "title"))
         ordering = ["-last_updated"]
         get_latest_by = "last_updated"
@@ -644,10 +643,10 @@ class Identifiers(models.Model):
         # create, but don't save reference object
         try:
             content = self.get_content()
-        except ValueError:
+        except ValueError as err:
             if self.database == constants.ReferenceDatabase.PUBMED:
                 self.update_pubmed_content([self])
-            raise AttributeError(f"Content invalid JSON: {self.unique_id}")
+            raise AttributeError(f"Content invalid JSON: {self.unique_id}") from err
 
         if self.database == constants.ReferenceDatabase.PUBMED:
             ref = Reference(
@@ -710,25 +709,6 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
             return "<root-node>"
         else:
             return f"{'━ ' * (self.depth - 1)}{self.name}"
-
-    @classmethod
-    def get_tags_in_assessment(cls, assessment_pk: int, tag_ids: list[int]):
-        """Returns a queryset of matching tags which are in the assessment
-
-        Args:
-            assessment_pk (int): assessment id
-            tag_ids (list[int]): list of tag ids expected to be in assessment
-
-        Raises:
-            ValueError: if any tags are missing or are not in the assessment
-        """
-        tags = cls.objects.filter(id__in=tag_ids)
-        assessment_root = ReferenceFilterTag.get_assessment_root(assessment_pk)
-        if len(set(tag_ids)) != tags.count():
-            raise ValueError("Tags not found")
-        if any(not tag.is_descendant_of(assessment_root) for tag in tags):
-            raise ValueError("Tags are not descendants of root")
-        return tags
 
     @classmethod
     def get_nested_tag_names(cls, assessment_pk: int) -> dict[int, str]:
@@ -958,8 +938,8 @@ class Reference(models.Model):
 
                 try:
                     binding = TagBinding.objects.get(assessment=self.assessment_id, tag=udf_tag_id)
-                except TagBinding.DoesNotExist:
-                    raise ValidationError("UDF binding not found")
+                except TagBinding.DoesNotExist as err:
+                    raise ValidationError("UDF binding not found") from err
 
                 # handle edge-case where a select multiple only has one selected
                 # TODO - can this code + JS be removed to fix this issue?

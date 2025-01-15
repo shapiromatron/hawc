@@ -12,9 +12,9 @@ class DurationGrouper(TextChoices):
 
 
 class PandasDurationGrouper(TextChoices):
-    annually = "A", "Annually"
-    quarterly = "Q", "Quarterly"
-    monthly = "M", "Monthly"
+    annually = "YE", "Annually"
+    quarterly = "QE", "Quarterly"
+    monthly = "ME", "Monthly"
     weekly = "W", "Weekly"
     daily = "D", "Daily"
 

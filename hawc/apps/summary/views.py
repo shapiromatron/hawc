@@ -21,8 +21,8 @@ from ..common.views import (
     BaseDelete,
     BaseDetail,
     BaseFilterList,
-    BaseList,
     BaseUpdate,
+    add_csrf,
 )
 from ..riskofbias.models import RiskOfBiasMetric
 from . import constants, filterset, forms, models, prefilters, serializers
@@ -34,59 +34,10 @@ def get_visual_list_crumb(assessment) -> Breadcrumb:
     )
 
 
-def get_summary_list_crumb(assessment) -> Breadcrumb:
-    return Breadcrumb(name="Summary", url=reverse("summary:list", args=(assessment.id,)))
-
-
 def get_table_list_crumb(assessment) -> Breadcrumb:
     return Breadcrumb(
         name="Summary tables", url=reverse("summary:tables_list", args=(assessment.id,))
     )
-
-
-# SUMMARY-TEXT
-class SummaryTextList(BaseList):
-    parent_model = Assessment
-    model = models.SummaryText
-    breadcrumb_active_name = "Executive summary"
-
-    def get_queryset(self):
-        rt = self.model.get_assessment_root_node(self.assessment.id)
-        return super().get_queryset().filter(pk__in=[rt.pk])
-
-    def get_app_config(self, context) -> WebappConfig:
-        return WebappConfig(
-            app="summaryTextStartup", data=dict(assessment_id=self.assessment.id, editMode=False)
-        )
-
-
-class SummaryTextModify(BaseCreate):
-    # Base view for all Create, Update, Delete GET operations
-    parent_model = Assessment
-    parent_template_name = "assessment"
-    model = models.SummaryText
-    form_class = forms.SummaryTextForm
-    http_method_names = ("get",)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["breadcrumbs"] = Breadcrumb.build_crumbs(
-            self.request.user,
-            "Update text",
-            [Breadcrumb.from_object(self.assessment), get_summary_list_crumb(self.assessment)],
-        )
-        return context
-
-    def get_app_config(self, context) -> WebappConfig:
-        return WebappConfig(
-            app="summaryTextStartup",
-            data=dict(
-                assessment_id=self.assessment.id,
-                editMode=True,
-                csrf=get_token(self.request),
-            ),
-        )
 
 
 # SUMMARY TABLE
@@ -112,11 +63,13 @@ class SummaryTableList(BaseFilterList):
         if self.assessment.user_is_team_member_or_higher(self.request.user):
             return dict(
                 main_field="title",
-                appended_fields=["type", "published"],
+                appended_fields=["type", "label", "published"],
             )
         else:
             return dict(
-                main_field="title", appended_fields=["type"], dynamic_fields=["title", "type"]
+                main_field="title",
+                appended_fields=["type", "label"],
+                dynamic_fields=["title", "type", "label"],
             )
 
 
@@ -173,8 +126,8 @@ class SummaryTableCreate(BaseCreate):
         kwargs = super().get_form_kwargs()
         try:
             table_type = constants.TableType(self.kwargs["table_type"])
-        except ValueError:
-            raise Http404()
+        except ValueError as err:
+            raise Http404() from err
         kwargs["table_type"] = table_type
         return kwargs
 
@@ -349,11 +302,13 @@ class VisualizationList(BaseFilterList):
         if self.assessment.user_is_team_member_or_higher(self.request.user):
             return dict(
                 main_field="title",
-                appended_fields=["type", "published"],
+                appended_fields=["type", "label", "published"],
             )
         else:
             return dict(
-                main_field="title", appended_fields=["type"], dynamic_fields=["title", "type"]
+                main_field="title",
+                appended_fields=["type", "label"],
+                dynamic_fields=["title", "type", "label"],
             )
 
     def get_context_data(self, **kwargs):
@@ -381,6 +336,7 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
+        context.update(config=add_csrf(self.object.read_config(), self.request))
         return context
 
     def get_template_names(self):
@@ -428,8 +384,8 @@ class VisualizationCreate(BaseCreate):
         kwargs["visual_type"] = self.kwargs.get("visual_type")
         try:
             constants.VisualType(kwargs["visual_type"])
-        except ValueError:
-            raise Http404
+        except ValueError as err:
+            raise Http404 from err
 
         if kwargs["initial"]:
             kwargs["instance"] = self.model.objects.filter(pk=self.request.GET["initial"]).first()
@@ -444,8 +400,8 @@ class VisualizationCreate(BaseCreate):
                     kwargs["evidence_type"] = constants.get_default_evidence_type(
                         kwargs["visual_type"]
                     )
-                except ValueError:
-                    raise Http404
+                except ValueError as err:
+                    raise Http404 from err
             if (
                 kwargs["evidence_type"]
                 not in constants.VISUAL_EVIDENCE_CHOICES[kwargs["visual_type"]]
@@ -456,10 +412,7 @@ class VisualizationCreate(BaseCreate):
 
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
-        if (
-            visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
-            and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
-        ):
+        if visual_type in [] and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
             raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
@@ -473,24 +426,31 @@ class VisualizationCreate(BaseCreate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["dose_units"] = models.Visual.get_dose_units()
-        context["instance"] = {}
-        context["visual_type"] = int(self.kwargs.get("visual_type"))
-        context["evidence_type"] = self.evidence_type
-        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["rob_metrics"] = json.dumps(
-            list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
+        visual = self.get_initial_visual(context)
+        context.update(
+            dose_units=models.Visual.get_dose_units(),
+            instance={},
+            visual_type=visual.visual_type,
+            evidence_type=visual.evidence_type,
+            initial_data=json.dumps(serializers.VisualSerializer().to_representation(visual)),
+            smart_tag_form=forms.SmartTagForm(assessment_id=self.assessment.id),
+            rob_metrics=json.dumps(
+                list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
+            ),
+            **visual.update_config(),
         )
-        context["initial_data"] = json.dumps(self.get_initial_visual(context))
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
         return context
 
-    def get_initial_visual(self, context) -> dict:
+    def get_initial_visual(self, context) -> models.Visual:
         instance = context["form"].instance
         instance.id = instance.FAKE_INITIAL_ID
-        return serializers.VisualSerializer().to_representation(instance)
+        instance.assessment = self.assessment
+        instance.visual_type = int(self.kwargs.get("visual_type"))
+        instance.evidence_type = self.evidence_type
+        return instance
 
 
 class VisualizationCreateTester(VisualizationCreate):
@@ -553,15 +513,12 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
     def get_form_class(self):
         try:
             return forms.get_visual_form(self.object.visual_type)
-        except ValueError:
-            raise Http404
+        except ValueError as err:
+            raise Http404 from err
 
     def get_template_names(self):
         visual_type = self.object.visual_type
-        if (
-            visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
-            and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
-        ):
+        if visual_type in [] and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
             raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
@@ -575,16 +532,18 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["dose_units"] = models.Visual.get_dose_units()
-        context["instance"] = self.object.get_json()
-        context["visual_type"] = self.object.visual_type
-        context["evidence_type"] = self.object.evidence_type
-        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["rob_metrics"] = json.dumps(
-            list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
-        )
-        context["initial_data"] = json.dumps(
-            serializers.VisualSerializer().to_representation(self.object)
+        visual = self.object
+        context.update(
+            dose_units=models.Visual.get_dose_units(),
+            instance=visual.get_json(),
+            visual_type=visual.visual_type,
+            evidence_type=visual.evidence_type,
+            initial_data=json.dumps(serializers.VisualSerializer().to_representation(visual)),
+            smart_tag_form=forms.SmartTagForm(assessment_id=self.assessment.id),
+            rob_metrics=json.dumps(
+                list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
+            ),
+            **visual.update_config(),
         )
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
@@ -604,6 +563,7 @@ class VisualizationDelete(GetVisualizationObjectMixin, BaseDelete):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )
+        context.update(config=add_csrf(self.object.read_config(), self.request))
         return context
 
 
@@ -655,8 +615,8 @@ class DataPivotQueryNew(DataPivotNew):
         try:
             evidence_type = constants.StudyType(self.kwargs["study_type"])
             _ = prefilters.get_prefilter_cls(None, evidence_type, self.assessment)
-        except (KeyError, ValueError):
-            raise Http404
+        except (KeyError, ValueError) as err:
+            raise Http404 from err
         return evidence_type
 
     def get_form_kwargs(self):

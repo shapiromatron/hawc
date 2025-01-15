@@ -3,9 +3,11 @@ from io import StringIO
 import pandas as pd
 import pytest
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.test import RequestFactory
 from pydantic import BaseModel
 from rest_framework.serializers import ValidationError as DRFValidationError
 
+from hawc.apps.assessment.models import Assessment
 from hawc.apps.common import helper
 
 
@@ -33,6 +35,20 @@ class TestFlatFileExporter:
             helper.FlatFileExporter.get_flattened_tags({"hi": [{"name": "a"}, {"name": "b"}]}, "hi")
             == "|a|b|"
         )
+
+
+@pytest.mark.parametrize(
+    "kw,expected",
+    [
+        [dict(items=list("abcde"), target="c", after="b", n_cols=2), "abcde"],
+        [dict(items=list("abcde"), target="b", after=None), "bacde"],
+        [dict(items=list("abcde"), target="c", after="a", n_cols=2), "acdbe"],
+        [dict(items=list("abcde"), target="d", after="b"), "abdce"],
+        [dict(items=list("abcde"), target="b", after="d", n_cols=2), "adbce"],
+    ],
+)
+def test_reorder_list(kw, expected):
+    assert "".join(helper.reorder_list(**kw)) == expected
 
 
 def test_df_move_column():
@@ -146,3 +162,34 @@ class TestPydanticToDjangoError:
 )
 def test_flatten(input, expected):
     assert list(helper.flatten(input)) == expected
+
+
+@pytest.mark.parametrize(
+    "input,expected",
+    [
+        ([], []),
+        (["a"], ["a"]),
+        (["a", "a", "a"], ["a", "a (2)", "a (3)"]),
+        (["a", "b", "a"], ["a", "b", "a (2)"]),
+    ],
+)
+def test_unique_text_list(input, expected):
+    assert list(helper.unique_text_list(input)) == expected
+
+
+def test_get_contrasting_text_color():
+    assert helper.get_contrasting_text_color("#000000") == "#ffffff"
+    assert helper.get_contrasting_text_color("#ffffff") == "#000000"
+
+
+@pytest.mark.django_db
+def test_paginate():
+    qs = Assessment.objects.all()
+    f = RequestFactory()
+
+    n_items = qs.count()
+    assert n_items >= 1
+
+    results = helper.paginate(qs, f.get("/"), n_items=1)
+    assert results["object_list"].count() == 1
+    assert results["paginator"].num_pages == n_items

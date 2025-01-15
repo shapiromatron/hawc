@@ -3,12 +3,16 @@ from datetime import datetime, timedelta
 from typing import Any, NamedTuple
 
 import pandas as pd
+from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Case, Exists, OuterRef, Q, QuerySet, Value, When
+from django.contrib.contenttypes.prefetch import GenericPrefetch
+from django.db.models import Case, Exists, OuterRef, Q, QuerySet, TextField, Value, When
+from django.db.models.functions import Concat
 from reversion.models import Version
+from treebeard.mp_tree import MP_NodeManager
 
-from ..common.helper import HAWCDjangoJSONEncoder, map_enum
+from ..common.helper import HAWCDjangoJSONEncoder
 from ..common.models import BaseManager, replace_null, str_m2m
 from . import constants
 
@@ -202,54 +206,6 @@ class DatasetManager(BaseManager):
 class AssessmentValueManager(BaseManager):
     assessment_relation = "assessment"
 
-    def get_df(self) -> pd.DataFrame:
-        """Get a dataframe of Assessment Values from given Queryset of Values."""
-        mapping: dict[str, str] = {
-            "assessment_id": "assessment_id",
-            "assessment__name": "assessment_name",
-            "assessment__created": "assessment_created",
-            "assessment__last_updated": "assessment_last_updated",
-            "assessment__details__project_type": "project_type",
-            "assessment__details__project_status": "project_status",
-            "assessment__details__project_url": "project_url",
-            "assessment__details__peer_review_status": "peer_review_status",
-            "assessment__details__qa_id": "qa_id",
-            "assessment__details__qa_url": "qa_url",
-            "assessment__details__report_id": "report_id",
-            "assessment__details__report_url": "report_url",
-            "assessment__details__extra": "assessment_extra",
-            "evaluation_type": "evaluation_type",
-            "id": "value_id",
-            "system": "system",
-            "value_type": "value_type",
-            "value": "value",
-            "value_unit": "value_unit",
-            "basis": "basis",
-            "pod_value": "pod_value",
-            "pod_unit": "pod_unit",
-            "species_studied": "species_studied",
-            "duration": "duration",
-            "study_id": "study_id",
-            "study__short_citation": "study_citation",
-            "confidence": "confidence",
-            "uncertainty": "uncertainty",
-            "tumor_type": "tumor_type",
-            "extrapolation_method": "extrapolation_method",
-            "evidence": "evidence",
-            "comments": "comments",
-            "extra": "extra",
-        }
-        data = self.select_related("assessment__details").values_list(*list(mapping.keys()))
-        df = pd.DataFrame(data=data, columns=list(mapping.values())).sort_values(
-            ["assessment_id", "value_id"]
-        )
-        map_enum(df, "project_status", constants.Status, replace=True)
-        map_enum(df, "peer_review_status", constants.PeerReviewType, replace=True)
-        map_enum(df, "evaluation_type", constants.EvaluationType, replace=True)
-        map_enum(df, "value_type", constants.ValueType, replace=True)
-        map_enum(df, "confidence", constants.Confidence, replace=True)
-        return df
-
 
 class AssessmentDetailManager(BaseManager):
     assessment_relation = "assessment"
@@ -360,3 +316,62 @@ class LogManager(BaseManager):
                 aggregations.append(EventPair(this_event).output())
 
         return aggregations
+
+
+class LabelManager(MP_NodeManager):
+    def get_applied(self, _object):
+        content_type = ContentType.objects.get_for_model(_object)
+        return self.filter(items__content_type=content_type, items__object_id=_object.id)
+
+
+class LabeledItemQuerySet(QuerySet):
+    def prefetch_content_objects(self):
+        return self.prefetch_related(
+            GenericPrefetch(
+                "content_object",
+                [
+                    apps.get_model("summary", "Visual").objects.all(),
+                    apps.get_model("summary", "DataPivotUpload").objects.all(),
+                    apps.get_model("summary", "DataPivotQuery").objects.all(),
+                    apps.get_model("summary", "SummaryTable").objects.all(),
+                ],
+            )
+        )
+
+    def filter_title(self, query: str):
+        filter = (
+            Q(summary_table__title__icontains=query)
+            | Q(visual__title__icontains=query)
+            | Q(datapivot_query__title__icontains=query)
+            | Q(datapivot_upload__title__icontains=query)
+        )
+        return self.filter(filter)
+
+    def matching_all_labels(self, labels: list):
+        if len(labels) == 0:
+            return self.none()
+
+        matched = set()
+        qs = self.annotate(
+            object_info=Concat("content_type", "object_id", output_field=TextField()),
+        )
+        for i, label in enumerate(labels):
+            # quit early if we run out of candidates
+            if i > 0 and len(matched) == 0:
+                return self.none()
+
+            objects = (
+                qs.filter(label__path__startswith=label.path)
+                .values_list("object_info", flat=True)
+                .distinct()
+            )
+            # filtering for objects matching all labels
+            matched = matched.intersection(objects) if i > 0 else set(objects)
+        return qs.filter(object_info__in=matched)
+
+
+class LabeledItemManager(BaseManager):
+    assessment_relation = "label__assessment"
+
+    def get_queryset(self):
+        return LabeledItemQuerySet(self.model, using=self._db)

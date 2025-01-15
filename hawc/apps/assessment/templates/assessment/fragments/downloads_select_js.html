@@ -4,10 +4,8 @@
       var format = $(this).val(),
           url = $(`#${this.id}-url`).attr("href");
       if (format && url) {
-        var format_idx = url.indexOf("format="),
-            help_text = format === "xlsx" ? "Excel Spreadsheet" : `${format.toUpperCase()} file`;
+        var format_idx = url.indexOf("format=");
         $(`#${this.id}-url`).attr("href", url.replace(/format=(\w+)/, `format=${format}`));
-        $(`#${this.id}-fmt-text`).text(help_text)
       }
       return false;
     });
@@ -20,6 +18,14 @@
           ));
       }
       return false;
+    });
+    $('.reference-format-selector').each(function(){
+      const selector = $(this);
+      selector.on('change', function(event){
+        const a = $(event.target).parent().find('a'),
+              url = a.attr("href").replace(/export_format=(\w+)/, `export_format=${this.value}`)
+        a.attr("href", url)
+      }).trigger('change')
     });
   });
 </script>
