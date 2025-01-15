@@ -1,6 +1,7 @@
 import * as d3 from "d3";
 import _ from "lodash";
 import HAWCModal from "shared/utils/HAWCModal";
+import h from "shared/utils/helpers";
 
 import $ from "$";
 
@@ -137,40 +138,38 @@ _.extend(_DataPivot_settings_conditionalFormat, {
 class _DataPivot_ColorGradientSVG {
     constructor(svg, start_color, stop_color) {
         svg = d3.select(svg);
-        var gradient = svg
-            .append("svg:defs")
-            .append("svg:linearGradient")
-            .attr("id", "gradient")
-            .attr("x1", "0%")
-            .attr("y1", "100%")
-            .attr("x2", "100%")
-            .attr("y2", "100%")
-            .attr("spreadMethod", "pad");
+        const gradientId = h.randomString(),
+            gradient = svg
+                .append("svg:defs")
+                .append("svg:linearGradient")
+                .attr("id", gradientId)
+                .attr("x1", "0%")
+                .attr("y1", "0%")
+                .attr("x2", "100%")
+                .attr("y2", "0%");
 
         this.start = gradient
             .append("svg:stop")
             .attr("offset", "0%")
-            .attr("stop-color", start_color)
-            .attr("stop-opacity", 1);
+            .attr("style", `stop-color:${start_color};stop-opacity:1`);
 
         this.stop = gradient
             .append("svg:stop")
             .attr("offset", "100%")
-            .attr("stop-color", stop_color)
-            .attr("stop-opacity", 1);
+            .attr("style", `stop-color:${stop_color};stop-opacity:1`);
 
         svg.append("svg:rect")
             .attr("width", "100%")
             .attr("height", "100%")
-            .style("fill", "url(#gradient)");
+            .attr("fill", `url(#${gradientId})`);
     }
 
     update_start_color(color) {
-        this.start.attr("stop-color", color);
+        this.start.attr("style", `stop-color:${color};stop-opacity:1`);
     }
 
     update_stop_color(color) {
-        this.stop.attr("stop-color", color);
+        this.stop.attr("style", `stop-color:${color};stop-opacity:1`);
     }
 }
 
@@ -190,7 +189,9 @@ class _DataPivot_settings_conditional {
             div = $('<div class="well">').appendTo(el),
             add_input_row = function(parent, desc_txt, inp) {
                 var lbl = $("<label>").html(desc_txt);
-                parent.append(lbl, inp);
+                $('<div class="col-6">')
+                    .append(lbl, inp)
+                    .appendTo(parent);
             },
             fieldName = dp.column_select_manager
                 .createSelect(true, {name: "field_name"})
@@ -213,8 +214,9 @@ class _DataPivot_settings_conditional {
             .prependTo(div);
 
         // add master conditional inputs and divs for changing fields
-        add_input_row(div, "Condition field", fieldName);
-        add_input_row(div, "Condition type", conditionType);
+        const selectorDiv = $('<div class="row">').appendTo(div);
+        add_input_row(selectorDiv, "Condition field", fieldName);
+        add_input_row(selectorDiv, "Condition type", conditionType);
         div.append("<hr>");
         formattingTypes.forEach(function(v) {
             $(`<div class="conditionalDivs ${v}">`)
@@ -236,30 +238,28 @@ class _DataPivot_settings_conditional {
                 values.max_color || defaults.max_color
             ),
             svg = $(
-                '<svg role="image" aria-label="Color gradient" width="150" height="25" class="d3" style="margin-top: 10px"></svg>'
+                '<svg role="image" aria-label="Color gradient" width="100%" height="25" class="d3 mt-3">'
             ),
             gradient = new _DataPivot_ColorGradientSVG(svg[0], min_color.val(), max_color.val());
 
         // add event-handlers to change gradient color
-        min_color.change(function(v) {
-            gradient.update_start_color(min_color.val());
-        });
-        max_color.change(function(v) {
-            gradient.update_stop_color(max_color.val());
-        });
+        min_color.change(v => gradient.update_start_color(min_color.val()));
+        max_color.change(v => gradient.update_stop_color(max_color.val()));
 
         // add size values to size div
         var ps = div.find(".point-size"),
             min_max_ps = $("<p>").appendTo(ps);
-        add_input_row(ps, "Minimum point-size", DataPivot.rangeInputDiv(min_size));
-        add_input_row(ps, "Maximum point-size", DataPivot.rangeInputDiv(max_size));
+        const psDiv = $('<div class="row">').appendTo(ps);
+        add_input_row(psDiv, "Minimum point-size", DataPivot.rangeInputDiv(min_size));
+        add_input_row(psDiv, "Maximum point-size", DataPivot.rangeInputDiv(max_size));
 
         // add color values to color div
         var pc = div.find(".point-color"),
             min_max_pc = $("<p>").appendTo(pc);
-        add_input_row(pc, "Minimum color", min_color);
-        add_input_row(pc, "Maximum color", max_color);
-        pc.append("<br>", svg);
+        const pcDiv = $('<div class="row">').appendTo(pc);
+        add_input_row(pcDiv, "Minimum color", min_color);
+        add_input_row(pcDiv, "Maximum color", max_color);
+        pcDiv.append($('<div class="col-12">').append(svg));
 
         this.inputs.push(fieldName, conditionType, min_size, max_size, min_color, max_color);
 
@@ -288,15 +288,28 @@ class _DataPivot_settings_conditional {
                     return;
                 }
 
+                const tbody = $("<tbody>"),
+                    tbl = $(`<table class="table table-sm table-bordered">
+                    <colgroup><col width="30%" /><col width="70%" /></colgroup>
+                    <thead><tr><th>Value</th><th>Style</th></tr></thead>
+                    </table>`);
+
                 // build rows for all unique items; tokens must be a string
                 let mapping = buildStyleMap(values, true);
-                vals.unique_tokens.forEach(v => {
-                    var select = dp.style_manager
-                        .add_select(parent.settings.type, mapping.get(v), true)
-                        .data("key", v);
-                    self.discrete_styles.push(select);
-                    add_input_row(discrete, `Style for <kbd>${v}</kbd>:`, select);
-                });
+                tbody.append(
+                    vals.unique_tokens.map(v => {
+                        var select = dp.style_manager
+                            .add_select(parent.settings.type, mapping.get(v) || NULL_CASE, true, {
+                                null_label: "--- no change ---",
+                            })
+                            .data("key", v);
+                        self.discrete_styles.push(select);
+                        return $("<tr>")
+                            .append(`<td><kbd>${v}</kbd></td>`)
+                            .append($("<td>").append(select));
+                    })
+                );
+                tbl.append(tbody).appendTo(discrete);
             } else {
                 var txt = `Selected items in <i>${fieldName.val()}</i> `;
                 if (vals.range) {

@@ -1,6 +1,6 @@
 import pandas as pd
 
-from hawc.apps.common.helper import FlatFileExporter
+from ..common.helper import FlatFileExporter
 
 
 class EcoFlatComplete(FlatFileExporter):

@@ -53,12 +53,6 @@ class ExperimentForm(ModelForm):
 
     @property
     def helper(self):
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "form-control"
-
         if self.instance.id:
             inputs = {
                 "legend_text": f"Update {self.instance}",
@@ -134,7 +128,7 @@ class ExperimentSelectorForm(CopyForm):
         )
 
 
-class AnimalGroupForm(ModelForm):
+class AnimalGroupForm(UDFModelFormMixin, ModelForm):
     class Meta:
         model = models.AnimalGroup
         exclude = ("experiment", "dosing_regime", "generation", "parents")
@@ -172,6 +166,7 @@ class AnimalGroupForm(ModelForm):
         self.fields["siblings"].queryset = models.AnimalGroup.objects.filter(
             experiment=self.instance.experiment
         )
+        self.set_udf_field(self.instance.experiment.study.assessment)
 
     @property
     def helper(self):
@@ -454,16 +449,14 @@ class EndpointForm(UDFModelFormMixin, ModelForm):
 
     @property
     def helper(self):
-        vocab_enabled = self.instance.assessment.vocabulary == VocabularyNamespace.EHV
+        vocab_enabled = self.instance.assessment.vocabulary is not None
+
         if vocab_enabled:
-            vocab = f"""&nbsp;The <a href="{reverse('vocab:ehv-browse')}">Environmental
-                Health Vocabulary (EHV)</a> is enabled for this assessment. Browse to view
-                controlled terms, and whenever possible please use these terms."""
+            vocab_id = self.instance.assessment.vocabulary
+            vocab_url = VocabularyNamespace(vocab_id).display_url
+            vocab = f"""The <a href="{vocab_url}">{VocabularyNamespace(vocab_id).display_name}</a> is enabled for this assessment. Browse to view controlled terms, and whenever possible please use these terms."""
         else:
-            vocab = f"""&nbsp;A controlled vocabulary is not enabled for this assessment.
-                However, you can still browse the <a href="{reverse('vocab:ehv-browse')}">Environmental
-                Health Vocabulary (EHV)</a> to see if this vocabulary would be a good fit for your
-                assessment. If it is, consider updating the assessment to use this vocabulary."""
+            vocab = f"""A controlled vocabulary is not enabled for this assessment. However, you can still browse the <a href="{reverse('vocab:ehv-browse')}">EHV</a> to see if this vocabulary would be a good fit for your assessment."""
 
         if self.instance.id:
             inputs = {
@@ -474,26 +467,14 @@ class EndpointForm(UDFModelFormMixin, ModelForm):
         else:
             inputs = {
                 "legend_text": "Create new endpoint",
-                "help_text": f"""Create a new endpoint. An endpoint may should describe one
-                    measure-of-effect which was measured in the study. It may
-                    or may not contain quantitative data.{vocab}""",
+                "help_text": f"""Create a new endpoint. An endpoint should describe one measure-of-effect in the study. It may or may not contain quantitative data. {vocab}""",
                 "cancel_url": self.instance.animal_group.get_absolute_url(),
             }
 
         helper = BaseFormHelper(self, **inputs)
-
         helper.form_id = "endpoint"
-
-        self.fields["diagnostic"].widget.attrs["rows"] = 2
-        for fld in ("results_notes", "endpoint_notes", "power_notes"):
-            self.fields[fld].widget.attrs["rows"] = 3
-
-        # by default take-up the whole row
-        for fld in list(self.fields.keys()):
-            widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
-                widget.attrs["class"] = "form-control"
-
+        helper.set_textarea_height(("diagnostic",), 2)
+        helper.set_textarea_height(("results_notes", "endpoint_notes", "power_notes"), 3)
         helper.layout.insert(
             helper.find_layout_idx_for_field_name("name"),
             cfl.Div(id="vocab"),

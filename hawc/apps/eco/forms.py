@@ -38,9 +38,6 @@ class DesignForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ("habitats_as_reported", "climates_as_reported", "comments"):
-            self.fields[fld].widget.attrs["rows"] = 3
-
         if self.instance.id:
             helper = BaseFormHelper(self)
             helper.form_tag = False
@@ -54,6 +51,7 @@ class DesignForm(forms.ModelForm):
             }
             helper = BaseFormHelper(self, **inputs)
 
+        helper.set_textarea_height(("habitats_as_reported", "climates_as_reported", "comments"))
         helper.add_row("name", 3, "col-md-4")
         helper.add_row("countries", 3, "col-md-4")
         helper.add_row("habitats", 4, "col-md-3")
@@ -89,19 +87,18 @@ class CauseForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"cause-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.study = design.study
 
     @property
     def helper(self):
-        for fld in ("as_reported", "comments", "level"):
-            self.fields[fld].widget.attrs["rows"] = 3
-
         self.fields["term"].help_text = _term_help_text()
 
         helper = BaseFormHelper(self)
         helper.form_tag = False
+        helper.set_textarea_height(("as_reported", "comments", "level"))
         helper.add_row("name", 2, ["col-md-4", "col-md-8"])
         helper.add_row("biological_organization", 2, "col-md-6")
         helper.add_row("level", 3, ["col-md-6", "col-md-3", "col-md-3"])
@@ -129,19 +126,18 @@ class EffectForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"effect-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.study = design.study
 
     @property
     def helper(self):
-        for fld in ("as_reported", "comments"):
-            self.fields[fld].widget.attrs["rows"] = 3
-
         self.fields["term"].help_text = _term_help_text()
 
         helper = BaseFormHelper(self)
         helper.form_tag = False
+        helper.set_textarea_height(("as_reported", "comments"))
         helper.add_row("name", 2, ["col-md-4", "col-md-8"])
         helper.add_row("biological_organization", 3, "col-md-4")
         helper.add_row("as_reported", 2, "col-md-6")
@@ -155,7 +151,8 @@ class ResultForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"result-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
         self.fields["cause"].queryset = self.fields["cause"].queryset.filter(
@@ -167,11 +164,11 @@ class ResultForm(forms.ModelForm):
 
     @property
     def helper(self):
-        for fld in ("relationship_comment", "modifying_factors_comment", "comments"):
-            self.fields[fld].widget.attrs["rows"] = 3
-
         helper = BaseFormHelper(self)
         helper.form_tag = False
+        helper.set_textarea_height(
+            ("relationship_comment", "modifying_factors_comment", "comments")
+        )
         helper.add_row("name", 4, ["col-md-4", "col-md-3", "col-md-3", "col-md-2"])
         helper.add_row(
             "relationship_direction", 4, ["col-md-2", "col-md-4", "col-md-3", "col-md-3"]

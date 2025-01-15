@@ -1,25 +1,25 @@
 interactions:
 - request:
-    body: db=pubmed&term=%28monomethyl+OR+MEP+OR+mono-n-butyl+OR+MBP+OR+mono+%283-carboxypropyl%29+OR+mcpp+OR+monobenzyl+OR+mbzp+OR+mono-isobutyl+OR+mibp+OR+mono+%282-ethylhexyl%29+OR+mono+%282-ethyl-5-oxohexyl%29+OR+meoph+OR+mono+%282-ethyl-5-carboxypentyl%29+OR+mecpp+OR+mepp+OR+mono+%282-ethyl-5-hydroxyhexyl%29+OR+mehp+OR+mono+%282-ethyl-5-oxyhexyl%29+OR+mono+%282-ethyl-4-hydroxyhexyl%29+OR+mono+%282-ethyl-4-oxyhexyl%29+OR+mono+%282-carboxymethyl%29+OR+mmhp+OR+mehp+OR+dehp+OR+2-ethylhexanol+OR+%28phthalic+acid%29%29+AND+%28liver+OR+hepato%2A+OR+hepat%2A%29+AND+%28%28cell+proliferation%29+OR+%28cell+growth%29+OR+%28dna+replication%29+OR+%28dna+synthesis%29+OR+%28replicative+dna+synthesis%29+OR+mitosis+OR+%28cell+division%29+OR+%28growth+response%29+OR+hyperplasia+OR+hepatomegaly%29+AND+%28mouse+OR+rat+OR+hamster+OR+rodent+OR+murine+OR+Mus+musculus+or+Rattus%29&rettype=count
+    body: db=pubmed&retmode=xml&term=%28monomethyl+OR+MEP+OR+mono-n-butyl+OR+MBP+OR+mono+%283-carboxypropyl%29+OR+mcpp+OR+monobenzyl+OR+mbzp+OR+mono-isobutyl+OR+mibp+OR+mono+%282-ethylhexyl%29+OR+mono+%282-ethyl-5-oxohexyl%29+OR+meoph+OR+mono+%282-ethyl-5-carboxypentyl%29+OR+mecpp+OR+mepp+OR+mono+%282-ethyl-5-hydroxyhexyl%29+OR+mehp+OR+mono+%282-ethyl-5-oxyhexyl%29+OR+mono+%282-ethyl-4-hydroxyhexyl%29+OR+mono+%282-ethyl-4-oxyhexyl%29+OR+mono+%282-carboxymethyl%29+OR+mmhp+OR+mehp+OR+dehp+OR+2-ethylhexanol+OR+%28phthalic+acid%29%29+AND+%28liver+OR+hepato%2A+OR+hepat%2A%29+AND+%28%28cell+proliferation%29+OR+%28cell+growth%29+OR+%28dna+replication%29+OR+%28dna+synthesis%29+OR+%28replicative+dna+synthesis%29+OR+mitosis+OR+%28cell+division%29+OR+%28growth+response%29+OR+hyperplasia+OR+hepatomegaly%29+AND+%28mouse+OR+rat+OR+hamster+OR+rodent+OR+murine+OR+Mus+musculus+or+Rattus%29&api_key=<omitted>&rettype=count
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '877'
+      - '934'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
       string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
-        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>256</Count>\n</eSearchResult>\n"
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>259</Count>\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -34,28 +34,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:42:31 GMT
+      - Thu, 05 Sep 2024 23:00:57 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD9F070703C0B500005CDBF6DB4449.1.1.m_1
+      - 939B82323C96818500002EC35F9670E8.1.1.m_1
       NCBI-SID:
-      - 5CC07DF976FA4A5E_E12BSID
+      - B7E259775CD9A496_05DBSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=5CC07DF976FA4A5E_E12BSID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:42:31 GMT
+      - ncbi_sid=B7E259775CD9A496_05DBSID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 23:00:57 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -66,26 +66,28 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=5000&db=pubmed&api_key=<omitted>&term=%28monomethyl+OR+MEP+OR+mono-n-butyl+OR+MBP+OR+mono+%283-carboxypropyl%29+OR+mcpp+OR+monobenzyl+OR+mbzp+OR+mono-isobutyl+OR+mibp+OR+mono+%282-ethylhexyl%29+OR+mono+%282-ethyl-5-oxohexyl%29+OR+meoph+OR+mono+%282-ethyl-5-carboxypentyl%29+OR+mecpp+OR+mepp+OR+mono+%282-ethyl-5-hydroxyhexyl%29+OR+mehp+OR+mono+%282-ethyl-5-oxyhexyl%29+OR+mono+%282-ethyl-4-hydroxyhexyl%29+OR+mono+%282-ethyl-4-oxyhexyl%29+OR+mono+%282-carboxymethyl%29+OR+mmhp+OR+mehp+OR+dehp+OR+2-ethylhexanol+OR+%28phthalic+acid%29%29+AND+%28liver+OR+hepato%2A+OR+hepat%2A%29+AND+%28%28cell+proliferation%29+OR+%28cell+growth%29+OR+%28dna+replication%29+OR+%28dna+synthesis%29+OR+%28replicative+dna+synthesis%29+OR+mitosis+OR+%28cell+division%29+OR+%28growth+response%29+OR+hyperplasia+OR+hepatomegaly%29+AND+%28mouse+OR+rat+OR+hamster+OR+rodent+OR+murine+OR+Mus+musculus+or+Rattus%29&retstart=0
+    body: db=pubmed&retmode=xml&term=%28monomethyl+OR+MEP+OR+mono-n-butyl+OR+MBP+OR+mono+%283-carboxypropyl%29+OR+mcpp+OR+monobenzyl+OR+mbzp+OR+mono-isobutyl+OR+mibp+OR+mono+%282-ethylhexyl%29+OR+mono+%282-ethyl-5-oxohexyl%29+OR+meoph+OR+mono+%282-ethyl-5-carboxypentyl%29+OR+mecpp+OR+mepp+OR+mono+%282-ethyl-5-hydroxyhexyl%29+OR+mehp+OR+mono+%282-ethyl-5-oxyhexyl%29+OR+mono+%282-ethyl-4-hydroxyhexyl%29+OR+mono+%282-ethyl-4-oxyhexyl%29+OR+mono+%282-carboxymethyl%29+OR+mmhp+OR+mehp+OR+dehp+OR+2-ethylhexanol+OR+%28phthalic+acid%29%29+AND+%28liver+OR+hepato%2A+OR+hepat%2A%29+AND+%28%28cell+proliferation%29+OR+%28cell+growth%29+OR+%28dna+replication%29+OR+%28dna+synthesis%29+OR+%28replicative+dna+synthesis%29+OR+mitosis+OR+%28cell+division%29+OR+%28growth+response%29+OR+hyperplasia+OR+hepatomegaly%29+AND+%28mouse+OR+rat+OR+hamster+OR+rodent+OR+murine+OR+Mus+musculus+or+Rattus%29&api_key=<omitted>&retmax=5000&retstart=0
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '931'
+      - '943'
       Content-Type:
       - application/x-www-form-urlencoded
+      Cookie:
+      - ncbi_sid=B7E259775CD9A496_05DBSID
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
       string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
-        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n<Count>256</Count><RetMax>256</RetMax><RetStart>0</RetStart>\n<IdList>\n\t<Id>38056127</Id>\n\t<Id>35810816</Id>\n\t<Id>34588381</Id>\n\t<Id>34303773</Id>\n\t<Id>33166671</Id>\n\t<Id>32540476</Id>\n\t<Id>32471116</Id>\n\t<Id>32435917</Id>\n\t<Id>31262386</Id>\n\t<Id>31152848</Id>\n\t<Id>30884453</Id>\n\t<Id>30878739</Id>\n\t<Id>30826316</Id>\n\t<Id>30384071</Id>\n\t<Id>29474903</Id>\n\t<Id>29197930</Id>\n\t<Id>28426879</Id>\n\t<Id>28284729</Id>\n\t<Id>28267557</Id>\n\t<Id>28115639</Id>\n\t<Id>27454254</Id>\n\t<Id>27040317</Id>\n\t<Id>26585812</Id>\n\t<Id>26519955</Id>\n\t<Id>26252616</Id>\n\t<Id>26188368</Id>\n\t<Id>25913319</Id>\n\t<Id>25789634</Id>\n\t<Id>25683344</Id>\n\t<Id>25270622</Id>\n\t<Id>24769090</Id>\n\t<Id>24180432</Id>\n\t<Id>24180374</Id>\n\t<Id>23899473</Id>\n\t<Id>23625783</Id>\n\t<Id>23001933</Id>\n\t<Id>22936646</Id>\n\t<Id>22588786</Id>\n\t<Id>22484601</Id>\n\t<Id>22333284</Id>\n\t<Id>22198209</Id>\n\t<Id>21856391</Id>\n\t<Id>21721021</Id>\n\t<Id>21714771</Id>\n\t<Id>21616130</Id>\n\t<Id>20954081</Id>\n\t<Id>20854900</Id>\n\t<Id>20600714</Id>\n\t<Id>20358181</Id>\n\t<Id>20307648</Id>\n\t<Id>20123618</Id>\n\t<Id>20077217</Id>\n\t<Id>19756843</Id>\n\t<Id>18639561</Id>\n\t<Id>18403868</Id>\n\t<Id>17929048</Id>\n\t<Id>17326724</Id>\n\t<Id>17098345</Id>\n\t<Id>16954067</Id>\n\t<Id>16855774</Id>\n\t<Id>16476687</Id>\n\t<Id>16326419</Id>\n\t<Id>16326050</Id>\n\t<Id>15914576</Id>\n\t<Id>15901911</Id>\n\t<Id>15838709</Id>\n\t<Id>15664438</Id>\n\t<Id>15588926</Id>\n\t<Id>15564602</Id>\n\t<Id>15486947</Id>\n\t<Id>15364543</Id>\n\t<Id>15297022</Id>\n\t<Id>14727734</Id>\n\t<Id>14630134</Id>\n\t<Id>12851149</Id>\n\t<Id>12805656</Id>\n\t<Id>12802597</Id>\n\t<Id>12668284</Id>\n\t<Id>12505296</Id>\n\t<Id>12498735</Id>\n\t<Id>12215663</Id>\n\t<Id>12151626</Id>\n\t<Id>12036039</Id>\n\t<Id>11995694</Id>\n\t<Id>11950162</Id>\n\t<Id>11940454</Id>\n\t<Id>11719701</Id>\n\t<Id>11597582</Id>\n\t<Id>11581012</Id>\n\t<Id>11560248</Id>\n\t<Id>11452036</Id>\n\t<Id>11428750</Id>\n\t<Id>11401753</Id>\n\t<Id>11341945</Id>\n\t<Id>11312035</Id>\n\t<Id>11246142</Id>\n\t<Id>11099649</Id>\n\t<Id>11091278</Id>\n\t<Id>11029268</Id>\n\t<Id>10930035</Id>\n\t<Id>10889518</Id>\n\t<Id>10869467</Id>\n\t<Id>10869455</Id>\n\t<Id>10839475</Id>\n\t<Id>10828276</Id>\n\t<Id>10728921</Id>\n\t<Id>10650916</Id>\n\t<Id>10581215</Id>\n\t<Id>10547627</Id>\n\t<Id>10536109</Id>\n\t<Id>10502499</Id>\n\t<Id>10499774</Id>\n\t<Id>10485824</Id>\n\t<Id>10478855</Id>\n\t<Id>10478332</Id>\n\t<Id>10388618</Id>\n\t<Id>10357793</Id>\n\t<Id>20654484</Id>\n\t<Id>10086319</Id>\n\t<Id>9950075</Id>\n\t<Id>9934846</Id>\n\t<Id>9538047</Id>\n\t<Id>9547862</Id>\n\t<Id>9465269</Id>\n\t<Id>9398495</Id>\n\t<Id>9367824</Id>\n\t<Id>9274804</Id>\n\t<Id>9207284</Id>\n\t<Id>9194412</Id>\n\t<Id>9013627</Id>\n\t<Id>9146736</Id>\n\t<Id>8914623</Id>\n\t<Id>8887448</Id>\n\t<Id>8761421</Id>\n\t<Id>8817083</Id>\n\t<Id>8998951</Id>\n\t<Id>8838637</Id>\n\t<Id>7590545</Id>\n\t<Id>8540215</Id>\n\t<Id>12209194</Id>\n\t<Id>8785518</Id>\n\t<Id>7538465</Id>\n\t<Id>7873979</Id>\n\t<Id>7918596</Id>\n\t<Id>7915705</Id>\n\t<Id>7800660</Id>\n\t<Id>8209376</Id>\n\t<Id>8020155</Id>\n\t<Id>8162897</Id>\n\t<Id>8269617</Id>\n\t<Id>8104013</Id>\n\t<Id>8472324</Id>\n\t<Id>12209168</Id>\n\t<Id>8352887</Id>\n\t<Id>1469623</Id>\n\t<Id>1458550</Id>\n\t<Id>1473784</Id>\n\t<Id>1336490</Id>\n\t<Id>1423834</Id>\n\t<Id>1516773</Id>\n\t<Id>1632818</Id>\n\t<Id>1600604</Id>\n\t<Id>1625184</Id>\n\t<Id>1591274</Id>\n\t<Id>1610294</Id>\n\t<Id>1755031</Id>\n\t<Id>2274965</Id>\n\t<Id>2260097</Id>\n\t<Id>2125992</Id>\n\t<Id>1979936</Id>\n\t<Id>1965743</Id>\n\t<Id>2274048</Id>\n\t<Id>2210515</Id>\n\t<Id>2311188</Id>\n\t<Id>2404574</Id>\n\t<Id>2097173</Id>\n\t<Id>2489351</Id>\n\t<Id>2804110</Id>\n\t<Id>2635147</Id>\n\t<Id>2781555</Id>\n\t<Id>2772924</Id>\n\t<Id>2731665</Id>\n\t<Id>2924396</Id>\n\t<Id>2917345</Id>\n\t<Id>3206528</Id>\n\t<Id>3180084</Id>\n\t<Id>3383337</Id>\n\t<Id>3173343</Id>\n\t<Id>3354005</Id>\n\t<Id>3378278</Id>\n\t<Id>3690505</Id>\n\t<Id>2443263</Id>\n\t<Id>3621460</Id>\n\t<Id>2887302</Id>\n\t<Id>3657395</Id>\n\t<Id>3617093</Id>\n\t<Id>3594721</Id>\n\t<Id>3617071</Id>\n\t<Id>3617070</Id>\n\t<Id>3617068</Id>\n\t<Id>3617066</Id>\n\t<Id>3303447</Id>\n\t<Id>3303446</Id>\n\t<Id>3303445</Id>\n\t<Id>3574334</Id>\n\t<Id>3564055</Id>\n\t<Id>3564043</Id>\n\t<Id>3815733</Id>\n\t<Id>3798454</Id>\n\t<Id>3594641</Id>\n\t<Id>3554467</Id>\n\t<Id>3802057</Id>\n\t<Id>3769136</Id>\n\t<Id>2877511</Id>\n\t<Id>3583306</Id>\n\t<Id>3536893</Id>\n\t<Id>3715859</Id>\n\t<Id>3770794</Id>\n\t<Id>3709461</Id>\n\t<Id>3709458</Id>\n\t<Id>3709451</Id>\n\t<Id>4091660</Id>\n\t<Id>3934796</Id>\n\t<Id>2867621</Id>\n\t<Id>4024105</Id>\n\t<Id>2859109</Id>\n\t<Id>4004798</Id>\n\t<Id>2863135</Id>\n\t<Id>3919955</Id>\n\t<Id>3966235</Id>\n\t<Id>2857115</Id>\n\t<Id>6517701</Id>\n\t<Id>6488454</Id>\n\t<Id>6147206</Id>\n\t<Id>12748680</Id>\n\t<Id>6732809</Id>\n\t<Id>6719482</Id>\n\t<Id>6143560</Id>\n\t<Id>6716514</Id>\n\t<Id>6710484</Id>\n\t<Id>6872148</Id>\n\t<Id>6355494</Id>\n\t<Id>6845354</Id>\n\t<Id>6677511</Id>\n\t<Id>7161829</Id>\n\t<Id>12778222</Id>\n\t<Id>6182138</Id>\n\t<Id>7115078</Id>\n\t<Id>6178713</Id>\n\t<Id>7397231</Id>\n\t<Id>548985</Id>\n\t<Id>734683</Id>\n\t<Id>99598</Id>\n\t<Id>598790</Id>\n\t<Id>996879</Id>\n\t<Id>769879</Id>\n</IdList>\n<TranslationSet><Translation>
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n<Count>259</Count><RetMax>259</RetMax><RetStart>0</RetStart>\n<IdList>\n\t<Id>39180124</Id>\n\t<Id>38833407</Id>\n\t<Id>38430581</Id>\n\t<Id>38056127</Id>\n\t<Id>35810816</Id>\n\t<Id>34588381</Id>\n\t<Id>34303773</Id>\n\t<Id>33166671</Id>\n\t<Id>32540476</Id>\n\t<Id>32471116</Id>\n\t<Id>32435917</Id>\n\t<Id>31262386</Id>\n\t<Id>31152848</Id>\n\t<Id>30884453</Id>\n\t<Id>30878739</Id>\n\t<Id>30826316</Id>\n\t<Id>30384071</Id>\n\t<Id>29474903</Id>\n\t<Id>29197930</Id>\n\t<Id>28426879</Id>\n\t<Id>28284729</Id>\n\t<Id>28267557</Id>\n\t<Id>28115639</Id>\n\t<Id>27454254</Id>\n\t<Id>27040317</Id>\n\t<Id>26585812</Id>\n\t<Id>26519955</Id>\n\t<Id>26252616</Id>\n\t<Id>26188368</Id>\n\t<Id>25913319</Id>\n\t<Id>25789634</Id>\n\t<Id>25683344</Id>\n\t<Id>25270622</Id>\n\t<Id>24769090</Id>\n\t<Id>24180432</Id>\n\t<Id>24180374</Id>\n\t<Id>23899473</Id>\n\t<Id>23625783</Id>\n\t<Id>23001933</Id>\n\t<Id>22936646</Id>\n\t<Id>22588786</Id>\n\t<Id>22484601</Id>\n\t<Id>22333284</Id>\n\t<Id>22198209</Id>\n\t<Id>21856391</Id>\n\t<Id>21721021</Id>\n\t<Id>21714771</Id>\n\t<Id>21616130</Id>\n\t<Id>20954081</Id>\n\t<Id>20854900</Id>\n\t<Id>20600714</Id>\n\t<Id>20358181</Id>\n\t<Id>20307648</Id>\n\t<Id>20123618</Id>\n\t<Id>20077217</Id>\n\t<Id>19756843</Id>\n\t<Id>18639561</Id>\n\t<Id>18403868</Id>\n\t<Id>17929048</Id>\n\t<Id>17326724</Id>\n\t<Id>17098345</Id>\n\t<Id>16954067</Id>\n\t<Id>16855774</Id>\n\t<Id>16476687</Id>\n\t<Id>16326419</Id>\n\t<Id>16326050</Id>\n\t<Id>15914576</Id>\n\t<Id>15901911</Id>\n\t<Id>15838709</Id>\n\t<Id>15664438</Id>\n\t<Id>15588926</Id>\n\t<Id>15564602</Id>\n\t<Id>15486947</Id>\n\t<Id>15364543</Id>\n\t<Id>15297022</Id>\n\t<Id>14727734</Id>\n\t<Id>14630134</Id>\n\t<Id>12851149</Id>\n\t<Id>12805656</Id>\n\t<Id>12802597</Id>\n\t<Id>12668284</Id>\n\t<Id>12505296</Id>\n\t<Id>12498735</Id>\n\t<Id>12215663</Id>\n\t<Id>12151626</Id>\n\t<Id>12036039</Id>\n\t<Id>11995694</Id>\n\t<Id>11950162</Id>\n\t<Id>11940454</Id>\n\t<Id>11719701</Id>\n\t<Id>11597582</Id>\n\t<Id>11581012</Id>\n\t<Id>11560248</Id>\n\t<Id>11452036</Id>\n\t<Id>11428750</Id>\n\t<Id>11401753</Id>\n\t<Id>11341945</Id>\n\t<Id>11312035</Id>\n\t<Id>11246142</Id>\n\t<Id>11099649</Id>\n\t<Id>11091278</Id>\n\t<Id>11029268</Id>\n\t<Id>10930035</Id>\n\t<Id>10889518</Id>\n\t<Id>10869467</Id>\n\t<Id>10869455</Id>\n\t<Id>10839475</Id>\n\t<Id>10828276</Id>\n\t<Id>10728921</Id>\n\t<Id>10650916</Id>\n\t<Id>10581215</Id>\n\t<Id>10547627</Id>\n\t<Id>10536109</Id>\n\t<Id>10502499</Id>\n\t<Id>10499774</Id>\n\t<Id>10485824</Id>\n\t<Id>10478855</Id>\n\t<Id>10478332</Id>\n\t<Id>10388618</Id>\n\t<Id>10357793</Id>\n\t<Id>20654484</Id>\n\t<Id>10086319</Id>\n\t<Id>9950075</Id>\n\t<Id>9934846</Id>\n\t<Id>9538047</Id>\n\t<Id>9547862</Id>\n\t<Id>9465269</Id>\n\t<Id>9398495</Id>\n\t<Id>9367824</Id>\n\t<Id>9274804</Id>\n\t<Id>9207284</Id>\n\t<Id>9194412</Id>\n\t<Id>9013627</Id>\n\t<Id>9146736</Id>\n\t<Id>8914623</Id>\n\t<Id>8887448</Id>\n\t<Id>8761421</Id>\n\t<Id>8817083</Id>\n\t<Id>8998951</Id>\n\t<Id>8838637</Id>\n\t<Id>7590545</Id>\n\t<Id>8540215</Id>\n\t<Id>12209194</Id>\n\t<Id>8785518</Id>\n\t<Id>7538465</Id>\n\t<Id>7873979</Id>\n\t<Id>7918596</Id>\n\t<Id>7915705</Id>\n\t<Id>7800660</Id>\n\t<Id>8209376</Id>\n\t<Id>8020155</Id>\n\t<Id>8162897</Id>\n\t<Id>8269617</Id>\n\t<Id>8104013</Id>\n\t<Id>8472324</Id>\n\t<Id>12209168</Id>\n\t<Id>8352887</Id>\n\t<Id>1469623</Id>\n\t<Id>1458550</Id>\n\t<Id>1473784</Id>\n\t<Id>1336490</Id>\n\t<Id>1423834</Id>\n\t<Id>1516773</Id>\n\t<Id>1632818</Id>\n\t<Id>1600604</Id>\n\t<Id>1625184</Id>\n\t<Id>1591274</Id>\n\t<Id>1610294</Id>\n\t<Id>1755031</Id>\n\t<Id>2274965</Id>\n\t<Id>2260097</Id>\n\t<Id>2125992</Id>\n\t<Id>1979936</Id>\n\t<Id>1965743</Id>\n\t<Id>2274048</Id>\n\t<Id>2210515</Id>\n\t<Id>2311188</Id>\n\t<Id>2404574</Id>\n\t<Id>2097173</Id>\n\t<Id>2489351</Id>\n\t<Id>2804110</Id>\n\t<Id>2635147</Id>\n\t<Id>2781555</Id>\n\t<Id>2772924</Id>\n\t<Id>2731665</Id>\n\t<Id>2924396</Id>\n\t<Id>2917345</Id>\n\t<Id>3206528</Id>\n\t<Id>3180084</Id>\n\t<Id>3383337</Id>\n\t<Id>3173343</Id>\n\t<Id>3354005</Id>\n\t<Id>3378278</Id>\n\t<Id>3690505</Id>\n\t<Id>2443263</Id>\n\t<Id>3621460</Id>\n\t<Id>2887302</Id>\n\t<Id>3657395</Id>\n\t<Id>3617093</Id>\n\t<Id>3594721</Id>\n\t<Id>3617071</Id>\n\t<Id>3617070</Id>\n\t<Id>3617068</Id>\n\t<Id>3617066</Id>\n\t<Id>3303447</Id>\n\t<Id>3303446</Id>\n\t<Id>3303445</Id>\n\t<Id>3574334</Id>\n\t<Id>3564055</Id>\n\t<Id>3564043</Id>\n\t<Id>3815733</Id>\n\t<Id>3798454</Id>\n\t<Id>3594641</Id>\n\t<Id>3554467</Id>\n\t<Id>3802057</Id>\n\t<Id>3769136</Id>\n\t<Id>2877511</Id>\n\t<Id>3583306</Id>\n\t<Id>3536893</Id>\n\t<Id>3715859</Id>\n\t<Id>3770794</Id>\n\t<Id>3709461</Id>\n\t<Id>3709458</Id>\n\t<Id>3709451</Id>\n\t<Id>4091660</Id>\n\t<Id>3934796</Id>\n\t<Id>2867621</Id>\n\t<Id>4024105</Id>\n\t<Id>2859109</Id>\n\t<Id>4004798</Id>\n\t<Id>2863135</Id>\n\t<Id>3919955</Id>\n\t<Id>3966235</Id>\n\t<Id>2857115</Id>\n\t<Id>6517701</Id>\n\t<Id>6488454</Id>\n\t<Id>6147206</Id>\n\t<Id>12748680</Id>\n\t<Id>6732809</Id>\n\t<Id>6719482</Id>\n\t<Id>6143560</Id>\n\t<Id>6716514</Id>\n\t<Id>6710484</Id>\n\t<Id>6872148</Id>\n\t<Id>6355494</Id>\n\t<Id>6845354</Id>\n\t<Id>6677511</Id>\n\t<Id>7161829</Id>\n\t<Id>12778222</Id>\n\t<Id>6182138</Id>\n\t<Id>7115078</Id>\n\t<Id>6178713</Id>\n\t<Id>7397231</Id>\n\t<Id>548985</Id>\n\t<Id>734683</Id>\n\t<Id>99598</Id>\n\t<Id>598790</Id>\n\t<Id>996879</Id>\n\t<Id>769879</Id>\n</IdList>\n<TranslationSet><Translation>
         \    <From>meoph</From>     <To>\"methylphosphite\"[Supplementary Concept]
         OR \"methylphosphite\"[All Fields] OR \"meoph\"[All Fields]</To>    </Translation><Translation>
         \    <From>mecpp</From>     <To>\"2-methyl-5,6-cyclopentapyrimidine\"[Supplementary
@@ -175,20 +177,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:42:32 GMT
+      - Thu, 05 Sep 2024 23:00:57 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD9F070703C0B5000053DBFB91F665.1.1.m_1
+      - D0BD9D8EE5AB4CE5000044EF72C0724B.1.1.m_1
       NCBI-SID:
-      - A43C639BC87A8EEF_FFCDSID
+      - B7E259775CD9A496_05DBSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=A43C639BC87A8EEF_FFCDSID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:42:32 GMT
+      - ncbi_sid=B7E259775CD9A496_05DBSID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 23:00:58 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -196,7 +198,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '9'
+      - '6'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

@@ -1,4 +1,7 @@
-<div class="list-group-item list-group-item-flush p-4" {% if binding %} hx-target="this" hx-swap="outerHTML" id="{{binding.id}}-binding-row" {% endif %}>
+{% if binding and action == "create" %}
+  <div class="create-row hidden"></div>
+{% endif %}
+<div class="list-group-item list-group-item-flush p-4{% if binding %} binding-row {% endif %}" {% if binding %} hx-target="this" hx-swap="outerHTML" id="{{binding.id}}-binding-row" {% endif %}>
   <div class="d-flex align-items-start justify-content-between">
 
     <div class="col-md-11 px-0">
@@ -16,6 +19,7 @@
     </div>
 
     {% if binding %}
+      <i class="fa fa-spinner fa-spin htmx-indicator" id="spinner-{{binding_type}}-{{binding.pk}}" aria-hidden="true"></i>
       {% if permissions.edit_assessment or obj_perms.edit_assessment %}
         <button class="btn outline-btn px-3" type="button" hx-indicator="#spinner-{{binding_type}}-{{binding.pk}}" hx-get="{{ binding.get_update_url }}">Update</button>
       {% endif %}

@@ -58,7 +58,7 @@
     "study name": "Biesemeier JA et al. 2011",
     "study published": true,
     "system": "developmental",
-    "tags": "|tag1|",
+    "tags": "tag1",
     "treatment period": "developmental (3 days)",
     "trend test result": "significant",
     "trend test value": 0.04
@@ -122,7 +122,7 @@
     "study name": "Biesemeier JA et al. 2011",
     "study published": true,
     "system": "",
-    "tags": "||",
+    "tags": "",
     "treatment period": "developmental (3 days)",
     "trend test result": "not reported",
     "trend test value": null
@@ -186,14 +186,14 @@
     "study name": "Biesemeier JA et al. 2011",
     "study published": true,
     "system": "Cardiovascular",
-    "tags": "||",
+    "tags": "",
     "treatment period": "developmental (3 days)",
     "trend test result": "not reported",
     "trend test value": null
   },
   {
-    "BMD": 744.8868751526,
-    "BMDL": 596.3773593095,
+    "BMD": null,
+    "BMDL": null,
     "Dose 1": 0.0,
     "Dose 2": 1.0,
     "Dose 3": 10.0,
@@ -250,14 +250,14 @@
     "study name": "Biesemeier JA et al. 2011",
     "study published": true,
     "system": "",
-    "tags": "||",
+    "tags": "",
     "treatment period": "developmental (3 days)",
     "trend test result": "not reported",
     "trend test value": null
   },
   {
-    "BMD": 12.7628191902,
-    "BMDL": 5.230337793,
+    "BMD": null,
+    "BMDL": null,
     "Dose 1": 0.0,
     "Dose 2": 1.0,
     "Dose 3": 10.0,
@@ -314,7 +314,7 @@
     "study name": "Biesemeier JA et al. 2011",
     "study published": true,
     "system": "",
-    "tags": "||",
+    "tags": "",
     "treatment period": "developmental (3 days)",
     "trend test result": "not reported",
     "trend test value": null

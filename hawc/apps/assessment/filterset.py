@@ -5,13 +5,18 @@ from django.urls import reverse
 
 from ..common.filterset import (
     ArrowOrderingFilter,
+    AutocompleteModelMultipleChoiceFilter,
     BaseFilterSet,
     ExpandableFilterForm,
     InlineFilterForm,
+    OrderingFilter,
+    PaginationFilter,
 )
 from ..common.helper import new_window_a
+from ..common.models import search_query
 from ..myuser.models import HAWCUser
 from . import models
+from .autocomplete import LabelAutocomplete
 from .constants import PublishedStatus
 
 
@@ -59,9 +64,7 @@ class AssessmentFilterSet(BaseFilterSet):
             | Q(year__icontains=value)
             | Q(authors__unaccent__icontains=value)
             | Q(cas__icontains=value)
-            | Q(dtxsids__dtxsid__icontains=value)
-            | Q(dtxsids__content__casrn=value)
-            | Q(dtxsids__content__preferredName__icontains=value)
+            | Q(dtxsids__search=search_query(value))
             | Q(details__project_type__icontains=value)
             | Q(details__report_id__icontains=value)
         )
@@ -83,13 +86,7 @@ class GlobalChemicalsFilterSet(df.FilterSet):
     public_only = df.BooleanFilter(method="filter_public_only")  # public_only=true/false
 
     def filter_query(self, queryset, name, value):
-        query = (
-            Q(name__icontains=value)
-            | Q(cas=value)
-            | Q(dtxsids__dtxsid=value)
-            | Q(dtxsids__content__preferredName__icontains=value)
-            | Q(dtxsids__content__casrn=value)
-        )
+        query = Q(name__icontains=value) | Q(cas=value) | Q(dtxsids__search=search_query(value))
         return queryset.filter(query).distinct()
 
     def filter_public_only(self, queryset, name, value):
@@ -165,3 +162,78 @@ class LogFilterSet(BaseFilterSet):
 
 class EffectTagFilterSet(df.FilterSet):
     name = df.CharFilter(lookup_expr="icontains")
+
+
+class LabeledItemFilterset(BaseFilterSet):
+    name = df.CharFilter(
+        method="filter_title",
+        label="Name",
+        help_text="Filter by name",
+    )
+    label = AutocompleteModelMultipleChoiceFilter(
+        autocomplete_class=LabelAutocomplete,
+        method="filter_labels",
+    )
+
+    class Meta:
+        model = models.LabeledItem
+        form = InlineFilterForm
+        fields = ("name", "label")
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        return queryset.filter(label__assessment=self.assessment)
+
+    def filter_title(self, queryset, name, value):
+        if not value:
+            return queryset
+        return queryset.filter_title(value)
+
+    def filter_labels(self, queryset, name, value):
+        if not value:
+            return queryset
+        return queryset.matching_all_labels(value)
+
+    def create_form(self):
+        form = super().create_form()
+        form.fields["label"].widget.attrs.update({"data-placeholder": "Filter by labels"})
+        form.fields["label"].set_filters(
+            {"assessment_id": self.assessment.id, "published": True}
+            if not self.perms["edit"]
+            else {"assessment_id": self.assessment.id}
+        )
+        form.fields["label"].widget.attrs["size"] = 1
+        return form
+
+
+class AssessmentValueFilterSet(df.FilterSet):
+    name = df.CharFilter(
+        field_name="assessment__name",
+        lookup_expr="icontains",
+        label="Assessment name",
+    )
+    cas = df.CharFilter(
+        field_name="assessment__cas",
+        label="Assessment CAS",
+    )
+    dtxsid = df.CharFilter(
+        field_name="assessment__dtxsids__dtxsid",
+        label="Assessment DTXSID",
+    )
+    project_type = df.CharFilter(
+        field_name="assessment__details__project_type",
+        lookup_expr="icontains",
+        label="Assessment project type",
+    )
+    year = df.CharFilter(field_name="assessment__year", label="Assessment year")
+
+    order_by = OrderingFilter(
+        fields=(("assessment__name", "name"), ("assessment__id", "assessment_id")),
+        initial="name",
+    )
+
+    paginate_by = PaginationFilter()
+
+    class Meta:
+        model = models.AssessmentValue
+        fields = ("value_type",)

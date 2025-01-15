@@ -46,7 +46,7 @@ def time_series(df: pd.DataFrame) -> go.Figure:
 
 
 def build_time_df(df: pd.DataFrame) -> pd.DataFrame | None:
-    if df.shape[0] == 0:
+    if df.empty:
         return None
     df2 = df.set_index("date").cumsum().reset_index().rename(columns={"n": "# items"})
     df2["Month"] = df2.date.dt.strftime("%B %Y")

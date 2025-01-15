@@ -1,9 +1,9 @@
-<div class="list-group-item {% if action == 'delete' %} bg-pink {% else %} bg-lightblue {% endif %} p-0 binding-edit-row" hx-target="this" hx-swap="outerHTML">
+<div class="list-group-item {% if action == 'delete' %} bg-pink {% else %} bg-lightblue {% endif %} p-0 binding-edit-row {% if form and not form.instance.id %} create-row {% endif %}" hx-target="this" hx-swap="outerHTML">
   <form method="post" class="d-flex align-items-center p-4">
     <div class="col-md-auto flex-fill pl-0 py-2">
       {% crispy form %}
     </div>
-    <div class="col-md p-0">
+    <div class="col-md-auto p-0">
       {% if form.instance.id %}
         <div class="d-flex row justify-content-end m-0 flex-shrink-0">
           {% if action == 'delete' %}
@@ -15,7 +15,7 @@
               <div class="row w-100 pb-1"></div>
               <div class="d-flex pl-2">
                 <button class="btn btn-sm btn-danger"
-                        id="workflow-conf-delete"
+                        id="binding-conf-delete"
                         hx-post="{{ object.get_delete_url }}"
                         hx-indicator="#spinner-{{object.pk}}"
                         hx-swap="outerHTML swap:1s"><i class="fa fa-trash"></i>&nbsp;Delete</button>
@@ -24,7 +24,7 @@
           {% else %}
             <button
               class="btn btn-sm btn-danger p-2 flex-shrink-0 align-self-end mb-2"
-              id="workflow-delete"
+              id="binding-delete"
               hx-get="{{ object.get_delete_url }}">
               <i class="fa fa-fw fa-trash"></i>
             </button>
@@ -58,7 +58,7 @@
         <button class="btn btn-light px-3 py-2 ml-2"
                 id="binding-cancel"
                 type='button'
-                onclick="$(this).closest('.binding-edit-row').remove()">
+                onclick="window.app.HAWCUtils.hideElement($(this).closest('.binding-edit-row'), false)">
           Cancel
         </button>
       {% endif %}

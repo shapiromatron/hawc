@@ -128,6 +128,11 @@ class TestSummary(PlaywrightTestCase):
         expect(page.locator("h2:has-text('image')")).to_be_visible()
         expect(page.locator("#visual-image").get_by_role("img")).to_be_visible()
 
+        page.goto(self.live_server_url + "/summary/visual/assessment/2/prisma-visual/")
+        expect(page.locator("h2:has-text('prisma visual')")).to_be_visible()
+        expect(page.locator("svg.d3")).to_be_visible()
+        assert page.locator("svg.d3 >> g >> rect").count() == 6
+
     def test_tables(self):
         """
         Tests to ensure all visual types are displayed.

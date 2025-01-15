@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from django.db.models import Q
 
-from ..common.exports import ModelExport
+from ..common.exports import ModelExport, clean_html
 from ..common.models import sql_display, sql_format, str_m2m
 from ..lit.constants import ReferenceDatabase
 from .constants import CoiReported
@@ -53,8 +53,18 @@ class StudyExport(ModelExport):
         }
 
     def prepare_df(self, df):
+        # cast from string to nullable int
         for key in [self.get_column_name("pubmed_id"), self.get_column_name("hero_id")]:
-            df[key] = pd.to_numeric(df[key], errors="coerce")
-        for key in [self.get_column_name("doi")]:
-            df[key] = df[key].replace("", np.nan)
+            if key in df.columns:
+                df[key] = pd.to_numeric(df[key], errors="coerce")
+
+        # cast from string to null
+        doi = self.get_column_name("doi")
+        if doi in df.columns:
+            df[doi] = df[doi].replace("", np.nan)
+
+        # clean html text
+        summary = self.get_column_name("summary")
+        if summary in df.columns:
+            df.loc[:, summary] = clean_html(df[summary])
         return df

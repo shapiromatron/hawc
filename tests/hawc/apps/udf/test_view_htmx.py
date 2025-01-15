@@ -22,8 +22,8 @@ class TestBindings:
         # tag binding create
         url = reverse("udf:binding_create", args=[assessment_id, constants.BindingType.TAG.value])
         inputs = {
-            "form": udf_id,
-            "tag": tags[1].id,
+            "tag-new-form": udf_id,
+            "tag-new-tag": tags[1].id,
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "udf/fragments/udf_row.html")
@@ -46,8 +46,8 @@ class TestBindings:
             "udf:binding_htmx", args=[constants.BindingType.TAG.value, tag_binding.id, "update"]
         )
         inputs = {
-            "form": udf_id,
-            "tag": tags[2].id,
+            f"tag-{tag_binding.id}-form": udf_id,
+            f"tag-{tag_binding.id}-tag": tags[2].id,
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "udf/fragments/udf_row.html")
@@ -78,8 +78,8 @@ class TestBindings:
         # model binding create
         url = reverse("udf:binding_create", args=[assessment_id, constants.BindingType.MODEL.value])
         inputs = {
-            "form": udf_id,
-            "content_type": 87,
+            "model-new-form": udf_id,
+            "model-new-content_type": 87,
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "udf/fragments/udf_row.html")
@@ -102,8 +102,8 @@ class TestBindings:
             "udf:binding_htmx", args=[constants.BindingType.MODEL.value, model_binding.id, "update"]
         )
         inputs = {
-            "form": udf_id,
-            "content_type": 91,
+            f"model-{model_binding.id}-form": udf_id,
+            f"model-{model_binding.id}-content_type": 91,
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "udf/fragments/udf_row.html")

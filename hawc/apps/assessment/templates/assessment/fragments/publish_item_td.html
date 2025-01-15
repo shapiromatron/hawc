@@ -7,4 +7,5 @@
       <span class="fa fa-spin fa-spinner float-right htmx-indicator"></span>
     </div>
   </form>
+  {% if can_update_message %}<span class="text-danger">{{can_update_message}}</span>{% endif %}
 </td>

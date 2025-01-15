@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import FormActions from "shared/components/FormActions";
+import UnderDevelopment from "shared/components/UnderDevelopment";
 
 import OverallPanel from "./OverallPanel";
 import PreviewPanel from "./PreviewPanel";
@@ -20,10 +21,11 @@ class App extends Component {
 
         return (
             <div>
+                <UnderDevelopment />
                 <Tabs onSelect={handleTabSelection}>
                     <TabList>
                         <Tab>Overall</Tab>
-                        <Tab>Setting</Tab>
+                        <Tab>Settings</Tab>
                         <Tab>Preview</Tab>
                     </TabList>
                     <TabPanel>

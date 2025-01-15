@@ -9,6 +9,7 @@ import Study from "study/Study";
 import $ from "$";
 
 import BaseVisual from "./BaseVisual";
+import {addLabelAction, addLabelIndicators} from "./common";
 import RoBHeatmapPlot from "./RoBHeatmapPlot";
 
 class RoBHeatmap extends BaseVisual {
@@ -28,14 +29,15 @@ class RoBHeatmap extends BaseVisual {
     addActionsMenu() {
         const items = [
             "Download data file",
-            {url: this.data.data_url + "?format=xlsx", text: "Download (xlsx)"},
+            {href: this.data.data_url + "?format=xlsx", text: "Download (xlsx)"},
         ];
         if (window.isEditable) {
             items.push(
                 ...[
                     "Visualization editing",
-                    {url: this.data.url_update, text: "Update"},
-                    {url: this.data.url_delete, text: "Delete"},
+                    {href: this.data.url_update, text: "Update"},
+                    {href: this.data.url_delete, text: "Delete"},
+                    addLabelAction(this.data.label_htmx),
                 ]
             );
         }
@@ -44,6 +46,7 @@ class RoBHeatmap extends BaseVisual {
 
     displayAsPage($el, options) {
         var title = $("<h2>").text(this.data.title),
+            labelIndicators = addLabelIndicators(this.data.label_indicators_htmx),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
@@ -56,6 +59,7 @@ class RoBHeatmap extends BaseVisual {
         if (!options.visualOnly) {
             var headerRow = $('<div class="d-flex">').append([
                 title,
+                labelIndicators,
                 HAWCUtils.unpublished(this.data.published, window.isEditable),
                 this.addActionsMenu(),
             ]);

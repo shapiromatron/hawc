@@ -8,8 +8,9 @@ import pandas as pd
 from django.apps import apps
 from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
+from django.contrib.postgres.search import SearchQuery
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, connection, models, router, transaction
 from django.db.models import Case, CharField, Choices, Q, QuerySet, TextField, URLField, Value, When
@@ -147,7 +148,7 @@ class AssessmentRootMixin:
     @classmethod
     def get_assessment_root(cls, assessment_id):
         try:
-            return cls.objects.get(name=cls.get_assessment_root_name(assessment_id))
+            return cls.objects.get(name=cls.get_assessment_root_name(assessment_id), depth=1)
         except ObjectDoesNotExist:
             return cls.create_root(assessment_id)
 
@@ -177,7 +178,7 @@ class AssessmentRootMixin:
                 if node.depth > last_depth:
                     pass
                 else:
-                    for i in range(last_depth - node.depth + 1):
+                    for _i in range(last_depth - node.depth + 1):
                         names.pop()
 
                 names.append(node.name)
@@ -269,17 +270,14 @@ class AssessmentRootMixin:
     @classmethod
     def create_tag(cls, assessment_id, parent_id=None, **kwargs):
         # get parent
-        if parent_id:
+        root = cls.get_assessment_root(assessment_id)
+        if parent_id is None or parent_id == root.pk:
+            parent = root
+        else:
             descendants = cls.get_descendants_pks(assessment_id=assessment_id)
             if parent_id not in descendants:
                 raise ObjectDoesNotExist("parent_id is not a descendant of assessment_id")
             parent = cls.objects.get(pk=parent_id)
-        else:
-            parent = cls.get_assessment_root(assessment_id)
-
-        # make sure name is valid and not root-like
-        if kwargs.get("name") == cls.get_assessment_root_name(assessment_id):
-            raise SuspiciousOperation("attempting to create new root")
 
         # clear cache and create!
         cls.clear_cache(assessment_id)
@@ -383,8 +381,8 @@ class AssessmentRootMixin:
             assessment_id = self.get_assessment_id()
             Assessment = apps.get_model("assessment", "Assessment")
             return Assessment.objects.get(id=assessment_id)
-        except Exception:
-            raise self.__class__.DoesNotExist()
+        except Exception as exc:
+            raise self.__class__.DoesNotExist() from exc
 
     def moveWithinSiblingsToIndex(self, newIndex):
         siblings = list(self.get_siblings())
@@ -423,11 +421,8 @@ class CustomURLField(URLField):
     default_validators = [validators.CustomURLValidator()]
 
     def formfield(self, **kwargs):
-        # As with CharField, this will cause URL validation to be performed
-        # twice.
-        defaults = {
-            "form_class": forms.CustomURLField,
-        }
+        # As with CharField, this will cause URL validation to be performed twice.
+        defaults = {"form_class": forms.CustomURLField}
         defaults.update(kwargs)
         return super().formfield(**defaults)
 
@@ -508,19 +503,21 @@ def include_related(
     return queryset | queryset.model.objects.filter(filters)
 
 
-def sql_display(name: str, Choice: type[Choices]) -> Case:
-    """Create a annotation to return the display name via SQL
+def sql_display(name: str, choice: type[Choices] | dict, default="?") -> Case:
+    """Create an annotation to return the display name via SQL
 
     Args:
         name (str): the field name
-        Choice (type[Choices]): a choice field
+        choice (type[Choices]): a choice field or dict of choices
+        default: default value if display value is not found
 
     Returns:
         Case: the case statement for use in an annotation
     """
+    choices = choice.items() if isinstance(choice, dict) else choice.choices
     return Case(
-        *(When(**{name: key, "then": Value(value)}) for key, value in Choice.choices),
-        default=Value("?"),
+        *(When(**{name: key, "then": Value(value)}) for key, value in choices),
+        default=Value(default),
     )
 
 
@@ -648,3 +645,14 @@ def sql_query_to_dicts(sql: str, params: Iterable | None = None) -> Iterator[dic
         cursor.execute(sql, params)
         columns = [col[0] for col in cursor.description]
         yield from (dict(zip(columns, row, strict=True)) for row in cursor.fetchall())
+
+
+class ColorField(models.CharField):
+    default_validators = [validators.ColorValidator()]
+
+    def formfield(self, **kwargs):
+        return super().formfield(**{"form_class": forms.ColorField, **kwargs})
+
+
+def search_query(value: str) -> SearchQuery:
+    return SearchQuery(value, search_type="websearch", config="english")

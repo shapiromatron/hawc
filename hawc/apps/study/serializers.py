@@ -1,11 +1,11 @@
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ValidationError
 from django.db import transaction
 from rest_framework import exceptions, serializers
 
 from ..assessment.models import Assessment
 from ..assessment.serializers import AssessmentMiniSerializer
 from ..common.api import DynamicFieldsMixin
-from ..common.helper import SerializerHelper
+from ..common.helper import SerializerHelper, tryParseInt
 from ..common.serializers import IdLookupMixin
 from ..lit.constants import ReferenceDatabase
 from ..lit.forms import create_external_id, validate_external_id
@@ -29,21 +29,18 @@ class StudySerializer(IdLookupMixin, serializers.ModelSerializer):
 
 
 class SimpleStudySerializer(StudySerializer):
-    def validate(self, data):
-        if "reference_id" in self.initial_data:
-            ref_id = self.initial_data.get("reference_id")
-
-            try:
-                Reference.objects.get(id=ref_id)
-            except ValueError:
-                raise serializers.ValidationError("Reference ID must be a number.")
-            except ObjectDoesNotExist:
-                raise serializers.ValidationError("Reference ID does not exist.")
-
-        return super().validate(data)
+    def validate(self, attrs):
+        ref_id = tryParseInt(self.initial_data.get("reference_id"), default=-1)
+        try:
+            Reference.objects.get(id=ref_id)
+        except Reference.DoesNotExist as err:
+            raise serializers.ValidationError(
+                {"reference_id": "Reference does not exist."}
+            ) from err
+        return super().validate(attrs)
 
     def create(self, validated_data):
-        ref_id = self.initial_data.get("reference_id")
+        ref_id = self.initial_data.get("reference_id", -1)
         reference = Reference.objects.get(id=ref_id)
         if models.Study.objects.filter(reference_ptr=ref_id).exists():
             raise serializers.ValidationError(f"Reference ID {ref_id} already linked with a study.")
@@ -130,7 +127,7 @@ class StudyFromIdentifierSerializer(serializers.ModelSerializer):
                 data["db_type"], data["db_id"]
             )
         except ValidationError as err:
-            raise serializers.ValidationError(err.message)
+            raise serializers.ValidationError(err.message) from err
 
         return data
 

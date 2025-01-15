@@ -26,6 +26,7 @@
   </div>
 
   {% if crud == "Read" %}
+    {% include "udf/fragments/table.html" with object=udf_content %}
     <div id="animalGroupTableMain"></div>
   {% endif %}
 

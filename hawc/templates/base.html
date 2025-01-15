@@ -69,15 +69,10 @@
         <div class="row no-gutters" style="min-height: 100vh;">
           {% block sidebar_outer %}{% endblock sidebar_outer %}
           <div class="col overflow-auto">
-            <div id="main-content-container" class="container-fluid">
+            <div id="main-content-container" class="container-fluid mt-2">
               {% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
-
               {% include "includes/messages.html" %}
               {% include "includes/htmx_alert.html" %}
-              {% if UA_SUPPORTED is False %}
-                {% include "includes/unsupported_browser.html" %}
-              {% endif %}
-
               {% block content_header %}{% endblock content_header %}
               {% block content_outer %}
                 <div class="row overflow-auto mb-4" style="min-height: 48rem;">
@@ -104,7 +99,7 @@
     {% endif %}
     <script type="text/javascript" src="{% static 'vendor/jquery/3.7.0/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/bootstrap/4.6.2/js/bootstrap.bundle.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'vendor/htmx/1.8.5/htmx.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/htmx/2.0.3/htmx.min.js' %}"></script>
     {% render_bundle 'main' %}
     {% if form %}{{ form.media }}{% endif %}
     {% block extrajs %}{% endblock %}

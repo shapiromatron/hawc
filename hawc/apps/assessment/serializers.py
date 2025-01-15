@@ -13,8 +13,8 @@ from . import constants, models
 
 
 class DSSToxSerializer(serializers.ModelSerializer):
-    dashboard_url = serializers.URLField(source="get_dashboard_url", read_only=True)
-    img_url = serializers.URLField(source="get_img_url", read_only=True)
+    dashboard_url = serializers.URLField(read_only=True)
+    image_url = serializers.URLField(read_only=True)
 
     class Meta:
         model = models.DSSTox
@@ -24,8 +24,10 @@ class DSSToxSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         try:
             substance = DssSubstance.create_from_dtxsid(validated_data["dtxsid"])
-        except ValueError:
-            raise serializers.ValidationError(f"Invalid DTXSID: {validated_data["dtxsid"]}")
+        except ValueError as exc:
+            raise serializers.ValidationError(
+                f"Invalid DTXSID: {validated_data["dtxsid"]}"
+            ) from exc
         return models.DSSTox.objects.create(dtxsid=substance.dtxsid, content=substance.content)
 
 
@@ -116,8 +118,8 @@ class RelatedEffectTagSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(f"'{data}' must be a string.")
         try:
             return models.EffectTag.objects.get(name=data)
-        except ObjectDoesNotExist:
-            raise serializers.ValidationError(f"'{data}' not found.")
+        except ObjectDoesNotExist as exc:
+            raise serializers.ValidationError(f"'{data}' not found.") from exc
 
 
 class DoseUnitsSerializer(serializers.ModelSerializer):
@@ -128,9 +130,9 @@ class DoseUnitsSerializer(serializers.ModelSerializer):
 
 class GrowthPlotSerializer(serializers.Serializer):
     model = serializers.ChoiceField(choices=["user", "assessment", "study"])
-    grouper = serializers.ChoiceField(choices=["A", "Q", "M"])
+    grouper = serializers.ChoiceField(choices=["YE", "QE", "ME"])
 
-    group_mapping = dict(A="Annual", Q="Quarterly", M="Monthly")
+    group_mapping = dict(YE="Annual", QE="Quarterly", ME="Monthly")
 
     def _build_change_plots(self, df: pd.DataFrame, grouper: str, y_axis: str) -> go.Figure:
         df1 = df.set_index("date").groupby(pd.Grouper(freq=grouper)).count().cumsum().reset_index()

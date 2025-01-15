@@ -1,4 +1,5 @@
 import pandas as pd
+from django.contrib.postgres.aggregates import ArrayAgg
 from django.db.models import (
     CharField,
     F,
@@ -45,25 +46,23 @@ class DesignManager(BaseManager):
         return DesignQuerySet(self.model, using=self._db)
 
     def study_df(self, study_qs: QuerySet) -> pd.DataFrame:
-        """Returns a data frame, one row per study in study queryset
+        """Returns a data frame, one row per design in study queryset.
 
         Args:
             study_qs (QuerySet): A study queryset of studies
 
         Returns:
-            pd.DataFrame: _description_
+            pd.DataFrame: A dataframe, one row per study design.
         """
         df1 = study_qs.flat_df()
         df2 = pd.DataFrame(
             data=study_qs.annotate(
-                designs__source_display=sql_display("designs__source", constants.Source),
-                designs__study_design_display=sql_display(
-                    "designs__study_design", constants.StudyDesign
-                ),
-                designs__outcomes__system_display=sql_display(
-                    "designs__outcomes__system", constants.HealthOutcomeSystem
-                ),
+                design_summary=str_m2m("designs__summary"),
+                _designs__study_design=sql_display("designs__study_design", constants.StudyDesign),
+                study_design=str_m2m("_designs__study_design"),
                 countries=str_m2m("designs__countries__name"),
+                _design_source=sql_display("designs__source", constants.Source),
+                design_source=str_m2m("_design_source"),
                 age_profile=Func(
                     F("designs__age_profile"),
                     Value("|"),
@@ -71,33 +70,70 @@ class DesignManager(BaseManager):
                     function="array_to_string",
                     output_field=CharField(max_length=256),
                 ),
+                _participant_n=ArrayAgg("designs__participant_n", distinct=True),
+                participant_n=Func(
+                    F("_participant_n"),
+                    Value("|"),
+                    Value(""),
+                    function="array_to_string",
+                    output_field=CharField(max_length=256),
+                ),
                 chemical_name=str_m2m("designs__chemicals__name"),
                 exposure_name=str_m2m("designs__exposures__name"),
-                design_source=str_m2m("designs__source_display"),
-                study_design=str_m2m("designs__study_design_display"),
-                outcome_system=str_m2m("designs__outcomes__system_display"),
+                _exposure_measurement_type=Func(
+                    F("designs__exposures__measurement_type"),
+                    Value("|"),
+                    Value(""),
+                    function="array_to_string",
+                    output_field=CharField(max_length=256),
+                ),
+                exposure_measurement_type=str_m2m("_exposure_measurement_type"),
+                _exposure_biomonitoring_matrix=sql_display(
+                    "designs__exposures__biomonitoring_matrix",
+                    constants.BiomonitoringMatrix,
+                    default="",
+                ),
+                exposure_biomonitoring_matrix=str_m2m("_exposure_biomonitoring_matrix"),
+                _exposure_route=sql_display(
+                    "designs__exposures__exposure_route", constants.ExposureRoute
+                ),
+                exposure_route=str_m2m("_exposure_route"),
+                _outcomes__system=sql_display(
+                    "designs__outcomes__system", constants.HealthOutcomeSystem
+                ),
+                outcome_system=str_m2m("_outcomes__system"),
                 outcome_effect=str_m2m("designs__outcomes__effect"),
                 outcome_endpoint=str_m2m("designs__outcomes__endpoint"),
             ).values_list(
                 "id",
+                "design_summary",
                 "study_design",
                 "countries",
                 "design_source",
                 "age_profile",
+                "participant_n",
                 "chemical_name",
                 "exposure_name",
+                "exposure_measurement_type",
+                "exposure_biomonitoring_matrix",
+                "exposure_route",
                 "outcome_system",
                 "outcome_effect",
                 "outcome_endpoint",
             ),
             columns=[
                 "study_id",
+                "design_summary",
                 "study_design",
                 "countries",
                 "design_source",
                 "age_profile",
+                "participant_n",
                 "chemical_name",
                 "exposure_name",
+                "exposure_measurement_type",
+                "exposure_biomonitoring_matrix",
+                "exposure_route",
                 "outcome_system",
                 "outcome_effect",
                 "outcome_endpoint",

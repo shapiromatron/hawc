@@ -34,12 +34,12 @@ class TestEco(PlaywrightTestCase):
         with page.expect_response(re.compile(r"/eco/cause/\d+/create/")) as resp:
             page.locator("#cause-create").click()
         assert resp.value.ok is True
-        page.locator('input[name="name"]').fill("new cause")
-        page.locator('select[name="term"]+span.select2-container').click()
+        page.locator('.form-cause input[name="cause-new-name"]').fill("new cause")
+        page.locator('select[name="cause-new-term"]+span.select2-container').click()
         page.locator('input[role="searchbox"]').type("term")
         page.locator('li[role="option"]:has-text("term")').click()
         page.get_by_label("Level*").fill("test!")
-        page.locator('select[name="duration"]+span.select2-container').click()
+        page.locator('select[name="cause-new-duration"]+span.select2-container').click()
         page.locator('input[role="searchbox"]').fill("3 days")
         # buggy?
         page.locator("#cause-save").focus()
@@ -57,11 +57,11 @@ class TestEco(PlaywrightTestCase):
         with page.expect_response(re.compile(r"/eco/effect/\d+/create/")) as resp:
             page.locator("#effect-create").click()
         assert resp.value.ok is True
-        page.locator('input[name="name"]').fill("new effect")
-        page.locator('select[name="term"]+span.select2-container').click()
+        page.locator('.form-effect input[name="effect-new-name"]').fill("new effect")
+        page.locator('select[name="effect-new-term"]+span.select2-container').click()
         page.locator('input[role="searchbox"]').type("term")
         page.locator('li[role="option"]:has-text("term")').click()
-        page.locator('select[name="units"]+span.select2-container').click()
+        page.locator('select[name="effect-new-units"]+span.select2-container').click()
         page.locator('input[role="searchbox"]').fill("grams")
         page.locator("#effect-save").click()
         # clone effect
@@ -76,14 +76,14 @@ class TestEco(PlaywrightTestCase):
         with page.expect_response(re.compile(r"/eco/result/\d+/create/")) as resp:
             page.locator("#result-create").click()
         assert resp.value.ok is True
-        page.locator('input[name="name"]').fill("name!")
-        page.locator('select[name="cause"]').select_option(index=2)
-        page.locator('select[name="effect"]').select_option(index=2)
-        page.locator('select[name="relationship_direction"]').select_option("0")
-        page.locator('input[name="modifying_factors"]').click()
-        page.locator('input[name="modifying_factors"]').fill("none")
-        page.locator('select[name="variability"]').select_option("94")
-        page.locator('select[name="statistical_sig_type"]').select_option("99")
+        page.locator('.form-result input[name="result-new-name"]').fill("name!")
+        page.locator('select[name="result-new-cause"]').select_option(index=2)
+        page.locator('select[name="result-new-effect"]').select_option(index=2)
+        page.locator('select[name="result-new-relationship_direction"]').select_option("0")
+        page.locator('input[name="result-new-modifying_factors"]').click()
+        page.locator('input[name="result-new-modifying_factors"]').fill("none")
+        page.locator('select[name="result-new-variability"]').select_option("94")
+        page.locator('select[name="result-new-statistical_sig_type"]').select_option("99")
         page.locator("#result-save").click()
         expect(page.locator('span:has-text("none")')).to_be_visible()
         # clone result

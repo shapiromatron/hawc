@@ -134,12 +134,13 @@ class StyleManager {
         // placeholder for all selects in our data pivot which use these styles
         this.selects = {symbols: [], lines: [], texts: [], rectangles: []}; // all selects in data pivot
     }
-    add_select(style_type, selected_style, include_null) {
+    add_select(style_type, selected_style, include_null, opts) {
         // add a select box to select a style anywhere in the data pivot
         var styles = this.styles[style_type],
             select = $('<select class="form-control">').html(_build_options(styles));
+        opts = opts || {null_label: NULL_CASE};
         if (include_null) {
-            select.prepend(`<option value="${NULL_CASE}">${NULL_CASE}</option>`);
+            select.prepend(`<option value="${NULL_CASE}">${opts.null_label}</option>`);
         }
         if (selected_style) {
             select.find(`option[value="${selected_style}"]`).prop("selected", true);

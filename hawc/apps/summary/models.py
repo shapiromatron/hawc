@@ -1,9 +1,9 @@
 import json
 import logging
 import os
-from operator import methodcaller
 
 import pandas as pd
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -14,17 +14,15 @@ from plotly.graph_objs._figure import Figure
 from plotly.io import from_json
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
-from treebeard.mp_tree import MP_Node
 
-from hawc.tools.tables.ept import EvidenceProfileTable
-from hawc.tools.tables.generic import BaseTable, GenericTable
-from hawc.tools.tables.parser import QuillParser
-from hawc.tools.tables.set import StudyEvaluationTable
-
+from ...tools.tables.ept import EvidenceProfileTable
+from ...tools.tables.generic import BaseTable, GenericTable
+from ...tools.tables.parser import QuillParser
+from ...tools.tables.set import StudyEvaluationTable
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.constants import EpiVersion, RobName
-from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
+from ..assessment.models import Assessment, BaseEndpoint, DoseUnits, LabeledItem
 from ..common.helper import (
     FlatExport,
     PydanticToDjangoError,
@@ -38,66 +36,13 @@ from ..epi.exports import OutcomeDataPivot
 from ..epimeta.exports import MetaResultFlatDataPivot
 from ..epiv2.exports import EpiFlatComplete
 from ..invitro import exports as ivexports
+from ..lit.models import Reference, ReferenceFilterTag, Search
 from ..riskofbias.models import RiskOfBiasScore
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
 from . import constants, managers, prefilters
 
 logger = logging.getLogger(__name__)
-
-
-class SummaryText(MP_Node):
-    objects = managers.SummaryTextManager()
-
-    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
-    title = models.CharField(max_length=128)
-    slug = models.SlugField(
-        verbose_name="URL Name",
-        help_text="The URL (web address) used on the website to describe this object (no spaces or special-characters).",
-        unique=True,
-    )
-    text = models.TextField(default="")
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-    BREADCRUMB_PARENT = "assessment"
-
-    class Meta:
-        verbose_name_plural = "Summary Text Descriptions"
-        unique_together = (
-            ("assessment", "title"),
-            ("assessment", "slug"),
-        )
-
-    def __str__(self):
-        return self.title
-
-    @classmethod
-    def assessment_qs(cls, assessment_id):
-        return cls.objects.filter(assessment=assessment_id)
-
-    @classmethod
-    def get_assessment_root_node(cls, assessment_id):
-        return SummaryText.objects.get(title=f"assessment-{assessment_id}")
-
-    @classmethod
-    def get_assessment_queryset(cls, assessment_id):
-        return cls.get_assessment_root_node(assessment_id).get_descendants()
-
-    @classmethod
-    def build_default(cls, assessment):
-        assessment = SummaryText.add_root(
-            assessment=assessment,
-            title=f"assessment-{assessment.pk}",
-            slug=f"assessment-{assessment.pk}-slug",
-            text="Root-level text",
-        )
-
-    def get_absolute_url(self):
-        return f"{reverse('summary:list', args=(self.assessment_id,))}#{self.slug}"
-
-    def get_assessment(self):
-        return self.assessment
 
 
 class SummaryTable(models.Model):
@@ -126,6 +71,7 @@ class SummaryTable(models.Model):
         help_text="For assessments marked for public viewing, mark table to be viewable by public",
     )
     caption = models.TextField(blank=True, validators=[validate_html_tags, validate_hyperlinks])
+    labels = GenericRelation(LabeledItem, related_query_name="summary_tables")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -227,7 +173,7 @@ class SummaryTable(models.Model):
             try:
                 self.get_table()
             except ValueError as e:
-                raise ValidationError({"content": str(e)})
+                raise ValidationError({"content": str(e)}) from e
 
         # clean up control characters before string validation
         content_str = json.dumps(self.content).replace('\\"', '"')
@@ -275,11 +221,6 @@ class Visual(models.Model):
         verbose_name="Publish visual for public viewing",
         help_text="For assessments marked for public viewing, mark visual to be viewable by public",
     )
-    sort_order = models.CharField(
-        max_length=40,
-        choices=constants.SortOrder,
-        default=constants.SortOrder.SC,
-    )
     prefilters = models.JSONField(default=dict)
     image = models.ImageField(
         upload_to="summary/visual/images",
@@ -289,6 +230,7 @@ class Visual(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+    labels = GenericRelation(LabeledItem, related_query_name="visuals")
 
     BREADCRUMB_PARENT = "assessment"
 
@@ -423,8 +365,20 @@ class Visual(models.Model):
                         ),
                         HeatmapDataset(
                             type="Epi",
+                            name="Epidemiology evidence map (including unpublished HAWC data)",
+                            url=reverse("epiv2:api:assessment-study-export", args=(assessment.id,))
+                            + "?unpublished=true",
+                        ),
+                        HeatmapDataset(
+                            type="Epi",
                             name="Epidemiology data extractions",
                             url=reverse("epiv2:api:assessment-export", args=(assessment.id,)),
+                        ),
+                        HeatmapDataset(
+                            type="Epi",
+                            name="Epidemiology data extractions (including unpublished HAWC data)",
+                            url=reverse("epiv2:api:assessment-export", args=(assessment.id,))
+                            + "?unpublished=true",
                         ),
                     ]
                 )
@@ -436,6 +390,71 @@ class Visual(models.Model):
         ]
         datasets.extend(additional_datasets)
         return HeatmapDatasets(datasets=datasets)
+
+    def get_prisma_data(self) -> dict:
+        return {
+            "reference_tag_pairs": list(
+                Reference.objects.tag_pairs(self.assessment.references.all().order_by("id"))
+            ),
+            "reference_search_pairs": list(
+                Reference.searches.through.objects.filter(
+                    reference_id__in=self.assessment.references.all()
+                )
+                .values("search_id", "reference_id")
+                .order_by("search_id", "reference_id")
+            ),
+            "searches": list(
+                Search.objects.filter(assessment_id=self.assessment.id)
+                .values("id", "title")
+                .order_by("id")
+            ),
+            "tags": list(
+                ReferenceFilterTag.as_dataframe(self.assessment.id).to_dict(orient="records")
+            ),
+            "references": list(
+                Reference.objects.filter(assessment=self.assessment.id)
+                .values_list("id", flat=True)
+                .order_by("id")
+            ),
+            "reference_detail_url": reverse("lit:interactive", args=(self.assessment.id,))
+            + "?action=venn_reference_list",
+        }
+
+    def get_data(self) -> dict:
+        """Get data needed to display Visual."""
+        match self.visual_type:
+            case constants.VisualType.PRISMA:
+                return self.get_prisma_data()
+            case _:
+                return {}
+
+    def update_config(self) -> dict:
+        """
+        Configuration required to create/update a visual.
+
+        This visual may be a mock instance which has not yet been saved to the database.
+        """
+        match self.visual_type:
+            case constants.VisualType.PRISMA:
+                return dict(
+                    settings=self.settings,
+                    api_data_url=reverse(
+                        "summary:api:assessment-json-data", args=(self.assessment.id,)
+                    ),
+                )
+            case _:
+                return {}
+
+    def read_config(self) -> dict:
+        """Configuration required to render an instance of the visual in read-only views."""
+        match self.visual_type:
+            case constants.VisualType.PRISMA:
+                return dict(
+                    settings=self.settings,
+                    api_data_url=reverse("summary:api:visual-json-data", args=(self.id,)),
+                )
+            case _:
+                return {}
 
     @staticmethod
     def get_dose_units():
@@ -483,7 +502,7 @@ class Visual(models.Model):
 
         return Endpoint.objects.none()
 
-    def get_studies(self, request=None) -> models.QuerySet[Study] | list[Study]:
+    def get_studies(self, request=None) -> list[Study]:
         """
         If there are endpoint-level prefilters, we get all studies which
         match this criteria. Otherwise, we use the M2M list of studies attached
@@ -500,15 +519,7 @@ class Visual(models.Model):
             form = fs.form
             fs.set_passthrough_options(form)
             fs.form.is_valid()
-
             qs = fs.qs
-
-        # TODO - remove? handle sort order in visualization?
-        if self.sort_order:
-            if self.sort_order == constants.SortOrder.OC.value:
-                qs = sorted(qs, key=methodcaller("get_overall_confidence"), reverse=True)
-            else:
-                qs = qs.order_by(self.sort_order)
 
         return qs
 
@@ -552,7 +563,7 @@ class Visual(models.Model):
         try:
             return from_json(json.dumps(self.settings))
         except ValueError as err:
-            raise ValueError(err)
+            raise ValueError(err) from err
 
     def _rob_data_qs(self, use_settings: bool = True) -> models.QuerySet:
         studies = self.get_studies()
@@ -662,6 +673,13 @@ class DataPivot(models.Model):
         else:
             return self.datapivotquery.visual_type
 
+    @property
+    def visible_labels(self):
+        if hasattr(self, "datapivotupload"):
+            return self.datapivotupload.visible_upload_labels
+        else:
+            return self.datapivotquery.visible_query_labels
+
     def get_visual_type_display(self):
         return self.visual_type
 
@@ -685,6 +703,7 @@ class DataPivotUpload(DataPivot):
         max_length=64,
         blank=True,
     )
+    labels = GenericRelation(LabeledItem, related_query_name="datapivot_uploads")
 
     @property
     def visual_type(self):
@@ -727,6 +746,7 @@ class DataPivotQuery(DataPivot):
         "creating one plot similar, but not identical, dose-units.",
     )
     prefilters = models.JSONField(default=dict)
+    labels = GenericRelation(LabeledItem, related_query_name="datapivot_queries")
 
     def clean(self):
         count = self.get_queryset().count()
@@ -841,7 +861,6 @@ class DataPivotQuery(DataPivot):
             raise ValueError("Unknown type")
 
 
-reversion.register(SummaryText)
 reversion.register(SummaryTable)
 reversion.register(DataPivot)
 reversion.register(DataPivotUpload)
