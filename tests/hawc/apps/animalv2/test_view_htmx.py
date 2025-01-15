@@ -11,7 +11,7 @@ from hawc.apps.assessment import models as assessment_models
 class TestExperimentChildren:
     def _test_helper(self, client, experiment, clazz, input_payload, short_name):
         initial_count = clazz.objects.count()
-        name_val = input_payload["name"]
+        name_val = input_payload[f"{short_name}-new-name"]
         expected_template = f"animalv2/fragments/_{short_name}_row.html"
         viewname = f"animalv2:{short_name}-htmx"
 
@@ -43,7 +43,8 @@ class TestExperimentChildren:
 
         # update
         url = reverse(viewname, args=(created_obj.id, "update"))
-        input_payload["name"] = f"{name_val} update"
+        input_payload[f"{short_name}-new-name"] = f"{name_val} update"
+        input_payload = {k.replace("new", str(created_obj.id)): v for k, v in input_payload.items()}
         resp = client.post(url, data=input_payload)
         assertTemplateUsed(resp, expected_template)
         assert resp.status_code == 200
@@ -60,8 +61,8 @@ class TestExperimentChildren:
         # Chemical
         dsstox_id = assessment_models.DSSTox.objects.first().dtxsid
         inputs = {
-            "name": "ex chemical",
-            "dtxsid": dsstox_id,
+            "chemical-new-name": "ex chemical",
+            "chemical-new-namedtxsid": dsstox_id,
         }
         self._test_helper(client, experiment, models.Chemical, inputs, "chemical")
 
@@ -69,10 +70,10 @@ class TestExperimentChildren:
         strain = assessment_models.Strain.objects.first()
         species = assessment_models.Species.objects.get(pk=strain.species.id)
         inputs = {
-            "name": "ex animalgroup",
-            "species": species.id,
-            "strain": strain.id,
-            "sex": "M",
+            "animalgroup-new-name": "ex animalgroup",
+            "animalgroup-new-species": species.id,
+            "animalgroup-new-strain": strain.id,
+            "animalgroup-new-sex": "M",
         }
         self._test_helper(client, experiment, models.AnimalGroup, inputs, "animalgroup")
 
