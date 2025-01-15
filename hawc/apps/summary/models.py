@@ -3,7 +3,6 @@ import logging
 
 import pandas as pd
 from django.contrib.contenttypes.fields import GenericRelation
-from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
@@ -711,121 +710,5 @@ class Visual(models.Model):
         return self.dataset.get_latest_df()
 
 
-class DataPivot(models.Model):
-    objects = managers.DataPivotManager()
-
-    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
-    title = models.CharField(
-        max_length=128,
-        help_text="Enter the title of the visualization (spaces and special-characters allowed).",
-    )
-    slug = models.SlugField(
-        verbose_name="URL Name",
-        help_text="The URL (web address) used to describe this object "
-        "(no spaces or special-characters).",
-    )
-    settings = models.JSONField(
-        default=dict,
-        blank=True,
-        help_text="To clone settings from an existing data-pivot, copy them into this field, "
-        "otherwise leave blank.",
-    )
-    caption = models.TextField(blank=True, default="")
-    published = models.BooleanField(
-        default=False,
-        verbose_name="Publish visual for public viewing",
-        help_text="For assessments marked for public viewing, mark visual to be viewable by public",
-    )
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-    BREADCRUMB_PARENT = "assessment"
-
-    class Meta:
-        unique_together = (("assessment", "slug"),)
-        ordering = ("title",)
-
-    def save(self, **kw):
-        if self.settings is None:
-            self.settings = {}
-        return super().save(**kw)
-
-    @staticmethod
-    def reset_row_overrides(settings: dict) -> None:
-        # reset row overrides in-place
-        settings["row_overrides"] = []
-
-
-class DataPivotUpload(DataPivot):
-    objects = managers.DataPivotUploadManager()
-
-    excel_file = models.FileField(
-        verbose_name="Excel file",
-        upload_to="data_pivot_excel",
-        max_length=250,
-        help_text="Upload an Excel file in XLSX format.",
-    )
-    worksheet_name = models.CharField(
-        help_text="Worksheet name to use in Excel file. If blank, the first worksheet is used.",
-        max_length=64,
-        blank=True,
-    )
-    labels = GenericRelation(LabeledItem, related_query_name="datapivot_uploads")
-
-
-class DataPivotQuery(DataPivot):
-    objects = managers.DataPivotQueryManager()
-
-    MAXIMUM_QUERYSET_COUNT = 1000
-
-    evidence_type = models.PositiveSmallIntegerField(
-        choices=constants.StudyType, default=constants.StudyType.BIOASSAY
-    )
-    export_style = models.PositiveSmallIntegerField(
-        choices=constants.ExportStyle,
-        default=constants.ExportStyle.EXPORT_GROUP,
-        help_text="The export style changes the level at which the "
-        "data are aggregated, and therefore which columns and types "
-        "of data are presented in the export, for use in the visual.",
-    )
-    # Implementation-note: use ArrayField to save DoseUnits ManyToMany because
-    # order is important and it would be a much larger implementation to allow
-    # copying and saving dose-units- dose-units are rarely deleted and this
-    # implementation shouldn't cause issues with deletions because should be
-    # used primarily with id__in style queries.
-    preferred_units = ArrayField(
-        models.PositiveIntegerField(),
-        default=list,
-        help_text="List of preferred dose-values, in order of preference. "
-        "If empty, dose-units will be random for each endpoint "
-        "presented. This setting may used for comparing "
-        "percent-response, where dose-units are not needed, or for "
-        "creating one plot similar, but not identical, dose-units.",
-    )
-    prefilters = models.JSONField(default=dict)
-    labels = GenericRelation(LabeledItem, related_query_name="datapivot_queries")
-
-    def clean(self):
-        count = self.get_queryset().count()
-
-        if count == 0:
-            err = """
-                Current settings returned 0 results. Please update your settings to make
-                data filters less restrictive.
-            """
-            raise ValidationError(err)
-
-        if count > self.MAXIMUM_QUERYSET_COUNT:
-            err = f"""
-                Current settings returned too many results ({count} returned; a maximum of
-                {self.MAXIMUM_QUERYSET_COUNT} are allowed). Please update your settings to make
-                data filters more restrictive.
-            """
-            raise ValidationError(err)
-
-
 reversion.register(SummaryTable)
-reversion.register(DataPivot)
-reversion.register(DataPivotUpload)
-reversion.register(DataPivotQuery)
 reversion.register(Visual)

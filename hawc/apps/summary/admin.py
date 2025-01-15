@@ -27,28 +27,6 @@ class VisualAdmin(admin.ModelAdmin):
         return format_html("<a href='{}'>{}</a>", obj.get_absolute_url(), obj.id)
 
 
-class DataPivotAdmin(admin.ModelAdmin):
-    list_display = (
-        "title",
-        "show_url",
-        "assessment_id",
-        "assessment",
-        "published",
-        "created",
-        "last_updated",
-    )
-    list_filter = ("published", ("evidence_type", admin.RelatedOnlyFieldListFilter))
-    search_fields = ("assessment__name", "title")
-
-    @admin.display(description="URL")
-    def show_url(self, obj):
-        return format_html("<a href='{}'>{}</a>", obj.get_absolute_url(), obj.id)
-
-
-class DataPivotQueryAdmin(DataPivotAdmin):
-    list_filter = ("published", "evidence_type")
-
-
 @admin.register(models.SummaryTable)
 class SummaryTableAdmin(VersionAdmin):
     list_display = (
@@ -61,7 +39,3 @@ class SummaryTableAdmin(VersionAdmin):
     )
 
     list_filter = ("table_type", "published", ("assessment", admin.RelatedOnlyFieldListFilter))
-
-
-admin.site.register(models.DataPivotUpload, DataPivotAdmin)
-admin.site.register(models.DataPivotQuery, DataPivotQueryAdmin)

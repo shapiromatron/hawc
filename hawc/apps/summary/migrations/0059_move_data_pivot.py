@@ -171,5 +171,5 @@ def backward(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [("summary", "0058_migrate_dp")]
+    dependencies = [("summary", "0058_migrate_data_pivot")]
     operations = [migrations.RunPython(forward, reverse_code=backward)]

@@ -13,7 +13,7 @@ from ...epiv2 import models as epiv2models
 from ...lit.models import Reference
 from ...riskofbias.models import RiskOfBias
 from ...study.models import Study
-from ...summary.models import DataPivot, Visual
+from ...summary.models import Visual
 from .common import empty_plot, pd_html_config
 
 
@@ -65,7 +65,6 @@ def build_time_series(key: str, df: pd.DataFrame) -> TimeSeries:
 def get_context_data(assessment: Assessment) -> dict:
     id = assessment.id
     viz_per_year = get_data(Visual, "month", id)
-    dp_per_year = get_data(DataPivot, "month", id)
     context = {
         "assessment": assessment,
         "assessment_pk": id,
@@ -80,10 +79,6 @@ def get_context_data(assessment: Assessment) -> dict:
         ),
         "endpoints": build_time_series("endpoints", get_data(Endpoint, "month", id)),
         "visuals": build_time_series("visuals", viz_per_year),
-        "datapivots": build_time_series("datapivots", dp_per_year),
-        "total_visuals": build_time_series(
-            "allviz", pd.concat([viz_per_year, dp_per_year]).groupby("date").sum().reset_index()
-        ),
     }
     if assessment.epi_version == 1:
         context.update(

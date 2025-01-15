@@ -795,7 +795,6 @@ class SmartTagForm(forms.Form):
         ("study", "Study"),
         ("endpoint", "Endpoint"),
         ("visual", "Visualization"),
-        ("data_pivot", "Data Pivot"),
     )
     resource = forms.ChoiceField(choices=RESOURCE_CHOICES)
     study = AutocompleteChoiceField(
@@ -810,10 +809,6 @@ class SmartTagForm(forms.Form):
         autocomplete_class=autocomplete.VisualAutocomplete,
         help_text="Type a few characters of the visual name, then click to select.",
     )
-    data_pivot = AutocompleteChoiceField(
-        autocomplete_class=autocomplete.DataPivotAutocomplete,
-        help_text="Type a few characters of the data-pivot name, then click to select.",
-    )
 
     def __init__(self, *args, **kwargs):
         assessment_id = kwargs.pop("assessment_id", -1)
@@ -823,4 +818,3 @@ class SmartTagForm(forms.Form):
             {"animal_group__experiment__study__assessment_id": assessment_id}
         )
         self.fields["visual"].set_filters({"assessment_id": assessment_id})
-        self.fields["data_pivot"].set_filters({"assessment_id": assessment_id})
