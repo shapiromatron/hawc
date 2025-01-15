@@ -284,7 +284,7 @@ class DataExtractionForm(forms.ModelForm):
 
     def is_valid(self):
         if "is_qualitative_only" in self.data and self.data["is_qualitative_only"] == "on":
-            # if "is qualitative only" is checked, we are hiding other fields...
+            # TODO - if "is qualitative only" is checked, we are hiding other fields...
             # so relax the required'ness of some...
             for usually_required_field in ["dose_response_observations", "result_details"]:
                 self.fields[usually_required_field].required = False
@@ -296,7 +296,7 @@ class DataExtractionForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
         if cleaned_data.get("is_qualitative_only") is True:
-            # set sensible values on the hidden fields
+            # TODO - set sensible values on the hidden fields
             hidden_defaults = {
                 "data_location": "",
                 "dataset_type": "",

@@ -1,6 +1,6 @@
 from django.db import transaction
-from django.db.models import Q
-from django.forms import modelformset_factory
+from django.db.models import Model, Q
+from django.forms import BaseForm, modelformset_factory
 from django.http import HttpRequest
 from django.shortcuts import render
 
@@ -19,7 +19,6 @@ from ..study.models import Study
 from . import forms, models
 
 
-# Experiment Views
 class ExperimentCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = "Experiment created."
     parent_model = Study
@@ -77,10 +76,10 @@ class ExperimentViewSet(HtmxViewSet):
 class ExperimentChildViewSet(HtmxViewSet):
     actions = {"create", "read", "update", "delete", "clone"}
     parent_model = models.Experiment
-    model = None  # required
-    form_class: str  # required
+    model: type[Model]
+    form_class: type[BaseForm]
     form_fragment = "common/fragments/_object_edit_row.html"
-    detail_fragment: str  # required
+    detail_fragment: str
     formset_configurations = []
 
     @action(permission=can_view)
