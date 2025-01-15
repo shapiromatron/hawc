@@ -4703,8 +4703,6 @@
     comments: a comment
     created: 2024-08-09 08:05:06.595126-04
     last_updated: 2024-08-09 08:05:06.595126-04
-- model: bmd.assessmentsettings
-  pk: 1
 - model: animal.endpointgroup
   pk: 34
   fields:

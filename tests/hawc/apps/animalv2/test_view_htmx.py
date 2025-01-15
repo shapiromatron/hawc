@@ -18,11 +18,11 @@ class TestStudyLevelValues:
         # studylevelvalues create
         url = reverse("animalv2:studylevelvalues-htmx", args=[study_id, "create"])
         inputs = {
-            "system": "System name",
-            "value_type": 1,
-            "value": 10,
-            "units": 1,
-            "comments": "a comment",
+            "studylevelvalue-new-system": "System name",
+            "studylevelvalue-new-value_type": 1,
+            "studylevelvalue-new-value": 10,
+            "studylevelvalue-new-units": 1,
+            "studylevelvalue-new-comments": "a comment",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "animalv2/fragments/studylevelvalue_row.html")
@@ -40,13 +40,8 @@ class TestStudyLevelValues:
 
         # studylevelvalues update
         url = studylevelvalue.get_edit_url()
-        inputs = {
-            "system": "System update",
-            "value_type": 1,
-            "value": 10,
-            "units": 1,
-            "comments": "a comment",
-        }
+        inputs["studylevelvalue-new-system"] = "System update"
+        inputs = {k.replace("new", str(studylevelvalue.id)): v for k, v in inputs.items()}
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "animalv2/fragments/studylevelvalue_row.html")
         assert resp.status_code == 200
@@ -77,11 +72,11 @@ class TestStudyLevelValues:
         # studylevelvalues create
         url = reverse("animalv2:studylevelvalues-htmx", args=[study_id, "create"])
         inputs = {
-            "system": "System name",
-            "value_type": 1,
-            "value": 10,
-            "units": 1,
-            "comments": "a comment",
+            "studylevelvalue-new-system": "System name",
+            "studylevelvalue-new-value_type": 1,
+            "studylevelvalue-new-value": 10,
+            "studylevelvalue-new-units": 1,
+            "studylevelvalue-new-comments": "a comment",
         }
         resp = client.post(url, data=inputs)
         assert resp.status_code == 403
@@ -96,9 +91,7 @@ class TestStudyLevelValues:
 
         # studylevelvalues update
         url = studylevelvalue.get_edit_url()
-        inputs = {
-            "system": "System update",
-        }
+        inputs["studylevelvalue-new-system"] = "System update"
         resp = client.post(url, data=inputs)
         assert resp.status_code == 403
 
