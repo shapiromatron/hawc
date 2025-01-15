@@ -108,7 +108,7 @@ urlpatterns = [
     path(
         "data-pivot/assessment/<int:pk>/<slug:slug>/",
         views.LegacyDataPivotRedirect.as_view(),
-        name="dp_detail",
+        name="legacy-dp-redirect",
     ),
     # HELP TEXT
     path(

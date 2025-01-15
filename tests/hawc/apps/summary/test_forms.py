@@ -2,23 +2,18 @@ import json
 from copy import deepcopy
 from io import BytesIO
 
-import pandas as pd
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
 
 from hawc.apps.assessment.models import Assessment
-from hawc.apps.summary.constants import ExportStyle, StudyType, VisualType
+from hawc.apps.summary.constants import StudyType, VisualType
 from hawc.apps.summary.forms import (
-    DataPivotQueryForm,
-    DataPivotUploadForm,
     ExternalSiteForm,
     ImageVisualForm,
     PlotlyVisualForm,
     TagtreeForm,
 )
-
-from ..test_utils import df_to_form_data
 
 
 @pytest.mark.django_db
@@ -251,72 +246,72 @@ class TestImageVisualForm:
         assert "Image must be >10KB and <3 MB in size." in form.errors["image"][0]
 
 
-@pytest.mark.django_db
-class TestDataPivotUploadForm:
-    def test_bad_excel(self, db_keys):
-        assess = Assessment.objects.get(id=db_keys.assessment_working)
-        bad_files = [
-            (
-                df_to_form_data("excel_file", pd.DataFrame(data=[1, 2], columns=["a"])),
-                "Must contain at least 2 columns.",
-            ),
-            (
-                df_to_form_data("excel_file", pd.DataFrame(data=[[1, 2]], columns=["a", "b"])),
-                "Must contain at least 2 rows of data.",
-            ),
-            (
-                {"excel_file": SimpleUploadedFile("test.xlsx", b"a,b,c\n1,2,3\n")},
-                "Unable to read Excel file. Please upload an Excel file in XLSX format.",
-            ),
-            (
-                {"excel_file": SimpleUploadedFile("test.csv", b"a,b,c\n1,2,3\n")},
-                "Unable to read Excel file. Please upload an Excel file in XLSX format.",
-            ),
-        ]
-        for files, error_msg in bad_files:
-            form = DataPivotUploadForm(
-                parent=assess,
-                data={"title": "a", "slug": "a"},
-                files=files,
-            )
-            assert form.is_valid() is False
-            assert form.errors["excel_file"][0] == error_msg
+# @pytest.mark.django_db
+# class TestDataPivotUploadForm:
+#     def test_bad_excel(self, db_keys):
+#         assess = Assessment.objects.get(id=db_keys.assessment_working)
+#         bad_files = [
+#             (
+#                 df_to_form_data("excel_file", pd.DataFrame(data=[1, 2], columns=["a"])),
+#                 "Must contain at least 2 columns.",
+#             ),
+#             (
+#                 df_to_form_data("excel_file", pd.DataFrame(data=[[1, 2]], columns=["a", "b"])),
+#                 "Must contain at least 2 rows of data.",
+#             ),
+#             (
+#                 {"excel_file": SimpleUploadedFile("test.xlsx", b"a,b,c\n1,2,3\n")},
+#                 "Unable to read Excel file. Please upload an Excel file in XLSX format.",
+#             ),
+#             (
+#                 {"excel_file": SimpleUploadedFile("test.csv", b"a,b,c\n1,2,3\n")},
+#                 "Unable to read Excel file. Please upload an Excel file in XLSX format.",
+#             ),
+#         ]
+#         for files, error_msg in bad_files:
+#             form = DataPivotUploadForm(
+#                 parent=assess,
+#                 data={"title": "a", "slug": "a"},
+#                 files=files,
+#             )
+#             assert form.is_valid() is False
+#             assert form.errors["excel_file"][0] == error_msg
 
-    def test_bad_worksheet(self, db_keys):
-        df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=("a", "b"))
-        form = DataPivotUploadForm(
-            parent=Assessment.objects.get(id=db_keys.assessment_working),
-            data={"title": "a", "slug": "a", "worksheet_name": "foo"},
-            files=df_to_form_data("excel_file", df),
-        )
-        assert form.is_valid() is False
-        assert form.errors["worksheet_name"][0] == "Worksheet name foo not found."
+#     def test_bad_worksheet(self, db_keys):
+#         df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=("a", "b"))
+#         form = DataPivotUploadForm(
+#             parent=Assessment.objects.get(id=db_keys.assessment_working),
+#             data={"title": "a", "slug": "a", "worksheet_name": "foo"},
+#             files=df_to_form_data("excel_file", df),
+#         )
+#         assert form.is_valid() is False
+#         assert form.errors["worksheet_name"][0] == "Worksheet name foo not found."
 
-    def test_success(self, db_keys):
-        df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=("a", "b"))
-        form = DataPivotUploadForm(
-            parent=Assessment.objects.get(id=db_keys.assessment_working),
-            data={"title": "a", "slug": "a"},
-            files=df_to_form_data("excel_file", df),
-        )
-        assert form.is_valid()
+#     def test_success(self, db_keys):
+#         df = pd.DataFrame(data=[[1, 2], [3, 4]], columns=("a", "b"))
+#         form = DataPivotUploadForm(
+#             parent=Assessment.objects.get(id=db_keys.assessment_working),
+#             data={"title": "a", "slug": "a"},
+#             files=df_to_form_data("excel_file", df),
+#         )
+#         assert form.is_valid()
 
 
-@pytest.mark.django_db
-class TestDataPivotQueryForm:
-    def test_success(self, db_keys):
-        form = DataPivotQueryForm(
-            parent=Assessment.objects.get(id=db_keys.assessment_working),
-            evidence_type=StudyType.BIOASSAY,
-            data={
-                "title": "a",
-                "slug": "a",
-                "export_style": ExportStyle.EXPORT_ENDPOINT.value,
-            },
-        )
-        assert form.is_valid()
-        instance = form.save()
-        assert instance.preferred_units == []
+# @pytest.mark.django_db
+# class TestDataPivotQueryForm:
+#     def test_success(self, db_keys):
+#         form = DataPivotQueryForm(
+#             parent=Assessment.objects.get(id=db_keys.assessment_working),
+#             evidence_type=StudyType.BIOASSAY,
+#             data={
+#                 "title": "a",
+#                 "slug": "a",
+#                 "export_style": ExportStyle.EXPORT_ENDPOINT.value,
+#             },
+#         )
+#         assert form.is_valid()
+#         instance = form.save()
+#         assert instance.preferred_units == []
 
 
 # @pytest.mark.django_db

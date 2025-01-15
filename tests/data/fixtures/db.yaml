@@ -19283,7 +19283,7 @@
     visual_type: 10
     evidence_type: 0
     dp_id: 1
-    dp_slug: animal-bioassay-data-pivot-endpoint-group
+    dp_slug: legacy-dp-slug
     prefilters:
       prefilters:
         published_only: true

@@ -28,6 +28,17 @@ from ..test_utils import check_200, get_client
 
 
 @pytest.mark.django_db
+def test_get_redirect():
+    client = get_client("admin")
+    urls = [
+        reverse("summary:visualization_detail_id", args=(2,)),
+        reverse("summary:legacy-dp-redirect", args=(2, "legacy-dp-slug")),
+    ]
+    for url in urls:
+        assert client.get(url).status_code == 302
+
+
+@pytest.mark.django_db
 def test_get_200():
     client = get_client("admin")
     main = 1
@@ -37,12 +48,6 @@ def test_get_200():
     slug_dp = "animal-bioassay-data-pivot-endpoint-group"
     table_type = 1
     visual_type = 1
-    study_type = 1
-
-    url = reverse("summary:visualization_detail_id", args=(main,))
-    assert client.get(url).status_code == 302
-    url = reverse("summary:dp_detail_id", args=(main,))
-    assert client.get(url).status_code == 302
 
     urls = [
         # summary tables
@@ -63,15 +68,9 @@ def test_get_200():
         reverse("summary:visualization_update", args=(main, slug_visual)),
         reverse("summary:visualization_delete", args=(main, slug_visual)),
         # data-pivot
-        reverse("summary:dp_new-prompt", args=(main,)),
-        reverse("summary:dp_new-query", args=(main, study_type)),
-        reverse("summary:dp_new-file", args=(main,)),
-        reverse("summary:dp_copy_selector", args=(main,)),
-        reverse("summary:dp_detail", args=(secondary, slug_dp)),
-        reverse("summary:dp_update", args=(secondary, slug_dp)),
-        reverse("summary:dp_query-update", args=(secondary, slug_dp)),
-        reverse("summary:dp_file-update", args=(secondary, slug_dp)),
-        reverse("summary:dp_delete", args=(secondary, slug_dp)),
+        reverse("summary:visualization_detail", args=(secondary, slug_dp)),
+        reverse("summary:visualization_update", args=(secondary, slug_dp)),
+        reverse("summary:visualization_update_settings", args=(secondary, slug_dp)),
         # help text
         reverse("summary:dataset_interactivity"),
     ]

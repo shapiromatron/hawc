@@ -299,7 +299,7 @@ class VisualizationCreateSelector(BaseDetail):
         return context
 
 
-class VisualizationCreate(BaseCreate):  # TODO
+class VisualizationCreate(BaseCreate):
     success_message = "Visualization created."
     parent_model = Assessment
     parent_template_name = "assessment"
@@ -386,9 +386,9 @@ class VisualizationCreate(BaseCreate):  # TODO
         return instance
 
 
-class VisualizationCreateTester(VisualizationCreate):  # TODO
+class VisualizationCreateTester(VisualizationCreate):
     parent_model = Assessment
-    http_method_names = ("post",)
+    http_method_names = ["post"]
 
     def post(self, request, *args, **kwargs):
         self.object = None
