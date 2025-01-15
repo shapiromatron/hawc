@@ -86,7 +86,7 @@ def update_reference_authors(apps, schema_editor):
     qs = Reference.objects.all().prefetch_related("identifiers")
     n_total = Reference.objects.all().count()
     updates = []
-    for idx, reference in enumerate(qs.iterator()):
+    for idx, reference in enumerate(qs.iterator(chunk_size=5000)):
         if idx % 5000 == 0:
             print(f"Updating reference authors {idx:,} of {n_total:,}")
 
@@ -112,7 +112,7 @@ def update_pubmed_queries(apps, schema_editor):
     qs = PubMedQuery.objects.all()
     n_total = qs.count()
     updates = []
-    for idx, query in enumerate(qs):
+    for _idx, query in enumerate(qs):
         if query.results:
             results = json.loads(query.results)
             results = dict(

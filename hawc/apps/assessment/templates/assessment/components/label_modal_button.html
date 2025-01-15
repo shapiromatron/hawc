@@ -1,0 +1,2 @@
+{% label_htmx_url object as label_url %}
+<a class="dropdown-item" data-toggle="modal" data-target="#label-modal" hx-get="{{label_url}}?action=label" hx-target="#label-modal-content">{%if icon %}<i class="fa fa-fw fa-tag"></i>&nbsp;{% endif %}Apply labels</a>

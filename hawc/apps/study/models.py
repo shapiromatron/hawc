@@ -3,6 +3,7 @@ import os
 
 import pandas as pd
 from django.apps import apps
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
 from django.db import models
 from django.http import Http404
@@ -12,6 +13,7 @@ from reversion import revisions as reversion
 from ..assessment.models import Communication
 from ..common.helper import SerializerHelper
 from ..lit.models import Reference
+from ..udf.models import ModelUDFContent
 from . import constants, managers
 
 logger = logging.getLogger(__name__)
@@ -114,6 +116,10 @@ class Study(Reference):
         help_text="Project-managers and team-members are allowed to edit this study.",
     )
 
+    udfs = GenericRelation(ModelUDFContent, related_query_name="studies")
+
+    communications = GenericRelation(Communication, related_query_name="study_communications")
+
     BREADCRUMB_PARENT = "assessment"
 
     class Meta:
@@ -161,8 +167,8 @@ class Study(Reference):
     def get_final_rob_url(self):
         try:
             return self.get_final_rob().get_final_url()
-        except ObjectDoesNotExist:
-            raise Http404("Final RoB does not exist")
+        except ObjectDoesNotExist as err:
+            raise Http404("Final RoB does not exist") from err
 
     def get_assessment(self):
         return self.assessment
@@ -231,8 +237,8 @@ class Study(Reference):
             return self.riskofbiases.get(final=True, active=True)
         except ObjectDoesNotExist as err:
             raise err
-        except MultipleObjectsReturned:
-            raise ObjectDoesNotExist(f'Multiple active final RoB "{self}", expecting one')
+        except MultipleObjectsReturned as err:
+            raise ObjectDoesNotExist(f'Multiple active final RoB "{self}", expecting one') from err
 
     def get_final_qs(self):
         return self.riskofbiases.filter(active=True, final=True).prefetch_related(
@@ -292,7 +298,7 @@ class Study(Reference):
         Communication.set_message(self, text)
 
     def user_can_toggle_editable(self, user) -> bool:
-        return self.assessment.user_can_edit_assessment(user)
+        return self.assessment.user_is_project_manager_or_higher(user)
 
     def toggle_editable(self):
         self.editable = not self.editable

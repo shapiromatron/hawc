@@ -4,7 +4,8 @@ from django.contrib import admin, messages
 from django.contrib.admin.models import LogEntry
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponse
-from django.utils.html import format_html
+from django.utils.html import format_html, format_html_join
+from django.utils.safestring import mark_safe
 from reversion.admin import VersionAdmin
 
 from ..animal.models import Endpoint
@@ -58,12 +59,10 @@ class AssessmentAdmin(admin.ModelAdmin):
         )
 
     def get_staff_ul(self, mgr):
-        ul = ["<ul>"]
-        for user in mgr.all():
-            ul.append(f"<li>{user.first_name} {user.last_name}</li>")
-
-        ul.append("</ul>")
-        return format_html(" ".join(ul))
+        lis = format_html_join(
+            "", "<li>{} {}</li>", ((u.first_name, u.last_name) for u in mgr.all())
+        )
+        return mark_safe(f"<ul>{lis}</ul>")
 
     @admin.display(description="Managers")
     def get_managers(self, obj):
@@ -278,6 +277,7 @@ class DSSXToxAdmin(admin.ModelAdmin):
         "get_exposures",
         "get_ivchemicals",
     )
+    list_filter = ("last_updated",)
     search_fields = ("dtxsid", "content__casrn", "content__preferredName")
 
     def get_queryset(self, request):
@@ -285,14 +285,11 @@ class DSSXToxAdmin(admin.ModelAdmin):
         return qs.prefetch_related("assessments", "experiments", "exposures", "ivchemicals")
 
     def get_ul(self, iterable, func):
-        ul = ["<ul>"]
-        for obj in iterable:
-            ul.append(f"<li>{func(obj)}</li>")
-        ul.append("</ul>")
-        return format_html(" ".join(ul))
+        lis = "".join([(func(obj)) for obj in iterable])
+        return format_html("<ul>{}</ul>", mark_safe(lis)) if lis else "-"
 
     def linked_name(self, obj):
-        return f"<a href='{obj.get_absolute_url()}'>{obj.name}</a>"
+        return format_html("<li><a href='{}'>{}</a></li>", obj.get_absolute_url(), obj.name)
 
     @admin.display(description="CASRN")
     def get_casrns(self, obj):
@@ -327,3 +324,39 @@ class ContentAdmin(VersionAdmin):
         "created",
         "last_updated",
     )
+
+
+@admin.register(models.Label)
+class LabelAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+        "assessment",
+        "published",
+        "created",
+        "last_updated",
+    )
+    readonly_fields = ("id",)
+    search_fields = ("name",)
+    readonly_fields = ("path", "depth", "numchild")
+
+
+@admin.register(models.LabeledItem)
+class LabeledItemAdmin(admin.ModelAdmin):
+    list_select_related = ("content_type",)
+    list_display = (
+        "id",
+        "label",
+        "content_object",
+        "created",
+        "last_updated",
+    )
+    readonly_fields = ("id",)
+    search_fields = (
+        "label",
+        "content_object",
+    )
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.prefetch_related("content_object")

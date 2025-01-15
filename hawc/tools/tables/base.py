@@ -1,8 +1,10 @@
+from typing import Annotated
+
 from docx import Document as create_document
 from docx.document import Document
 from docx.enum.section import WD_ORIENT
 from docx.shared import Inches
-from pydantic import BaseModel, conint
+from pydantic import BaseModel, Field
 
 from .parser import QuillParser
 
@@ -18,10 +20,10 @@ def to_landscape(document):
 
 class BaseCell(BaseModel):
     header: bool = False
-    row: conint(ge=0) = 0
-    column: conint(ge=0) = 0
-    row_span: conint(ge=1) = 1
-    col_span: conint(ge=1) = 1
+    row: Annotated[int, Field(ge=0)] = 0
+    column: Annotated[int, Field(ge=0)] = 0
+    row_span: Annotated[int, Field(ge=1)] = 1
+    col_span: Annotated[int, Field(ge=1)] = 1
 
     def __str__(self):
         return f"{self.__class__.__name__} (row={self.row}, column={self.column})"
@@ -96,8 +98,8 @@ class BaseTable(BaseCellGroup):
                         if table_cells[cell.row + i][cell.column + j]:
                             raise ValueError(f"Cell overlap at {cell}")
                         table_cells[cell.row + i][cell.column + j] = True
-            except IndexError:
-                raise ValueError(f"{cell} outside of table bounds")
+            except IndexError as err:
+                raise ValueError(f"{cell} outside of table bounds") from err
 
     def sort_cells(self):
         self.cells.sort(key=lambda cell: cell.row_order_index(self.columns))

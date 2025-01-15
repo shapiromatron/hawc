@@ -378,7 +378,7 @@ class StudyEvaluationTableStore {
                 let data = this.getDataSelection(row.type, row.id),
                     text = data[col.attribute];
                 return {
-                    html: `<p><a href="/study/${data["study_id"]}" rel="noopener noreferrer" target="_blank">${text}</a></p>`,
+                    html: `<p><a href="/study/${data["study_id"]}/" rel="noopener noreferrer" target="_blank">${text}</a></p>`,
                 };
             }
             case constants.COL_ATTRIBUTE.ANIMAL_GROUP_DOSES.id: {
@@ -595,7 +595,7 @@ class StudyEvaluationTableStore {
     }
     displayRobAsModal(robData, data, config) {
         var modal = new HAWCModal(),
-            title = `<h4><a target="_blank" href="/study/${data["study_id"]}">${
+            title = `<h4><a target="_blank" href="/study/${data["study_id"]}/">${
                 data["study_short_citation"]
             }</a>${robData["label"] ? `: ${robData["label"]}` : ""}</h4>`,
             $content = $('<div class="container-fluid">');

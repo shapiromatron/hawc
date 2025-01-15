@@ -2,8 +2,7 @@ import pandas as pd
 from django.conf import settings
 from django.db.models import Value
 
-from ..common.exports import Exporter, ModelExport
-from ..common.helper import cleanHTML
+from ..common.exports import Exporter, ModelExport, clean_html
 from ..common.models import sql_format
 from ..study.exports import StudyExport
 from . import constants
@@ -66,7 +65,7 @@ class RiskOfBiasScoreExport(ModelExport):
         if (key := self.get_column_name("description")) in df.columns:
             df.loc[:, key] = df[self.get_column_name("score")].map(constants.SCORE_CHOICES_MAP)
         if (key := self.get_column_name("notes")) in df.columns:
-            df.loc[:, key] = df[key].apply(cleanHTML)
+            df.loc[:, key] = clean_html(df[key])
         return df
 
 

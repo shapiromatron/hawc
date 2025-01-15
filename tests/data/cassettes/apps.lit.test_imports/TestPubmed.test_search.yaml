@@ -1,25 +1,25 @@
 interactions:
 - request:
-    body: db=pubmed&term=%28monomethyl+OR+MEP+OR+mono-n-butyl+OR+MBP+OR+mono+%283-carboxypropyl%29+OR+mcpp+OR+monobenzyl+OR+mbzp+OR+mono-isobutyl+OR+mibp+OR+mono+%282-ethylhexyl%29+OR+mono+%282-ethyl-5-oxohexyl%29+OR+meoph+OR+mono+%282-ethyl-5-carboxypentyl%29+OR+mecpp+OR+mepp+OR+mono+%282-ethyl-5-hydroxyhexyl%29+OR+mehp+OR+mono+%282-ethyl-5-oxyhexyl%29+OR+mono+%282-ethyl-4-hydroxyhexyl%29+OR+mono+%282-ethyl-4-oxyhexyl%29+OR+mono+%282-carboxymethyl%29+OR+mmhp+OR+mehp+OR+dehp+OR+2-ethylhexanol+OR+%28phthalic+acid%29%29+AND+%28liver+OR+hepato%2A+OR+hepat%2A%29+AND+%28%28cell+proliferation%29+OR+%28cell+growth%29+OR+%28dna+replication%29+OR+%28dna+synthesis%29+OR+%28replicative+dna+synthesis%29+OR+mitosis+OR+%28cell+division%29+OR+%28growth+response%29+OR+hyperplasia+OR+hepatomegaly%29+AND+%28mouse+OR+rat+OR+hamster+OR+rodent+OR+murine+OR+Mus+musculus+or+Rattus%29&rettype=count
+    body: db=pubmed&retmode=xml&term=%28monomethyl+OR+MEP+OR+mono-n-butyl+OR+MBP+OR+mono+%283-carboxypropyl%29+OR+mcpp+OR+monobenzyl+OR+mbzp+OR+mono-isobutyl+OR+mibp+OR+mono+%282-ethylhexyl%29+OR+mono+%282-ethyl-5-oxohexyl%29+OR+meoph+OR+mono+%282-ethyl-5-carboxypentyl%29+OR+mecpp+OR+mepp+OR+mono+%282-ethyl-5-hydroxyhexyl%29+OR+mehp+OR+mono+%282-ethyl-5-oxyhexyl%29+OR+mono+%282-ethyl-4-hydroxyhexyl%29+OR+mono+%282-ethyl-4-oxyhexyl%29+OR+mono+%282-carboxymethyl%29+OR+mmhp+OR+mehp+OR+dehp+OR+2-ethylhexanol+OR+%28phthalic+acid%29%29+AND+%28liver+OR+hepato%2A+OR+hepat%2A%29+AND+%28%28cell+proliferation%29+OR+%28cell+growth%29+OR+%28dna+replication%29+OR+%28dna+synthesis%29+OR+%28replicative+dna+synthesis%29+OR+mitosis+OR+%28cell+division%29+OR+%28growth+response%29+OR+hyperplasia+OR+hepatomegaly%29+AND+%28mouse+OR+rat+OR+hamster+OR+rodent+OR+murine+OR+Mus+musculus+or+Rattus%29&api_key=<omitted>&rettype=count
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '877'
+      - '934'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
       string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
-        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>256</Count>\n</eSearchResult>\n"
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n\t<Count>259</Count>\n</eSearchResult>\n"
     headers:
       Access-Control-Allow-Origin:
       - '*'
@@ -34,28 +34,28 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:38:14 GMT
+      - Thu, 05 Sep 2024 22:58:23 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD9F070703C0B5000038D725B7A0C4.1.1.m_1
+      - 939B82323C96818500002EC1EDBFA5A5.1.1.m_1
       NCBI-SID:
-      - 4BCA8694DDFD69F6_827FSID
+      - E17FCF57B557407E_6D5DSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=4BCA8694DDFD69F6_827FSID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:38:15 GMT
+      - ncbi_sid=E17FCF57B557407E_6D5DSID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:23 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
       - chunked
       X-RateLimit-Limit:
-      - '3'
+      - '10'
       X-RateLimit-Remaining:
-      - '2'
+      - '7'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -66,26 +66,28 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=5000&db=pubmed&api_key=<omitted>&term=%28monomethyl+OR+MEP+OR+mono-n-butyl+OR+MBP+OR+mono+%283-carboxypropyl%29+OR+mcpp+OR+monobenzyl+OR+mbzp+OR+mono-isobutyl+OR+mibp+OR+mono+%282-ethylhexyl%29+OR+mono+%282-ethyl-5-oxohexyl%29+OR+meoph+OR+mono+%282-ethyl-5-carboxypentyl%29+OR+mecpp+OR+mepp+OR+mono+%282-ethyl-5-hydroxyhexyl%29+OR+mehp+OR+mono+%282-ethyl-5-oxyhexyl%29+OR+mono+%282-ethyl-4-hydroxyhexyl%29+OR+mono+%282-ethyl-4-oxyhexyl%29+OR+mono+%282-carboxymethyl%29+OR+mmhp+OR+mehp+OR+dehp+OR+2-ethylhexanol+OR+%28phthalic+acid%29%29+AND+%28liver+OR+hepato%2A+OR+hepat%2A%29+AND+%28%28cell+proliferation%29+OR+%28cell+growth%29+OR+%28dna+replication%29+OR+%28dna+synthesis%29+OR+%28replicative+dna+synthesis%29+OR+mitosis+OR+%28cell+division%29+OR+%28growth+response%29+OR+hyperplasia+OR+hepatomegaly%29+AND+%28mouse+OR+rat+OR+hamster+OR+rodent+OR+murine+OR+Mus+musculus+or+Rattus%29&retstart=0
+    body: db=pubmed&retmode=xml&term=%28monomethyl+OR+MEP+OR+mono-n-butyl+OR+MBP+OR+mono+%283-carboxypropyl%29+OR+mcpp+OR+monobenzyl+OR+mbzp+OR+mono-isobutyl+OR+mibp+OR+mono+%282-ethylhexyl%29+OR+mono+%282-ethyl-5-oxohexyl%29+OR+meoph+OR+mono+%282-ethyl-5-carboxypentyl%29+OR+mecpp+OR+mepp+OR+mono+%282-ethyl-5-hydroxyhexyl%29+OR+mehp+OR+mono+%282-ethyl-5-oxyhexyl%29+OR+mono+%282-ethyl-4-hydroxyhexyl%29+OR+mono+%282-ethyl-4-oxyhexyl%29+OR+mono+%282-carboxymethyl%29+OR+mmhp+OR+mehp+OR+dehp+OR+2-ethylhexanol+OR+%28phthalic+acid%29%29+AND+%28liver+OR+hepato%2A+OR+hepat%2A%29+AND+%28%28cell+proliferation%29+OR+%28cell+growth%29+OR+%28dna+replication%29+OR+%28dna+synthesis%29+OR+%28replicative+dna+synthesis%29+OR+mitosis+OR+%28cell+division%29+OR+%28growth+response%29+OR+hyperplasia+OR+hepatomegaly%29+AND+%28mouse+OR+rat+OR+hamster+OR+rodent+OR+murine+OR+Mus+musculus+or+Rattus%29&api_key=<omitted>&retmax=5000&retstart=0
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '931'
+      - '943'
       Content-Type:
       - application/x-www-form-urlencoded
+      Cookie:
+      - ncbi_sid=E17FCF57B557407E_6D5DSID
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi
   response:
     body:
       string: "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<!DOCTYPE eSearchResult
-        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n<Count>256</Count><RetMax>256</RetMax><RetStart>0</RetStart>\n<IdList>\n\t<Id>38056127</Id>\n\t<Id>35810816</Id>\n\t<Id>34588381</Id>\n\t<Id>34303773</Id>\n\t<Id>33166671</Id>\n\t<Id>32540476</Id>\n\t<Id>32471116</Id>\n\t<Id>32435917</Id>\n\t<Id>31262386</Id>\n\t<Id>31152848</Id>\n\t<Id>30884453</Id>\n\t<Id>30878739</Id>\n\t<Id>30826316</Id>\n\t<Id>30384071</Id>\n\t<Id>29474903</Id>\n\t<Id>29197930</Id>\n\t<Id>28426879</Id>\n\t<Id>28284729</Id>\n\t<Id>28267557</Id>\n\t<Id>28115639</Id>\n\t<Id>27454254</Id>\n\t<Id>27040317</Id>\n\t<Id>26585812</Id>\n\t<Id>26519955</Id>\n\t<Id>26252616</Id>\n\t<Id>26188368</Id>\n\t<Id>25913319</Id>\n\t<Id>25789634</Id>\n\t<Id>25683344</Id>\n\t<Id>25270622</Id>\n\t<Id>24769090</Id>\n\t<Id>24180432</Id>\n\t<Id>24180374</Id>\n\t<Id>23899473</Id>\n\t<Id>23625783</Id>\n\t<Id>23001933</Id>\n\t<Id>22936646</Id>\n\t<Id>22588786</Id>\n\t<Id>22484601</Id>\n\t<Id>22333284</Id>\n\t<Id>22198209</Id>\n\t<Id>21856391</Id>\n\t<Id>21721021</Id>\n\t<Id>21714771</Id>\n\t<Id>21616130</Id>\n\t<Id>20954081</Id>\n\t<Id>20854900</Id>\n\t<Id>20600714</Id>\n\t<Id>20358181</Id>\n\t<Id>20307648</Id>\n\t<Id>20123618</Id>\n\t<Id>20077217</Id>\n\t<Id>19756843</Id>\n\t<Id>18639561</Id>\n\t<Id>18403868</Id>\n\t<Id>17929048</Id>\n\t<Id>17326724</Id>\n\t<Id>17098345</Id>\n\t<Id>16954067</Id>\n\t<Id>16855774</Id>\n\t<Id>16476687</Id>\n\t<Id>16326419</Id>\n\t<Id>16326050</Id>\n\t<Id>15914576</Id>\n\t<Id>15901911</Id>\n\t<Id>15838709</Id>\n\t<Id>15664438</Id>\n\t<Id>15588926</Id>\n\t<Id>15564602</Id>\n\t<Id>15486947</Id>\n\t<Id>15364543</Id>\n\t<Id>15297022</Id>\n\t<Id>14727734</Id>\n\t<Id>14630134</Id>\n\t<Id>12851149</Id>\n\t<Id>12805656</Id>\n\t<Id>12802597</Id>\n\t<Id>12668284</Id>\n\t<Id>12505296</Id>\n\t<Id>12498735</Id>\n\t<Id>12215663</Id>\n\t<Id>12151626</Id>\n\t<Id>12036039</Id>\n\t<Id>11995694</Id>\n\t<Id>11950162</Id>\n\t<Id>11940454</Id>\n\t<Id>11719701</Id>\n\t<Id>11597582</Id>\n\t<Id>11581012</Id>\n\t<Id>11560248</Id>\n\t<Id>11452036</Id>\n\t<Id>11428750</Id>\n\t<Id>11401753</Id>\n\t<Id>11341945</Id>\n\t<Id>11312035</Id>\n\t<Id>11246142</Id>\n\t<Id>11099649</Id>\n\t<Id>11091278</Id>\n\t<Id>11029268</Id>\n\t<Id>10930035</Id>\n\t<Id>10889518</Id>\n\t<Id>10869467</Id>\n\t<Id>10869455</Id>\n\t<Id>10839475</Id>\n\t<Id>10828276</Id>\n\t<Id>10728921</Id>\n\t<Id>10650916</Id>\n\t<Id>10581215</Id>\n\t<Id>10547627</Id>\n\t<Id>10536109</Id>\n\t<Id>10502499</Id>\n\t<Id>10499774</Id>\n\t<Id>10485824</Id>\n\t<Id>10478855</Id>\n\t<Id>10478332</Id>\n\t<Id>10388618</Id>\n\t<Id>10357793</Id>\n\t<Id>20654484</Id>\n\t<Id>10086319</Id>\n\t<Id>9950075</Id>\n\t<Id>9934846</Id>\n\t<Id>9538047</Id>\n\t<Id>9547862</Id>\n\t<Id>9465269</Id>\n\t<Id>9398495</Id>\n\t<Id>9367824</Id>\n\t<Id>9274804</Id>\n\t<Id>9207284</Id>\n\t<Id>9194412</Id>\n\t<Id>9013627</Id>\n\t<Id>9146736</Id>\n\t<Id>8914623</Id>\n\t<Id>8887448</Id>\n\t<Id>8761421</Id>\n\t<Id>8817083</Id>\n\t<Id>8998951</Id>\n\t<Id>8838637</Id>\n\t<Id>7590545</Id>\n\t<Id>8540215</Id>\n\t<Id>12209194</Id>\n\t<Id>8785518</Id>\n\t<Id>7538465</Id>\n\t<Id>7873979</Id>\n\t<Id>7918596</Id>\n\t<Id>7915705</Id>\n\t<Id>7800660</Id>\n\t<Id>8209376</Id>\n\t<Id>8020155</Id>\n\t<Id>8162897</Id>\n\t<Id>8269617</Id>\n\t<Id>8104013</Id>\n\t<Id>8472324</Id>\n\t<Id>12209168</Id>\n\t<Id>8352887</Id>\n\t<Id>1469623</Id>\n\t<Id>1458550</Id>\n\t<Id>1473784</Id>\n\t<Id>1336490</Id>\n\t<Id>1423834</Id>\n\t<Id>1516773</Id>\n\t<Id>1632818</Id>\n\t<Id>1600604</Id>\n\t<Id>1625184</Id>\n\t<Id>1591274</Id>\n\t<Id>1610294</Id>\n\t<Id>1755031</Id>\n\t<Id>2274965</Id>\n\t<Id>2260097</Id>\n\t<Id>2125992</Id>\n\t<Id>1979936</Id>\n\t<Id>1965743</Id>\n\t<Id>2274048</Id>\n\t<Id>2210515</Id>\n\t<Id>2311188</Id>\n\t<Id>2404574</Id>\n\t<Id>2097173</Id>\n\t<Id>2489351</Id>\n\t<Id>2804110</Id>\n\t<Id>2635147</Id>\n\t<Id>2781555</Id>\n\t<Id>2772924</Id>\n\t<Id>2731665</Id>\n\t<Id>2924396</Id>\n\t<Id>2917345</Id>\n\t<Id>3206528</Id>\n\t<Id>3180084</Id>\n\t<Id>3383337</Id>\n\t<Id>3173343</Id>\n\t<Id>3354005</Id>\n\t<Id>3378278</Id>\n\t<Id>3690505</Id>\n\t<Id>2443263</Id>\n\t<Id>3621460</Id>\n\t<Id>2887302</Id>\n\t<Id>3657395</Id>\n\t<Id>3617093</Id>\n\t<Id>3594721</Id>\n\t<Id>3617071</Id>\n\t<Id>3617070</Id>\n\t<Id>3617068</Id>\n\t<Id>3617066</Id>\n\t<Id>3303447</Id>\n\t<Id>3303446</Id>\n\t<Id>3303445</Id>\n\t<Id>3574334</Id>\n\t<Id>3564055</Id>\n\t<Id>3564043</Id>\n\t<Id>3815733</Id>\n\t<Id>3798454</Id>\n\t<Id>3594641</Id>\n\t<Id>3554467</Id>\n\t<Id>3802057</Id>\n\t<Id>3769136</Id>\n\t<Id>2877511</Id>\n\t<Id>3583306</Id>\n\t<Id>3536893</Id>\n\t<Id>3715859</Id>\n\t<Id>3770794</Id>\n\t<Id>3709461</Id>\n\t<Id>3709458</Id>\n\t<Id>3709451</Id>\n\t<Id>4091660</Id>\n\t<Id>3934796</Id>\n\t<Id>2867621</Id>\n\t<Id>4024105</Id>\n\t<Id>2859109</Id>\n\t<Id>4004798</Id>\n\t<Id>2863135</Id>\n\t<Id>3919955</Id>\n\t<Id>3966235</Id>\n\t<Id>2857115</Id>\n\t<Id>6517701</Id>\n\t<Id>6488454</Id>\n\t<Id>6147206</Id>\n\t<Id>12748680</Id>\n\t<Id>6732809</Id>\n\t<Id>6719482</Id>\n\t<Id>6143560</Id>\n\t<Id>6716514</Id>\n\t<Id>6710484</Id>\n\t<Id>6872148</Id>\n\t<Id>6355494</Id>\n\t<Id>6845354</Id>\n\t<Id>6677511</Id>\n\t<Id>7161829</Id>\n\t<Id>12778222</Id>\n\t<Id>6182138</Id>\n\t<Id>7115078</Id>\n\t<Id>6178713</Id>\n\t<Id>7397231</Id>\n\t<Id>548985</Id>\n\t<Id>734683</Id>\n\t<Id>99598</Id>\n\t<Id>598790</Id>\n\t<Id>996879</Id>\n\t<Id>769879</Id>\n</IdList>\n<TranslationSet><Translation>
+        PUBLIC \"-//NLM//DTD esearch 20060628//EN\" \"https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd\">\n<eSearchResult>\n<Count>259</Count><RetMax>259</RetMax><RetStart>0</RetStart>\n<IdList>\n\t<Id>39180124</Id>\n\t<Id>38833407</Id>\n\t<Id>38430581</Id>\n\t<Id>38056127</Id>\n\t<Id>35810816</Id>\n\t<Id>34588381</Id>\n\t<Id>34303773</Id>\n\t<Id>33166671</Id>\n\t<Id>32540476</Id>\n\t<Id>32471116</Id>\n\t<Id>32435917</Id>\n\t<Id>31262386</Id>\n\t<Id>31152848</Id>\n\t<Id>30884453</Id>\n\t<Id>30878739</Id>\n\t<Id>30826316</Id>\n\t<Id>30384071</Id>\n\t<Id>29474903</Id>\n\t<Id>29197930</Id>\n\t<Id>28426879</Id>\n\t<Id>28284729</Id>\n\t<Id>28267557</Id>\n\t<Id>28115639</Id>\n\t<Id>27454254</Id>\n\t<Id>27040317</Id>\n\t<Id>26585812</Id>\n\t<Id>26519955</Id>\n\t<Id>26252616</Id>\n\t<Id>26188368</Id>\n\t<Id>25913319</Id>\n\t<Id>25789634</Id>\n\t<Id>25683344</Id>\n\t<Id>25270622</Id>\n\t<Id>24769090</Id>\n\t<Id>24180432</Id>\n\t<Id>24180374</Id>\n\t<Id>23899473</Id>\n\t<Id>23625783</Id>\n\t<Id>23001933</Id>\n\t<Id>22936646</Id>\n\t<Id>22588786</Id>\n\t<Id>22484601</Id>\n\t<Id>22333284</Id>\n\t<Id>22198209</Id>\n\t<Id>21856391</Id>\n\t<Id>21721021</Id>\n\t<Id>21714771</Id>\n\t<Id>21616130</Id>\n\t<Id>20954081</Id>\n\t<Id>20854900</Id>\n\t<Id>20600714</Id>\n\t<Id>20358181</Id>\n\t<Id>20307648</Id>\n\t<Id>20123618</Id>\n\t<Id>20077217</Id>\n\t<Id>19756843</Id>\n\t<Id>18639561</Id>\n\t<Id>18403868</Id>\n\t<Id>17929048</Id>\n\t<Id>17326724</Id>\n\t<Id>17098345</Id>\n\t<Id>16954067</Id>\n\t<Id>16855774</Id>\n\t<Id>16476687</Id>\n\t<Id>16326419</Id>\n\t<Id>16326050</Id>\n\t<Id>15914576</Id>\n\t<Id>15901911</Id>\n\t<Id>15838709</Id>\n\t<Id>15664438</Id>\n\t<Id>15588926</Id>\n\t<Id>15564602</Id>\n\t<Id>15486947</Id>\n\t<Id>15364543</Id>\n\t<Id>15297022</Id>\n\t<Id>14727734</Id>\n\t<Id>14630134</Id>\n\t<Id>12851149</Id>\n\t<Id>12805656</Id>\n\t<Id>12802597</Id>\n\t<Id>12668284</Id>\n\t<Id>12505296</Id>\n\t<Id>12498735</Id>\n\t<Id>12215663</Id>\n\t<Id>12151626</Id>\n\t<Id>12036039</Id>\n\t<Id>11995694</Id>\n\t<Id>11950162</Id>\n\t<Id>11940454</Id>\n\t<Id>11719701</Id>\n\t<Id>11597582</Id>\n\t<Id>11581012</Id>\n\t<Id>11560248</Id>\n\t<Id>11452036</Id>\n\t<Id>11428750</Id>\n\t<Id>11401753</Id>\n\t<Id>11341945</Id>\n\t<Id>11312035</Id>\n\t<Id>11246142</Id>\n\t<Id>11099649</Id>\n\t<Id>11091278</Id>\n\t<Id>11029268</Id>\n\t<Id>10930035</Id>\n\t<Id>10889518</Id>\n\t<Id>10869467</Id>\n\t<Id>10869455</Id>\n\t<Id>10839475</Id>\n\t<Id>10828276</Id>\n\t<Id>10728921</Id>\n\t<Id>10650916</Id>\n\t<Id>10581215</Id>\n\t<Id>10547627</Id>\n\t<Id>10536109</Id>\n\t<Id>10502499</Id>\n\t<Id>10499774</Id>\n\t<Id>10485824</Id>\n\t<Id>10478855</Id>\n\t<Id>10478332</Id>\n\t<Id>10388618</Id>\n\t<Id>10357793</Id>\n\t<Id>20654484</Id>\n\t<Id>10086319</Id>\n\t<Id>9950075</Id>\n\t<Id>9934846</Id>\n\t<Id>9538047</Id>\n\t<Id>9547862</Id>\n\t<Id>9465269</Id>\n\t<Id>9398495</Id>\n\t<Id>9367824</Id>\n\t<Id>9274804</Id>\n\t<Id>9207284</Id>\n\t<Id>9194412</Id>\n\t<Id>9013627</Id>\n\t<Id>9146736</Id>\n\t<Id>8914623</Id>\n\t<Id>8887448</Id>\n\t<Id>8761421</Id>\n\t<Id>8817083</Id>\n\t<Id>8998951</Id>\n\t<Id>8838637</Id>\n\t<Id>7590545</Id>\n\t<Id>8540215</Id>\n\t<Id>12209194</Id>\n\t<Id>8785518</Id>\n\t<Id>7538465</Id>\n\t<Id>7873979</Id>\n\t<Id>7918596</Id>\n\t<Id>7915705</Id>\n\t<Id>7800660</Id>\n\t<Id>8209376</Id>\n\t<Id>8020155</Id>\n\t<Id>8162897</Id>\n\t<Id>8269617</Id>\n\t<Id>8104013</Id>\n\t<Id>8472324</Id>\n\t<Id>12209168</Id>\n\t<Id>8352887</Id>\n\t<Id>1469623</Id>\n\t<Id>1458550</Id>\n\t<Id>1473784</Id>\n\t<Id>1336490</Id>\n\t<Id>1423834</Id>\n\t<Id>1516773</Id>\n\t<Id>1632818</Id>\n\t<Id>1600604</Id>\n\t<Id>1625184</Id>\n\t<Id>1591274</Id>\n\t<Id>1610294</Id>\n\t<Id>1755031</Id>\n\t<Id>2274965</Id>\n\t<Id>2260097</Id>\n\t<Id>2125992</Id>\n\t<Id>1979936</Id>\n\t<Id>1965743</Id>\n\t<Id>2274048</Id>\n\t<Id>2210515</Id>\n\t<Id>2311188</Id>\n\t<Id>2404574</Id>\n\t<Id>2097173</Id>\n\t<Id>2489351</Id>\n\t<Id>2804110</Id>\n\t<Id>2635147</Id>\n\t<Id>2781555</Id>\n\t<Id>2772924</Id>\n\t<Id>2731665</Id>\n\t<Id>2924396</Id>\n\t<Id>2917345</Id>\n\t<Id>3206528</Id>\n\t<Id>3180084</Id>\n\t<Id>3383337</Id>\n\t<Id>3173343</Id>\n\t<Id>3354005</Id>\n\t<Id>3378278</Id>\n\t<Id>3690505</Id>\n\t<Id>2443263</Id>\n\t<Id>3621460</Id>\n\t<Id>2887302</Id>\n\t<Id>3657395</Id>\n\t<Id>3617093</Id>\n\t<Id>3594721</Id>\n\t<Id>3617071</Id>\n\t<Id>3617070</Id>\n\t<Id>3617068</Id>\n\t<Id>3617066</Id>\n\t<Id>3303447</Id>\n\t<Id>3303446</Id>\n\t<Id>3303445</Id>\n\t<Id>3574334</Id>\n\t<Id>3564055</Id>\n\t<Id>3564043</Id>\n\t<Id>3815733</Id>\n\t<Id>3798454</Id>\n\t<Id>3594641</Id>\n\t<Id>3554467</Id>\n\t<Id>3802057</Id>\n\t<Id>3769136</Id>\n\t<Id>2877511</Id>\n\t<Id>3583306</Id>\n\t<Id>3536893</Id>\n\t<Id>3715859</Id>\n\t<Id>3770794</Id>\n\t<Id>3709461</Id>\n\t<Id>3709458</Id>\n\t<Id>3709451</Id>\n\t<Id>4091660</Id>\n\t<Id>3934796</Id>\n\t<Id>2867621</Id>\n\t<Id>4024105</Id>\n\t<Id>2859109</Id>\n\t<Id>4004798</Id>\n\t<Id>2863135</Id>\n\t<Id>3919955</Id>\n\t<Id>3966235</Id>\n\t<Id>2857115</Id>\n\t<Id>6517701</Id>\n\t<Id>6488454</Id>\n\t<Id>6147206</Id>\n\t<Id>12748680</Id>\n\t<Id>6732809</Id>\n\t<Id>6719482</Id>\n\t<Id>6143560</Id>\n\t<Id>6716514</Id>\n\t<Id>6710484</Id>\n\t<Id>6872148</Id>\n\t<Id>6355494</Id>\n\t<Id>6845354</Id>\n\t<Id>6677511</Id>\n\t<Id>7161829</Id>\n\t<Id>12778222</Id>\n\t<Id>6182138</Id>\n\t<Id>7115078</Id>\n\t<Id>6178713</Id>\n\t<Id>7397231</Id>\n\t<Id>548985</Id>\n\t<Id>734683</Id>\n\t<Id>99598</Id>\n\t<Id>598790</Id>\n\t<Id>996879</Id>\n\t<Id>769879</Id>\n</IdList>\n<TranslationSet><Translation>
         \    <From>meoph</From>     <To>\"methylphosphite\"[Supplementary Concept]
         OR \"methylphosphite\"[All Fields] OR \"meoph\"[All Fields]</To>    </Translation><Translation>
         \    <From>mecpp</From>     <To>\"2-methyl-5,6-cyclopentapyrimidine\"[Supplementary
@@ -175,20 +177,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:38:15 GMT
+      - Thu, 05 Sep 2024 22:58:22 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - D0BD9F070703C0B5000039D72A9F59BF.1.1.m_1
+      - D0BD9D8EE5AB4CE500004AEDAE846626.1.1.m_1
       NCBI-SID:
-      - 9E16AFF3DA054EDC_AFABSID
+      - E17FCF57B557407E_6D5DSID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=9E16AFF3DA054EDC_AFABSID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:38:15 GMT
+      - ncbi_sid=E17FCF57B557407E_6D5DSID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:23 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -196,7 +198,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '9'
+      - '7'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:
@@ -207,20 +209,20 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=7918596&id=2489351&id=6677511&id=3690505&id=6732809&id=12209168&id=30878739&id=2311188&id=11719701&id=2097173&id=3303447&id=3303446&id=3303445&id=2863135&id=10357793&id=28267557&id=20358181&id=8998951&id=3383337&id=12209194&id=23625783&id=8540215&id=10485824&id=22936646&id=2877511&id=32471116&id=8761421&id=8104013&id=11950162&id=3919955&id=6872148&id=9547862&id=29474903&id=1600604&id=1625184&id=6716514&id=2859109&id=3378278&id=20854900&id=8352887&id=11341945&id=548985&id=2260097&id=6147206&id=21856391&id=10388618&id=8887448&id=2857115&id=3554467&id=2125992&id=1336490&id=10536109&id=1469623&id=7915705&id=8020155&id=38056127&id=25789634&id=12505296&id=6710484&id=15901911&id=2404574&id=10581215&id=9398495&id=1516773&id=14630134&id=1473784&id=6182138&id=10478855&id=99598&id=9367824&id=3966235&id=10650916&id=3617066&id=3617068&id=10889518&id=3617071&id=3617070&id=3815733&id=15664438&id=11560248&id=3617093&id=7115078&id=26252616&id=3583306&id=11091278&id=33166671&id=23899473&id=25270622&id=10502499&id=12215663&id=9146736&id=22588786&id=2781555&id=1458550&id=9013627&id=12668284&id=3206528&id=6488454&id=2635147&id=2804110&id=25683344&id=3594641&id=26519955&id=20654484&id=3354005&id=16326050&id=2867621&id=3770794&id=10547627&id=10839475&id=9274804&id=9465269&id=3798454&id=8817083&id=7873979&id=15364543&id=10728921&id=1423834&id=734683&id=3594721&id=8838637&id=10828276&id=15838709&id=9207284&id=15297022&id=9538047&id=35810816&id=11099649&id=21616130&id=3564043&id=3709451&id=16476687&id=996879&id=3709458&id=3709461&id=3564055&id=12805656&id=11401753&id=18403868&id=1979936&id=12802597&id=6355494&id=11995694&id=1632818&id=3180084&id=14727734&id=1610294&id=27040317&id=15588926&id=11246142&id=3574334&id=24769090&id=6143560&id=3934796&id=15914576&id=26188368&id=8162897&id=11581012&id=3621460&id=30884453&id=11940454&id=17098345&id=29197930&id=8785518&id=22484601&id=28426879&id=17326724&id=11452036&id=2887302&id=7590545&id=2731665&id=2274965&id=24180374&id=20077217&id=1965743&id=31262386&id=3657395&id=28115639&id=10499774&id=8914623&id=20307648&id=18639561&id=32435917&id=10869455&id=31152848&id=24180432&id=16954067&id=26585812&id=2210515&id=10869467&id=34588381&id=16855774&id=12778222&id=10478332&id=2274048&id=8472324&id=598790&id=4091660&id=11597582&id=16326419&id=11029268&id=3715859&id=34303773&id=7538465&id=4024105&id=19756843&id=27454254&id=12498735&id=3769136&id=8269617&id=28284729&id=15564602&id=32540476&id=12151626&id=30826316&id=23001933&id=21714771&id=7800660&id=769879&id=17929048&id=22333284&id=2924396&id=7397231&id=10930035&id=9950075&id=12748680&id=20600714&id=11428750&id=1755031&id=6178713&id=11312035&id=6845354&id=9194412&id=10086319&id=2772924&id=21721021&id=4004798&id=22198209&id=6517701&id=30384071&id=12036039&id=3802057&id=12851149&id=3173343&id=8209376&id=20954081&id=20123618&id=15486947&id=2917345&id=7161829&id=25913319&id=1591274&id=6719482&id=3536893&id=9934846&id=2443263
+    body: retmax=1000&db=pubmed&retmode=xml&api_key=<omitted>&id=7918596&id=2489351&id=6677511&id=3690505&id=6732809&id=12209168&id=30878739&id=2311188&id=11719701&id=2097173&id=3303447&id=3303446&id=3303445&id=2863135&id=10357793&id=28267557&id=20358181&id=8998951&id=3383337&id=12209194&id=23625783&id=8540215&id=10485824&id=22936646&id=2877511&id=32471116&id=8761421&id=8104013&id=11950162&id=3919955&id=6872148&id=9547862&id=29474903&id=1600604&id=1625184&id=6716514&id=2859109&id=3378278&id=20854900&id=8352887&id=11341945&id=548985&id=2260097&id=6147206&id=21856391&id=10388618&id=8887448&id=2857115&id=3554467&id=2125992&id=1336490&id=10536109&id=1469623&id=7915705&id=8020155&id=38056127&id=25789634&id=12505296&id=6710484&id=15901911&id=2404574&id=10581215&id=9398495&id=1516773&id=14630134&id=1473784&id=6182138&id=38833407&id=10478855&id=99598&id=9367824&id=3966235&id=10650916&id=3617066&id=3617068&id=10889518&id=3617071&id=3617070&id=3815733&id=15664438&id=11560248&id=3617093&id=7115078&id=26252616&id=3583306&id=11091278&id=33166671&id=23899473&id=25270622&id=10502499&id=12215663&id=9146736&id=22588786&id=2781555&id=1458550&id=9013627&id=12668284&id=3206528&id=6488454&id=2635147&id=2804110&id=25683344&id=3594641&id=26519955&id=20654484&id=3354005&id=16326050&id=2867621&id=3770794&id=10547627&id=10839475&id=9274804&id=9465269&id=3798454&id=8817083&id=7873979&id=15364543&id=10728921&id=1423834&id=734683&id=3594721&id=8838637&id=10828276&id=15838709&id=9207284&id=15297022&id=9538047&id=35810816&id=11099649&id=21616130&id=3564043&id=3709451&id=16476687&id=996879&id=3709458&id=3709461&id=3564055&id=12805656&id=11401753&id=18403868&id=1979936&id=12802597&id=6355494&id=11995694&id=1632818&id=3180084&id=14727734&id=1610294&id=27040317&id=15588926&id=11246142&id=3574334&id=24769090&id=6143560&id=3934796&id=15914576&id=26188368&id=8162897&id=11581012&id=3621460&id=30884453&id=11940454&id=17098345&id=29197930&id=8785518&id=22484601&id=28426879&id=17326724&id=11452036&id=2887302&id=7590545&id=2731665&id=2274965&id=24180374&id=20077217&id=1965743&id=31262386&id=3657395&id=28115639&id=10499774&id=8914623&id=20307648&id=18639561&id=32435917&id=10869455&id=31152848&id=24180432&id=16954067&id=26585812&id=2210515&id=10869467&id=34588381&id=16855774&id=12778222&id=10478332&id=2274048&id=8472324&id=598790&id=4091660&id=11597582&id=16326419&id=11029268&id=3715859&id=34303773&id=7538465&id=4024105&id=19756843&id=27454254&id=12498735&id=3769136&id=8269617&id=28284729&id=15564602&id=32540476&id=12151626&id=30826316&id=23001933&id=21714771&id=7800660&id=769879&id=17929048&id=39180124&id=22333284&id=2924396&id=7397231&id=10930035&id=38430581&id=9950075&id=12748680&id=20600714&id=11428750&id=1755031&id=6178713&id=11312035&id=6845354&id=9194412&id=10086319&id=2772924&id=21721021&id=4004798&id=22198209&id=6517701&id=30384071&id=12036039&id=3802057&id=12851149&id=3173343&id=8209376&id=20954081&id=20123618&id=15486947&id=2917345&id=7161829&id=25913319&id=1591274&id=6719482&id=3536893&id=9934846&id=2443263
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '3010'
+      - '3046'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - python-requests/2.31.0
+      - hawc
     method: POST
     uri: https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi
   response:
@@ -788,7 +790,7 @@ interactions:
         UI="D004051">Diethylhexyl Phthalate</NameOfSubstance></Chemical><Chemical><RegistryNumber>FU2EWB60RT</RegistryNumber><NameOfSubstance
         UI="C016599">mono-(2-ethylhexyl)phthalate</NameOfSubstance></Chemical><Chemical><RegistryNumber>YQE403BP4D</RegistryNumber><NameOfSubstance
         UI="D010634">Phenobarbital</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><CommentsCorrectionsList><CommentsCorrections
-        RefType="CommentIn"><RefSource>Toxicol Sci. 2001 Dec;64(2):147-8</RefSource><PMID
+        RefType="CommentIn"><RefSource>Toxicol Sci. 2001 Dec;64(2):147-8. doi: 10.1093/toxsci/64.2.147</RefSource><PMID
         Version="1">11719695</PMID></CommentsCorrections></CommentsCorrectionsList><MeshHeadingList><MeshHeading><DescriptorName
         UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
         UI="D001835" MajorTopicYN="N">Body Weight</DescriptorName><QualifierName UI="Q000187"
@@ -1136,7 +1138,8 @@ interactions:
         UI="Q000378" MajorTopicYN="Y">metabolism</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>1985</Year><Month>5</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>1985</Year><Month>5</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>1985</Year><Month>5</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>1985</Year><Month>5</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>1985</Year><Month>5</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">2863135</ArticleId><ArticleId IdType="pmc">PMC1568574</ArticleId><ArticleId
         IdType="doi">10.1289/ehp.8560381</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Am
         J Pathol. 1977 Sep;88(3):595-618</Citation><ArticleIdList><ArticleId IdType="pubmed">18937</ArticleId></ArticleIdList></Reference><Reference><Citation>Res
@@ -2274,7 +2277,8 @@ interactions:
         PubStatus="accepted"><Year>2020</Year><Month>5</Month><Day>25</Day></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>2020</Year><Month>5</Month><Day>31</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="pubmed"><Year>2020</Year><Month>5</Month><Day>31</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="medline"><Year>2020</Year><Month>11</Month><Day>20</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>epublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="medline"><Year>2020</Year><Month>11</Month><Day>20</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2020</Year><Month>6</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>epublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">32471116</ArticleId><ArticleId IdType="pmc">PMC7312183</ArticleId><ArticleId
         IdType="doi">10.3390/ijerph17113802</ArticleId><ArticleId IdType="pii">ijerph17113802</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Halden
         R.U. Plastics and health risks. Annu. Rev. Public Health. 2010;31:179&#x2013;194.
@@ -4250,7 +4254,8 @@ interactions:
         UI="Q000473" MajorTopicYN="N">pathology</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>1990</Year><Month>12</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>1990</Year><Month>12</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>1990</Year><Month>12</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>1990</Year><Month>12</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>1990</Year><Month>12</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">2125992</ArticleId><ArticleId IdType="pmc">PMC5918008</ArticleId><ArticleId
         IdType="doi">10.1111/j.1349-7006.1990.tb02684.x</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>)
         Reddy , J. K. and Lalwani , N. D.Carcinogenesis by hepatic peroxisome proliferators:
@@ -4486,7 +4491,8 @@ interactions:
         UI="Q000187" MajorTopicYN="N">drug effects</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>1992</Year><Month>11</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>1992</Year><Month>11</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>1992</Year><Month>11</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>1992</Year><Month>11</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>1992</Year><Month>11</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">1336490</ArticleId><ArticleId IdType="pmc">PMC5918708</ArticleId><ArticleId
         IdType="doi">10.1111/j.1349-7006.1992.tb02739.x</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>)
         Kier , L. W. , Brunsick , D. J. , Auletta , A. E. , Von Halle , E. S. , Brown
@@ -5946,6 +5952,556 @@ interactions:
         PubStatus="medline"><Year>1982</Year><Month>8</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>1982</Year><Month>8</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">6182138</ArticleId><ArticleId IdType="doi">10.1093/oxfordjournals.jbchem.a133937</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM" IndexingMethod="Automated"><PMID Version="1">38833407</PMID><DateCompleted><Year>2024</Year><Month>06</Month><Day>04</Day></DateCompleted><DateRevised><Year>2024</Year><Month>06</Month><Day>22</Day></DateRevised><Article
+        PubModel="Print-Electronic"><Journal><ISSN IssnType="Electronic">1552-9924</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>132</Volume><Issue>6</Issue><PubDate><Year>2024</Year><Month>Jun</Month></PubDate></JournalIssue><Title>Environmental
+        health perspectives</Title><ISOAbbreviation>Environ Health Perspect</ISOAbbreviation></Journal><ArticleTitle>Effects
+        of Developmental Lead and Phthalate Exposures on DNA Methylation in Adult
+        Mouse Blood, Brain, and Liver: A Focus on Genomic Imprinting by Tissue and
+        Sex.</ArticleTitle><Pagination><StartPage>67003</StartPage><MedlinePgn>67003</MedlinePgn></Pagination><ELocationID
+        EIdType="pii" ValidYN="Y">067003</ELocationID><ELocationID EIdType="doi" ValidYN="Y">10.1289/EHP14074</ELocationID><Abstract><AbstractText
+        Label="BACKGROUND" NlmCategory="UNASSIGNED">Maternal exposure to environmental
+        chemicals can cause adverse health effects in offspring. Mounting evidence
+        supports that these effects are influenced, at least in part, by epigenetic
+        modifications. It is unknown whether epigenetic changes in surrogate tissues
+        such as the blood are reflective of similar changes in target tissues such
+        as cortex or liver.</AbstractText><AbstractText Label="OBJECTIVE" NlmCategory="UNASSIGNED">We
+        examined tissue- and sex-specific changes in DNA methylation (DNAm) associated
+        with human-relevant lead (Pb) and di(2-ethylhexyl) phthalate (DEHP) exposure
+        during perinatal development in cerebral cortex, blood, and liver.</AbstractText><AbstractText
+        Label="METHODS" NlmCategory="UNASSIGNED">Female mice were exposed to human
+        relevant doses of either Pb (<mml:math xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mn>32</mml:mn><mml:mtext>&#x2009;ppm</mml:mtext></mml:mrow></mml:math>)
+        via drinking water or DEHP (<mml:math xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mn>5</mml:mn><mml:mspace/><mml:mi>mg</mml:mi><mml:mo>/</mml:mo><mml:mtext>kg-day</mml:mtext></mml:mrow></mml:math>)
+        via chow for 2 weeks prior to mating through offspring weaning. Whole genome
+        bisulfite sequencing (WGBS) was utilized to examine DNAm changes in offspring
+        cortex, blood, and liver at 5 months of age. Metilene and methylSig were used
+        to identify differentially methylated regions (DMRs). Annotatr and ChIP-enrich
+        were used for genomic annotations and gene set enrichment tests of DMRs, respectively.</AbstractText><AbstractText
+        Label="RESULTS" NlmCategory="UNASSIGNED">The cortex contained the majority
+        of DMRs associated with Pb (66%) and DEHP (57%) exposure. The cortex also
+        contained the greatest degree of overlap in DMR signatures between sexes (<mml:math
+        xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>n</mml:mi><mml:mo>=</mml:mo><mml:mn>13</mml:mn></mml:mrow></mml:math>
+        and 8 DMRs with Pb and DEHP exposure, respectively) and exposure types (<mml:math
+        xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>n</mml:mi><mml:mo>=</mml:mo><mml:mn>55</mml:mn></mml:mrow></mml:math>
+        and 39 DMRs in males and females, respectively). In all tissues, detected
+        DMRs were preferentially found at genomic regions associated with gene expression
+        regulation (e.g., CpG islands and shores, 5'' UTRs, promoters, and exons).
+        An analysis of GO terms associated with DMR-containing genes identified imprinted
+        genes to be impacted by both Pb and DEHP exposure. Of these, <i>Gnas</i> and
+        <i>Grb10</i> contained DMRs across tissues, sexes, and exposures, with some
+        signatures replicated between target and surrogate tissues. DMRs were enriched
+        in the imprinting control regions (ICRs) of <i>Gnas</i> and <i>Grb10</i>,
+        and we again observed a replication of DMR signatures between blood and target
+        tissues. Specifically, we observed hypermethylation of the <i>Grb10</i> ICR
+        in both blood and liver of Pb-exposed male animals.</AbstractText><AbstractText
+        Label="CONCLUSIONS" NlmCategory="UNASSIGNED">These data provide preliminary
+        evidence that imprinted genes may be viable candidates in the search for epigenetic
+        biomarkers of toxicant exposure in target tissues. Additional research is
+        needed on allele- and developmental stage-specific effects, as well as whether
+        other imprinted genes provide additional examples of this relationship. https://doi.org/10.1289/EHP14074.</AbstractText></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Morgan</LastName><ForeName>Rachel
+        K</ForeName><Initials>RK</Initials><Identifier Source="ORCID">0000-0002-0157-7755</Identifier><AffiliationInfo><Affiliation>Department
+        of Environmental Health Sciences, School of Public Health, University of Michigan,
+        Ann Arbor, Michigan, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Wang</LastName><ForeName>Kai</ForeName><Initials>K</Initials><AffiliationInfo><Affiliation>Department
+        of Computational Medicine and Bioinformatics, School of Medicine, University
+        of Michigan, Ann Arbor, Michigan, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Svoboda</LastName><ForeName>Laurie K</ForeName><Initials>LK</Initials><AffiliationInfo><Affiliation>Department
+        of Environmental Health Sciences, School of Public Health, University of Michigan,
+        Ann Arbor, Michigan, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Rygiel</LastName><ForeName>Christine A</ForeName><Initials>CA</Initials><AffiliationInfo><Affiliation>Department
+        of Environmental Health Sciences, School of Public Health, University of Michigan,
+        Ann Arbor, Michigan, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Lalancette</LastName><ForeName>Claudia</ForeName><Initials>C</Initials><AffiliationInfo><Affiliation>Epigenomics
+        Core, School of Medicine, University of Michigan, Ann Arbor, Michigan, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Cavalcante</LastName><ForeName>Raymond</ForeName><Initials>R</Initials><AffiliationInfo><Affiliation>Epigenomics
+        Core, School of Medicine, University of Michigan, Ann Arbor, Michigan, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Bartolomei</LastName><ForeName>Marisa S</ForeName><Initials>MS</Initials><AffiliationInfo><Affiliation>Department
+        of Cell and Developmental Biology, Center of Excellence in Environmental Toxicology,
+        Perelman School of Medicine, University of Pennsylvania, Philadelphia, Pennsylvania,
+        USA.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Prasasya</LastName><ForeName>Rexxi</ForeName><Initials>R</Initials><AffiliationInfo><Affiliation>Department
+        of Cell and Developmental Biology, Center of Excellence in Environmental Toxicology,
+        Perelman School of Medicine, University of Pennsylvania, Philadelphia, Pennsylvania,
+        USA.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Neier</LastName><ForeName>Kari</ForeName><Initials>K</Initials><AffiliationInfo><Affiliation>Department
+        of Environmental Health Sciences, School of Public Health, University of Michigan,
+        Ann Arbor, Michigan, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Perera</LastName><ForeName>Bambarendage P U</ForeName><Initials>BPU</Initials><AffiliationInfo><Affiliation>Department
+        of Environmental Health Sciences, School of Public Health, University of Michigan,
+        Ann Arbor, Michigan, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Jones</LastName><ForeName>Tamara R</ForeName><Initials>TR</Initials><AffiliationInfo><Affiliation>Department
+        of Environmental Health Sciences, School of Public Health, University of Michigan,
+        Ann Arbor, Michigan, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Colacino</LastName><ForeName>Justin A</ForeName><Initials>JA</Initials><AffiliationInfo><Affiliation>Department
+        of Environmental Health Sciences, School of Public Health, University of Michigan,
+        Ann Arbor, Michigan, USA.</Affiliation></AffiliationInfo><AffiliationInfo><Affiliation>Department
+        of Nutritional Sciences, School of Public Health, University of Michigan,
+        Ann Arbor, Michigan, USA.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Sartor</LastName><ForeName>Maureen A</ForeName><Initials>MA</Initials><AffiliationInfo><Affiliation>Department
+        of Computational Medicine and Bioinformatics, School of Medicine, University
+        of Michigan, Ann Arbor, Michigan, USA.</Affiliation></AffiliationInfo><AffiliationInfo><Affiliation>Department
+        of Biostatistics, School of Public Health, University of Michigan, Ann Arbor,
+        Michigan, USA.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Dolinoy</LastName><ForeName>Dana
+        C</ForeName><Initials>DC</Initials><AffiliationInfo><Affiliation>Department
+        of Environmental Health Sciences, School of Public Health, University of Michigan,
+        Ann Arbor, Michigan, USA.</Affiliation></AffiliationInfo><AffiliationInfo><Affiliation>Department
+        of Nutritional Sciences, School of Public Health, University of Michigan,
+        Ann Arbor, Michigan, USA.</Affiliation></AffiliationInfo></Author></AuthorList><Language>eng</Language><GrantList
+        CompleteYN="Y"><Grant><GrantID>K01 ES032048</GrantID><Acronym>ES</Acronym><Agency>NIEHS
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>K99
+        HD112543</GrantID><Acronym>HD</Acronym><Agency>NICHD NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>R01 AG072396</GrantID><Acronym>AG</Acronym><Agency>NIA
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>P30
+        ES017885</GrantID><Acronym>ES</Acronym><Agency>NIEHS NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>U01 ES026697</GrantID><Acronym>ES</Acronym><Agency>NIEHS
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>K99
+        ES034429</GrantID><Acronym>ES</Acronym><Agency>NIEHS NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>R01 ES007062</GrantID><Acronym>ES</Acronym><Agency>NIEHS
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>T32
+        HD079342</GrantID><Acronym>HD</Acronym><Agency>NICHD NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>R01 ES028802</GrantID><Acronym>ES</Acronym><Agency>NIEHS
+        NIH HHS</Agency><Country>United States</Country></Grant><Grant><GrantID>T32
+        ES007062</GrantID><Acronym>ES</Acronym><Agency>NIEHS NIH HHS</Agency><Country>United
+        States</Country></Grant><Grant><GrantID>R35 ES031686</GrantID><Acronym>ES</Acronym><Agency>NIEHS
+        NIH HHS</Agency><Country>United States</Country></Grant></GrantList><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType></PublicationTypeList><ArticleDate
+        DateType="Electronic"><Year>2024</Year><Month>06</Month><Day>04</Day></ArticleDate></Article><MedlineJournalInfo><Country>United
+        States</Country><MedlineTA>Environ Health Perspect</MedlineTA><NlmUniqueID>0330411</NlmUniqueID><ISSNLinking>0091-6765</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>2P299V784P</RegistryNumber><NameOfSubstance
+        UI="D007854">Lead</NameOfSubstance></Chemical><Chemical><RegistryNumber>C42K0PH13C</RegistryNumber><NameOfSubstance
+        UI="D004051">Diethylhexyl Phthalate</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D004785">Environmental Pollutants</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D010795">Phthalic Acids</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><CommentsCorrectionsList><CommentsCorrections
+        RefType="UpdateOf"><RefSource>bioRxiv. 2023 Oct 10:2023.09.29.560131. doi:
+        10.1101/2023.09.29.560131</RefSource><PMID Version="1">37873115</PMID></CommentsCorrections></CommentsCorrectionsList><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D019175" MajorTopicYN="Y">DNA Methylation</DescriptorName><QualifierName
+        UI="Q000187" MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051379" MajorTopicYN="N">Mice</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D005260" MajorTopicYN="N">Female</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008099" MajorTopicYN="Y">Liver</DescriptorName><QualifierName UI="Q000187"
+        MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008297" MajorTopicYN="N">Male</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D007854" MajorTopicYN="Y">Lead</DescriptorName><QualifierName UI="Q000633"
+        MajorTopicYN="N">toxicity</QualifierName><QualifierName UI="Q000097" MajorTopicYN="N">blood</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D018392" MajorTopicYN="Y">Genomic Imprinting</DescriptorName><QualifierName
+        UI="Q000187" MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004051" MajorTopicYN="N">Diethylhexyl Phthalate</DescriptorName><QualifierName
+        UI="Q000633" MajorTopicYN="N">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D001921" MajorTopicYN="N">Brain</DescriptorName><QualifierName UI="Q000187"
+        MajorTopicYN="N">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004785" MajorTopicYN="N">Environmental Pollutants</DescriptorName><QualifierName
+        UI="Q000633" MajorTopicYN="N">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D018811" MajorTopicYN="N">Maternal Exposure</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D010795" MajorTopicYN="N">Phthalic Acids</DescriptorName><QualifierName
+        UI="Q000633" MajorTopicYN="N">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011247" MajorTopicYN="N">Pregnancy</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D011297" MajorTopicYN="N">Prenatal Exposure Delayed Effects</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D044127" MajorTopicYN="N">Epigenesis, Genetic</DescriptorName><QualifierName
+        UI="Q000187" MajorTopicYN="N">drug effects</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="medline"><Year>2024</Year><Month>6</Month><Day>4</Day><Hour>18</Hour><Minute>43</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2024</Year><Month>6</Month><Day>4</Day><Hour>18</Hour><Minute>42</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2024</Year><Month>6</Month><Day>4</Day><Hour>13</Hour><Minute>2</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2024</Year><Month>6</Month><Day>4</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">38833407</ArticleId><ArticleId IdType="pmc">PMC11166413</ArticleId><ArticleId
+        IdType="doi">10.1289/EHP14074</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Gillman
+        MW. 2005. Developmental origins of health and disease. N Engl J Med 353(17):1848&#x2013;1850,
+        PMID: 16251542, 10.1056/NEJMe058187.</Citation><ArticleIdList><ArticleId IdType="doi">10.1056/NEJMe058187</ArticleId><ArticleId
+        IdType="pmc">PMC1488726</ArticleId><ArticleId IdType="pubmed">16251542</ArticleId></ArticleIdList></Reference><Reference><Citation>Bernal
+        AJ, Jirtle RL. 2010. Epigenomic disruption: the effects of early developmental
+        exposures. Birth Defects Res A Clin Mol Teratol 88(10):938&#x2013;944, PMID:
+        20568270, 10.1002/bdra.20685.</Citation><ArticleIdList><ArticleId IdType="doi">10.1002/bdra.20685</ArticleId><ArticleId
+        IdType="pmc">PMC2945443</ArticleId><ArticleId IdType="pubmed">20568270</ArticleId></ArticleIdList></Reference><Reference><Citation>Bollati
+        V, Baccarelli A. 2010. Environmental epigenetics. Heredity (Edinb) 105(1):105&#x2013;112,
+        PMID: 20179736, 10.1038/hdy.2010.2.</Citation><ArticleIdList><ArticleId IdType="doi">10.1038/hdy.2010.2</ArticleId><ArticleId
+        IdType="pmc">PMC3133724</ArticleId><ArticleId IdType="pubmed">20179736</ArticleId></ArticleIdList></Reference><Reference><Citation>Lyko
+        F. 2018. The DNA methyltransferase family: a versatile toolkit for epigenetic
+        regulation. Nat Rev Genet 19(2):81&#x2013;92, PMID: 29033456, 10.1038/nrg.2017.80.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1038/nrg.2017.80</ArticleId><ArticleId IdType="pubmed">29033456</ArticleId></ArticleIdList></Reference><Reference><Citation>Siegfried
+        Z, Simon I. 2010. DNA methylation and gene expression. Wiley Interdiscip Rev
+        Syst Biol Med 2(3):362&#x2013;371, PMID: 20836034, 10.1002/wsbm.64.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1002/wsbm.64</ArticleId><ArticleId IdType="pubmed">20836034</ArticleId></ArticleIdList></Reference><Reference><Citation>Zeng
+        Y, Chen T. 2019. DNA methylation reprogramming during mammalian development.
+        Genes 10(4):257, 10.3390/genes10040257.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.3390/genes10040257</ArticleId><ArticleId IdType="pmc">PMC6523607</ArticleId><ArticleId
+        IdType="pubmed">30934924</ArticleId></ArticleIdList></Reference><Reference><Citation>Dolinoy
+        DC, Das R, Weidman JR, Jirtle RL. 2007. Metastable epialleles, imprinting,
+        and the fetal origins of adult diseases. Pediatr Res 61(5 pt 2):30R&#x2013;37R,
+        PMID: 17413847, 10.1203/pdr.0b013e31804575f7.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1203/pdr.0b013e31804575f7</ArticleId><ArticleId IdType="pubmed">17413847</ArticleId></ArticleIdList></Reference><Reference><Citation>SanMiguel
+        JM, Bartolomei MS. 2018. DNA methylation dynamics of genomic imprinting in
+        mouse development. Biol Reprod 99(1):252&#x2013;262, PMID: 29462489, 10.1093/biolre/ioy036.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1093/biolre/ioy036</ArticleId><ArticleId IdType="pmc">PMC6044325</ArticleId><ArticleId
+        IdType="pubmed">29462489</ArticleId></ArticleIdList></Reference><Reference><Citation>Tucci
+        V, Isles AR, Kelsey G, Ferguson-Smith AC, Erice Imprinting Group. 2019. Genomic
+        imprinting and physiological processes in mammals. Cell 176(5):952&#x2013;965,
+        PMID: 30794780, 10.1016/j.cell.2019.01.043.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.cell.2019.01.043</ArticleId><ArticleId IdType="pubmed">30794780</ArticleId></ArticleIdList></Reference><Reference><Citation>Chang
+        S, Bartolomei MS. 2020. Modeling human epigenetic disorders in mice: Beckwith-Wiedemann
+        syndrome and Silver-Russell syndrome. Dis Model Mech 13(5):dmm044123, PMID:
+        32424032, 10.1242/dmm.044123.</Citation><ArticleIdList><ArticleId IdType="doi">10.1242/dmm.044123</ArticleId><ArticleId
+        IdType="pmc">PMC7272347</ArticleId><ArticleId IdType="pubmed">32424032</ArticleId></ArticleIdList></Reference><Reference><Citation>Henckel
+        A, Chebli K, Kota SK, Arnaud P, Feil R. 2012. Transcription and histone methylation
+        changes correlate with imprint acquisition in male germ cells. Embo J 31(3):606&#x2013;615,
+        PMID: 22117218, 10.1038/emboj.2011.425.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1038/emboj.2011.425</ArticleId><ArticleId IdType="pmc">PMC3273379</ArticleId><ArticleId
+        IdType="pubmed">22117218</ArticleId></ArticleIdList></Reference><Reference><Citation>Jima
+        DD, Skaar DA, Planchart A, Motsinger-Reif A, Cevik SE, Park SS, et al. . 2022.
+        Genomic map of candidate human imprint control regions: the imprintome. Epigenetics
+        17(13):1920&#x2013;1943, 10.1080/15592294.2022.2091815.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1080/15592294.2022.2091815</ArticleId><ArticleId IdType="pmc">PMC9665137</ArticleId><ArticleId
+        IdType="pubmed">35786392</ArticleId></ArticleIdList></Reference><Reference><Citation>Faulk
+        C, Dolinoy DC. 2011. Timing is everything: the when and how of environmentally
+        induced changes in the epigenome of animals. Epigenetics 6(7):791&#x2013;797,
+        PMID: 21636976, 10.4161/epi.6.7.16209.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.4161/epi.6.7.16209</ArticleId><ArticleId IdType="pmc">PMC3230539</ArticleId><ArticleId
+        IdType="pubmed">21636976</ArticleId></ArticleIdList></Reference><Reference><Citation>Argyraki
+        M, Damdimopoulou P, Chatzimeletiou K, Grimbizis GF, Tarlatzis BC, Syrrou M,
+        et al. . 2019. In-utero stress and mode of conception: impact on regulation
+        of imprinted genes, fetal development and future health. Hum Reprod Update
+        25(6):777&#x2013;801, PMID: 31633761, 10.1093/humupd/dmz025.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1093/humupd/dmz025</ArticleId><ArticleId IdType="pubmed">31633761</ArticleId></ArticleIdList></Reference><Reference><Citation>Senut
+        MC, Cingolani P, Sen A, Kruger A, Shaik A, Hirsch H, et al. . 2012. Epigenetics
+        of early-life lead exposure and effects on brain development. Epigenomics
+        4(6):665&#x2013;674, PMID: 23244311, 10.2217/epi.12.58.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.2217/epi.12.58</ArticleId><ArticleId IdType="pmc">PMC3555228</ArticleId><ArticleId
+        IdType="pubmed">23244311</ArticleId></ArticleIdList></Reference><Reference><Citation>Parsanathan
+        R, Karundevi B. 2014. Phthalate exposure in utero causes epigenetic changes
+        and impairs insulin signalling. J Endocrinol 223:47&#x2013;66, PMID: 25232145,
+        10.1530/JOE-14-0111.</Citation><ArticleIdList><ArticleId IdType="doi">10.1530/JOE-14-0111</ArticleId><ArticleId
+        IdType="pubmed">25232145</ArticleId></ArticleIdList></Reference><Reference><Citation>Dignam
+        T, Kaufmann RB, LeStourgeon L, Brown MJ. 2019. Control of lead sources in
+        the United States, 1970&#x2013;2017: public health progress and current challenges
+        to eliminating lead exposure. J Public Health Manag Pract 25(suppl 1):S13&#x2013;S22,
+        PMID: 30507765, 10.1097/PHH.0000000000000889.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1097/PHH.0000000000000889</ArticleId><ArticleId IdType="pmc">PMC6522252</ArticleId><ArticleId
+        IdType="pubmed">30507765</ArticleId></ArticleIdList></Reference><Reference><Citation>Zhou
+        F, Yin G, Gao Y, Liu D, Xie J, Ouyang L, et al. . 2019. Toxicity assessment
+        due to prenatal and lactational exposure to lead, cadmium and mercury mixtures.
+        Environ Int 133(pt B):105192, PMID: 31639605, 10.1016/j.envint.2019.105192.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.envint.2019.105192</ArticleId><ArticleId IdType="pubmed">31639605</ArticleId></ArticleIdList></Reference><Reference><Citation>Kamenov
+        GD, Swaringen BF, Cornwell DA, McTigue NE, Roberts SM, Bonzongo JJ. 2023.
+        High-precision Pb isotopes of drinking water lead pipes: implications for
+        human exposure to industrial Pb in the United States. Sci Total Environ 871:162067,
+        PMID: 36758690, 10.1016/j.scitotenv.2023.162067.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.scitotenv.2023.162067</ArticleId><ArticleId IdType="pubmed">36758690</ArticleId></ArticleIdList></Reference><Reference><Citation>Dietrich
+        M, Barlow CF, Entwistle JA, Meza-Figueroa D, Dong C, Gunkel-Grillon P, et
+        al. . 2023. Predictive modeling of indoor dust lead concentrations: sources,
+        risks, and benefits of intervention. Environ Pollut 319:121039, PMID: 36627044,
+        10.1016/j.envpol.2023.121039.</Citation><ArticleIdList><ArticleId IdType="doi">10.1016/j.envpol.2023.121039</ArticleId><ArticleId
+        IdType="pubmed">36627044</ArticleId></ArticleIdList></Reference><Reference><Citation>Wang
+        Y, Qian H. 2021. Phthalates and their impacts on human health. Healthcare
+        (Basel) 9(5):603, PMID: 34069956, 10.3390/healthcare9050603.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.3390/healthcare9050603</ArticleId><ArticleId IdType="pmc">PMC8157593</ArticleId><ArticleId
+        IdType="pubmed">34069956</ArticleId></ArticleIdList></Reference><Reference><Citation>Erythropel
+        HC, Maric M, Nicell JA, Leask RL, Yargeau V. 2014. Leaching of the plasticizer
+        di(2-ethylhexyl)phthalate (DEHP) from plastic containers and the question
+        of human exposure. Appl Microbiol Biotechnol 98(24):9967&#x2013;9981, PMID:
+        25376446, 10.1007/s00253-014-6183-8.</Citation><ArticleIdList><ArticleId IdType="doi">10.1007/s00253-014-6183-8</ArticleId><ArticleId
+        IdType="pubmed">25376446</ArticleId></ArticleIdList></Reference><Reference><Citation>Wang
+        T, Pehrsson EC, Purushotham D, Li D, Zhuo X, Zhang B, et al. . 2018. The NIEHS
+        TaRGET II Consortium and environmental epigenomics. Nat Biotechnol 36(3):225&#x2013;227,
+        PMID: 29509741, 10.1038/nbt.4099.</Citation><ArticleIdList><ArticleId IdType="doi">10.1038/nbt.4099</ArticleId><ArticleId
+        IdType="pmc">PMC5991835</ArticleId><ArticleId IdType="pubmed">29509741</ArticleId></ArticleIdList></Reference><Reference><Citation>Bakulski
+        KM, Halladay A, Hu VW, Mill J, Fallin MD. 2016. Epigenetic research in neuropsychiatric
+        disorders: the &#x201c;tissue issue&#x201d;. Curr Behav Neurosci Rep 3(3):264&#x2013;274,
+        PMID: 28093577, 10.1007/s40473-016-0083-4.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1007/s40473-016-0083-4</ArticleId><ArticleId IdType="pmc">PMC5235359</ArticleId><ArticleId
+        IdType="pubmed">28093577</ArticleId></ArticleIdList></Reference><Reference><Citation>Galbraith
+        DB, Wolff GL. 1974. Aberrant regulation of the Agouti pigment pattern in the
+        viable yellow mouse. J Hered 65(3):137&#x2013;140, PMID: 4847754, 10.1093/oxfordjournals.jhered.a108484.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1093/oxfordjournals.jhered.a108484</ArticleId><ArticleId IdType="pubmed">4847754</ArticleId></ArticleIdList></Reference><Reference><Citation>Weinhouse
+        C, Anderson OS, Bergin IL, Vandenbergh DJ, Gyekis JP, Dingman MA, et al. .
+        2014. Dose-dependent incidence of hepatic tumors in adult mice following perinatal
+        exposure to bisphenol A. Environ Health Perspect 122(5):485&#x2013;491, PMID:
+        24487385, 10.1289/ehp.1307449.</Citation><ArticleIdList><ArticleId IdType="doi">10.1289/ehp.1307449</ArticleId><ArticleId
+        IdType="pmc">PMC4014767</ArticleId><ArticleId IdType="pubmed">24487385</ArticleId></ArticleIdList></Reference><Reference><Citation>Faulk
+        C, Barks A, S&#xe1;nchez BN, Zhang Z, Anderson OS, Peterson KE, et al. . 2014.
+        Perinatal lead (Pb) exposure results in sex-specific effects on food intake,
+        fat, weight, and insulin response across the murine life-course. PLoS One
+        9(8):e104273, PMID: 25105421, 10.1371/journal.pone.0104273.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1371/journal.pone.0104273</ArticleId><ArticleId IdType="pmc">PMC4126699</ArticleId><ArticleId
+        IdType="pubmed">25105421</ArticleId></ArticleIdList></Reference><Reference><Citation>Faulk
+        C, Barks A, Liu K, Goodrich JM, Dolinoy DC. 2013. Early-life lead exposure
+        results in dose- and sex-specific effects on weight and epigenetic gene regulation
+        in weanling mice. Epigenomics 5(5):487&#x2013;500, PMID: 24059796, 10.2217/epi.13.49.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.2217/epi.13.49</ArticleId><ArticleId IdType="pmc">PMC3873735</ArticleId><ArticleId
+        IdType="pubmed">24059796</ArticleId></ArticleIdList></Reference><Reference><Citation>The
+        American College of Obstetricians and Gynecologists. 2012. Lead Screening
+        During Pregnancy and Lactation. https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2012/08/lead-screening-during-pregnancy-and-lactation
+        [accessed 9 January 2024].</Citation></Reference><Reference><Citation>Lin
+        Y, Wei J, Li Y, Chen J, Zhou Z, Song L, et al. . 2011. Developmental exposure
+        to di(2-ethylhexyl) phthalate impairs endocrine pancreas and leads to long-term
+        adverse effects on glucose homeostasis in the rat. Am J Physiol Endocrinol
+        Metab 301(3):E527&#x2013;E538, PMID: 21673306, 10.1152/ajpendo.00233.2011.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1152/ajpendo.00233.2011</ArticleId><ArticleId IdType="pubmed">21673306</ArticleId></ArticleIdList></Reference><Reference><Citation>Neier
+        K, Cheatham D, Bedrosian LD, Dolinoy DC. 2019. Perinatal exposures to phthalates
+        and phthalate mixtures result in sex-specific effects on body weight, organ
+        weights and intracisternal A-particle (IAP) DNA methylation in weanling mice.
+        J Dev Orig Health Dis 10(2):176&#x2013;187, PMID: 29991372, 10.1017/S2040174418000430.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1017/S2040174418000430</ArticleId><ArticleId IdType="pmc">PMC6329673</ArticleId><ArticleId
+        IdType="pubmed">29991372</ArticleId></ArticleIdList></Reference><Reference><Citation>Svoboda
+        LK, Neier K, Wang K, Cavalcante RG, Rygiel CA, Tsai Z, et al. . 2021. Tissue
+        and sex-specific programming of DNA methylation by perinatal lead exposure:
+        implications for environmental epigenetics studies. Epigenetics 16(10):1102&#x2013;1122,
+        PMID: 33164632, 10.1080/15592294.2020.1841872.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1080/15592294.2020.1841872</ArticleId><ArticleId IdType="pmc">PMC8510611</ArticleId><ArticleId
+        IdType="pubmed">33164632</ArticleId></ArticleIdList></Reference><Reference><Citation>Percie
+        du Sert N, Hurst V, Ahluwalia A, Alam S, Avey MT, Baker M, et al. . 2020.
+        The ARRIVE guidelines 2.0: updated guidelines for reporting animal research.
+        PLoS Biol 18(7):e3000410, PMID: 32663219, 10.1371/journal.pbio.3000410.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1371/journal.pbio.3000410</ArticleId><ArticleId IdType="pmc">PMC7360023</ArticleId><ArticleId
+        IdType="pubmed">32663219</ArticleId></ArticleIdList></Reference><Reference><Citation>Ewels
+        P, Magnusson M, Lundin S, K&#xe4;ller M. 2016. MultiQC: summarize analysis
+        results for multiple tools and samples in a single report. Bioinformatics
+        32(19):3047&#x2013;3048, PMID: 27312411, 10.1093/bioinformatics/btw354.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1093/bioinformatics/btw354</ArticleId><ArticleId IdType="pmc">PMC5039924</ArticleId><ArticleId
+        IdType="pubmed">27312411</ArticleId></ArticleIdList></Reference><Reference><Citation>Krueger
+        F, Andrews SR. 2011. Bismark: a flexible aligner and methylation caller for
+        bisulfite-seq applications. Bioinformatics 27(11):1571&#x2013;1572, PMID:
+        21493656, 10.1093/bioinformatics/btr167.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1093/bioinformatics/btr167</ArticleId><ArticleId IdType="pmc">PMC3102221</ArticleId><ArticleId
+        IdType="pubmed">21493656</ArticleId></ArticleIdList></Reference><Reference><Citation>Langmead
+        B, Salzberg SL. 2012. Fast gapped-read alignment with Bowtie 2. Nat Methods
+        9(4):357&#x2013;359, PMID: 22388286, 10.1038/nmeth.1923.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1038/nmeth.1923</ArticleId><ArticleId IdType="pmc">PMC3322381</ArticleId><ArticleId
+        IdType="pubmed">22388286</ArticleId></ArticleIdList></Reference><Reference><Citation>J&#xfc;hling
+        F, Kretzmer H, Bernhart SH, Otto C, Stadler PF, Hoffmann S. 2016. Metilene:
+        fast and sensitive calling of differentially methylated regions from bisulfite
+        sequencing data. Genome Res 26(2):256&#x2013;262, PMID: 26631489, 10.1101/gr.196394.115.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1101/gr.196394.115</ArticleId><ArticleId IdType="pmc">PMC4728377</ArticleId><ArticleId
+        IdType="pubmed">26631489</ArticleId></ArticleIdList></Reference><Reference><Citation>Park
+        Y, Figueroa ME, Rozek LS, Sartor MA. 2014. MethylSig: a whole genome DNA methylation
+        analysis pipeline. Bioinformatics 30(17):2414&#x2013;2422, PMID: 24836530,
+        10.1093/bioinformatics/btu339.</Citation><ArticleIdList><ArticleId IdType="doi">10.1093/bioinformatics/btu339</ArticleId><ArticleId
+        IdType="pmc">PMC4147891</ArticleId><ArticleId IdType="pubmed">24836530</ArticleId></ArticleIdList></Reference><Reference><Citation>Cavalcante
+        RG, Sartor MA. 2017. Annotatr: genomic regions in context. Bioinformatics
+        33(15):2381&#x2013;2383, PMID: 28369316, 10.1093/bioinformatics/btx183.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1093/bioinformatics/btx183</ArticleId><ArticleId IdType="pmc">PMC5860117</ArticleId><ArticleId
+        IdType="pubmed">28369316</ArticleId></ArticleIdList></Reference><Reference><Citation>Welch
+        RP, Lee C, Imbriano PM, Patil S, Weymouth TE, Smith RA, et al. . 2014. ChIP-enrich:
+        gene set enrichment testing for ChIP-seq data. Nucleic Acids Res 42(13):e105,
+        PMID: 24878920, 10.1093/nar/gku463.</Citation><ArticleIdList><ArticleId IdType="doi">10.1093/nar/gku463</ArticleId><ArticleId
+        IdType="pmc">PMC4117744</ArticleId><ArticleId IdType="pubmed">24878920</ArticleId></ArticleIdList></Reference><Reference><Citation>Williamson
+        CM, Blake A, Thomas S, Beechey CV, Hancock J, Cattanach BM, et al. . 2013.
+        World Wide Web Site - Mouse Imprinting Data and References. Oxfordshire, UK:
+        MRC Hartwell.</Citation></Reference><Reference><Citation>Juan AM, Foong YH,
+        Thorvaldsen JL, Lan Y, Leu NA, Rurik JG, et al. . 2022. Tissue-specific Grb10/Ddc
+        insulator drives allelic architecture for cardiac development. Mol Cell 82(19):3613&#x2013;3631.e7,
+        PMID: 36108632, 10.1016/j.molcel.2022.08.021.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.molcel.2022.08.021</ArticleId><ArticleId IdType="pmc">PMC9547965</ArticleId><ArticleId
+        IdType="pubmed">36108632</ArticleId></ArticleIdList></Reference><Reference><Citation>Wang
+        L, Zhang J, Duan J, Gao X, Zhu W, Lu X, et al. . 2014. Programming and inheritance
+        of parental DNA methylomes in mammals. Cell 157(4):979&#x2013;991, PMID: 24813617,
+        10.1016/j.cell.2014.04.017.</Citation><ArticleIdList><ArticleId IdType="doi">10.1016/j.cell.2014.04.017</ArticleId><ArticleId
+        IdType="pmc">PMC4096154</ArticleId><ArticleId IdType="pubmed">24813617</ArticleId></ArticleIdList></Reference><Reference><Citation>Riemondy
+        KA, Sheridan RM, Gillen A, Yu Y, Bennett CG, Hesselberth JR. 2017. Valr: reproducible
+        genome interval analysis in R. F1000Res 6:1025, PMID: 28751969, 10.12688/f1000research.11997.1.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.12688/f1000research.11997.1</ArticleId><ArticleId IdType="pmc">PMC5506536</ArticleId><ArticleId
+        IdType="pubmed">28751969</ArticleId></ArticleIdList></Reference><Reference><Citation>Kurukuti
+        S, Tiwari VK, Tavoosidana G, Pugacheva E, Murrell A, Zhao Z, et al. . 2006.
+        CTCF binding at the H19 imprinting control region mediates maternally inherited
+        higher-order chromatin conformation to restrict enhancer access to Igf2. Proc
+        Natl Acad Sci USA 103(28):10684&#x2013;10689, PMID: 16815976, 10.1073/pnas.0600326103.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1073/pnas.0600326103</ArticleId><ArticleId IdType="pmc">PMC1484419</ArticleId><ArticleId
+        IdType="pubmed">16815976</ArticleId></ArticleIdList></Reference><Reference><Citation>Dolinoy
+        DC, Weidman JR, Jirtle RL. 2007. Epigenetic gene regulation: linking early
+        developmental environment to adult disease. Reprod Toxicol 23(3):297&#x2013;307,
+        PMID: 17046196, 10.1016/j.reprotox.2006.08.012.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.reprotox.2006.08.012</ArticleId><ArticleId IdType="pubmed">17046196</ArticleId></ArticleIdList></Reference><Reference><Citation>Thomason
+        ME, Hect JL, Rauh VA, Trentacosta C, Wheelock MD, Eggebrecht AT, et al. .
+        2019. Prenatal lead exposure impacts cross-hemispheric and long-range connectivity
+        in the human fetal brain. Neuroimage 191:186&#x2013;192, PMID: 30739062, 10.1016/j.neuroimage.2019.02.017.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.neuroimage.2019.02.017</ArticleId><ArticleId IdType="pmc">PMC6451829</ArticleId><ArticleId
+        IdType="pubmed">30739062</ArticleId></ArticleIdList></Reference><Reference><Citation>Neier
+        K, Montrose L, Chen K, Malloy MA, Jones TR, Svoboda LK, et al. . 2020. Short-
+        and long-term effects of perinatal phthalate exposures on metabolic pathways
+        in the mouse liver. Environ Epigenet 6(1):dvaa017, PMID: 33391822, 10.1093/eep/dvaa017.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1093/eep/dvaa017</ArticleId><ArticleId IdType="pmc">PMC7757125</ArticleId><ArticleId
+        IdType="pubmed">33391822</ArticleId></ArticleIdList></Reference><Reference><Citation>Rygiel
+        CA, Goodrich JM, Solano-Gonz&#xe1;lez M, Mercado-Garc&#xed;a A, Hu H, T&#xe9;llez-Rojo
+        MM, et al. . 2021. Prenatal lead (Pb) exposure and peripheral blood DNA methylation
+        (5mC) and hydroxymethylation (5hmC) in Mexican adolescents from the ELEMENT
+        birth cohort. Environ Health Perspect 129(6):67002, PMID: 34152198, 10.1289/EHP8507.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1289/EHP8507</ArticleId><ArticleId IdType="pmc">PMC8216410</ArticleId><ArticleId
+        IdType="pubmed">34152198</ArticleId></ArticleIdList></Reference><Reference><Citation>Chen
+        C-H, Jiang SS, Chang I-S, Wen H-J, Sun C-W, Wang S-L. 2018. Association between
+        fetal exposure to phthalate endocrine disruptor and genome-wide DNA methylation
+        at birth. Environ Res 162:261&#x2013;270, PMID: 29367177, 10.1016/j.envres.2018.01.009.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.envres.2018.01.009</ArticleId><ArticleId IdType="pubmed">29367177</ArticleId></ArticleIdList></Reference><Reference><Citation>Sobolewski
+        M, Varma G, Adams B, Anderson DW, Schneider JS, Cory-Slechta DA. 2018. Developmental
+        lead exposure and prenatal stress result in sex-specific reprograming of adult
+        stress physiology and epigenetic profiles in brain. Toxicol Sci 163(2):478&#x2013;489,
+        PMID: 29481626, 10.1093/toxsci/kfy046.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1093/toxsci/kfy046</ArticleId><ArticleId IdType="pmc">PMC5974781</ArticleId><ArticleId
+        IdType="pubmed">29481626</ArticleId></ArticleIdList></Reference><Reference><Citation>Liu
+        S, Wang K, Svoboda LK, Rygiel CA, Neier K, Jones TR, et al. . 2021. Perinatal
+        DEHP exposure induces sex- and tissue-specific DNA methylation changes in
+        both juvenile and adult mice. Environ Epigenet 7(1):dvab004, PMID: 33986952,
+        10.1093/eep/dvab004.</Citation><ArticleIdList><ArticleId IdType="doi">10.1093/eep/dvab004</ArticleId><ArticleId
+        IdType="pmc">PMC8107644</ArticleId><ArticleId IdType="pubmed">33986952</ArticleId></ArticleIdList></Reference><Reference><Citation>Svoboda
+        LK, Ishikawa T, Dolinoy DC. 2022. Developmental toxicant exposures and sex-specific
+        effects on epigenetic programming and cardiovascular health across generations.
+        Environ Epigenet 8(1):dvac017, PMID: 36325489, 10.1093/eep/dvac017.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1093/eep/dvac017</ArticleId><ArticleId IdType="pmc">PMC9600458</ArticleId><ArticleId
+        IdType="pubmed">36325489</ArticleId></ArticleIdList></Reference><Reference><Citation>Singh
+        G, Singh V, Sobolewski M, Cory-Slechta DA, Schneider JS. 2018. Sex-dependent
+        effects of developmental lead exposure on the brain. Front Genet 9:89, PMID:
+        29662502, 10.3389/fgene.2018.00089.</Citation><ArticleIdList><ArticleId IdType="doi">10.3389/fgene.2018.00089</ArticleId><ArticleId
+        IdType="pmc">PMC5890196</ArticleId><ArticleId IdType="pubmed">29662502</ArticleId></ArticleIdList></Reference><Reference><Citation>Barrere-Cain
+        R, Allard P. 2020. An understudied dimension: why age needs to be considered
+        when studying epigenetic-environment interactions. Epigenet Insights 13:2516865720947014,
+        PMID: 32864568, 10.1177/2516865720947014.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1177/2516865720947014</ArticleId><ArticleId IdType="pmc">PMC7430070</ArticleId><ArticleId
+        IdType="pubmed">32864568</ArticleId></ArticleIdList></Reference><Reference><Citation>Wang
+        K, Liu S, Svoboda LK, Rygiel CA, Neier K, Jones TR, et al. . 2020. Tissue-
+        and sex-specific DNA methylation changes in mice perinatally exposed to lead
+        (Pb). Front Genet 11:840, PMID: 32973866, 10.3389/fgene.2020.00840.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.3389/fgene.2020.00840</ArticleId><ArticleId IdType="pmc">PMC7472839</ArticleId><ArticleId
+        IdType="pubmed">32973866</ArticleId></ArticleIdList></Reference><Reference><Citation>Kang
+        E-R, Iqbal K, Tran DA, Rivas GE, Singh P, Pfeifer GP, et al. . 2011. Effects
+        of endocrine disruptors on imprinted gene expression in the mouse embryo.
+        Epigenetics 6(7):937&#x2013;950, PMID: 21636974, 10.4161/epi.6.7.16067.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.4161/epi.6.7.16067</ArticleId><ArticleId IdType="pmc">PMC3154434</ArticleId><ArticleId
+        IdType="pubmed">21636974</ArticleId></ArticleIdList></Reference><Reference><Citation>Krishnamoorthy
+        M, Gerwe BA, Scharer CD, Heimburg-Molinaro J, Gregory F, Nash RJ, et al. .
+        2011. GABRB3 gene expression increases upon ethanol exposure in human embryonic
+        stem cells. J Recept Signal Transduct Res 31(3):206&#x2013;213, PMID: 21619448,
+        10.3109/10799893.2011.569723.</Citation><ArticleIdList><ArticleId IdType="doi">10.3109/10799893.2011.569723</ArticleId><ArticleId
+        IdType="pubmed">21619448</ArticleId></ArticleIdList></Reference><Reference><Citation>Bastepe
+        M, Fr&#xf6;hlich LF, Hendy GN, Indridason OS, Josse RG, Koshiyama H, et al.
+        . 2003. Autosomal dominant pseudohypoparathyroidism type Ib is associated
+        with a heterozygous microdeletion that likely disrupts a putative imprinting
+        control element of GNAS. J Clin Invest 112(8):1255&#x2013;1263, PMID: 14561710,
+        10.1172/JCI19159.</Citation><ArticleIdList><ArticleId IdType="doi">10.1172/JCI19159</ArticleId><ArticleId
+        IdType="pmc">PMC213493</ArticleId><ArticleId IdType="pubmed">14561710</ArticleId></ArticleIdList></Reference><Reference><Citation>Eggermann
+        T, Begemann M, Kurth I, Elbracht M. 2019. Contribution of GRB10 to the prenatal
+        phenotype in Silver-Russell syndrome? Lessons from 7p12 copy number variations.
+        Eur J Med Genet 62(7):103671, PMID: 31100449, 10.1016/j.ejmg.2019.103671.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.ejmg.2019.103671</ArticleId><ArticleId IdType="pubmed">31100449</ArticleId></ArticleIdList></Reference><Reference><Citation>Nye
+        MD, King KE, Darrah TH, Maguire R, Jima DD, Huang Z, et al. . 2016. Maternal
+        blood lead concentrations, DNA methylation of MEG3 DMR regulating the DLK1/MEG3
+        imprinted domain and early growth in a multiethnic cohort. Environ Epigenet
+        2(1):dvv009, PMID: 28123784, 10.1093/eep/dvv009.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1093/eep/dvv009</ArticleId><ArticleId IdType="pmc">PMC5258134</ArticleId><ArticleId
+        IdType="pubmed">28123784</ArticleId></ArticleIdList></Reference><Reference><Citation>Li
+        L, Zhang T, Qin X-S, Ge W, Ma H-G, Sun L-L, et al. . 2014. Exposure to diethylhexyl
+        phthalate (DEHP) results in a heritable modification of imprint genes DNA
+        methylation in mouse oocytes. Mol Biol Rep 41(3):1227&#x2013;1235, PMID: 24390239,
+        10.1007/s11033-013-2967-7.</Citation><ArticleIdList><ArticleId IdType="doi">10.1007/s11033-013-2967-7</ArticleId><ArticleId
+        IdType="pubmed">24390239</ArticleId></ArticleIdList></Reference><Reference><Citation>Kalish
+        JM, Jiang C, Bartolomei MS. 2014. Epigenetics and imprinting in human disease.
+        Int J Dev Biol 58(2&#x2013;4):291&#x2013;298, PMID: 25023695, 10.1387/ijdb.140077mb.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1387/ijdb.140077mb</ArticleId><ArticleId IdType="pubmed">25023695</ArticleId></ArticleIdList></Reference><Reference><Citation>Reik
+        W, Dean W, Walter J. 2001. Epigenetic reprogramming in mammalian development.
+        Science 293(5532):1089&#x2013;1093, PMID: 11498579, 10.1126/science.1063443.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1126/science.1063443</ArticleId><ArticleId IdType="pubmed">11498579</ArticleId></ArticleIdList></Reference><Reference><Citation>Muhr
+        J, Arbor TC, Ackerman KM. 2023. Embryology, Gastrulation. StatPearls. Treasure
+        Island, FL: StatPearls Publishing.</Citation><ArticleIdList><ArticleId IdType="pubmed">32119281</ArticleId></ArticleIdList></Reference><Reference><Citation>Weinstein
+        LS, Xie T, Zhang Q-H, Chen M. 2007. Studies of the regulation and function
+        of the Gs alpha gene Gnas using gene targeting technology. Pharmacol Ther
+        115(2):271&#x2013;291, PMID: 17588669, 10.1016/j.pharmthera.2007.03.013.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.pharmthera.2007.03.013</ArticleId><ArticleId IdType="pmc">PMC2031856</ArticleId><ArticleId
+        IdType="pubmed">17588669</ArticleId></ArticleIdList></Reference><Reference><Citation>Wang
+        L, Chang S, Wang Z, Wang S, Huo J, Ding G, et al. . 2017. Altered GNAS imprinting
+        due to folic acid deficiency contributes to poor embryo development and may
+        lead to neural tube defects. Oncotarget 8(67):110797&#x2013;110810, PMID:
+        29340017, 10.18632/oncotarget.22731.</Citation><ArticleIdList><ArticleId IdType="doi">10.18632/oncotarget.22731</ArticleId><ArticleId
+        IdType="pmc">PMC5762285</ArticleId><ArticleId IdType="pubmed">29340017</ArticleId></ArticleIdList></Reference><Reference><Citation>Hanna
+        P, Francou B, Delemer B, J&#xfc;ppner H, Linglart A. 2021. A novel familial
+        PHP1B variant with incomplete loss of methylation at GNAS-A/B and enhanced
+        methylation at GNAS-AS2. J Clin Endocrinol Metab 106(9):2779&#x2013;2787,
+        PMID: 33677588, 10.1210/clinem/dgab136.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1210/clinem/dgab136</ArticleId><ArticleId IdType="pmc">PMC8372637</ArticleId><ArticleId
+        IdType="pubmed">33677588</ArticleId></ArticleIdList></Reference><Reference><Citation>Turan
+        S, Bastepe M. 2013. The GNAS complex locus and human diseases associated with
+        loss-of-function mutations or epimutations within this imprinted gene. Horm
+        Res Paediatr 80(4):229&#x2013;241, PMID: 24107509, 10.1159/000355384.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1159/000355384</ArticleId><ArticleId IdType="pmc">PMC3874326</ArticleId><ArticleId
+        IdType="pubmed">24107509</ArticleId></ArticleIdList></Reference><Reference><Citation>Wroe
+        SF, Kelsey G, Skinner JA, Bodle D, Ball ST, Beechey CV, et al. . 2000. An
+        imprinted transcript, antisense to Nesp, adds complexity to the cluster of
+        imprinted genes at the mouse Gnas locus. Proc Natl Acad Sci USA 97(7):3342&#x2013;3346,
+        PMID: 10716699, 10.1073/pnas.97.7.3342.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1073/pnas.97.7.3342</ArticleId><ArticleId IdType="pmc">PMC16241</ArticleId><ArticleId
+        IdType="pubmed">10716699</ArticleId></ArticleIdList></Reference><Reference><Citation>Hayward
+        BE, Kamiya M, Strain L, Moran V, Campbell R, Hayashizaki Y, et al. . 1998.
+        The human GNAS1 gene is imprinted and encodes distinct paternally and biallelically
+        expressed G proteins. Proc Natl Acad Sci USA 95(17):10038&#x2013;10043, PMID:
+        9707596, 10.1073/pnas.95.17.10038.</Citation><ArticleIdList><ArticleId IdType="doi">10.1073/pnas.95.17.10038</ArticleId><ArticleId
+        IdType="pmc">PMC21457</ArticleId><ArticleId IdType="pubmed">9707596</ArticleId></ArticleIdList></Reference><Reference><Citation>Xie
+        T, Plagge A, Gavrilova O, Pack S, Jou W, Lai EW, et al. . 2006. The alternative
+        stimulatory G protein alpha-subunit XLalphas is a critical regulator of energy
+        and glucose metabolism and sympathetic nerve activity in adult mice. J Biol
+        Chem 281(28):18989&#x2013;18999, PMID: 16672216, 10.1074/jbc.M511752200.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1074/jbc.M511752200</ArticleId><ArticleId IdType="pmc">PMC1490322</ArticleId><ArticleId
+        IdType="pubmed">16672216</ArticleId></ArticleIdList></Reference><Reference><Citation>Tycko
+        B. 2010. Allele-specific DNA methylation: beyond imprinting. Hum Mol Genet
+        19(R2):R210&#x2013;R220, PMID: 20855472, 10.1093/hmg/ddq376.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1093/hmg/ddq376</ArticleId><ArticleId IdType="pmc">PMC2953749</ArticleId><ArticleId
+        IdType="pubmed">20855472</ArticleId></ArticleIdList></Reference><Reference><Citation>Desbuquois
+        B, Carr&#xe9; N, Burnol A-F. 2013. Regulation of insulin and type 1 insulin-like
+        growth factor signaling and action by the Grb10/14 and SH2B1/B2 adaptor proteins.
+        FEBS J 280(3):794&#x2013;816, PMID: 23190452, 10.1111/febs.12080.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1111/febs.12080</ArticleId><ArticleId IdType="pubmed">23190452</ArticleId></ArticleIdList></Reference><Reference><Citation>Plasschaert
+        RN, Bartolomei MS. 2015. Tissue-specific regulation and function of Grb10
+        during growth and neuronal commitment. Proc Natl Acad Sci USA 112(22):6841&#x2013;6847,
+        PMID: 25368187, 10.1073/pnas.1411254111.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1073/pnas.1411254111</ArticleId><ArticleId IdType="pmc">PMC4460511</ArticleId><ArticleId
+        IdType="pubmed">25368187</ArticleId></ArticleIdList></Reference><Reference><Citation>Luo
+        L, Jiang W, Liu H, Bu J, Tang P, Du C, et al. . 2018. De-silencing Grb10 contributes
+        to acute ER stress-induced steatosis in mouse liver. J Mol Endocrinol 60(4):285&#x2013;297,
+        PMID: 29555819, 10.1530/JME-18-0018.</Citation><ArticleIdList><ArticleId IdType="doi">10.1530/JME-18-0018</ArticleId><ArticleId
+        IdType="pubmed">29555819</ArticleId></ArticleIdList></Reference><Reference><Citation>Blagitko
+        N, Mergenthaler S, Schulz U, Wollmann HA, Craigen W, Eggermann T, et al. .
+        2000. Human GRB10 is imprinted and expressed from the paternal and maternal
+        allele in a highly tissue- and isoform-specific fashion. Hum Mol Genet 9(11):1587&#x2013;1595,
+        PMID: 10861285, 10.1093/hmg/9.11.1587.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1093/hmg/9.11.1587</ArticleId><ArticleId IdType="pubmed">10861285</ArticleId></ArticleIdList></Reference><Reference><Citation>Yamasaki-Ishizaki
+        Y, Kayashima T, Mapendano CK, Soejima H, Ohta T, Masuzaki H, et al. . 2007.
+        Role of DNA methylation and histone H3 lysine 27 methylation in tissue-specific
+        imprinting of mouse Grb10. Mol Cell Biol 27(2):732&#x2013;742, PMID: 17101788,
+        10.1128/MCB.01329-06.</Citation><ArticleIdList><ArticleId IdType="doi">10.1128/MCB.01329-06</ArticleId><ArticleId
+        IdType="pmc">PMC1800802</ArticleId><ArticleId IdType="pubmed">17101788</ArticleId></ArticleIdList></Reference><Reference><Citation>Bakulski
+        KM, Blostein F, London SJ. 2023. Linking prenatal environmental exposures
+        to lifetime health with epigenome-wide association studies: state-of-the-science
+        review and future recommendations. Environ Health Perspect 131(12):126001,
+        PMID: 38048101, 10.1289/EHP12956.</Citation><ArticleIdList><ArticleId IdType="doi">10.1289/EHP12956</ArticleId><ArticleId
+        IdType="pmc">PMC10695268</ArticleId><ArticleId IdType="pubmed">38048101</ArticleId></ArticleIdList></Reference><Reference><Citation>Doshi
+        T, D&#x2019;souza C, Vanage G. 2013. Aberrant DNA methylation at Igf2-H19
+        imprinting control region in spermatozoa upon neonatal exposure to bisphenol
+        A and its association with post implantation loss. Mol Biol Rep 40(8):4747&#x2013;4757,
+        PMID: 23653003, 10.1007/s11033-013-2571-x.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1007/s11033-013-2571-x</ArticleId><ArticleId IdType="pubmed">23653003</ArticleId></ArticleIdList></Reference><Reference><Citation>Kochmanski
+        JJ, Marchlewicz EH, Cavalcante RG, Perera BPU, Sartor MA, Dolinoy DC. 2018.
+        Longitudinal effects of developmental bisphenol A exposure on epigenome-wide
+        DNA hydroxymethylation at imprinted loci in mouse blood. Environ Health Perspect
+        126(7):077006, PMID: 30044229, 10.1289/EHP3441.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1289/EHP3441</ArticleId><ArticleId IdType="pmc">PMC6108846</ArticleId><ArticleId
+        IdType="pubmed">30044229</ArticleId></ArticleIdList></Reference><Reference><Citation>Schrott
+        R, Greeson KW, King D, Symosko Crow KM, Easley CA, Murphy SK. 2022. Cannabis
+        alters DNA methylation at maternally imprinted and autism candidate genes
+        in spermatogenic cells. Syst Biol Reprod Med 68(5&#x2013;6):357&#x2013;369,
+        PMID: 35687495, 10.1080/19396368.2022.2073292.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1080/19396368.2022.2073292</ArticleId><ArticleId IdType="pmc">PMC10032331</ArticleId><ArticleId
+        IdType="pubmed">35687495</ArticleId></ArticleIdList></Reference><Reference><Citation>Soubry
+        A, Hoyo C, Butt CM, Fieuws S, Price TM, Murphy SK, et al. . 2017. Human exposure
+        to flame-retardants is associated with aberrant DNA methylation at imprinted
+        genes in sperm. Environ Epigenet 3(1):dvx003, PMID: 29492305, 10.1093/eep/dvx003.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1093/eep/dvx003</ArticleId><ArticleId IdType="pmc">PMC5804543</ArticleId><ArticleId
+        IdType="pubmed">29492305</ArticleId></ArticleIdList></Reference><Reference><Citation>Bakulski
+        KM, Feinberg JI, Andrews SV, Yang J, Brown S, McKenney SL, et al. . 2016.
+        DNA methylation of cord blood cell types: applications for mixed cell birth
+        studies. Epigenetics 11(5):354&#x2013;362, PMID: 27019159, 10.1080/15592294.2016.1161875.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1080/15592294.2016.1161875</ArticleId><ArticleId IdType="pmc">PMC4889293</ArticleId><ArticleId
+        IdType="pubmed">27019159</ArticleId></ArticleIdList></Reference><Reference><Citation>Armand
+        EJ, Li J, Xie F, Luo C, Mukamel EA. 2021. Single-cell sequencing of brain
+        cell transcriptomes and epigenomes. Neuron 109(1):11&#x2013;26, PMID: 33412093,
+        10.1016/j.neuron.2020.12.010.</Citation><ArticleIdList><ArticleId IdType="doi">10.1016/j.neuron.2020.12.010</ArticleId><ArticleId
+        IdType="pmc">PMC7808568</ArticleId><ArticleId IdType="pubmed">33412093</ArticleId></ArticleIdList></Reference><Reference><Citation>Campbell
+        KA, Colacino JA, Park SK, Bakulski KM. 2020. Cell types in environmental epigenetic
+        studies: biological and epidemiological frameworks. Curr Environ Health Rep
+        7(3):185&#x2013;197, PMID: 32794033, 10.1007/s40572-020-00287-0.</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1007/s40572-020-00287-0</ArticleId><ArticleId IdType="pmc">PMC7493967</ArticleId><ArticleId
+        IdType="pubmed">32794033</ArticleId></ArticleIdList></Reference></ReferenceList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
         Status="MEDLINE" Owner="NLM"><PMID Version="1">10478855</PMID><DateCompleted><Year>1999</Year><Month>10</Month><Day>28</Day></DateCompleted><DateRevised><Year>2019</Year><Month>05</Month><Day>13</Day></DateRevised><Article
         PubModel="Print"><Journal><ISSN IssnType="Print">1096-6080</ISSN><JournalIssue
         CitedMedium="Print"><Volume>50</Volume><Issue>2</Issue><PubDate><Year>1999</Year><Month>Aug</Month></PubDate></JournalIssue><Title>Toxicological
@@ -7209,7 +7765,8 @@ interactions:
         MajorTopicYN="N">immunology</QualifierName><QualifierName UI="Q000473" MajorTopicYN="N">pathology</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>2000</Year><Month>11</Month><Day>25</Day><Hour>11</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2001</Year><Month>2</Month><Day>28</Day><Hour>10</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2000</Year><Month>11</Month><Day>25</Day><Hour>11</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2000</Year><Month>11</Month><Day>25</Day><Hour>11</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2001</Year><Month>11</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">11091278</ArticleId><ArticleId IdType="pmc">PMC1905771</ArticleId><ArticleId
         IdType="doi">10.1046/j.1365-2249.2000.01367.x</ArticleId><ArticleId IdType="pii">cei1367</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Gonzalez
         FJ, Peters JM, Cattley RC. Mechanism of action of the nongenotoxic peroxisome
@@ -7860,7 +8417,7 @@ interactions:
         PubStatus="entrez"><Year>1997</Year><Month>2</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">9146736</ArticleId><ArticleId IdType="doi">10.1016/s0278-6915(96)00064-6</ArticleId><ArticleId
         IdType="pii">S0278691596000646</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
-        Status="MEDLINE" Owner="NLM"><PMID Version="1">22588786</PMID><DateCompleted><Year>2013</Year><Month>07</Month><Day>08</Day></DateCompleted><DateRevised><Year>2022</Year><Month>03</Month><Day>21</Day></DateRevised><Article
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">22588786</PMID><DateCompleted><Year>2013</Year><Month>07</Month><Day>08</Day></DateCompleted><DateRevised><Year>2024</Year><Month>03</Month><Day>18</Day></DateRevised><Article
         PubModel="Print-Electronic"><Journal><ISSN IssnType="Electronic">1552-9924</ISSN><JournalIssue
         CitedMedium="Internet"><Volume>120</Volume><Issue>8</Issue><PubDate><Year>2012</Year><Month>Aug</Month></PubDate></JournalIssue><Title>Environmental
         health perspectives</Title><ISOAbbreviation>Environ Health Perspect</ISOAbbreviation></Journal><ArticleTitle>Effects
@@ -7911,8 +8468,8 @@ interactions:
         UI="D047492">Peroxisome Proliferator-Activated Receptors</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
         UI="D020033">Protein Isoforms</NameOfSubstance></Chemical><Chemical><RegistryNumber>C42K0PH13C</RegistryNumber><NameOfSubstance
         UI="D004051">Diethylhexyl Phthalate</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><CommentsCorrectionsList><CommentsCorrections
-        RefType="CommentIn"><RefSource>Environ Health Perspect. 2012 Aug;120(8):a320</RefSource><PMID
-        Version="1">22854284</PMID></CommentsCorrections></CommentsCorrectionsList><MeshHeadingList><MeshHeading><DescriptorName
+        RefType="CommentIn"><RefSource>Environ Health Perspect. 2012 Aug;120(8):a320.
+        doi: 10.1289/ehp.120-a320a</RefSource><PMID Version="1">22854284</PMID></CommentsCorrections></CommentsCorrectionsList><MeshHeadingList><MeshHeading><DescriptorName
         UI="D050156" MajorTopicYN="N">Adipogenesis</DescriptorName><QualifierName
         UI="Q000187" MajorTopicYN="Y">drug effects</QualifierName></MeshHeading><MeshHeading><DescriptorName
         UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
@@ -7937,7 +8494,8 @@ interactions:
         PubStatus="accepted"><Year>2012</Year><Month>5</Month><Day>15</Day></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>2012</Year><Month>5</Month><Day>17</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="pubmed"><Year>2012</Year><Month>5</Month><Day>17</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="medline"><Year>2013</Year><Month>7</Month><Day>9</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="medline"><Year>2013</Year><Month>7</Month><Day>9</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2012</Year><Month>8</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">22588786</ArticleId><ArticleId IdType="pmc">PMC3440070</ArticleId><ArticleId
         IdType="doi">10.1289/ehp.1104016</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Adibi
         JJ, Perera FP, Jedrychowski W, Camann DE, Barr D, Jacek R, et al. Prenatal
@@ -8093,8 +8651,9 @@ interactions:
         (World Health Organization) Part I: The problem of overweight and obesity.
         In: Obesity: Preventing and Managing the Global Epidemic. Technical Report
         Series 894. Geneva:WHO, 5&#x2013;37. 2000.  Available:  http://whqlibdoc.who.int/trs/WHO_TRS_894_(part1).pdf
-        [accessed 21 June 2012]</Citation></Reference><Reference><Citation>WHO (World
-        Health Organization) Chemical Fact Sheets: Di(2-ethylhexyl)phthalate. 2003.  Available:  http://www.who.int/water_sanitation_health/dwq/chemicals/di2ethylhexylphthalatesum.pdf
+        [accessed 21 June 2012]</Citation><ArticleIdList><ArticleId IdType="pubmed">11234459</ArticleId></ArticleIdList></Reference><Reference><Citation>WHO
+        (World Health Organization) Chemical Fact Sheets: Di(2-ethylhexyl)phthalate.
+        2003.  Available:  http://www.who.int/water_sanitation_health/dwq/chemicals/di2ethylhexylphthalatesum.pdf
         [accessed 24 June 2012]</Citation></Reference><Reference><Citation>WHO (World
         Health Organization) Obesity: Facts and Figures. 2012.  Available:  http://www.euro.who.int/en/what-we-do/health-topics/noncommunicable-diseases/obesity
         [accessed 1 May 2012]</Citation></Reference><Reference><Citation>Xu A, Wang
@@ -8664,7 +9223,7 @@ interactions:
         PubStatus="entrez"><Year>1989</Year><Month>11</Month><Day>3</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">2804110</ArticleId><ArticleId IdType="doi">10.1016/0005-2736(89)90414-8</ArticleId><ArticleId
         IdType="pii">0005-2736(89)90414-8</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
-        Status="MEDLINE" Owner="NLM"><PMID Version="1">25683344</PMID><DateCompleted><Year>2015</Year><Month>08</Month><Day>25</Day></DateCompleted><DateRevised><Year>2019</Year><Month>12</Month><Day>10</Day></DateRevised><Article
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">25683344</PMID><DateCompleted><Year>2015</Year><Month>08</Month><Day>25</Day></DateCompleted><DateRevised><Year>2024</Year><Month>05</Month><Day>15</Day></DateRevised><Article
         PubModel="Print-Electronic"><Journal><ISSN IssnType="Electronic">1349-7006</ISSN><JournalIssue
         CitedMedium="Internet"><Volume>106</Volume><Issue>5</Issue><PubDate><Year>2015</Year><Month>May</Month></PubDate></JournalIssue><Title>Cancer
         science</Title><ISOAbbreviation>Cancer Sci</ISOAbbreviation></Journal><ArticleTitle>Validation
@@ -8752,12 +9311,13 @@ interactions:
         PubStatus="accepted"><Year>2015</Year><Month>2</Month><Day>8</Day></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>2015</Year><Month>2</Month><Day>17</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="pubmed"><Year>2015</Year><Month>2</Month><Day>17</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="medline"><Year>2015</Year><Month>8</Month><Day>26</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="medline"><Year>2015</Year><Month>8</Month><Day>26</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2015</Year><Month>5</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">25683344</ArticleId><ArticleId IdType="pmc">PMC4452153</ArticleId><ArticleId
         IdType="doi">10.1111/cas.12634</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>OECD.
         OECD Guideline for Testing of Chemicals No. 488: Transgenic Rodent Somatic
         and Germ Cell Gene Mutation Assays. OECD: Paris; 2013.</Citation><ArticleIdList><ArticleId
-        IdType="pubmed">30057023</ArticleId></ArticleIdList></Reference><Reference><Citation>Hayashi
+        IdType="pubmed">0</ArticleId></ArticleIdList></Reference><Reference><Citation>Hayashi
         H, Kondo H, Masumura K, Shindo Y, Nohmi T. Novel transgenic rat for in&#xa0;vivo
         genotoxicity assays using 6-thioguanine and Spi&#x2212; selection. Environ
         Mol Mutagen. 2003;41:253&#x2013;9.</Citation><ArticleIdList><ArticleId IdType="pubmed">12717780</ArticleId></ArticleIdList></Reference><Reference><Citation>Nohmi
@@ -10283,8 +10843,9 @@ interactions:
         PubStatus="pubmed"><Year>1978</Year><Month>11</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>1978</Year><Month>11</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>1978</Year><Month>11</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
-        IdType="pubmed">734683</ArticleId><ArticleId IdType="doi">10.1016/s0300-483x(78)91639-6</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
-        Status="MEDLINE" Owner="NLM"><PMID Version="1">3594721</PMID><DateCompleted><Year>1987</Year><Month>08</Month><Day>05</Day></DateCompleted><DateRevised><Year>2019</Year><Month>05</Month><Day>10</Day></DateRevised><Article
+        IdType="pubmed">734683</ArticleId><ArticleId IdType="doi">10.1016/s0300-483x(78)91639-6</ArticleId></ArticleIdList></PubmedData></PubmedArticle>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">3594721</PMID><DateCompleted><Year>1987</Year><Month>08</Month><Day>05</Day></DateCompleted><DateRevised><Year>2019</Year><Month>05</Month><Day>10</Day></DateRevised><Article
         PubModel="Print"><Journal><ISSN IssnType="Print">0143-3334</ISSN><JournalIssue
         CitedMedium="Print"><Volume>8</Volume><Issue>7</Issue><PubDate><Year>1987</Year><Month>Jul</Month></PubDate></JournalIssue><Title>Carcinogenesis</Title><ISOAbbreviation>Carcinogenesis</ISOAbbreviation></Journal><ArticleTitle>Lack
         of rapid initiating, promoting or sequential syncarcinogenic effects of di(2-ethylhexyl)phthalate
@@ -10346,9 +10907,8 @@ interactions:
         PubStatus="pubmed"><Year>1987</Year><Month>7</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>1987</Year><Month>7</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>1987</Year><Month>7</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
-        IdType="pubmed">3594721</ArticleId><ArticleId IdType="doi">10.1093/carcin/8.7.875</ArticleId></ArticleIdList></PubmedData></PubmedArticle>
-
-        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">8838637</PMID><DateCompleted><Year>1996</Year><Month>12</Month><Day>11</Day></DateCompleted><DateRevised><Year>2019</Year><Month>09</Month><Day>09</Day></DateRevised><Article
+        IdType="pubmed">3594721</ArticleId><ArticleId IdType="doi">10.1093/carcin/8.7.875</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">8838637</PMID><DateCompleted><Year>1996</Year><Month>12</Month><Day>11</Day></DateCompleted><DateRevised><Year>2019</Year><Month>09</Month><Day>09</Day></DateRevised><Article
         PubModel="Print"><Journal><ISSN IssnType="Print">0272-0590</ISSN><JournalIssue
         CitedMedium="Print"><Volume>29</Volume><Issue>1</Issue><PubDate><Year>1996</Year><Month>Jan</Month></PubDate></JournalIssue><Title>Fundamental
         and applied toxicology : official journal of the Society of Toxicology</Title><ISOAbbreviation>Fundam
@@ -11256,7 +11816,8 @@ interactions:
         UI="D051381" MajorTopicYN="N">Rats</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>1986</Year><Month>3</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>1986</Year><Month>3</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>1986</Year><Month>3</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>1986</Year><Month>3</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>1986</Year><Month>3</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">3709451</ArticleId><ArticleId IdType="pmc">PMC1474679</ArticleId><ArticleId
         IdType="doi">10.1289/ehp.8665263</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Nature.
         1965 Sep 11;207(5002):1170-3</Citation><ArticleIdList><ArticleId IdType="pubmed">5882717</ArticleId></ArticleIdList></Reference><Reference><Citation>Nature.
@@ -11451,7 +12012,8 @@ interactions:
         UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>1986</Year><Month>3</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>1986</Year><Month>3</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>1986</Year><Month>3</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>1986</Year><Month>3</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>1986</Year><Month>3</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">3709458</ArticleId><ArticleId IdType="pmc">PMC1474691</ArticleId><ArticleId
         IdType="doi">10.1289/ehp.8665329</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>J
         Chromatogr. 1973 Feb 28;76(2):321-30</Citation><ArticleIdList><ArticleId IdType="pubmed">4689606</ArticleId></ArticleIdList></Reference><Reference><Citation>Proc
@@ -11529,7 +12091,8 @@ interactions:
         MajorTopicYN="Y">drug effects</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>1986</Year><Month>3</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2001</Year><Month>3</Month><Day>28</Day><Hour>10</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>1986</Year><Month>3</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>1986</Year><Month>3</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>1986</Year><Month>3</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">3709461</ArticleId><ArticleId IdType="pmc">PMC1474682</ArticleId><ArticleId
         IdType="doi">10.1289/ehp.8665343</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Clin
         Chem. 1974 Apr;20(4):470-5</Citation><ArticleIdList><ArticleId IdType="pubmed">4818200</ArticleId></ArticleIdList></Reference><Reference><Citation>Can
@@ -11783,8 +12346,8 @@ interactions:
         UI="D018160">Receptors, Cytoplasmic and Nuclear</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
         UI="D014157">Transcription Factors</NameOfSubstance></Chemical><Chemical><RegistryNumber>C42K0PH13C</RegistryNumber><NameOfSubstance
         UI="D004051">Diethylhexyl Phthalate</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><CommentsCorrectionsList><CommentsCorrections
-        RefType="CommentIn"><RefSource>Environ Health Perspect. 2001 Oct;109(10):A462-4</RefSource><PMID
-        Version="1">11675276</PMID></CommentsCorrections></CommentsCorrectionsList><MeshHeadingList><MeshHeading><DescriptorName
+        RefType="CommentIn"><RefSource>Environ Health Perspect. 2001 Oct;109(10):A462-4.
+        doi: 10.1289/ehp.109-a462</RefSource><PMID Version="1">11675276</PMID></CommentsCorrections></CommentsCorrectionsList><MeshHeadingList><MeshHeading><DescriptorName
         UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
         UI="D017209" MajorTopicYN="N">Apoptosis</DescriptorName></MeshHeading><MeshHeading><DescriptorName
         UI="D015197" MajorTopicYN="N">Carcinogenicity Tests</DescriptorName></MeshHeading><MeshHeading><DescriptorName
@@ -11814,7 +12377,8 @@ interactions:
         UI="Q000378" MajorTopicYN="N">metabolism</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>2001</Year><Month>6</Month><Day>13</Day><Hour>10</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2001</Year><Month>8</Month><Day>24</Day><Hour>10</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2001</Year><Month>6</Month><Day>13</Day><Hour>10</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2001</Year><Month>6</Month><Day>13</Day><Hour>10</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2001</Year><Month>5</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">11401753</ArticleId><ArticleId IdType="pmc">PMC1240301</ArticleId><ArticleId
         IdType="doi">10.1289/ehp.01109437</ArticleId><ArticleId IdType="pii">sc271_5_1835</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Carcinogenesis.
         1997 Aug;18(8):1453-6</Citation><ArticleIdList><ArticleId IdType="pubmed">9276615</ArticleId></ArticleIdList></Reference><Reference><Citation>Biochimie.
@@ -11979,7 +12543,8 @@ interactions:
         MajorTopicYN="N">genetics</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>2008</Year><Month>4</Month><Day>12</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2008</Year><Month>6</Month><Day>6</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2008</Year><Month>4</Month><Day>12</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2008</Year><Month>4</Month><Day>12</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2020</Year><Month>5</Month><Day>12</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">18403868</ArticleId><ArticleId IdType="mid">NIHMS1584371</ArticleId><ArticleId
         IdType="pmc">PMC7217336</ArticleId><ArticleId IdType="doi">10.1539/joh.l7105</ArticleId><ArticleId
         IdType="pii">JST.JSTAGE/joh/L7105</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Huber
@@ -13216,7 +13781,7 @@ interactions:
         PubStatus="entrez"><Year>1987</Year><Month>5</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">3574334</ArticleId><ArticleId IdType="doi">10.1016/0165-1218(87)90110-8</ArticleId><ArticleId
         IdType="pii">0165-1218(87)90110-8</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
-        Status="MEDLINE" Owner="NLM"><PMID Version="1">24769090</PMID><DateCompleted><Year>2014</Year><Month>07</Month><Day>18</Day></DateCompleted><DateRevised><Year>2021</Year><Month>10</Month><Day>21</Day></DateRevised><Article
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">24769090</PMID><DateCompleted><Year>2014</Year><Month>07</Month><Day>18</Day></DateCompleted><DateRevised><Year>2024</Year><Month>06</Month><Day>10</Day></DateRevised><Article
         PubModel="Print-Electronic"><Journal><ISSN IssnType="Electronic">1096-0333</ISSN><JournalIssue
         CitedMedium="Internet"><Volume>278</Volume><Issue>1</Issue><PubDate><Year>2014</Year><Month>Jul</Month><Day>01</Day></PubDate></JournalIssue><Title>Toxicology
         and applied pharmacology</Title><ISOAbbreviation>Toxicol Appl Pharmacol</ISOAbbreviation></Journal><ArticleTitle>Fibroblast
@@ -13325,7 +13890,8 @@ interactions:
         PubStatus="accepted"><Year>2014</Year><Month>4</Month><Day>14</Day></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>2014</Year><Month>4</Month><Day>29</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="pubmed"><Year>2014</Year><Month>4</Month><Day>29</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="medline"><Year>2014</Year><Month>7</Month><Day>19</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="medline"><Year>2014</Year><Month>7</Month><Day>19</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2015</Year><Month>7</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">24769090</ArticleId><ArticleId IdType="mid">NIHMS594981</ArticleId><ArticleId
         IdType="pmc">PMC4090247</ArticleId><ArticleId IdType="doi">10.1016/j.taap.2014.04.013</ArticleId><ArticleId
         IdType="pii">S0041-008X(14)00153-7</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Adams
@@ -13383,7 +13949,8 @@ interactions:
         2008;8:169&#x2013;174.</Citation><ArticleIdList><ArticleId IdType="pubmed">18680716</ArticleId></ArticleIdList></Reference><Reference><Citation>IARC.
         Polychlorinated Dibenzo-para-dioxins and Polychlorinated Dibenzofurans. Vol.
         69. International Agency for Research on Cancer; 1997. IARC Monographs on
-        the Evaluation of Carcinogenic Risks to Humans.</Citation></Reference><Reference><Citation>Inagaki
+        the Evaluation of Carcinogenic Risks to Humans.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC5366851</ArticleId><ArticleId IdType="pubmed">9379504</ArticleId></ArticleIdList></Reference><Reference><Citation>Inagaki
         T, Dutchak P, Zhao G, Ding X, Gautron L, Parameswara V, Li Y, Goetz R, Mohammadi
         M, Esser V, Elmquist JK, Gerard RD, Burgess SC, Hammer RE, Mangelsdorf DJ,
         Kliewer SA. Endocrine regulation of the fasting response by PPARalpha-mediated
@@ -13707,7 +14274,7 @@ interactions:
         PubStatus="entrez"><Year>2005</Year><Month>5</Month><Day>26</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">15914576</ArticleId><ArticleId IdType="doi">10.1152/physiolgenomics.00260.2004</ArticleId><ArticleId
         IdType="pii">00260.2004</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
-        Status="MEDLINE" Owner="NLM"><PMID Version="1">26188368</PMID><DateCompleted><Year>2017</Year><Month>09</Month><Day>25</Day></DateCompleted><DateRevised><Year>2018</Year><Month>11</Month><Day>13</Day></DateRevised><Article
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">26188368</PMID><DateCompleted><Year>2017</Year><Month>09</Month><Day>25</Day></DateCompleted><DateRevised><Year>2024</Year><Month>06</Month><Day>10</Day></DateRevised><Article
         PubModel="Print-Electronic"><Journal><ISSN IssnType="Electronic">1873-4847</ISSN><JournalIssue
         CitedMedium="Internet"><Volume>26</Volume><Issue>11</Issue><PubDate><Year>2015</Year><Month>Nov</Month></PubDate></JournalIssue><Title>The
         Journal of nutritional biochemistry</Title><ISOAbbreviation>J Nutr Biochem</ISOAbbreviation></Journal><ArticleTitle>In
@@ -13811,7 +14378,8 @@ interactions:
         PubStatus="accepted"><Year>2015</Year><Month>5</Month><Day>26</Day></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>2015</Year><Month>7</Month><Day>20</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="pubmed"><Year>2015</Year><Month>7</Month><Day>21</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="medline"><Year>2017</Year><Month>9</Month><Day>26</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="medline"><Year>2017</Year><Month>9</Month><Day>26</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2016</Year><Month>11</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">26188368</ArticleId><ArticleId IdType="mid">NIHMS705112</ArticleId><ArticleId
         IdType="pmc">PMC4631689</ArticleId><ArticleId IdType="doi">10.1016/j.jnutbio.2015.05.012</ArticleId><ArticleId
         IdType="pii">S0955-2863(15)00145-X</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Lind
@@ -13857,8 +14425,8 @@ interactions:
         P, Sathish S, Srinivasan C, Selvaraj J, Balasubramanian K. Exposure to diethyl
         hexyl phthalate (DEHP) to adult male rat is associated with insulin resistance
         in adipose tisssue: Protective role of antioxidant vitamins (C &amp; E) J
-        Cell Biochem. 2012</Citation></Reference><Reference><Citation>Schmidt JS,
-        Schaedlich K, Fiandanese N, Pocar P, Fischer B. Effects of Di(2-ethylhexyl)
+        Cell Biochem. 2012</Citation><ArticleIdList><ArticleId IdType="pubmed">22991202</ArticleId></ArticleIdList></Reference><Reference><Citation>Schmidt
+        JS, Schaedlich K, Fiandanese N, Pocar P, Fischer B. Effects of Di(2-ethylhexyl)
         Phthalate (DEHP) on Female Fertility and Adipogenesis in C3H/N Mice. Environ
         Health Perspect. 2012;120:1123&#x2013;1129.</Citation><ArticleIdList><ArticleId
         IdType="pmc">PMC3440070</ArticleId><ArticleId IdType="pubmed">22588786</ArticleId></ArticleIdList></Reference><Reference><Citation>Unuvar
@@ -14480,7 +15048,8 @@ interactions:
         MajorTopicYN="N">pathology</QualifierName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>2002</Year><Month>4</Month><Day>10</Day><Hour>10</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2002</Year><Month>5</Month><Day>15</Day><Hour>10</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2002</Year><Month>4</Month><Day>10</Day><Hour>10</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2002</Year><Month>4</Month><Day>10</Day><Hour>10</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2002</Year><Month>4</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">11940454</ArticleId><ArticleId IdType="pmc">PMC1240799</ArticleId><ArticleId
         IdType="doi">10.1289/ehp.02110363</ArticleId><ArticleId IdType="pii">sc271_5_1835</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>J
         Biol Chem. 1951 Nov;193(1):265-75</Citation><ArticleIdList><ArticleId IdType="pubmed">14907713</ArticleId></ArticleIdList></Reference><Reference><Citation>J
@@ -14715,7 +15284,8 @@ interactions:
         PubStatus="accepted"><Year>2017</Year><Month>10</Month><Day>12</Day></PubMedPubDate><PubMedPubDate
         PubStatus="pubmed"><Year>2017</Year><Month>12</Month><Day>5</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2019</Year><Month>5</Month><Day>28</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2017</Year><Month>12</Month><Day>4</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2017</Year><Month>12</Month><Day>4</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2019</Year><Month>1</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">29197930</ArticleId><ArticleId IdType="mid">NIHMS936806</ArticleId><ArticleId
         IdType="pmc">PMC6092738</ArticleId><ArticleId IdType="doi">10.1007/s00204-017-2094-7</ArticleId><ArticleId
         IdType="pii">10.1007/s00204-017-2094-7</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Abdellatif
@@ -16333,7 +16903,8 @@ interactions:
         PubStatus="accepted"><Year>2006</Year><Month>10</Month><Day>16</Day></PubMedPubDate><PubMedPubDate
         PubStatus="pubmed"><Year>2007</Year><Month>3</Month><Day>1</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2007</Year><Month>4</Month><Day>17</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2007</Year><Month>3</Month><Day>1</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2007</Year><Month>3</Month><Day>1</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2006</Year><Month>12</Month><Day>12</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">17326724</ArticleId><ArticleId IdType="pmc">PMC1698505</ArticleId><ArticleId
         IdType="doi">10.1371/journal.pbio.0050002</ArticleId><ArticleId IdType="pii">06-PLBI-RA-0854R3</ArticleId><ArticleId
         IdType="sici">plbi-05-01-01</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Harman
@@ -16642,7 +17213,8 @@ interactions:
         UI="D013552" MajorTopicYN="N">Swine</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>2001</Year><Month>7</Month><Day>14</Day><Hour>10</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2001</Year><Month>9</Month><Day>8</Day><Hour>10</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2001</Year><Month>7</Month><Day>14</Day><Hour>10</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2001</Year><Month>7</Month><Day>14</Day><Hour>10</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2001</Year><Month>7</Month><Day>15</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">11452036</ArticleId><ArticleId IdType="pmc">PMC55807</ArticleId><ArticleId
         IdType="doi">10.1093/nar/29.14.3108</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Bonen
         L. (1993) Trans-splicing of pre-mRNA in plants, animals, and protists. FASEB
@@ -17072,7 +17644,8 @@ interactions:
         PubStatus="accepted"><Year>2013</Year><Month>9</Month><Day>7</Day></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>2013</Year><Month>11</Month><Day>5</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="pubmed"><Year>2013</Year><Month>11</Month><Day>5</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="medline"><Year>2014</Year><Month>3</Month><Day>19</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="medline"><Year>2014</Year><Month>3</Month><Day>19</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2015</Year><Month>2</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">24180374</ArticleId><ArticleId IdType="pmc">PMC3919650</ArticleId><ArticleId
         IdType="doi">10.1111/iep.12059</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Aebi
         H. Catalase. In: Bergmeyer HU, editor. Methods of Enzymatic Analysis. New
@@ -17777,7 +18350,8 @@ interactions:
         MajorTopicYN="N">zinc deficiency</Keyword></KeywordList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>2017</Year><Month>1</Month><Day>25</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2018</Year><Month>1</Month><Day>18</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2017</Year><Month>1</Month><Day>25</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2017</Year><Month>1</Month><Day>25</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2018</Year><Month>4</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">28115639</ArticleId><ArticleId IdType="pmc">PMC5837672</ArticleId><ArticleId
         IdType="doi">10.1093/toxsci/kfx008</ArticleId><ArticleId IdType="pii">kfx008</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Aimo
         L., Mackenzie G. G., Keenan A. H., Oteiza P. I. (2010). Gestational zinc deficiency
@@ -18069,8 +18643,9 @@ interactions:
         PubStatus="pubmed"><Year>1999</Year><Month>9</Month><Day>28</Day></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>1999</Year><Month>9</Month><Day>28</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>1999</Year><Month>9</Month><Day>28</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
-        IdType="pubmed">10499774</ArticleId><ArticleId IdType="doi">10.1080/10715769900300731</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
-        Status="MEDLINE" Owner="NLM"><PMID Version="1">8914623</PMID><DateCompleted><Year>1996</Year><Month>12</Month><Day>12</Day></DateCompleted><DateRevised><Year>2019</Year><Month>08</Month><Day>19</Day></DateRevised><Article
+        IdType="pubmed">10499774</ArticleId><ArticleId IdType="doi">10.1080/10715769900300731</ArticleId></ArticleIdList></PubmedData></PubmedArticle>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">8914623</PMID><DateCompleted><Year>1996</Year><Month>12</Month><Day>12</Day></DateCompleted><DateRevised><Year>2019</Year><Month>08</Month><Day>19</Day></DateRevised><Article
         PubModel="Print"><Journal><ISSN IssnType="Print">0378-4274</ISSN><JournalIssue
         CitedMedium="Print"><Volume>87</Volume><Issue>2-3</Issue><PubDate><Year>1996</Year><Month>Oct</Month></PubDate></JournalIssue><Title>Toxicology
         letters</Title><ISOAbbreviation>Toxicol Lett</ISOAbbreviation></Journal><ArticleTitle>Differential
@@ -18133,9 +18708,8 @@ interactions:
         PubStatus="medline"><Year>1996</Year><Month>10</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>1996</Year><Month>10</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">8914623</ArticleId><ArticleId IdType="doi">10.1016/0378-4274(96)03371-1</ArticleId><ArticleId
-        IdType="pii">0378-4274(96)03371-1</ArticleId></ArticleIdList></PubmedData></PubmedArticle>
-
-        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">20307648</PMID><DateCompleted><Year>2010</Year><Month>09</Month><Day>21</Day></DateCompleted><DateRevised><Year>2016</Year><Month>11</Month><Day>25</Day></DateRevised><Article
+        IdType="pii">0378-4274(96)03371-1</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">20307648</PMID><DateCompleted><Year>2010</Year><Month>09</Month><Day>21</Day></DateCompleted><DateRevised><Year>2016</Year><Month>11</Month><Day>25</Day></DateRevised><Article
         PubModel="Print-Electronic"><Journal><ISSN IssnType="Electronic">1873-1708</ISSN><JournalIssue
         CitedMedium="Internet"><Volume>29</Volume><Issue>4</Issue><PubDate><Year>2010</Year><Month>Jul</Month></PubDate></JournalIssue><Title>Reproductive
         toxicology (Elmsford, N.Y.)</Title><ISOAbbreviation>Reprod Toxicol</ISOAbbreviation></Journal><ArticleTitle>In
@@ -18335,7 +18909,8 @@ interactions:
         PubStatus="accepted"><Year>2008</Year><Month>6</Month><Day>19</Day></PubMedPubDate><PubMedPubDate
         PubStatus="pubmed"><Year>2008</Year><Month>7</Month><Day>22</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2008</Year><Month>11</Month><Day>13</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2008</Year><Month>7</Month><Day>22</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2008</Year><Month>7</Month><Day>22</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2009</Year><Month>9</Month><Day>26</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">18639561</ArticleId><ArticleId IdType="mid">NIHMS73641</ArticleId><ArticleId
         IdType="pmc">PMC2571982</ArticleId><ArticleId IdType="doi">10.1016/j.mrfmmm.2008.06.009</ArticleId><ArticleId
         IdType="pii">S0027-5107(08)00127-9</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Hanahan
@@ -18984,7 +19559,8 @@ interactions:
         UI="D013045" MajorTopicYN="N">Species Specificity</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>2006</Year><Month>9</Month><Day>7</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2006</Year><Month>9</Month><Day>27</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2006</Year><Month>9</Month><Day>7</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2006</Year><Month>9</Month><Day>7</Day><Hour>9</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2009</Year><Month>1</Month><Day>6</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">16954067</ArticleId><ArticleId IdType="mid">NIHMS11721</ArticleId><ArticleId
         IdType="pmc">PMC2614359</ArticleId><ArticleId IdType="doi">10.1080/10408440600779065</ArticleId><ArticleId
         IdType="pii">R537016P12400766</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Fay
@@ -19960,7 +20536,8 @@ interactions:
         MajorTopicYN="N">Volatile organic compound (VOC)</Keyword></KeywordList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>2021</Year><Month>10</Month><Day>1</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2021</Year><Month>12</Month><Day>1</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2021</Year><Month>9</Month><Day>30</Day><Hour>6</Hour><Minute>3</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2021</Year><Month>9</Month><Day>30</Day><Hour>6</Hour><Minute>3</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2021</Year><Month>11</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">34588381</ArticleId><ArticleId IdType="pmc">PMC8655744</ArticleId><ArticleId
         IdType="doi">10.2486/indhealth.2020-0252</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Kamijima
         M, Sakai K, Shibata E, Yamada T, Itohara S, Ohno H, Hayakawa R, Sugiura M,
@@ -24597,7 +25174,8 @@ interactions:
         Genomics</MedlineTA><NlmUniqueID>100965258</NlmUniqueID><ISSNLinking>1471-2164</ISSNLinking></MedlineJournalInfo><CitationSubset>IM</CitationSubset></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="entrez"><Year>2016</Year><Month>7</Month><Day>26</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="pubmed"><Year>2016</Year><Month>7</Month><Day>28</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="medline"><Year>2016</Year><Month>7</Month><Day>28</Day><Hour>6</Hour><Minute>1</Minute></PubMedPubDate></History><PublicationStatus>epublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="medline"><Year>2016</Year><Month>7</Month><Day>28</Day><Hour>6</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2016</Year><Month>7</Month><Day>20</Day></PubMedPubDate></History><PublicationStatus>epublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">27454254</ArticleId><ArticleId IdType="pmc">PMC4959372</ArticleId><ArticleId
         IdType="doi">10.1186/s12864-016-2858-0</ArticleId><ArticleId IdType="pii">10.1186/s12864-016-2858-0</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
         Status="MEDLINE" Owner="NLM"><PMID Version="1">12498735</PMID><DateCompleted><Year>2003</Year><Month>01</Month><Day>14</Day></DateCompleted><DateRevised><Year>2019</Year><Month>07</Month><Day>27</Day></DateRevised><Article
@@ -25138,7 +25716,8 @@ interactions:
         PubStatus="accepted"><Year>2020</Year><Month>6</Month><Day>3</Day></PubMedPubDate><PubMedPubDate
         PubStatus="pubmed"><Year>2020</Year><Month>6</Month><Day>17</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>2021</Year><Month>5</Month><Day>22</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>2020</Year><Month>6</Month><Day>17</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>2020</Year><Month>6</Month><Day>17</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2021</Year><Month>10</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">32540476</ArticleId><ArticleId IdType="mid">NIHMS1603802</ArticleId><ArticleId
         IdType="pmc">PMC7487059</ArticleId><ArticleId IdType="doi">10.1016/j.fct.2020.111497</ArticleId><ArticleId
         IdType="pii">S0278-6915(20)30387-2</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Bancalari
@@ -25831,6 +26410,232 @@ interactions:
         Cell Biol. 2000 Dec;114(6):433-46</Citation><ArticleIdList><ArticleId IdType="pubmed">11201604</ArticleId></ArticleIdList></Reference><Reference><Citation>J
         Biol Chem. 2007 Aug 10;282(32):23055-69</Citation><ArticleIdList><ArticleId
         IdType="pubmed">17522052</ArticleId></ArticleIdList></Reference></ReferenceList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="PubMed-not-MEDLINE" Owner="NLM"><PMID Version="1">39180124</PMID><DateRevised><Year>2024</Year><Month>08</Month><Day>26</Day></DateRevised><Article
+        PubModel="Electronic"><Journal><ISSN IssnType="Print">1880-7046</ISSN><JournalIssue
+        CitedMedium="Print"><Volume>46</Volume><Issue>1</Issue><PubDate><Year>2024</Year><Month>Aug</Month><Day>23</Day></PubDate></JournalIssue><Title>Genes
+        and environment : the official journal of the Japanese Environmental Mutagen
+        Society</Title><ISOAbbreviation>Genes Environ</ISOAbbreviation></Journal><ArticleTitle>Confirmation
+        of Di(2-ethylhexyl) phthalate-induced micronuclei by repeated dose liver micronucleus
+        assay: focus on evaluation of liver micronucleus assay in young rats.</ArticleTitle><Pagination><StartPage>17</StartPage><MedlinePgn>17</MedlinePgn></Pagination><ELocationID
+        EIdType="pii" ValidYN="Y">17</ELocationID><ELocationID EIdType="doi" ValidYN="Y">10.1186/s41021-024-00311-x</ELocationID><Abstract><AbstractText
+        Label="BACKGROUND" NlmCategory="BACKGROUND">Di(2-ethylhexyl) phthalate (DEHP)
+        is a plasticizer commonly used in a wide variety of products, including medical
+        devices. It is rapidly metabolized in the liver into various metabolites upon
+        absorption through oral ingestion, dermal absorption, and inhalation. DEHP
+        is classified as a non-genotoxic hepatocarcinogen in rodents, as its chronic
+        exposure has been associated with the development of liver cancer in these
+        animals, but most genotoxicity studies have been negative. Epidemiologic studies
+        in humans suggest that long-term high intakes of DEHP may be a risk factor
+        for liver dysfunction. The repeated-dose liver micronucleus (RDLMN) assay
+        is a well-established method for assessing chromosomal changes caused by hepatic
+        genotoxins and/or carcinogens. It is particularly valuable for detecting substances
+        that undergo metabolic activation, especially when the metabolite has a short
+        half-life or does not reach the bone marrow effectively. Therefore, we investigated
+        whether the RDLMN assay could detect DEHP-induced micronucleus formation in
+        the liver following a 14 or 28-day treatment.</AbstractText><AbstractText
+        Label="RESULTS" NlmCategory="RESULTS">We report that the RDLMN assay demonstrated
+        an increased frequency of hepatic micronuclei in rats exposed to DEHP for
+        14 or 28&#xa0;days. The increases in micronuclei correlated with hepatomegaly,
+        an established response to phthalates in the liver. Conversely, no such increases
+        were observed in the micronucleus assay using bone marrow from these rats.</AbstractText><AbstractText
+        Label="CONCLUSION" NlmCategory="CONCLUSIONS">The detection of DEHP-induced
+        micronuclei by the RDLMN assay suggests that this assay could detect the potential
+        genotoxicity and hepatocarcinogenicity of DEHP. It also demonstrated the utility
+        of the RDLMN assay in identifying metabolically activated hepatic carcinogens.</AbstractText><CopyrightInformation>&#xa9;
+        2024. The Author(s).</CopyrightInformation></Abstract><AuthorList CompleteYN="Y"><Author
+        ValidYN="Y"><LastName>Shigano</LastName><ForeName>Miyuki</ForeName><Initials>M</Initials><Identifier
+        Source="ORCID">0000-0002-8191-8934</Identifier><AffiliationInfo><Affiliation>Safety
+        Assessment Department, Kashima Laboratories, Mediford Corporation, 14-1 Sunayama,
+        Kamisu-shi, Ibaraki, 314-0255, Japan. miyuki.shigano@mediford.com.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Takashima</LastName><ForeName>Rie</ForeName><Initials>R</Initials><AffiliationInfo><Affiliation>Nippon
+        Kayaku Co., Ltd., 2-1-1 Marunouchi, Chiyoda-Ku, Tokyo, 100-0005, Japan.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Satomoto</LastName><ForeName>Kensuke</ForeName><Initials>K</Initials><AffiliationInfo><Affiliation>Ishihara
+        Sangyo Kaisha Ltd., 2-3-1 Nishi-Shibukawa Kusatsu-Shi, Shiga, 525-0025, Japan.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Sales</LastName><ForeName>Henri</ForeName><Initials>H</Initials><AffiliationInfo><Affiliation>ITR
+        Laboratories Canada Inc., 19601 Clark Graham Ave, Baie-D''Urf&#xe9;, Quebec,
+        H9X 3T1, Canada.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Harada</LastName><ForeName>Ryoko</ForeName><Initials>R</Initials><AffiliationInfo><Affiliation>ITR
+        Laboratories Canada Inc., 19601 Clark Graham Ave, Baie-D''Urf&#xe9;, Quebec,
+        H9X 3T1, Canada.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Hamada</LastName><ForeName>Shuichi</ForeName><Initials>S</Initials><AffiliationInfo><Affiliation>BoZo
+        Research Center Inc., 1-3-11 Hanegi, Setagaya-ku, Tokyo, 156-0042, Japan.</Affiliation></AffiliationInfo></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType></PublicationTypeList><ArticleDate
+        DateType="Electronic"><Year>2024</Year><Month>08</Month><Day>23</Day></ArticleDate></Article><MedlineJournalInfo><Country>England</Country><MedlineTA>Genes
+        Environ</MedlineTA><NlmUniqueID>101285347</NlmUniqueID><ISSNLinking>1880-7046</ISSNLinking></MedlineJournalInfo><KeywordList
+        Owner="NOTNLM"><Keyword MajorTopicYN="N">Carcinogen</Keyword><Keyword MajorTopicYN="N">In
+        vivo</Keyword><Keyword MajorTopicYN="N">Liver</Keyword><Keyword MajorTopicYN="N">Micronucleus</Keyword><Keyword
+        MajorTopicYN="N">Phthalate</Keyword><Keyword MajorTopicYN="N">Rats</Keyword></KeywordList><CoiStatement>The
+        authors declare that they have no competing interests.</CoiStatement></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="received"><Year>2024</Year><Month>3</Month><Day>16</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="accepted"><Year>2024</Year><Month>8</Month><Day>12</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2024</Year><Month>8</Month><Day>24</Day><Hour>16</Hour><Minute>44</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2024</Year><Month>8</Month><Day>24</Day><Hour>16</Hour><Minute>43</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2024</Year><Month>8</Month><Day>23</Day><Hour>23</Hour><Minute>45</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2024</Year><Month>8</Month><Day>23</Day></PubMedPubDate></History><PublicationStatus>epublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">39180124</ArticleId><ArticleId IdType="pmc">PMC11344444</ArticleId><ArticleId
+        IdType="doi">10.1186/s41021-024-00311-x</ArticleId><ArticleId IdType="pii">10.1186/s41021-024-00311-x</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>National
+        Toxicology Program. Report on Carcinogens, Fifteenth Edition Di(2-ethylhexyl)
+        Phthalate. U.S. Department of Health and Human Services. Available from: https://ntp.niehs.nih.gov/sites/default/files/ntp/roc/content/profiles/diethylhexylphthalate.pdf;
+        [cited 2024 Jan 22].
+
+        </Citation></Reference><Reference><Citation>Maloney EK, Waxman DJ. trans-Activation
+        of PPARalpha and PPARgamma by structurally diverse environmental chemicals.
+        Toxicol Appl Pharmacol. 1999;161:209&#x2013;18. 10.1006/taap.1999.8809</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1006/taap.1999.8809</ArticleId><ArticleId IdType="pubmed">10581215</ArticleId></ArticleIdList></Reference><Reference><Citation>Li
+        A, Kang L, Li R, Wu S, Liu K, Wang X. Modeling di (2-ethylhexyl) Phthalate
+        (DEHP) and its metabolism in a body&#x2019;s organs and tissues through different
+        intake pathways into human body. Int J Environ Res Public Health. 2022;19:5742.
+        10.3390/ijerph19095742</Citation><ArticleIdList><ArticleId IdType="doi">10.3390/ijerph19095742</ArticleId><ArticleId
+        IdType="pmc">PMC9101911</ArticleId><ArticleId IdType="pubmed">35565138</ArticleId></ArticleIdList></Reference><Reference><Citation>Martinez-Arguelles
+        DB, Culty M, Zirkin BR, Papadopoulos V. In utero exposure to di-(2-ethylhexyl)
+        phthalate decreases mineralocorticoid receptor expression in the adult testis.
+        Endocrinology. 2009;150:5575&#x2013;85. 10.1210/en.2009-0847</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1210/en.2009-0847</ArticleId><ArticleId IdType="pmc">PMC2795714</ArticleId><ArticleId
+        IdType="pubmed">19819939</ArticleId></ArticleIdList></Reference><Reference><Citation>Chen
+        X, Xu S, Tan T, Lee ST, Cheng SH, Lee FWF, et al. Toxicity and estrogenic
+        endocrine disrupting activity of phthalates and their mixtures. Int J Environ
+        Res Public Health. 2014;11:3156&#x2013;68. 10.3390/ijerph110303156</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.3390/ijerph110303156</ArticleId><ArticleId IdType="pmc">PMC3987027</ArticleId><ArticleId
+        IdType="pubmed">24637910</ArticleId></ArticleIdList></Reference><Reference><Citation>Rowdhwal
+        SSS, Chen J. Toxic Effects of Di-2-ethylhexyl Phthalate: An Overview. BioMed
+        Res Int. 2018;2018:1750368. 10.1155/2018/1750368</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1155/2018/1750368</ArticleId><ArticleId IdType="pmc">PMC5842715</ArticleId><ArticleId
+        IdType="pubmed">29682520</ArticleId></ArticleIdList></Reference><Reference><Citation>Erythropel
+        HC, Maric M, Nicell JA, Leask RL, Yargeau V. Leaching of the plasticizer di(2-ethylhexyl)phthalate
+        (DEHP) from plastic containers and the question of human exposure. Appl Microbiol
+        Biotechnol. 2014;98:9967&#x2013;81. 10.1007/s00253-014-6183-8</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1007/s00253-014-6183-8</ArticleId><ArticleId IdType="pubmed">25376446</ArticleId></ArticleIdList></Reference><Reference><Citation>Wang
+        Y, Zhu H, Kannan K. A review of biomonitoring of phthalate exposures. Toxics.
+        2019;7:21. 10.3390/toxics7020021</Citation><ArticleIdList><ArticleId IdType="doi">10.3390/toxics7020021</ArticleId><ArticleId
+        IdType="pmc">PMC6630674</ArticleId><ArticleId IdType="pubmed">30959800</ArticleId></ArticleIdList></Reference><Reference><Citation>Jia
+        PP, Ma YB, Lu CJ, Mirza Z, Zhang W, Jia YF, et al. The Effects of Disturbance
+        on Hypothalamus-Pituitary-Thyroid (HPT) Axis in Zebrafish Larvae after Exposure
+        to DEHP. PLoS ONE. 2016;11:e0155762. 10.1371/journal.pone.0155762</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1371/journal.pone.0155762</ArticleId><ArticleId IdType="pmc">PMC4880181</ArticleId><ArticleId
+        IdType="pubmed">27223697</ArticleId></ArticleIdList></Reference><Reference><Citation>Rusyn
+        I, Peters JM, Cunningham ML. Modes of action and species-specific effects
+        of di-(2-ethylhexyl)phthalate in the liver. Crit Rev Toxicol. 2006;36:459&#x2013;79.
+        10.1080/10408440600779065</Citation><ArticleIdList><ArticleId IdType="doi">10.1080/10408440600779065</ArticleId><ArticleId
+        IdType="pmc">PMC2614359</ArticleId><ArticleId IdType="pubmed">16954067</ArticleId></ArticleIdList></Reference><Reference><Citation>Noriega
+        NC, Howdeshell KL, Furr J, Lambright CR, Wilson VS, Gray LE. Pubertal administration
+        of DEHP delays puberty, suppresses testosterone production, and inhibits reproductive
+        tract development in male Sprague-Dawley and Long-Evans rats. Toxicol Sci
+        Off J Soc Toxicol. 2009;111:163&#x2013;78. 10.1093/toxsci/kfp129</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1093/toxsci/kfp129</ArticleId><ArticleId IdType="pubmed">19528224</ArticleId></ArticleIdList></Reference><Reference><Citation>Hannon
+        PR, Peretz J, Flaws JA. Daily exposure to Di(2-ethylhexyl) phthalate alters
+        estrous cyclicity and accelerates primordial follicle recruitment potentially
+        via dysregulation of the phosphatidylinositol 3-kinase signaling pathway in
+        adult mice. Biol Reprod. 2014;90:136. 10.1095/biolreprod.114.119032</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1095/biolreprod.114.119032</ArticleId><ArticleId IdType="pmc">PMC4435463</ArticleId><ArticleId
+        IdType="pubmed">24804967</ArticleId></ArticleIdList></Reference><Reference><Citation>Lin
+        H, Yuan K, Li L, Liu S, Li S, Hu G, et al. In utero exposure to diethylhexyl
+        phthalate affects rat brain development: a behavioral and genomic approach.
+        Int J Environ Res Public Health. 2015;12:13696&#x2013;710. 10.3390/ijerph121113696</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.3390/ijerph121113696</ArticleId><ArticleId IdType="pmc">PMC4661608</ArticleId><ArticleId
+        IdType="pubmed">26516888</ArticleId></ArticleIdList></Reference><Reference><Citation>Rusyn
+        I, Corton JC. Mechanistic considerations for human relevance of cancer hazard
+        of di(2-ethylhexyl) phthalate. Mutat Res. 2012;750:141&#x2013;58. 10.1016/j.mrrev.2011.12.004</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.mrrev.2011.12.004</ArticleId><ArticleId IdType="pmc">PMC3348351</ArticleId><ArticleId
+        IdType="pubmed">22198209</ArticleId></ArticleIdList></Reference><Reference><Citation>Klaunig
+        JE, Babich MA, Baetcke KP, Cook JC, Corton JC, David RM, et al. PPARalpha
+        agonist-induced rodent tumors: modes of action and human relevance. Crit Rev
+        Toxicol. 2003;33:655&#x2013;780. 10.1080/713608372</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1080/713608372</ArticleId><ArticleId IdType="pubmed">14727734</ArticleId></ArticleIdList></Reference><Reference><Citation>Ito
+        Y, Yamanoshita O, Asaeda N, Tagawa Y, Lee C-H, Aoyama T, et al. Di(2-ethylhexyl)phthalate
+        induces hepatic tumorigenesis through a peroxisome proliferator-activated
+        receptor alpha-independent pathway. J Occup Health. 2007;49:172&#x2013;82.
+        10.1539/joh.49.172</Citation><ArticleIdList><ArticleId IdType="doi">10.1539/joh.49.172</ArticleId><ArticleId
+        IdType="pubmed">17575397</ArticleId></ArticleIdList></Reference><Reference><Citation>Yang
+        Q, Ito S, Gonzalez FJ. Hepatocyte-restricted constitutive activation of PPAR
+        alpha induces hepatoproliferation but not hepatocarcinogenesis. Carcinogenesis.
+        2007;28:1171&#x2013;7. 10.1093/carcin/bgm046</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1093/carcin/bgm046</ArticleId><ArticleId IdType="pmc">PMC1885989</ArticleId><ArticleId
+        IdType="pubmed">17331954</ArticleId></ArticleIdList></Reference><Reference><Citation>Ghosh
+        J, Das J, Manna P, Sil PC. Hepatotoxicity of di-(2-ethylhexyl)phthalate is
+        attributed to calcium aggravation, ROS-mediated mitochondrial depolarization,
+        and ERK/NF-&#x3ba;B pathway activation. Free Radic Biol Med. 2010;49:1779&#x2013;91.
+        10.1016/j.freeradbiomed.2010.09.011</Citation><ArticleIdList><ArticleId IdType="doi">10.1016/j.freeradbiomed.2010.09.011</ArticleId><ArticleId
+        IdType="pubmed">20854900</ArticleId></ArticleIdList></Reference><Reference><Citation>National
+        Toxicology Program. https://cebs.niehs.nih.gov/cebs/test_article/117-81-7.
+        Accessed 2024 May 18.
+
+        </Citation></Reference><Reference><Citation>Madle S, Dean SW, Andrae U, Brambilla
+        G, Burlinson B, Doolittle DJ, et al. Recommendations for the performance of
+        UDS tests in vitro and in vivo. Mutat Res Environ Mutagen Relat Subj. 1994;312:263&#x2013;85.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">7514739</ArticleId></ArticleIdList></Reference><Reference><Citation>Lambert
+        IB, Singer TM, Boucher SA, Douglas GR. Detailed review of transgenic rodent
+        mutation assays. Mutat Res Rev Mutat Res. 2005;590:1&#x2013;280. 10.1016/j.mrrev.2005.04.002</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.mrrev.2005.04.002</ArticleId><ArticleId IdType="pubmed">16081315</ArticleId></ArticleIdList></Reference><Reference><Citation>Corton
+        JC, Peters JM, Klaunig JE. The PPAR&#x3b1;-dependent rodent liver tumor response
+        is not relevant to humans: addressing misconceptions. Arch Toxicol. 2018;92:83&#x2013;119.
+        10.1007/s00204-017-2094-7</Citation><ArticleIdList><ArticleId IdType="doi">10.1007/s00204-017-2094-7</ArticleId><ArticleId
+        IdType="pmc">PMC6092738</ArticleId><ArticleId IdType="pubmed">29197930</ArticleId></ArticleIdList></Reference><Reference><Citation>Kirkland
+        D, Kasper P, Martus HJ, M&#xfc;ller L, van Benthem J, Madia F, et al. Updated
+        recommended lists of genotoxic and non-genotoxic chemicals for assessment
+        of the performance of new or improved genotoxicity tests. Mutat Res Genet
+        Toxicol Environ Mutagen. 2016;795:7&#x2013;30. 10.1016/j.mrgentox.2015.10.006</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.mrgentox.2015.10.006</ArticleId><ArticleId IdType="pubmed">26774663</ArticleId></ArticleIdList></Reference><Reference><Citation>O&#x2019;Brien
+        ML, Spear BT, Glauert HP. Role of oxidative stress in peroxisome proliferator-mediated
+        carcinogenesis. Crit Rev Toxicol. 2005;35:61&#x2013;88. 10.1080/10408440590905957</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1080/10408440590905957</ArticleId><ArticleId IdType="pubmed">15742903</ArticleId></ArticleIdList></Reference><Reference><Citation>Wang
+        W, Craig ZR, Basavarajappa MS, Hafner KS, Flaws JA. Mono-(2-Ethylhexyl) phthalate
+        induces oxidative stress and inhibits growth of mouse ovarian antral follicles.
+        Biol Reprod. 2012;87:152.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC4435432</ArticleId><ArticleId
+        IdType="pubmed">23077170</ArticleId></ArticleIdList></Reference><Reference><Citation>Nakajima
+        T, Hopf NB, Schulte PA. IRCA Monographs Di(2-ethylhexyl) phthalate (DEHP).
+        IARC. 2000;77:41&#x2013;148.</Citation><ArticleIdList><ArticleId IdType="pmc">PMC7197289</ArticleId><ArticleId
+        IdType="pubmed">11100399</ArticleId></ArticleIdList></Reference><Reference><Citation>ECHA.
+        Support Document for Identification of DEHP. European Chemicals Agency; 2014.&#xa0;https://echa.europa.eu/documents/10162/fa429d23-21e7-4764-b223-6c8c98f8a01c.</Citation></Reference><Reference><Citation>Cambien
+        G, Dupuis A, Guihenneuc J, Bauwens M, Belmouaz M, Ayraud-Thevenot S. Endocrine
+        disruptors in dialysis therapies: a literature review. Environ Int. 2023;178:
+        108100. 10.1016/j.envint.2023.108100</Citation><ArticleIdList><ArticleId IdType="doi">10.1016/j.envint.2023.108100</ArticleId><ArticleId
+        IdType="pubmed">37481953</ArticleId></ArticleIdList></Reference><Reference><Citation>Hamada
+        S, Ohyama W, Takashima R, Shimada K, Matsumoto K, Kawakami S, et al. Evaluation
+        of the repeated-dose liver and gastrointestinal tract micronucleus assays
+        with 22 chemicals using young adult rats: summary of the collaborative study
+        by the Collaborative Study Group for the Micronucleus Test (CSGMT)/The Japanese
+        Environmental Mutagen Society (JEMS) - Mammalian Mutagenicity Study Group
+        (MMS). Mutat Res Genet Toxicol Environ Mutagen. 2015;780&#x2013;781:2&#x2013;17.
+        10.1016/j.mrgentox.2015.01.001</Citation><ArticleIdList><ArticleId IdType="doi">10.1016/j.mrgentox.2015.01.001</ArticleId><ArticleId
+        IdType="pubmed">25892619</ArticleId></ArticleIdList></Reference><Reference><Citation>Narumi
+        K, Ashizawa K, Takashima R, Takasawa H, Katayama S, Tsuzuki Y, et al. Development
+        of a repeated-dose liver micronucleus assay using adult rats: an investigation
+        of diethylnitrosamine and 2,4-diaminotoluene. Mutat Res. 2012;747:234&#x2013;9.
+        10.1016/j.mrgentox.2012.05.012</Citation><ArticleIdList><ArticleId IdType="doi">10.1016/j.mrgentox.2012.05.012</ArticleId><ArticleId
+        IdType="pubmed">22677510</ArticleId></ArticleIdList></Reference><Reference><Citation>Kawabata
+        M, Takasawa H, Minowa S, Saitou H, Nakagawa M, Nakajima M, et al. New method
+        of specimen preparation as cell suspension for a micronucleus test. Genes
+        Environ. 2007;29:100&#x2013;6. 10.3123/jemsge.29.100</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.3123/jemsge.29.100</ArticleId></ArticleIdList></Reference><Reference><Citation>Satomoto
+        K, Aoki M, Wakita A, Yamagata H, Mitsumoto T, Okamoto T, et al. Hepatocyte
+        proliferation activity in untreated rats, measured by immunohistochemical
+        detection of Ki-67: The effect of age on the repeated-dose liver micronucleus
+        assay. Mutat Res Genet Toxicol Environ Mutagen. 2023;890: 503658. 10.1016/j.mrgentox.2023.503658</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.mrgentox.2023.503658</ArticleId><ArticleId IdType="pubmed">37567645</ArticleId></ArticleIdList></Reference><Reference><Citation>Phillips
+        DH, Arlt VM. Genotoxicity: damage to DNA and its consequences. EXS. 2009;99:87&#x2013;110.</Citation><ArticleIdList><ArticleId
+        IdType="pubmed">19157059</ArticleId></ArticleIdList></Reference><Reference><Citation>Xu
+        B, Wang W, Guo H, Sun Z, Wei Z, Zhang X, et al. Oxidative stress preferentially
+        induces a subtype of micronuclei and mediates the genomic instability caused
+        by p53 dysfunction. Mutat Res. 2014;770:1&#x2013;8. 10.1016/j.mrfmmm.2014.08.004</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.mrfmmm.2014.08.004</ArticleId><ArticleId IdType="pmc">PMC4186711</ArticleId><ArticleId
+        IdType="pubmed">25302047</ArticleId></ArticleIdList></Reference><Reference><Citation>Kasai
+        H, Okada Y, Nishimura S, Rao MS, Reddy JK. Formation of 8-hydroxydeoxyguanosine
+        in liver DNA of rats following long-term exposure to a peroxisome proliferator.
+        Cancer Res. 1989;49:2603&#x2013;5.</Citation><ArticleIdList><ArticleId IdType="pubmed">2713844</ArticleId></ArticleIdList></Reference><Reference><Citation>Krupina
+        K, Goginashvili A, Cleveland DW. Causes and consequences of micronuclei. Curr
+        Opin Cell Biol. 2021;70:91&#x2013;9. 10.1016/j.ceb.2021.01.004</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.ceb.2021.01.004</ArticleId><ArticleId IdType="pmc">PMC8119331</ArticleId><ArticleId
+        IdType="pubmed">33610905</ArticleId></ArticleIdList></Reference><Reference><Citation>Ye
+        H, Ha M, Yang M, Yue P, Xie Z, Liu C. Di2-ethylhexyl phthalate disrupts thyroid
+        hormone homeostasis through activating the Ras/Akt/TRHr pathway and inducing
+        hepatic enzymes. Sci Rep. 2017;7:40153. 10.1038/srep40153</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1038/srep40153</ArticleId><ArticleId IdType="pmc">PMC5220292</ArticleId><ArticleId
+        IdType="pubmed">28065941</ArticleId></ArticleIdList></Reference><Reference><Citation>Crobeddu
+        B, Ferraris E, Kolasa E, Plante I. Di(2-ethylhexyl) phthalate (DEHP) increases
+        proliferation of epithelial breast cancer cells through progesterone receptor
+        dysregulation. Environ Res. 2019;173:165&#x2013;73. 10.1016/j.envres.2019.03.037</Citation><ArticleIdList><ArticleId
+        IdType="doi">10.1016/j.envres.2019.03.037</ArticleId><ArticleId IdType="pubmed">30909102</ArticleId></ArticleIdList></Reference><Reference><Citation>Kim
+        JH. Analysis of the in vitro effects of di-(2-ethylhexyl) phthalate exposure
+        on human uterine leiomyoma cells. Exp Ther Med. 2018;15:4972&#x2013;8.</Citation><ArticleIdList><ArticleId
+        IdType="pmc">PMC5958751</ArticleId><ArticleId IdType="pubmed">29805520</ArticleId></ArticleIdList></Reference></ReferenceList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
         Status="MEDLINE" Owner="NLM"><PMID Version="1">22333284</PMID><DateCompleted><Year>2015</Year><Month>05</Month><Day>15</Day></DateCompleted><DateRevised><Year>2012</Year><Month>02</Month><Day>15</Day></DateRevised><Article
         PubModel="Print"><Journal><ISSN IssnType="Print">0529-567X</ISSN><JournalIssue
         CitedMedium="Print"><Volume>46</Volume><Issue>12</Issue><PubDate><Year>2011</Year><Month>Dec</Month></PubDate></JournalIssue><Title>Zhonghua
@@ -26110,6 +26915,99 @@ interactions:
         PubStatus="medline"><Year>2001</Year><Month>2</Month><Day>28</Day><Hour>10</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>2000</Year><Month>8</Month><Day>10</Day><Hour>11</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">10930035</ArticleId><ArticleId IdType="doi">10.1177/019262330002800401</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM" IndexingMethod="Automated"><PMID Version="1">38430581</PMID><DateCompleted><Year>2024</Year><Month>03</Month><Day>18</Day></DateCompleted><DateRevised><Year>2024</Year><Month>03</Month><Day>18</Day></DateRevised><Article
+        PubModel="Print-Electronic"><Journal><ISSN IssnType="Electronic">1090-2414</ISSN><JournalIssue
+        CitedMedium="Internet"><Volume>273</Volume><PubDate><Year>2024</Year><Month>Mar</Month><Day>15</Day></PubDate></JournalIssue><Title>Ecotoxicology
+        and environmental safety</Title><ISOAbbreviation>Ecotoxicol Environ Saf</ISOAbbreviation></Journal><ArticleTitle>Long-term
+        di-(2-ethylhexyl) phthalate exposure reduces sorafenib treatment efficacy
+        by enhancing mesenchymal transition in hepatocellular carcinoma.</ArticleTitle><Pagination><StartPage>116161</StartPage><MedlinePgn>116161</MedlinePgn></Pagination><ELocationID
+        EIdType="doi" ValidYN="Y">10.1016/j.ecoenv.2024.116161</ELocationID><ELocationID
+        EIdType="pii" ValidYN="Y">S0147-6513(24)00236-7</ELocationID><Abstract><AbstractText>Di(2-ethylhexyl)
+        phthalate (DEHP) is a worldwide common plasticizer. Nevertheless, DEHP is
+        easily leached out to the environment due to the lack of covalent bonds with
+        plastic. High dose of DEHP exposure is often observed in hemodialysis patients
+        because of the continual usage of plastic medical devices. Although the liver
+        is the major organ that catabolizes DEHP, the impact of long-term DEHP exposure
+        on the sensitivity of liver cancer to chemotherapy remains unclear. In this
+        study, we established long-term DEHP-exposed hepatocellular carcinoma (HCC)
+        cells and two NOD/SCID mice models to investigate the effects and the underlying
+        mechanisms of long-term DEHP exposure on chemosensitivity of HCC. The results
+        showed long-term DEHP exposure potentially increased epithelial-mesenchymal
+        transition (EMT) in HCC cells. Next generation sequencing showed that long-term
+        DEHP exposure increased cell adhesion/migratory related genes expression and
+        blunted sorafenib treatment induced genes alterations. Long-term exposure
+        to DEHP reduced the sensitivity of HCC cells to sorafenib-induced anti-migratory
+        effect by enhancing the EMT transcription factors (slug, twist, and ZEB1)
+        and mesenchymal protein (vimentin) expression. In NOD/SCID mice model, we
+        showed that long-term DEHP-exposed HCC cells exhibited higher growth rate.
+        Regarding the anti-HCC effects of sorafenib, subcutaneous HuH7 tumor grew
+        slowly in sorafenib-treated mice. Nonetheless, the anti-tumor growth effect
+        of sorafenib was not observed in long-term DEHP-exposed mice. Higher mesenchymal
+        markers and proliferating cell nuclear antigen (PCNA) expression were found
+        in sorafenib-treated long-term DEHP-exposed mice. In conclusion, long-term
+        DEHP exposure promoted migratory activity in HCC cells and decreased sorafenib
+        sensitivity in tumor-bearing mice.</AbstractText><CopyrightInformation>Copyright
+        &#xa9; 2024 The Authors. Published by Elsevier Inc. All rights reserved.</CopyrightInformation></Abstract><AuthorList
+        CompleteYN="Y"><Author ValidYN="Y"><LastName>Shih</LastName><ForeName>Ming-Syuan</ForeName><Initials>MS</Initials><AffiliationInfo><Affiliation>School
+        of Medical Laboratory Science and Biotechnology, College of Medical Science
+        and Technology, Taipei Medical University,&#xa0;Shuang-Ho Campus,&#xa0;Taipei
+        235,&#xa0;Taiwan.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Suk</LastName><ForeName>Fat-Moon</ForeName><Initials>FM</Initials><AffiliationInfo><Affiliation>Division
+        of Gastroenterology, Department of Internal Medicine, Wan Fang Hospital, Taipei
+        Medical University,&#xa0;Taipei 116,&#xa0;Taiwan; Department of Internal Medicine,
+        School of Medicine, College of Medicine, Taipei Medical University,&#xa0;Taipei
+        110,&#xa0;Taiwan.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Chiu</LastName><ForeName>Wan-Chun</ForeName><Initials>WC</Initials><AffiliationInfo><Affiliation>School
+        of Nutrition and Health Sciences, Taipei Medical University,&#xa0;Taipei 11031,&#xa0;Taiwan;
+        Research Center of Geriatric Nutrition, College of Nutrition, Taipei Medical
+        University,&#xa0;Taipei 110Taiwan; Department of Nutrition, Wan Fang Hospital,
+        Taipei Medical University,&#xa0;Taipei 116,&#xa0;Taiwan.</Affiliation></AffiliationInfo></Author><Author
+        ValidYN="Y"><LastName>Lee</LastName><ForeName>Chun-Ya</ForeName><Initials>CY</Initials><AffiliationInfo><Affiliation>School
+        of Medical Laboratory Science and Biotechnology, College of Medical Science
+        and Technology, Taipei Medical University,&#xa0;Shuang-Ho Campus,&#xa0;Taipei
+        235,&#xa0;Taiwan.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Hsu</LastName><ForeName>Fang-Yu</ForeName><Initials>FY</Initials><AffiliationInfo><Affiliation>School
+        of Medical Laboratory Science and Biotechnology, College of Medical Science
+        and Technology, Taipei Medical University,&#xa0;Shuang-Ho Campus,&#xa0;Taipei
+        235,&#xa0;Taiwan.</Affiliation></AffiliationInfo></Author><Author ValidYN="Y"><LastName>Liao</LastName><ForeName>Yi-Jen</ForeName><Initials>YJ</Initials><AffiliationInfo><Affiliation>School
+        of Medical Laboratory Science and Biotechnology, College of Medical Science
+        and Technology, Taipei Medical University,&#xa0;Shuang-Ho Campus,&#xa0;Taipei
+        235,&#xa0;Taiwan; TMU Research Center for Digestive Medicine, Taipei Medical
+        University,&#xa0;Taipei 110,&#xa0;Taiwan. Electronic address: yjliao@tmu.edu.tw.</Affiliation></AffiliationInfo></Author></AuthorList><Language>eng</Language><PublicationTypeList><PublicationType
+        UI="D016428">Journal Article</PublicationType></PublicationTypeList><ArticleDate
+        DateType="Electronic"><Year>2024</Year><Month>03</Month><Day>02</Day></ArticleDate></Article><MedlineJournalInfo><Country>Netherlands</Country><MedlineTA>Ecotoxicol
+        Environ Saf</MedlineTA><NlmUniqueID>7805381</NlmUniqueID><ISSNLinking>0147-6513</ISSNLinking></MedlineJournalInfo><ChemicalList><Chemical><RegistryNumber>9ZOQ3TZI87</RegistryNumber><NameOfSubstance
+        UI="D000077157">Sorafenib</NameOfSubstance></Chemical><Chemical><RegistryNumber>6O7F7IX66E</RegistryNumber><NameOfSubstance
+        UI="C032279">phthalic acid</NameOfSubstance></Chemical><Chemical><RegistryNumber>C42K0PH13C</RegistryNumber><NameOfSubstance
+        UI="D004051">Diethylhexyl Phthalate</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
+        UI="D010795">Phthalic Acids</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><MeshHeadingList><MeshHeading><DescriptorName
+        UI="D006801" MajorTopicYN="N">Humans</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D051379" MajorTopicYN="N">Mice</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D006528" MajorTopicYN="Y">Carcinoma, Hepatocellular</DescriptorName><QualifierName
+        UI="Q000188" MajorTopicYN="N">drug therapy</QualifierName><QualifierName UI="Q000473"
+        MajorTopicYN="N">pathology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D000077157" MajorTopicYN="N">Sorafenib</DescriptorName><QualifierName
+        UI="Q000494" MajorTopicYN="N">pharmacology</QualifierName><QualifierName UI="Q000627"
+        MajorTopicYN="N">therapeutic use</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D008113" MajorTopicYN="Y">Liver Neoplasms</DescriptorName><QualifierName
+        UI="Q000188" MajorTopicYN="N">drug therapy</QualifierName><QualifierName UI="Q000473"
+        MajorTopicYN="N">pathology</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D004051" MajorTopicYN="Y">Diethylhexyl Phthalate</DescriptorName><QualifierName
+        UI="Q000633" MajorTopicYN="N">toxicity</QualifierName></MeshHeading><MeshHeading><DescriptorName
+        UI="D016513" MajorTopicYN="N">Mice, SCID</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D016688" MajorTopicYN="N">Mice, Inbred NOD</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D016896" MajorTopicYN="N">Treatment Outcome</DescriptorName></MeshHeading><MeshHeading><DescriptorName
+        UI="D010795" MajorTopicYN="Y">Phthalic Acids</DescriptorName></MeshHeading></MeshHeadingList><KeywordList
+        Owner="NOTNLM"><Keyword MajorTopicYN="N">Di(2-ethylhexyl) phthalate (DEHP)</Keyword><Keyword
+        MajorTopicYN="N">Drug susceptibility</Keyword><Keyword MajorTopicYN="N">Hepatocellular
+        carcinoma</Keyword><Keyword MajorTopicYN="N">Sorafenib</Keyword></KeywordList><CoiStatement>Declaration
+        of Competing Interest The authors declare that there are no conflicts of interest.</CoiStatement></MedlineCitation><PubmedData><History><PubMedPubDate
+        PubStatus="received"><Year>2023</Year><Month>11</Month><Day>22</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="revised"><Year>2024</Year><Month>2</Month><Day>23</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="accepted"><Year>2024</Year><Month>2</Month><Day>25</Day></PubMedPubDate><PubMedPubDate
+        PubStatus="medline"><Year>2024</Year><Month>3</Month><Day>18</Day><Hour>6</Hour><Minute>44</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pubmed"><Year>2024</Year><Month>3</Month><Day>3</Day><Hour>7</Hour><Minute>42</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="entrez"><Year>2024</Year><Month>3</Month><Day>2</Day><Hour>18</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        IdType="pubmed">38430581</ArticleId><ArticleId IdType="doi">10.1016/j.ecoenv.2024.116161</ArticleId><ArticleId
+        IdType="pii">S0147-6513(24)00236-7</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
         Status="MEDLINE" Owner="NLM"><PMID Version="1">9950075</PMID><DateCompleted><Year>1999</Year><Month>03</Month><Day>30</Day></DateCompleted><DateRevised><Year>2019</Year><Month>09</Month><Day>05</Day></DateRevised><Article
         PubModel="Print"><Journal><ISSN IssnType="Print">0340-5761</ISSN><JournalIssue
         CitedMedium="Print"><Volume>72</Volume><Issue>12</Issue><PubDate><Year>1998</Year><Month>Dec</Month></PubDate></JournalIssue><Title>Archives
@@ -27070,7 +27968,8 @@ interactions:
         UI="D011916" MajorTopicYN="N">Rats, Inbred F344</DescriptorName></MeshHeading></MeshHeadingList></MedlineCitation><PubmedData><History><PubMedPubDate
         PubStatus="pubmed"><Year>1985</Year><Month>5</Month><Day>1</Day></PubMedPubDate><PubMedPubDate
         PubStatus="medline"><Year>1985</Year><Month>5</Month><Day>1</Day><Hour>0</Hour><Minute>1</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="entrez"><Year>1985</Year><Month>5</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="entrez"><Year>1985</Year><Month>5</Month><Day>1</Day><Hour>0</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>1985</Year><Month>11</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">4004798</ArticleId><ArticleId IdType="pmc">PMC1144904</ArticleId><ArticleId
         IdType="doi">10.1042/bj2270767</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Biochem
         J. 1964 Jul;92(1):179-84</Citation><ArticleIdList><ArticleId IdType="pubmed">4378796</ArticleId></ArticleIdList></Reference><Reference><Citation>J
@@ -27132,8 +28031,9 @@ interactions:
         Res. 1984 Jun;44(6):2582-9</Citation><ArticleIdList><ArticleId IdType="pubmed">6372995</ArticleId></ArticleIdList></Reference><Reference><Citation>J
         Biol Chem. 1951 Nov;193(1):265-75</Citation><ArticleIdList><ArticleId IdType="pubmed">14907713</ArticleId></ArticleIdList></Reference><Reference><Citation>Nature.
         1962 Jun 9;194:948-9</Citation><ArticleIdList><ArticleId IdType="pubmed">13921051</ArticleId></ArticleIdList></Reference><Reference><Citation>Nature.
-        1965 Nov 27;208(5013):856-8</Citation><ArticleIdList><ArticleId IdType="pubmed">5870099</ArticleId></ArticleIdList></Reference></ReferenceList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
-        Status="MEDLINE" Owner="NLM"><PMID Version="1">22198209</PMID><DateCompleted><Year>2012</Year><Month>09</Month><Day>18</Day></DateCompleted><DateRevised><Year>2021</Year><Month>10</Month><Day>21</Day></DateRevised><Article
+        1965 Nov 27;208(5013):856-8</Citation><ArticleIdList><ArticleId IdType="pubmed">5870099</ArticleId></ArticleIdList></Reference></ReferenceList></PubmedData></PubmedArticle>
+
+        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">22198209</PMID><DateCompleted><Year>2012</Year><Month>09</Month><Day>18</Day></DateCompleted><DateRevised><Year>2021</Year><Month>10</Month><Day>21</Day></DateRevised><Article
         PubModel="Print-Electronic"><Journal><ISSN IssnType="Print">0027-5107</ISSN><JournalIssue
         CitedMedium="Print"><Volume>750</Volume><Issue>2</Issue><PubDate><Year>2012</Year><Season>Apr-Jun</Season></PubDate></JournalIssue><Title>Mutation
         research</Title><ISOAbbreviation>Mutat Res</ISOAbbreviation></Journal><ArticleTitle>Mechanistic
@@ -27223,7 +28123,8 @@ interactions:
         PubStatus="accepted"><Year>2011</Year><Month>12</Month><Day>12</Day></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>2011</Year><Month>12</Month><Day>27</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="pubmed"><Year>2011</Year><Month>12</Month><Day>27</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="medline"><Year>2012</Year><Month>9</Month><Day>19</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="medline"><Year>2012</Year><Month>9</Month><Day>19</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2013</Year><Month>4</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">22198209</ArticleId><ArticleId IdType="mid">NIHMS345694</ArticleId><ArticleId
         IdType="pmc">PMC3348351</ArticleId><ArticleId IdType="doi">10.1016/j.mrrev.2011.12.004</ArticleId><ArticleId
         IdType="pii">S1383-5742(11)00102-5</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Wittassek
@@ -28235,9 +29136,8 @@ interactions:
         PubStatus="medline"><Year>2019</Year><Month>1</Month><Day>29</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>2018</Year><Month>11</Month><Day>2</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">30384071</ArticleId><ArticleId IdType="doi">10.1016/j.envpol.2018.08.091</ArticleId><ArticleId
-        IdType="pii">S0269-7491(18)32153-5</ArticleId></ArticleIdList></PubmedData></PubmedArticle>
-
-        <PubmedArticle><MedlineCitation Status="MEDLINE" Owner="NLM"><PMID Version="1">12036039</PMID><DateCompleted><Year>2002</Year><Month>11</Month><Day>20</Day></DateCompleted><DateRevised><Year>2015</Year><Month>11</Month><Day>19</Day></DateRevised><Article
+        IdType="pii">S0269-7491(18)32153-5</ArticleId></ArticleIdList></PubmedData></PubmedArticle><PubmedArticle><MedlineCitation
+        Status="MEDLINE" Owner="NLM"><PMID Version="1">12036039</PMID><DateCompleted><Year>2002</Year><Month>11</Month><Day>20</Day></DateCompleted><DateRevised><Year>2015</Year><Month>11</Month><Day>19</Day></DateRevised><Article
         PubModel="Print"><Journal><ISSN IssnType="Print">0916-8451</ISSN><JournalIssue
         CitedMedium="Print"><Volume>66</Volume><Issue>4</Issue><PubDate><Year>2002</Year><Month>Apr</Month></PubDate></JournalIssue><Title>Bioscience,
         biotechnology, and biochemistry</Title><ISOAbbreviation>Biosci Biotechnol
@@ -28771,8 +29671,8 @@ interactions:
         UI="D047493">PPAR alpha</NameOfSubstance></Chemical><Chemical><RegistryNumber>0</RegistryNumber><NameOfSubstance
         UI="D010968">Plasticizers</NameOfSubstance></Chemical><Chemical><RegistryNumber>C42K0PH13C</RegistryNumber><NameOfSubstance
         UI="D004051">Diethylhexyl Phthalate</NameOfSubstance></Chemical></ChemicalList><CitationSubset>IM</CitationSubset><CommentsCorrectionsList><CommentsCorrections
-        RefType="CommentIn"><RefSource>Environ Health Perspect. 2010 Feb;118(2):A81</RefSource><PMID
-        Version="1">20123631</PMID></CommentsCorrections></CommentsCorrectionsList><MeshHeadingList><MeshHeading><DescriptorName
+        RefType="CommentIn"><RefSource>Environ Health Perspect. 2010 Feb;118(2):A81.
+        doi: 10.1289/ehp.118-a81a</RefSource><PMID Version="1">20123631</PMID></CommentsCorrections></CommentsCorrectionsList><MeshHeadingList><MeshHeading><DescriptorName
         UI="D000818" MajorTopicYN="N">Animals</DescriptorName></MeshHeading><MeshHeading><DescriptorName
         UI="D002460" MajorTopicYN="N">Cell Line</DescriptorName></MeshHeading><MeshHeading><DescriptorName
         UI="D004051" MajorTopicYN="N">Diethylhexyl Phthalate</DescriptorName><QualifierName
@@ -28801,7 +29701,8 @@ interactions:
         PubStatus="accepted"><Year>2009</Year><Month>10</Month><Day>8</Day></PubMedPubDate><PubMedPubDate
         PubStatus="entrez"><Year>2010</Year><Month>2</Month><Day>4</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
         PubStatus="pubmed"><Year>2010</Year><Month>2</Month><Day>4</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
-        PubStatus="medline"><Year>2010</Year><Month>6</Month><Day>5</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
+        PubStatus="medline"><Year>2010</Year><Month>6</Month><Day>5</Day><Hour>6</Hour><Minute>0</Minute></PubMedPubDate><PubMedPubDate
+        PubStatus="pmc-release"><Year>2010</Year><Month>2</Month><Day>1</Day></PubMedPubDate></History><PublicationStatus>ppublish</PublicationStatus><ArticleIdList><ArticleId
         IdType="pubmed">20123618</ArticleId><ArticleId IdType="pmc">PMC2831923</ArticleId><ArticleId
         IdType="doi">10.1289/ehp.0901217</ArticleId></ArticleIdList><ReferenceList><Reference><Citation>Akingbemi
         BT, Ge R, Klinefelter GR, Zirkin BR, Hardy MP. Phthalate-induced Leydig cell
@@ -29721,20 +30622,20 @@ interactions:
       Content-Type:
       - text/xml; charset=UTF-8
       Date:
-      - Tue, 20 Feb 2024 16:38:16 GMT
+      - Thu, 05 Sep 2024 22:58:23 GMT
       Keep-Alive:
       - timeout=4, max=40
       NCBI-PHID:
-      - 322C45D975EA9B45000053DB90B27C3A.1.1.m_3
+      - 939B82323C96818500002DC1F27E5564.1.1.m_3
       NCBI-SID:
-      - 32D08667D66FBBF2_A818SID
+      - FDA87FAE483201C8_0012SID
       Referrer-Policy:
       - origin-when-cross-origin
       Server:
       - Finatra
       Set-Cookie:
-      - ncbi_sid=32D08667D66FBBF2_A818SID; domain=.nih.gov; path=/; expires=Thu, 20
-        Feb 2025 16:38:16 GMT
+      - ncbi_sid=FDA87FAE483201C8_0012SID; domain=.nih.gov; path=/; expires=Fri, 05
+        Sep 2025 22:58:24 GMT
       Strict-Transport-Security:
       - max-age=31536000; includeSubDomains; preload
       Transfer-Encoding:
@@ -29742,7 +30643,7 @@ interactions:
       X-RateLimit-Limit:
       - '10'
       X-RateLimit-Remaining:
-      - '8'
+      - '7'
       X-UA-Compatible:
       - IE=Edge
       X-XSS-Protection:

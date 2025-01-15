@@ -139,6 +139,27 @@ urlpatterns = [
         {"action": "update_item"},
         name="publish-update",
     ),
+    # assessment labels
+    path(
+        "<int:pk>/labeled-items/",
+        views.LabeledItemList.as_view(),
+        name="labeled-items",
+    ),
+    path(
+        "<int:pk>/labels/",
+        views.LabelList.as_view(),
+        name="manage-labels",
+    ),
+    path(
+        "label/<int:pk>/<slug:action>/",
+        views.LabelViewSet.as_view(),
+        name="label-htmx",
+    ),
+    path(
+        "label-item/<int:content_type>/<int:object_id>/",
+        views.LabelItem.as_view(),
+        name="label-item",
+    ),
     # api views
     path("api/", include((router.urls, "api"))),
 ]

@@ -7,6 +7,7 @@ from io import BytesIO
 from pathlib import Path
 
 import pandas as pd
+from django.contrib.auth.models import AnonymousUser
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db import models
 from django.http import HttpResponse
@@ -15,6 +16,7 @@ from rest_framework.response import Response
 from rest_framework.test import APIClient
 
 from hawc.apps.assessment.models import Log, TimeSpentEditing
+from hawc.apps.myuser.models import HAWCUser
 
 DATA_ROOT = Path(__file__).parents[2] / "data/api"
 
@@ -52,6 +54,18 @@ def get_client(role: str = "", api: bool = False, htmx: bool = False) -> Client 
     if role:
         assert client.login(username=f"{role}@hawcproject.org", password="pw") is True
     return client
+
+
+def get_user(role: str = "") -> AnonymousUser | HAWCUser:
+    """Return a user with specified user role
+
+    Args:
+        role (str): One of the following: {'', 'pm', 'team', 'reviewer', 'admin'}. If empty, anonymous.
+    """
+
+    if not role:
+        return AnonymousUser()
+    return HAWCUser.objects.get(email=f"{role}@hawcproject.org")
 
 
 def check_403(

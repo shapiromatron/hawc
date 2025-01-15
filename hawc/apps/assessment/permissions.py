@@ -34,7 +34,7 @@ class AssessmentPermissions(BaseModel):
 
         def get_perms() -> typing.Self:
             return cls(
-                public=(assessment.public_on is not None),
+                public=(assessment.is_public),
                 editable=assessment.editable,
                 project_manager={user.id for user in assessment.project_manager.all()},
                 team_members={user.id for user in assessment.team_members.all()},

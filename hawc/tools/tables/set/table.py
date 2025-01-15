@@ -1,9 +1,10 @@
+from typing import Annotated
+
 import pandas as pd
-from pydantic import BaseModel, Field, conint
+from pydantic import BaseModel, Field
 
-from hawc.apps.riskofbias.constants import SCORE_SHADES, SCORE_SYMBOLS
-from hawc.apps.summary.table_serializers import StudyEvaluationSerializer
-
+from ....apps.riskofbias.constants import SCORE_SHADES, SCORE_SYMBOLS
+from ....apps.summary.table_serializers import StudyEvaluationSerializer
 from ..base import BaseCell, BaseCellGroup, BaseTable
 from ..generic import GenericCell
 from ..parser import QuillParser, color_background, tag_wrapper
@@ -15,8 +16,8 @@ NM_SHADE = "#DFDFDF"
 
 class Subheader(BaseModel):
     label: str
-    start: conint(ge=1)
-    length: conint(ge=1)
+    start: Annotated[int, Field(ge=1)]
+    length: Annotated[int, Field(ge=1)]
 
 
 class Column(BaseModel):

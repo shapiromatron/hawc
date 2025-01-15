@@ -1,9 +1,17 @@
-import bmds
-from bmds.datasets import DatasetBase
+import pybmds
+from django.utils import timezone
+from django.utils.text import slugify
+from pybmds.datasets.base import DatasetBase
+from pybmds.reporting.styling import Report
 
+from ...tools import word
 from ..animal.constants import DataType
 from ..animal.models import Endpoint
-from .constants import BmdsVersion
+from ..common.helper import ReportExport
+
+
+def version():
+    return pybmds.__version__
 
 
 def build_dataset(endpoint: Endpoint, dose_units_id: int, n_drop_doses: int = 0) -> DatasetBase:
@@ -19,7 +27,7 @@ def build_dataset(endpoint: Endpoint, dose_units_id: int, n_drop_doses: int = 0)
     doses = [d for d, grp in zip(doses, grps, strict=True) if grp["isReported"]]
 
     if endpoint.data_type == DataType.CONTINUOUS:
-        Cls = bmds.ContinuousDataset
+        Cls = pybmds.ContinuousDataset
         kwargs = dict(
             doses=doses,
             ns=[d["n"] for d in grps if d["isReported"]],
@@ -27,7 +35,7 @@ def build_dataset(endpoint: Endpoint, dose_units_id: int, n_drop_doses: int = 0)
             stdevs=[d["stdev"] for d in grps if d["isReported"]],
         )
     elif endpoint.data_type in [DataType.DICHOTOMOUS, DataType.DICHOTOMOUS_CANCER]:
-        Cls = bmds.DichotomousDataset
+        Cls = pybmds.DichotomousDataset
         kwargs = dict(
             doses=doses,
             ns=[d["n"] for d in grps if d["isReported"]],
@@ -37,28 +45,39 @@ def build_dataset(endpoint: Endpoint, dose_units_id: int, n_drop_doses: int = 0)
         raise ValueError(f"Cannot create BMDS dataset for this data type: {endpoint.data_type}")
 
     # drop doses from the top
-    for i in range(n_drop_doses):
+    for _i in range(n_drop_doses):
         [lst.pop() for lst in kwargs.values()]
 
     return Cls(**kwargs)
 
 
-def build_session(dataset: DatasetBase, version: BmdsVersion):
-    if version == BmdsVersion.BMDS2601:
-        version = BmdsVersion.BMDS270
-    Session = bmds.BMDS.version(version.value)
-
-    if version.startswith("BMDS2"):
-        return Session(dataset.dtype, dataset=dataset)
-    else:
-        return Session(dataset=dataset)
+def build_session(dataset) -> pybmds.Session:
+    return pybmds.Session(dataset=dataset)
 
 
 def build_and_execute(endpoint, inputs):
     dataset = build_dataset(
         endpoint, inputs.settings.dose_units_id, inputs.settings.num_doses_dropped
     )
-    session = build_session(dataset, BmdsVersion.BMDS330)
+    session = build_session(dataset)
     inputs.add_models(session)
     session.execute_and_recommend()
     return session
+
+
+def create_report(session: pybmds.Session, name: str, url: str, versions: dict) -> ReportExport:
+    report = Report.build_default()
+    report.document.add_heading(name, 1)
+    # add report generation timestamp
+    timestamp = timezone.now().strftime("%Y-%b-%d %H:%m %Z")
+    word.write_setting_p(report.document, "Report Generated: ", timestamp)
+    # add URL to analysis
+    p = report.document.add_paragraph()
+    p.add_run("Analysis URL: ").bold = True
+    word.add_url_hyperlink(p, url, "View")
+    # add pybmds version information
+    version_str = f"pybmds {versions['python']}; bmdscore {versions['dll']}"
+    word.write_setting_p(report.document, "BMDS Version: ", version_str)
+    # add report data
+    report = session.to_docx(report=report, header_level=1, all_models=True)
+    return ReportExport(docx=report, filename=slugify(name))

@@ -11,7 +11,7 @@ class AssessmentAutocomplete(BaseAutocomplete):
 @register
 class DSSToxAutocomplete(BaseAutocomplete):
     model = models.DSSTox
-    search_fields = ["dtxsid", "content__preferredName", "content__casrn"]
+    search_fields = ["search"]
 
     def get_result(self, obj):
         result = super().get_result(obj)
@@ -64,3 +64,16 @@ class AssessmentDetailAutocomplete(BaseAutocomplete):
 @register
 class AssessmentValueAutocomplete(BaseAutocomplete):
     model = models.AssessmentValue
+
+
+@register
+class LabelAutocomplete(BaseAutocomplete):
+    model = models.Label
+    filter_fields = ["assessment_id", "published"]
+
+    @classmethod
+    def get_base_queryset(cls, filters: dict | None = None):
+        return super().get_base_queryset(filters).filter(depth__gte=2)
+
+    def get_result_label(self, result):
+        return result.get_nested_name()[1:]

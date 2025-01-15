@@ -15,6 +15,7 @@ from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template import RequestContext
+from django.template.context_processors import csrf
 from django.urls import Resolver404, resolve, reverse
 from django.utils.decorators import method_decorator
 from django.utils.http import is_same_domain
@@ -80,6 +81,12 @@ def get_referrer(request: HttpRequest, default: str) -> str:
         return default_url
 
     return f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
+
+
+def add_csrf(obj: dict, request: HttpRequest) -> dict:
+    """Add CSRF token to context object as the key `csrf`."""
+    obj["csrf"] = str(csrf(request)["csrf_token"])
+    return obj
 
 
 def create_object_log(
@@ -697,7 +704,7 @@ class FilterSetMixin:
     filterset_class: type[BaseFilterSet]
     paginate_by = 25
 
-    def get_paginate_by(self, qs) -> int:
+    def get_paginate_by(self, queryset) -> int:
         form = self.filterset.form
         value = (
             form.cleaned_data.get("paginate_by")

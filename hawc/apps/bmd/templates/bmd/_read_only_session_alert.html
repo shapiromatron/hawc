@@ -1,5 +1,5 @@
-{% alert warning %}
+{% alert type="warning" %}
   <h4>Read only</h4>
-  <p>This session uses {{object.get_version_display}}, which can no longer be executed in HAWC. To make changes, update the assessment BMDS version to a more recent version. Then, you can delete this current analysis and create a new one.
+  <p>This session uses {{object.version}}, which can no longer be executed in HAWC. To update, delete the current BMD analysis and create a new one.
   </p>
 {% endalert %}

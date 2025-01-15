@@ -268,6 +268,30 @@ class TestAssessmentViewSet:
         )
         assert resp.status_code == 403
 
+    def test_team_members(self):
+        client = APIClient()
+        url = reverse("assessment:api:assessment-team-member")
+        # Anon client is forbidden
+        resp = client.get(url)
+        assert resp.status_code == 403
+
+        # Reviewer shows 0 assessments
+        assert client.login(username="reviewer@hawcproject.org", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assert len(resp.json()) == 0
+
+        # Team member and PM show all 5
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assert len(resp.json()) == 5
+
+        assert client.login(username="pm@hawcproject.org", password="pw") is True
+        resp = client.get(url)
+        assert resp.status_code == 200
+        assert len(resp.json()) == 5
+
     def test_chemical(self):
         url = reverse("assessment:api:assessment-chemical-search")
 

@@ -72,7 +72,7 @@ class SearchSerializer(serializers.ModelSerializer):
             else:
                 raise serializers.ValidationError("API currently only supports PubMed/HERO imports")
         except ValidationError as err:
-            raise serializers.ValidationError(err.message)
+            raise serializers.ValidationError(err.message) from err
 
     @transaction.atomic
     def create(self, validated_data):
@@ -180,10 +180,10 @@ class BulkReferenceTagSerializer(serializers.Serializer):
     def validate_csv(self, value):
         try:
             df = pd.read_csv(StringIO(value)).drop_duplicates()
-        except pd.errors.ParserError:
-            raise serializers.ValidationError("CSV could not be parsed")
-        except pd.errors.EmptyDataError:
-            raise serializers.ValidationError("CSV must not be empty")
+        except pd.errors.ParserError as err:
+            raise serializers.ValidationError("CSV could not be parsed") from err
+        except pd.errors.EmptyDataError as err:
+            raise serializers.ValidationError("CSV must not be empty") from err
 
         # ensure columns are expected
         expected_columns = ["reference_id", "tag_id"]
@@ -193,7 +193,7 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             )
 
         # ensure we have some data
-        if df.shape[0] == 0:
+        if df.empty:
             raise serializers.ValidationError("CSV has no data")
 
         expected_assessment_id = self.context["assessment"].id
@@ -379,7 +379,7 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
         try:
             self.fetched_content = models.Identifiers.objects.validate_hero_ids(self.hero_ids)
         except ValidationError as err:
-            raise serializers.ValidationError(err.args[0])
+            raise serializers.ValidationError(err.args[0]) from err
 
         return replace
 
@@ -417,15 +417,15 @@ class FilterReferences(PydanticDrfSerializer):
     def validate_search_id(cls, v):
         try:
             return models.Search.objects.get(pk=v)
-        except models.Search.DoesNotExist:
-            raise ValueError("Invalid search id")
+        except models.Search.DoesNotExist as err:
+            raise ValueError("Invalid search id") from err
 
     @field_validator("tag")
     def validate_tag_id(cls, v):
         try:
             return models.ReferenceFilterTag.objects.get(pk=v)
-        except models.ReferenceFilterTag.DoesNotExist:
-            raise ValueError("Invalid tag id")
+        except models.ReferenceFilterTag.DoesNotExist as err:
+            raise ValueError("Invalid tag id") from err
 
     @field_validator("required_tags", "pruned_tags", mode="before")
     def str_to_list(cls, v):

@@ -42,8 +42,10 @@ class ExperimentSerializer(serializers.ModelSerializer):
         if dtxsid:
             try:
                 data["dtxsid"] = DSSTox.objects.get(pk=dtxsid)
-            except models.ObjectDoesNotExist:
-                raise serializers.ValidationError(dict(dtxsid=f"DSSTox {dtxsid} does not exist"))
+            except models.ObjectDoesNotExist as exc:
+                raise serializers.ValidationError(
+                    dict(dtxsid=f"DSSTox {dtxsid} does not exist")
+                ) from exc
 
         return data
 
@@ -425,5 +427,6 @@ class DosingRegimeCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelS
         return obj.dosed_animals.experiment.study.short_citation
 
 
-SerializerHelper.add_serializer(models.AnimalGroup, AnimalGroupSerializer)
-SerializerHelper.add_serializer(models.Endpoint, EndpointSerializer)
+def register_serializers():
+    SerializerHelper.add_serializer(models.AnimalGroup, AnimalGroupSerializer)
+    SerializerHelper.add_serializer(models.Endpoint, EndpointSerializer)

@@ -5,6 +5,18 @@ from django.utils import timezone
 from .helper import FlatExport
 
 
+def clean_html(series: pd.Series):
+    """Vectorized method to clean html."""
+    return (
+        series.str.replace("\n", " ")
+        .str.replace("\r", "")
+        .str.replace("<br>", "\n")
+        .str.replace("&nbsp;", " ")
+        .str.replace(r"<[^>]*>", "", regex=True)  # strip tags
+        .str.replace(r"&(?:\w+|#\d+);", "", regex=True)  # strip entities
+    )
+
+
 class ModelExport:
     """Model level export module for use in Exporter class."""
 
@@ -147,7 +159,7 @@ class ModelExport:
         return df
 
     def format_time(self, df: pd.DataFrame) -> pd.DataFrame:
-        if df.shape[0] == 0:
+        if df.empty:
             return df
         tz = timezone.get_default_timezone()
         for key in [self.get_column_name("created"), self.get_column_name("last_updated")]:
