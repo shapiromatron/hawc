@@ -13,7 +13,7 @@ def set_animal_version(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("assessment", "0038_alter_assessmentdetail_qa_id"),
+        ("assessment", "0047_alter_labeleditem_options"),
     ]
 
     operations = [

@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("assessment", "0039_assessment_animal_version"),
+        ("assessment", "0048_assessment_animal_version"),
         ("study", "0012_study_eco"),
         ("vocab", "0006_require_uid"),
     ]
