@@ -4,7 +4,7 @@
   <div class="d-flex">
     <h2 class="mb-2">Study Level Values</h2>
     {% if obj_perms.edit %}
-      <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'animalv2:studylevelvalues-htmx' study.pk 'create' %}" hx-trigger="click" hx-target="#attach-tbody" hx-swap="afterbegin" href="/">Create new study level value</a>
+      <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'animalv2:studylevelvalues-htmx' study.pk 'create' %}" hx-trigger="click" hx-target=".studylevelvalue-edit-row.create-row" hx-swap="outerHTML" href="/">Create new study level value</a>
     {% endif %}
   </div>
   <table class="table table-sm table-striped">
@@ -13,15 +13,12 @@
     {% else %}
       {% bs4_thead 'System,Value type,Value,Units,Comments' %}
     {% endif %}
-    <tbody id="attach-tbody">
+    <tbody>
       {% for object in object_list %}
         {% include "animalv2/fragments/studylevelvalue_row.html" %}
       {% endfor %}
-      <tr class="show-only-child">
-        <td colspan="6">
-          <div class="alert alert-info text-center">No study level values created (yet).</div>
-        </td>
-      </tr>
+      {% include "common/fragments/_create_one.html" with text='No study level values to display. Click "Create new study level value" to add one.' %}
+      {% include "common/fragments/_create_row.html" with model="studylevelvalue" first=True %}
     </tbody>
   </table>
 {% endblock %}
@@ -29,9 +26,4 @@
 {% block extrajs %}
   {% include "common/htmx_autocomplete.html" %}
   {% include "common/helptext_popup_js.html" %}
-  <script type="text/javascript">
-    $(window).ready(function() {
-      //window.app.HAWCUtils.addScrollHtmx("studylevelvalue-edit-row", "studylevelvalue-row", "studylevelvalue-conf-delete");
-    });
-  </script>
 {% endblock %}

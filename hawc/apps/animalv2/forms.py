@@ -17,7 +17,8 @@ class StudyLevelValueForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"studylevelvalue-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if study:
             self.instance.study = study
             self.instance.assessment = study.get_assessment()
