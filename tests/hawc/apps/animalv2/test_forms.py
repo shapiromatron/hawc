@@ -14,7 +14,7 @@ class TestChemicalForm:
         instance = models.Chemical.objects.first()
 
         form = forms.ChemicalForm({}, instance=instance)
-        data = deepcopy(form.initial)
+        data = {f"chemical-{instance.pk}-{k}": v for k, v in deepcopy(form.initial).items()}
 
         # test success
         form = forms.ChemicalForm(data, instance=instance)
@@ -22,13 +22,13 @@ class TestChemicalForm:
 
         # test `dtxsid`
         data2 = deepcopy(data)
-        data2.update(dtxsid="invalid")
+        data2.update({f"chemical-{instance.pk}-dtxsid": "invalid"})
         form = forms.ChemicalForm(data2, instance=instance)
         assert form.is_valid() is False
         assert "dtxsid" in form.errors
 
         valid_dtxsid = assessment_models.DSSTox.objects.first().dtxsid
-        data2.update(dtxsid=valid_dtxsid)
+        data2.update({f"chemical-{instance.pk}-dtxsid": valid_dtxsid})
         form = forms.ChemicalForm(data2, instance=instance)
         assert form.is_valid() is True
 
@@ -39,7 +39,7 @@ class TestAnimalGroupForm:
         instance = models.AnimalGroup.objects.first()
 
         form = forms.AnimalGroupForm({}, instance=instance)
-        data = deepcopy(form.initial)
+        data = {f"animalgroup-{instance.pk}-{k}": v for k, v in deepcopy(form.initial).items()}
 
         # test success
         form = forms.AnimalGroupForm(data, instance=instance)
@@ -52,11 +52,17 @@ class TestAnimalGroupForm:
 
         data2 = deepcopy(data)
         data2.update(species=mouse_species.id, strain=rat_strain.id)
+        data2.update(
+            {
+                f"animalgroup-{instance.pk}-species": mouse_species.id,
+                f"animalgroup-{instance.pk}-strain": rat_strain.id,
+            }
+        )
         form = forms.AnimalGroupForm(data2, instance=instance)
         assert form.is_valid() is False
         assert "strain" in form.errors
 
-        data2.update(species=rat_species.id)
+        data2.update({f"animalgroup-{instance.pk}-species": rat_species.id})
         form = forms.AnimalGroupForm(data2, instance=instance)
         assert form.is_valid() is True
 
@@ -67,7 +73,7 @@ class TestTreatmentForm:
         instance = models.Treatment.objects.first()
 
         form = forms.TreatmentForm({}, instance=instance)
-        data = deepcopy(form.initial)
+        data = {f"treatment-{instance.pk}-{k}": v for k, v in deepcopy(form.initial).items()}
 
         # test success
         form = forms.TreatmentForm(data, instance=instance)
@@ -80,7 +86,7 @@ class TestEndpointForm:
         instance = models.Endpoint.objects.first()
 
         form = forms.EndpointForm({}, instance=instance)
-        data = deepcopy(form.initial)
+        data = {f"endpoint-{instance.pk}-{k}": v for k, v in deepcopy(form.initial).items()}
 
         # test success
         form = forms.EndpointForm(data, instance=instance)
@@ -93,7 +99,7 @@ class TestObservationTimeForm:
         instance = models.ObservationTime.objects.first()
 
         form = forms.ObservationTimeForm({}, instance=instance)
-        data = deepcopy(form.initial)
+        data = {f"observationtime-{instance.pk}-{k}": v for k, v in deepcopy(form.initial).items()}
 
         # test success
         form = forms.ObservationTimeForm(data, instance=instance)
@@ -106,7 +112,7 @@ class TestDataExtractionForm:
         instance = models.DataExtraction.objects.first()
 
         form = forms.DataExtractionForm({}, instance=instance)
-        data = deepcopy(form.initial)
+        data = {f"dataextraction-{instance.pk}-{k}": v for k, v in deepcopy(form.initial).items()}
 
         # test success
         form = forms.DataExtractionForm(data, instance=instance)
