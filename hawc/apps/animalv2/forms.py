@@ -35,7 +35,7 @@ class ExperimentForm(ModelForm):
         # by default take-up the whole row
         for fld in list(self.fields.keys()):
             widget = self.fields[fld].widget
-            if type(widget) != forms.CheckboxInput:
+            if type(widget) is not forms.CheckboxInput:
                 widget.attrs["class"] = "form-control"
 
         if self.instance.id:
@@ -78,7 +78,8 @@ class ChemicalForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"chemical-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if experiment:
             self.instance.experiment = experiment
 
@@ -100,7 +101,8 @@ class AnimalGroupForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"animalgroup-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if experiment:
             self.instance.experiment = experiment
 
@@ -146,7 +148,8 @@ class TreatmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"treatment-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if experiment:
             self.instance.experiment = experiment
         self.fields["chemical"].queryset = self.instance.experiment.v2_chemicals.all()
@@ -191,7 +194,8 @@ class EndpointForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"endpoint-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if experiment:
             self.instance.experiment = experiment
         # TODO - if/when we add EHV terms back in, we'll need this kind of filtering...
@@ -220,7 +224,8 @@ class ObservationTimeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"observationtime-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         # TODO - right now with name/name_term, the associated dropdown for picking an endpoint shows
         # an empty string for endpoints with a name_term but no freetext name.
         #
@@ -255,7 +260,8 @@ class DataExtractionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"dataextraction-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if experiment:
             self.instance.experiment = experiment
         self.fields["endpoint"].queryset = self.instance.experiment.v2_endpoints.all()
