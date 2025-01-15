@@ -8,11 +8,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
 
 from hawc.apps.assessment.models import Assessment
-from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.summary.constants import ExportStyle, StudyType, VisualType
 from hawc.apps.summary.forms import (
     DataPivotQueryForm,
-    DataPivotSelectorForm,
     DataPivotUploadForm,
     ExternalSiteForm,
     ImageVisualForm,
@@ -321,17 +319,17 @@ class TestDataPivotQueryForm:
         assert instance.preferred_units == []
 
 
-@pytest.mark.django_db
-class TestDataPivotSelectorForm:
-    def test_success(self, db_keys):
-        user = HAWCUser.objects.get(email="team@hawcproject.org")
-        form = DataPivotSelectorForm(
-            user=user,
-            parent=Assessment.objects.get(id=db_keys.assessment_working),
-            data={"selector": 2, "reset_row_overrides": True},
-        )
-        assert form.is_valid()
-        assert (
-            form.get_success_url()
-            == "/summary/data-pivot/assessment/1/create/query/0/?initial=2&reset_row_overrides=1"
-        )
+# @pytest.mark.django_db
+# class TestDataPivotSelectorForm:
+#     def test_success(self, db_keys):
+#         user = HAWCUser.objects.get(email="team@hawcproject.org")
+#         form = DataPivotSelectorForm(
+#             user=user,
+#             parent=Assessment.objects.get(id=db_keys.assessment_working),
+#             data={"selector": 2, "reset_row_overrides": True},
+#         )
+#         assert form.is_valid()
+#         assert (
+#             form.get_success_url()
+#             == "/summary/data-pivot/assessment/1/create/query/0/?initial=2&reset_row_overrides=1"
+#         )

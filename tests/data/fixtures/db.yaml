@@ -517,18 +517,6 @@
 - model: contenttypes.contenttype
   fields:
     app_label: summary
-    model: datapivot
-- model: contenttypes.contenttype
-  fields:
-    app_label: summary
-    model: datapivotquery
-- model: contenttypes.contenttype
-  fields:
-    app_label: summary
-    model: datapivotupload
-- model: contenttypes.contenttype
-  fields:
-    app_label: summary
     model: visual
 - model: contenttypes.contenttype
   fields:
@@ -19185,8 +19173,8 @@
     created: 2024-10-04 20:03:17.634955+00:00
     last_updated: 2024-10-04 20:07:33.868117+00:00
     endpoints: []
-- model: summary.datapivot
-  pk: 1
+- model: summary.visual
+  pk: 17
   fields:
     assessment: 2
     title: data pivot - animal bioassay - endpoint group
@@ -19292,10 +19280,19 @@
       "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>caption</p>
     published: true
+    visual_type: 10
+    evidence_type: 0
+    dp_id: 1
+    dp_slug: animal-bioassay-data-pivot-endpoint-group
+    prefilters:
+      prefilters:
+        published_only: true
+      export_style: 0
+      preferred_units: [1]
     created: 2020-05-08 17:48:36.143248+00:00
     last_updated: 2020-05-08 19:46:14.546712+00:00
-- model: summary.datapivot
-  pk: 2
+- model: summary.visual
+  pk: 18
   fields:
     assessment: 2
     title: data pivot - animal bioassay - endpoint
@@ -19403,10 +19400,19 @@
       "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: ''
     published: true
+    visual_type: 10
+    evidence_type: 0
+    prefilters:
+      prefilters:
+        published_only: true
+      preferred_units: [1]
+      export_style: 1
+    dp_id: 2
+    dp_slug: animal-bioassay-data-pivot-endpoint
     created: 2020-05-08 17:52:21.928839+00:00
     last_updated: 2020-05-08 19:46:02.216322+00:00
-- model: summary.datapivot
-  pk: 3
+- model: summary.visual
+  pk: 19
   fields:
     assessment: 2
     title: data pivot - epimeta
@@ -19513,10 +19519,18 @@
       "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: ''
     published: true
+    visual_type: 10
+    evidence_type: 4
+    prefilters:
+      published_only: true
+      export_style: 0
+      preferred_units: []
+    dp_id: 3
+    dp_slug: data-pivot-epimeta
     created: 2020-05-09 03:22:01.190725+00:00
     last_updated: 2020-05-09 03:23:45.812012+00:00
-- model: summary.datapivot
-  pk: 4
+- model: summary.visual
+  pk: 20
   fields:
     assessment: 2
     title: data pivot - epi
@@ -19622,10 +19636,19 @@
       "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>Example.</p>
     published: true
+    visual_type: 10
+    evidence_type: 1
+    prefilters:
+      prefilters:
+        published_only: true
+      export_style: 0
+      preferred_units: '[]'
+    dp_id: 4
+    dp_slug: data-pivot-epi
     created: 2020-05-11 02:26:51.725098+00:00
     last_updated: 2020-05-11 02:46:43.863863+00:00
-- model: summary.datapivot
-  pk: 5
+- model: summary.visual
+  pk: 21
   fields:
     assessment: 2
     title: data pivot - invitro - endpoint
@@ -19731,10 +19754,19 @@
       "#ffffff"}, {"name": "fuschia", "fill": "#d4266e", "fill-opacity": 0.8, "stroke": "#ab006c", "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>demo.</p>
     published: true
+    visual_type: 10
+    evidence_type: 2
+    prefilters:
+      prefilters:
+        published_only: true
+      export_style: 1
+      preferred_units: []
+    dp_id: 5
+    dp_slug: data-pivot-invitro-endpoint
     created: 2020-05-11 04:10:29.880052+00:00
     last_updated: 2020-05-11 04:15:33.309627+00:00
-- model: summary.datapivot
-  pk: 6
+- model: summary.visual
+  pk: 22
   fields:
     assessment: 2
     title: data pivot - invitro - endpoint group
@@ -19840,62 +19872,17 @@
       "stroke-width": 1, "pattern": "solid", "pattern_fill": "#ffffff"}]}, "calculated_columns": []}
     caption: <p>demo.</p>
     published: true
+    visual_type: 10
+    evidence_type: 2
+    prefilters:
+      export_style: 0
+      preferred_units: []
+      prefilters:
+        published_only: true
+    dp_id: 6
+    dp_slug: data-pivot-invitro-endpoint-group
     created: 2020-05-11 04:12:54.866928+00:00
     last_updated: 2020-05-11 04:12:54.866957+00:00
-- model: summary.datapivotquery
-  pk: 2
-  fields:
-    datapivot_ptr: 2
-    evidence_type: 0
-    export_style: 1
-    preferred_units: '["1"]'
-    prefilters:
-      published_only: true
-- model: summary.datapivotquery
-  pk: 1
-  fields:
-    datapivot_ptr: 1
-    evidence_type: 0
-    export_style: 0
-    preferred_units: '["1"]'
-    prefilters:
-      published_only: true
-- model: summary.datapivotquery
-  pk: 4
-  fields:
-    datapivot_ptr: 4
-    evidence_type: 1
-    export_style: 0
-    preferred_units: '[]'
-    prefilters:
-      published_only: true
-- model: summary.datapivotquery
-  pk: 3
-  fields:
-    datapivot_ptr: 3
-    evidence_type: 4
-    export_style: 0
-    preferred_units: '[]'
-    prefilters:
-      published_only: true
-- model: summary.datapivotquery
-  pk: 5
-  fields:
-    datapivot_ptr: 5
-    evidence_type: 2
-    export_style: 1
-    preferred_units: '[]'
-    prefilters:
-      published_only: true
-- model: summary.datapivotquery
-  pk: 6
-  fields:
-    datapivot_ptr: 6
-    evidence_type: 2
-    export_style: 0
-    preferred_units: '[]'
-    prefilters:
-      published_only: true
 - model: docs.documentationpage
   pk: 3
   fields:
