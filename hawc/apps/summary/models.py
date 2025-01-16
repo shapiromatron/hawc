@@ -295,6 +295,13 @@ class Visual(models.Model):
                 label = "Data pivot (ecology)"
         return label
 
+    @property
+    def is_data_pivot(self) -> bool:
+        return self.visual_type in (
+            constants.VisualType.DATA_PIVOT_QUERY,
+            constants.VisualType.DATA_PIVOT_FILE,
+        )
+
     @classmethod
     def get_heatmap_datasets(cls, assessment: Assessment) -> HeatmapDatasets:
         datasets = [

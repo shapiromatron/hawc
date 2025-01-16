@@ -282,6 +282,11 @@ class TestDataPivotQueryForm:
         )
         assert form.is_valid()
 
+        # assert save successfully works
+        assert form.instance.id is None
+        form.save()
+        assert form.instance.id is not None
+
     def test_update(self, db_keys):
         form = forms.DataPivotQueryForm(
             parent=Assessment.objects.get(id=db_keys.assessment_working),

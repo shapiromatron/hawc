@@ -385,6 +385,11 @@ class VisualizationCreate(BaseCreate):
         instance.evidence_type = self.evidence_type
         return instance
 
+    def get_success_url(self):
+        if self.object.is_data_pivot:
+            return self.object.get_dp_update_settings()
+        return super().get_success_url()
+
 
 class VisualizationCreateTester(VisualizationCreate):
     parent_model = Assessment
@@ -484,12 +489,23 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         )
         return context
 
+    def get_success_url(self):
+        if self.object.is_data_pivot:
+            return self.object.get_dp_update_settings()
+        return super().get_success_url()
+
 
 class VisualizationUpdateSettings(GetVisualizationObjectMixin, BaseUpdate):
     success_message = "Visualization updated."
     model = models.Visual
     form_class = forms.VisualSettingsForm
     template_name = "summary/visual_update_settings.html"
+
+    def get_object(self, **kw):
+        object = super().get_object(**kw)
+        if not object.is_data_pivot:
+            raise Http404()
+        return object
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

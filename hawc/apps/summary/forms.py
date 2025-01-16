@@ -773,18 +773,6 @@ class DataPivotQueryForm(VisualForm):
         }
         return super().save(commit=commit)
 
-    def clean_export_style(self):
-        evidence_type = self.instance.evidence_type
-        export_style = self.cleaned_data["export_style"]
-        if (
-            evidence_type not in (constants.StudyType.IN_VITRO, constants.StudyType.BIOASSAY)
-            and export_style != constants.ExportStyle.EXPORT_GROUP
-        ):
-            raise forms.ValidationError(
-                "Outcome/Result level export not implemented for this data-type."
-            )
-        return export_style
-
     def clean_settings(self):
         # if settings is None make it an empty dictionary
         return self.cleaned_data["settings"] or {}

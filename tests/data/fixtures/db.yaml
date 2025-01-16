@@ -19542,7 +19542,8 @@
     visual_type: 10
     evidence_type: 4
     prefilters:
-      published_only: true
+      prefilters:
+        published_only: true
       export_style: 0
       preferred_units: []
     dp_id: 3

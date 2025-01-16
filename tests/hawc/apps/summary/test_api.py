@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils.http import urlencode
 from rest_framework.test import APIClient
 
-from hawc.apps.summary import models
+from hawc.apps.summary import constants, models
 
 from ..test_utils import check_api_json_data, get_client
 
@@ -208,108 +208,99 @@ class TestVisual:
         assert team_client.get(url).status_code == 200
 
 
-# @pytest.mark.django_db
-# class TestVisualDataPivot:
-#     def _test_dp(self, rewrite_data_files: bool, slug: str, fn_key: str, db_keys):
-#         user_anon = APIClient()
-#         user_reviewer = APIClient()
-#         assert user_reviewer.login(username="reviewer@hawcproject.org", password="pw") is True
-#         user_team = APIClient()
-#         assert user_team.login(username="team@hawcproject.org", password="pw") is True
+@pytest.mark.django_db
+class TestVisualDataPivot:
+    def _test_dp(self, rewrite_data_files: bool, slug: str, fn_key: str, db_keys):
+        user_anon = get_client(api=True)
+        user_reviewer = get_client("reviewer", api=True)
+        user_team = get_client("team", api=True)
 
-#         # check DataPivot read
-#         dp = models.DataPivot.objects.get(slug=slug)
-#         url = dp.get_api_detail()
-#         response = user_anon.get(url)
-#         assert response.status_code == 200
+        dp = models.Visual.objects.get(slug=slug)
 
-#         data = response.json()
-#         key = f"api-dp-{fn_key}.json"
-#         check_api_json_data(data, key, rewrite_data_files)
+        # check api detail
+        url = dp.get_api_detail()
+        response = user_anon.get(url)
+        assert response.status_code == 200
 
-#         # check DataPivot data read
-#         url = dp.get_data_url().replace("tsv", "json")
-#         response = user_anon.get(url)
-#         assert response.status_code == 200
-#         data = response.json()
-#         key = f"api-dp-data-{fn_key}.json"
-#         check_api_json_data(data, key, rewrite_data_files)
+        data = response.json()
+        key = f"api-dp-{fn_key}.json"
+        check_api_json_data(data, key, rewrite_data_files)
 
-#         # check DataPivotQuery read
-#         dpq = models.DataPivotQuery.objects.get(slug=slug)
-#         url = reverse("summary:api:data_pivot_query-detail", args=(dpq.pk,))
-#         response = user_anon.get(url)
-#         assert response.status_code == 200
+        # check api data
+        url = dp.get_data_url() + "?format=json"
+        response = user_anon.get(url)
+        assert response.status_code == 200
 
-#         data = response.json()
-#         key = f"api-dp_query-{fn_key}.json"
-#         check_api_json_data(data, key, rewrite_data_files)
+        dataset = response.json()
+        key = f"api-dp-data-{fn_key}.json"
+        check_api_json_data(dataset, key, rewrite_data_files)
 
-#         # check DataPivotQuery create
-#         data["title"] = data["title"] + "-2"
-#         data["slug"] = data["slug"] + "-2"
-#         data["assessment"] = db_keys.assessment_working
-#         url = reverse("summary:api:data_pivot_query-list")
-#         for user in [user_anon, user_reviewer]:
-#             response = user.post(url, data, format="json")
-#             assert response.status_code == 403
-#         response = user_team.post(url, data, format="json")
-#         assert response.status_code == 201
-#         assert response.json()["title"] == data["title"]
+        # check api create
+        data["title"] = data["title"] + "-2"
+        data["slug"] = data["slug"] + "-2"
+        data["visual_type"] = constants.VisualType.DATA_PIVOT_QUERY
+        data["assessment"] = db_keys.assessment_working
+        url = reverse("summary:api:visual-list")
+        for user in [user_anon, user_reviewer]:
+            response = user.post(url, data, format="json")
+            assert response.status_code == 403
+        response = user_team.post(url, data, format="json")
+        assert response.status_code == 201
+        assert response.json()["title"] == data["title"]
 
-#         dpq_id = response.json()["id"]
-#         url = reverse("summary:api:data_pivot_query-detail", args=(dpq_id,))
+        dpq_id = response.json()["id"]
+        url = reverse("summary:api:visual-detail", args=(dpq_id,))
 
-#         # update data pivot
-#         data["title"] = "updated-title"
-#         for user in [user_anon, user_reviewer]:
-#             response = user.patch(url, data, format="json")
-#             assert response.status_code == 403
-#         response = user_team.patch(url, data, format="json")
-#         assert response.status_code == 200
-#         assert response.json()["title"] == "updated-title"
+        # update data pivot
+        data["title"] = "updated-title"
+        for user in [user_anon, user_reviewer]:
+            response = user.patch(url, data, format="json")
+            assert response.status_code == 403
+        response = user_team.patch(url, data, format="json")
+        assert response.status_code == 200
+        assert response.json()["title"] == "updated-title"
 
-#         # delete data pivot
-#         for user in [user_anon, user_reviewer]:
-#             response = user.delete(url, data, format="json")
-#             assert response.status_code == 403
-#         response = user_team.delete(url, data, format="json")
-#         assert response.status_code == 204
+        # delete data pivot
+        for user in [user_anon, user_reviewer]:
+            response = user.delete(url, data, format="json")
+            assert response.status_code == 403
+        response = user_team.delete(url, data, format="json")
+        assert response.status_code == 204
 
-#     def test_bioassay_endpoint(self, rewrite_data_files: bool, db_keys):
-#         self._test_dp(
-#             rewrite_data_files,
-#             "animal-bioassay-data-pivot-endpoint",
-#             "animal-bioassay-endpoint",
-#             db_keys,
-#         )
+    def test_bioassay_endpoint(self, rewrite_data_files: bool, db_keys):
+        self._test_dp(
+            rewrite_data_files,
+            "animal-bioassay-data-pivot-endpoint",
+            "animal-bioassay-endpoint",
+            db_keys,
+        )
 
-#     def test_bioassay_endpoint_group(self, rewrite_data_files: bool, db_keys):
-#         self._test_dp(
-#             rewrite_data_files,
-#             "animal-bioassay-data-pivot-endpoint",
-#             "animal-bioassay-endpoint",
-#             db_keys,
-#         )
+    def test_bioassay_endpoint_group(self, rewrite_data_files: bool, db_keys):
+        self._test_dp(
+            rewrite_data_files,
+            "animal-bioassay-data-pivot-endpoint",
+            "animal-bioassay-endpoint",
+            db_keys,
+        )
 
-#     def test_epi(self, rewrite_data_files: bool, db_keys):
-#         self._test_dp(rewrite_data_files, "data-pivot-epi", "epi", db_keys)
+    def test_epi(self, rewrite_data_files: bool, db_keys):
+        self._test_dp(rewrite_data_files, "data-pivot-epi", "epi", db_keys)
 
-#     def test_epimeta(self, rewrite_data_files: bool, db_keys):
-#         self._test_dp(rewrite_data_files, "data-pivot-epimeta", "epimeta", db_keys)
+    def test_epimeta(self, rewrite_data_files: bool, db_keys):
+        self._test_dp(rewrite_data_files, "data-pivot-epimeta", "epimeta", db_keys)
 
-#     def test_invitro_endpoint(self, rewrite_data_files: bool, db_keys):
-#         self._test_dp(
-#             rewrite_data_files, "data-pivot-invitro-endpoint", "invitro-endpoint", db_keys
-#         )
+    def test_invitro_endpoint(self, rewrite_data_files: bool, db_keys):
+        self._test_dp(
+            rewrite_data_files, "data-pivot-invitro-endpoint", "invitro-endpoint", db_keys
+        )
 
-#     def test_invitro_endpoint_group(self, rewrite_data_files: bool, db_keys):
-#         self._test_dp(
-#             rewrite_data_files,
-#             "data-pivot-invitro-endpoint-group",
-#             "invitro-endpoint-group",
-#             db_keys,
-#         )
+    def test_invitro_endpoint_group(self, rewrite_data_files: bool, db_keys):
+        self._test_dp(
+            rewrite_data_files,
+            "data-pivot-invitro-endpoint-group",
+            "invitro-endpoint-group",
+            db_keys,
+        )
 
 
 @pytest.mark.django_db

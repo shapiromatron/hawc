@@ -95,10 +95,3 @@ class TestVisual:
         ).first()
         export = obj._data_df_dpq()
         assert export.df.shape[0] > 0
-
-
-# @pytest.mark.django_db
-# class TestDataPivot:
-#     def test_clean(self):
-#         obj = models.DataPivotQuery.objects.get(id=1)
-#         obj.clean()
