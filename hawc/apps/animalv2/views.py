@@ -18,6 +18,8 @@ from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
 from . import forms, models
 
+# TODO - make sure HTML views efficiently query database, HTMX views lower priority
+
 
 class ExperimentCreate(EnsureExtractionStartedMixin, BaseCreate):
     success_message = "Experiment created."
@@ -34,8 +36,6 @@ class ExperimentUpdate(BaseUpdate):
     model = models.Experiment
     form_class = forms.ExperimentForm
     template_name = "animalv2/experiment_update.html"
-
-    # TODO - both here and ExperimentDelete, instead of using default behavior, could implement smart prefetching by overriding get_queryset. See epiv2/managers::DesignManager.
 
 
 class ExperimentDetail(BaseDetail):
@@ -91,6 +91,8 @@ class ExperimentChildViewSet(HtmxViewSet):
         template = self.form_fragment
         formsets = []
         formsets_valid_if_present = True
+        # TODO - refactor shared code between `create` and `update`?
+        # TODO - errors in formset forms not rendering - show?
         if request.method == "POST":
             # make a copy; if we do any is_valid modifying of the data we need this...
             request.POST = request.POST.copy()
@@ -228,18 +230,7 @@ class ExperimentChildViewSet(HtmxViewSet):
                     form=formset_config.form_class,
                     can_delete=True,
                 )(
-                    # only show the subobjects related to this parent. The filter key is dynamic
-                    # so we do it using a Q object.
-                    #
-                    # e.g. for DoseGroup editing we have a FormsetConfiguration "formset_config" where:
-                    #       formset_config.form_class.formset_parent_key    == "treatment_id"
-                    #       self.request.item.object.id                     == the id of the parent treatment
-                    #       formset_config.sort_field                       == "dose_group_id"
-                    #
-                    # So this Q code is like doing:
-                    #       queryset=formset_config.model_class.objects.filter(
-                    #           treatment_id=x
-                    #       ).order_by("dose_group_id")
+                    # only show the subobjects related to this parent.
                     queryset=formset_config.model_class.objects.filter(
                         Q(
                             (
@@ -255,7 +246,7 @@ class ExperimentChildViewSet(HtmxViewSet):
 
             formsets.append(
                 {
-                    "fragment": formset_config.fragment,
+                    "fragment": formset_config.template,
                     "instance": formset,
                     "helper": formset_config.helper_class(),
                 }
@@ -284,12 +275,12 @@ class TreatmentViewSet(ExperimentChildViewSet):
     detail_fragment = "animalv2/fragments/_treatment_row.html"
     formset_configurations = [
         FormsetConfiguration(
-            "animalv2/fragments/_treatment_formset.html",
-            forms.DoseGroupForm,
             models.DoseGroup,
+            forms.DoseGroupForm,
             FormsetGenericFormHelper,
-            "dose_group_id",
             "dosegroupform",
+            "dose_group_id",
+            "animalv2/fragments/_treatment_formset.html",
         )
     ]
 
@@ -312,19 +303,19 @@ class DataExtractionViewSet(ExperimentChildViewSet):
     detail_fragment = "animalv2/fragments/_dataextraction_row.html"
     formset_configurations = [
         FormsetConfiguration(
-            "animalv2/fragments/_dataextraction_formset_groupleveldata.html",
-            forms.DoseResponseGroupLevelDataForm,
             models.DoseResponseGroupLevelData,
+            forms.DoseResponseGroupLevelDataForm,
             FormsetGenericFormHelper,
-            "id",
             "groupleveldataform",
+            "id",
+            "animalv2/fragments/_dataextraction_formset_groupleveldata.html",
         ),
         FormsetConfiguration(
-            "animalv2/fragments/_dataextraction_formset_animalleveldata.html",
-            forms.DoseResponseAnimalLevelDataForm,
             models.DoseResponseAnimalLevelData,
+            forms.DoseResponseAnimalLevelDataForm,
             FormsetGenericFormHelper,
-            "id",
             "animalleveldataform",
+            "id",
+            "animalv2/fragments/_dataextraction_formset_animalleveldata.html",
         ),
     ]

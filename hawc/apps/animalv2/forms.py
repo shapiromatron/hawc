@@ -236,7 +236,7 @@ class ObservationTimeForm(forms.ModelForm):
         # need a UI widget for picking the endpoint at all, b/c it's implicit in the nested structure.
         #
         # in short, right now it's a minor issue, but not worth fixing til we make some other decisions.
-        if self.instance.id is not None:
+        if self.instance.id:
             # editing an existing timepoint
             self.fields["endpoint"].queryset = self.instance.endpoint.experiment.v2_endpoints.all()
         else:

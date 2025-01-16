@@ -20200,7 +20200,6 @@
     result_details: test details
     created: 2024-01-20 21:12:17.714337+00:00
     last_updated: 2024-01-21 20:38:10.024296+00:00
-
 - model: animalv2.doseresponsegroupleveldata
   pk: 1
   fields:
@@ -20217,7 +20216,6 @@
     LOEL: 2
     created: 2024-01-20 21:12:17.714337+00:00
     last_updated: 2024-01-21 20:38:10.024296+00:00
-
 - model: animalv2.doseresponseanimalleveldata
   pk: 1
   fields:

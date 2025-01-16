@@ -485,8 +485,14 @@ class PydanticValidator:
             self.schema.model_validate(value)
 
 
-# thx https://stackoverflow.com/questions/21754918/rendering-tabular-rows-with-formset-in-django-crispy-forms and https://stackoverflow.com/questions/42615357/cannot-pass-helper-to-django-crispy-formset-in-template
 class FormsetGenericFormHelper(BaseFormHelper):
+    """Custom helper method to style a row form in a table inline formset.
+
+    Related links:
+    * https://stackoverflow.com/questions/42615357/
+    * https://stackoverflow.com/a/25656273/906385
+    """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.form_tag = False

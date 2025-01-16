@@ -6,11 +6,14 @@ from typing import Any
 from urllib.parse import urlparse
 
 import reversion
+from crispy_forms import helper as cf
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
+from django.db.models import Model
+from django.forms import BaseForm
 from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -803,15 +806,11 @@ def htmx_required(func):
 
 @dataclass
 class FormsetConfiguration:
-    """
-    dataclass containing all the information needed to render one or more child formsets as part of another form.
+    """Configuration for rendering a child formset in parent form."""
 
-    No functionality; just a convenient grouping of fields.
-    """
-
-    fragment: str  # path to the template fragment for this formset
-    form_class: type  # class/type; subclass of django.forms.ModelForm
-    model_class: type  # class/type; subclass of django.db.models.Model
-    helper_class: type  # class/type; a django form helper
-    sort_field: str  # field used to sort when retrieving items being displayed in the subformset
-    form_prefix: str  # prefix passed to modelformset_factory during formset construction
+    model_class: type[Model]  # class/type; subclass of django.db.models.Model
+    form_class: type[BaseForm]  # class/type; subclass of django.forms.ModelForm
+    helper_class: type[cf.FormHelper]  # class/type; a django form helper
+    form_prefix: str
+    sort_field: str
+    template: str  # formset template fragment

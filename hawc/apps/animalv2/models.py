@@ -351,26 +351,6 @@ class Endpoint(models.Model):
     def get_study(self):
         return self.experiment.get_study()
 
-    @property
-    def resolved_name(self):
-        return self.name_term.name if self.name_term else self.name
-
-    @property
-    def resolved_system(self):
-        return self.system_term.name if self.system_term else self.system
-
-    @property
-    def resolved_organ(self):
-        return self.organ_term.name if self.organ_term else self.organ
-
-    @property
-    def resolved_effect(self):
-        return self.effect_term.name if self.effect_term else self.effect
-
-    @property
-    def resolved_effect_subtype(self):
-        return self.effect_subtype_term.name if self.effect_subtype_term else self.effect_subtype
-
     def clone(self):
         self.id = None
         self.name = clone_name(self, "name")
