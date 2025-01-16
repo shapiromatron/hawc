@@ -1,6 +1,8 @@
 import pytest
 from django.urls import reverse
 
+from hawc.apps.summary import constants, models
+
 from ..test_utils import check_200, get_client
 
 
@@ -53,3 +55,21 @@ def test_get_200():
     ]
     for url in urls:
         check_200(client, url)
+
+
+@pytest.mark.django_db
+class TestVisualizationUpdateSettings:
+    def test_test_404(self):
+        client = get_client("admin")
+
+        # works for a datapivot
+        obj = models.Visual.objects.filter(
+            visual_type=constants.VisualType.DATA_PIVOT_QUERY
+        ).first()
+        url = obj.get_dp_update_settings()
+        assert client.get(url).status_code == 200
+
+        # but returns 404 for non-data pivot
+        obj = models.Visual.objects.filter(visual_type=constants.VisualType.PLOTLY).first()
+        url = obj.get_dp_update_settings()
+        assert client.get(url).status_code == 404
