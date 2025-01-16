@@ -634,7 +634,7 @@ def get_visual_form(visual_type):
             constants.VisualType.IMAGE: ImageVisualForm,
             constants.VisualType.PRISMA: PrismaVisualForm,
             constants.VisualType.DATA_PIVOT_QUERY: DataPivotQueryForm,
-            constants.VisualType.DATA_PIVOT_FILE: DataPivotUploadForm,
+            constants.VisualType.DATA_PIVOT_FILE: DataPivotDatasetForm,
         }[visual_type]
     except Exception as exc:
         raise ValueError() from exc
@@ -646,7 +646,7 @@ class VisualSettingsForm(forms.ModelForm):
         fields = ("settings",)
 
 
-class DataPivotUploadForm(VisualForm):
+class DataPivotDatasetForm(VisualForm):
     class Meta:
         model = models.Visual
         fields = (
@@ -731,11 +731,11 @@ class DataPivotQueryForm(VisualForm):
         if self.instance.id is None:
             self.instance.evidence_type = evidence_type
 
-        data = self.instance.prefilters
-        if "export_style" in data:
-            self.fields["export_style"].initial = data["export_style"]
-        if "preferred_units" in data:
-            self.fields["preferred_units"].initial = data["preferred_units"]
+        instance_data = self.instance.prefilters
+        if "export_style" in instance_data:
+            self.fields["export_style"].initial = instance_data["export_style"]
+        if "preferred_units" in instance_data:
+            self.fields["preferred_units"].initial = instance_data["preferred_units"]
 
         self.prefilter_cls = prefilters.get_prefilter_cls(
             None, self.instance.evidence_type, self.instance.assessment
