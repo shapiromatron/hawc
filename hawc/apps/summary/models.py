@@ -231,7 +231,7 @@ class Visual(models.Model):
     )
     dp_slug = models.SlugField(editable=False, blank=True, help_text="data pivot migration")
     dataset = models.ForeignKey(
-        "assessment.Dataset", on_delete=models.PROTECT, blank=True, null=True
+        "assessment.Dataset", on_delete=models.CASCADE, blank=True, null=True
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
