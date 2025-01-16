@@ -234,7 +234,6 @@ class EndpointAggregationForm(VisualForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
-        self.helper.attrs["novalidate"] = ""
         self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(
             self.instance.assessment
         )
@@ -242,6 +241,7 @@ class EndpointAggregationForm(VisualForm):
         self.fields["endpoints"].queryset = Endpoint.objects.assessment_qs(
             self.instance.assessment
         ).selector()
+        self.fields["dose_units"].required = True
 
     class Meta:
         model = models.Visual

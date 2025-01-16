@@ -126,7 +126,6 @@ class AssessmentForm(forms.ModelForm):
         helper.add_row("editable", 3, "col-md-4")
         helper.add_row("conflicts_of_interest", 2, "col-md-6")
         helper.add_create_btn("dtxsids", reverse("assessment:dtxsid_create"), "Add new DTXSID")
-        helper.attrs["novalidate"] = ""
         return helper
 
 
