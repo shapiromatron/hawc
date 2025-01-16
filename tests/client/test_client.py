@@ -1290,6 +1290,11 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.summary.visual_list(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
+    def test_summary_table_list(self):
+        client = HawcClient(self.live_server_url)
+        response = client.summary.table_list(self.db_keys.assessment_client)
+        assert isinstance(response, pd.DataFrame)
+
     def test_summary_crud(self):
         client = HawcClient(self.live_server_url)
         client.authenticate("admin@hawcproject.org", "pw")
