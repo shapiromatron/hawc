@@ -2175,6 +2175,26 @@
     text_color: "#FFFFFF"
     created: 2024-09-16 11:30:01.123456+00:00
     last_updated: 2024-09-16 11:30:01.123456+00:00
+- model: assessment.labeleditem
+  pk: 1
+  fields:
+    label: 2
+    content_type:
+    - summary
+    - summarytable
+    object_id: 1
+    created: 2025-01-15 23:34:01.139917+00:00
+    last_updated: 2025-01-15 23:34:01.139926+00:00
+- model: assessment.labeleditem
+  pk: 2
+  fields:
+    label: 2
+    content_type:
+    - summary
+    - visual
+    object_id: 1
+    created: 2025-01-15 23:34:10.594337+00:00
+    last_updated: 2025-01-15 23:34:10.594370+00:00
 - model: lit.literatureassessment
   pk: 1
   fields:
