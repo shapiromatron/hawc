@@ -58,9 +58,10 @@ Client tutorials for common operations are below:
 
 ### Changelog
 
-#### NEXT (TBD)
+#### [2024-4](https://pypi.org/project/hawc-client/2024.4/) (January 2025)
 
-* Added literature tag API {create, update, delete, move}
+* Added assessment team member API endpoint to retrieve assessments a user is a member of
+* Added literature tag API {create, update, delete, move} to modify tags
 
 #### [2024-3](https://pypi.org/project/hawc-client/2024.3/) (October 2024)
 
