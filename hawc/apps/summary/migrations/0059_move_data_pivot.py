@@ -57,6 +57,7 @@ def forward(apps, schema_editor):
     dpu_ct = ContentType.objects.get_for_model(DataPivotUpload).id
 
     mapping = []
+    dps = []
 
     for dp in DataPivotQuery.objects.all():
         new_dp_id = (
@@ -87,6 +88,10 @@ def forward(apps, schema_editor):
         visualization.save()
 
         mapping.append(("dpq", dp.id, visualization.id))
+
+        visualization.created = dp.created
+        visualization.last_updated = dp.last_updated
+        dps.append(visualization)
 
         for label in LabeledItem.objects.filter(object_id=dp.id, content_type_id=dpq_ct):
             new_label = LabeledItem.objects.create(
@@ -146,11 +151,17 @@ def forward(apps, schema_editor):
 
         mapping.append(("dpu", dp.id, visualization.id))
 
+        visualization.created = dp.created
+        visualization.last_updated = dp.last_updated
+        dps.append(visualization)
+
         for label in LabeledItem.objects.filter(object_id=dp.id, content_type_id=dpu_ct):
             new_label = LabeledItem.objects.create(
                 object_id=visualization.id, content_type_id=dpu_ct, label_id=label.label_id
             )
             mapping.append(("label", label.id, new_label.id))
+
+    Visual.objects.bulk_update(dps, fields=("created", "last_updated"))
 
     pd.DataFrame(data=mapping, columns="model|old_id|new_id".split("|")).to_csv(
         "summary-migration-0059.csv", index=False
