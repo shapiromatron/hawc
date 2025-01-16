@@ -10,6 +10,7 @@ DEBUG = True
 
 # enable feature flags for tests
 HAWC_FEATURES.ENABLE_DOCS_LINK = True
+HAWC_FEATURES.ENABLE_BIOASSAY_V2 = True
 
 # remove toolbar for integration tests
 INSTALLED_APPS = [app for app in INSTALLED_APPS if app != "debug_toolbar"]

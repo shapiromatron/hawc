@@ -600,6 +600,54 @@
     model: tagudfcontent
 - model: contenttypes.contenttype
   fields:
+    app_label: animalv2
+    model: experiment
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: chemical
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: dosegroup
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: animalendpointtimepoint
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: doseresponseanimalleveldata
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: doseresponsegroupleveldata
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: animalendpoint
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: animalgroup
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: dataextraction
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: treatment
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: endpoint
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: observationtime
+- model: contenttypes.contenttype
+  fields:
     app_label: assessment
     model: label
 - model: contenttypes.contenttype
@@ -1547,6 +1595,7 @@
     reviewers:
     - - reviewer@hawcproject.org
     epi_version: 2
+    animal_version: 1
 - model: assessment.assessment
   pk: 2
   fields:
@@ -1589,6 +1638,7 @@
     reviewers:
     - - reviewer@hawcproject.org
     epi_version: 1
+    animal_version: 1
 - model: assessment.assessment
   pk: 3
   fields:
@@ -1627,6 +1677,7 @@
     reviewers:
     - - reviewer@hawcproject.org
     epi_version: 1
+    animal_version: 1
 - model: assessment.assessment
   pk: 4
   fields:
@@ -1657,6 +1708,7 @@
     vocabulary: 1
     modify_uncontrolled_vocabulary: true
     epi_version: 2
+    animal_version: 2
     created: 2022-10-27 21:02:28.805681+00:00
     last_updated: 2022-10-27 21:02:28.805695+00:00
     dtxsids: []
@@ -20038,3 +20090,139 @@
   fields:
     date_created: 2099-08-01 00:00:00.000000+00:00
     user_id: 1
+- model: animalv2.experiment
+  pk: 1
+  fields:
+    study: 1
+    name: Test Experiment
+    design: AA
+    has_multiple_generations: false
+    guideline_compliance: test compliance
+    comments: <p>test comments</p>
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.chemical
+  pk: 1
+  fields:
+    experiment: 1
+    name: Test Chemical
+    cas: sample CAS
+    dtxsid: DTXSID6026296
+    source: test source
+    purity: test purity
+    vehicle: test vehicle
+    comments: test comments
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.animalgroup
+  pk: 1
+  fields:
+    experiment: 1
+    name: Test Animal Group
+    species: 1
+    strain: 1
+    sex: M
+    animal_source: test animal source
+    lifestage_at_exposure: DEV
+    lifestage_at_assessment: DEV
+    generation: ''
+    husbandry_and_diet: test husbandry and diet
+    comments: test comments
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.treatment
+  pk: 1
+  fields:
+    experiment: 1
+    name: Test Treatment
+    chemical: 1
+    route_of_exposure: OR
+    exposure_duration: 1.1
+    exposure_duration_description: test duration description
+    exposure_outcome_duration: 1
+    comments: test comments
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.dosegroup
+  pk: 1
+  fields:
+    treatment: 1
+    dose_group_id: 1
+    dose: 1.1
+    dose_units: 1
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.endpoint
+  pk: 1
+  fields:
+    experiment: 1
+    name: test endpoint name
+    name_term: null
+    system: Cardiovascular
+    system_term: null
+    organ: Eyes
+    organ_term: null
+    effect: test effect
+    effect_term: null
+    effect_subtype: test subtype
+    effect_subtype_term: null
+    effect_modifier_reference: test reference
+    effect_modifier_anatomical: test anatomical
+    effect_modifier_location: test location
+    comments: test comments
+- model: animalv2.observationtime
+  pk: 1
+  fields:
+    endpoint: 1
+    observation_time: 1.1
+    observation_time_units: 0
+    observation_time_text: test time text
+    comments: test comments
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.dataextraction
+  pk: 1
+  fields:
+    experiment: 1
+    endpoint: 1
+    observation_timepoint: 1
+    treatment: 1
+    is_qualitative_only: false
+    data_location: test location
+    variance_type: 0
+    statistical_method: test stat method
+    method_to_control_for_litter_effects: 2
+    values_estimated: false
+    dataset_type: C
+    statistical_power: test stat power
+    response_units: ''
+    dose_response_observations: test response observations
+    result_details: test details
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.doseresponsegroupleveldata
+  pk: 1
+  fields:
+    data_extraction: 1
+    treatment_name: test treatment name
+    dose: test dose
+    n: 99
+    response: 1.1
+    variance: 2.2
+    treatment_related_effect: 3
+    statistically_significant: 2
+    p_value: test pval
+    NOEL: 2
+    LOEL: 2
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.doseresponseanimalleveldata
+  pk: 1
+  fields:
+    data_extraction: 1
+    cage_id: test cage id
+    animal_id: test animal id
+    dose: test dose
+    response: 1.1
+    created: 2024-01-20 21:12:17.714337+00:00
+    last_updated: 2024-01-21 20:38:10.024296+00:00

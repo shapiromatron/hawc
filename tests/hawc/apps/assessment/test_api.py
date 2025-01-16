@@ -235,6 +235,7 @@ class TestAssessmentViewSet:
             "team_members": [1, 2],
             "reviewers": [1],
             "epi_version": 1,
+            "animal_version": 1,
             "dtxsids_ids": ["DTXSID7020970"],
         }
 

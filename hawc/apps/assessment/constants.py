@@ -64,6 +64,11 @@ class EpiVersion(models.IntegerChoices):
     V2 = 2, "v2"
 
 
+class AnimalVersion(models.IntegerChoices):
+    V1 = 1, "v1"
+    V2 = 2, "v2"
+
+
 class Status(models.IntegerChoices):
     SCOPING = 0, "Scoping"
     PROBLEM_FORM = 5, "Problem Formulation"

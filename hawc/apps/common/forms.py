@@ -483,3 +483,17 @@ class PydanticValidator:
         """Validate the field with the pydantic model."""
         with PydanticToDjangoError(include_field=False):
             self.schema.model_validate(value)
+
+
+class FormsetGenericFormHelper(BaseFormHelper):
+    """Custom helper method to style a row form in a table inline formset.
+
+    Related links:
+    * https://stackoverflow.com/questions/42615357/
+    * https://stackoverflow.com/a/25656273/906385
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_tag = False
+        self.template = "bootstrap4/table_inline_formset.html"

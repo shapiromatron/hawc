@@ -1,8 +1,10 @@
 import reversion
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.urls import reverse
 
-from ..assessment.models import DSSTox
+from ..assessment.models import DSSTox, EffectTag
+from ..common.models import clone_name
 from ..vocab.models import Term
 from . import constants, managers
 
@@ -36,14 +38,31 @@ class Experiment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    BREADCRUMB_PARENT = "study"
+
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("animalv2:experiment_detail", args=(self.pk,))
+
+    def get_update_url(self):
+        return reverse("animalv2:experiment_update", args=(self.pk,))
+
+    def get_delete_url(self):
+        return reverse("animalv2:experiment_delete", args=(self.pk,))
 
     def get_assessment(self):
         return self.study.get_assessment()
 
     def get_study(self):
         return self.study
+
+    def get_has_multiple_generations_display(self) -> str:
+        return "Yes" if self.has_multiple_generations else "No"
+
+    def get_v2_timepoints(self):
+        return ObservationTime.objects.filter(endpoint__experiment=self).order_by("endpoint__name")
 
 
 class Chemical(models.Model):
@@ -95,6 +114,12 @@ class Chemical(models.Model):
 
     def get_study(self):
         return self.experiment.get_study()
+
+    def clone(self):
+        self.id = None
+        self.name = clone_name(self, "name")
+        self.save()
+        return self
 
 
 class AnimalGroup(models.Model):
@@ -157,6 +182,12 @@ class AnimalGroup(models.Model):
     def get_study(self):
         return self.experiment.get_study()
 
+    def clone(self):
+        self.id = None
+        self.name = clone_name(self, "name")
+        self.save()
+        return self
+
 
 class Treatment(models.Model):
     objects = managers.TreatmentManager()
@@ -187,7 +218,7 @@ class Treatment(models.Model):
         blank=True,
         help_text="""Length of time between start of exposure and outcome assessment, in days when &lt;7 (e.g., 5d), weeks when &ge;7 days to 12 weeks (e.g., 1wk, 12wk), or months when &gt;12 weeks (e.g., 15mon). For repeated measures use descriptions such as "1, 2 and 3 wk".  For inhalations studies, also include hours per day and days per week, e.g., "13wk (6h/d, 7d/wk)." This field is commonly used in visualizations, so use abbreviations (h, d, wk, mon, y) and no spaces between numbers to save space. For reproductive and developmental studies, where possible instead include abbreviated age descriptions such as "GD1-10" or "GD2-PND10". For gavage studies, include the number of doses, e.g. "1wk (1dose/d, 5d/wk)" or "2doses" for a single-day experiment.""",
     )
-    exposure_outcome_durection = models.FloatField(
+    exposure_outcome_duration = models.FloatField(
         verbose_name="Exposure-outcome duration (days)",
         help_text="""Optional: Numeric length of time between start of exposure and outcome assessment in days. This field may be used to sort studies which is why days are used as a common metric.""",
         blank=True,
@@ -205,6 +236,22 @@ class Treatment(models.Model):
 
     def get_study(self):
         return self.experiment.get_study()
+
+    # also clone dose groups assigned to this treatment
+    def clone(self):
+        associated_dose_groups = DoseGroup.objects.filter(treatment_id=self.id).order_by(
+            "dose_group_id"
+        )
+
+        self.id = None
+        self.name = clone_name(self, "name")
+        self.save()
+        for dose_group in associated_dose_groups:
+            dose_group.id = None
+            dose_group.treatment_id = self.id
+            dose_group.save()
+
+        return self
 
 
 class DoseGroup(models.Model):
@@ -234,6 +281,7 @@ class Endpoint(models.Model):
     experiment = models.ForeignKey(
         Experiment, on_delete=models.CASCADE, related_name="v2_endpoints"
     )
+    name = models.CharField(max_length=128, blank=True, help_text="Endpoint/Adverse Outcome")
     name_term = models.ForeignKey(
         Term,
         related_name="v2_endpoint_name_terms",
@@ -291,6 +339,7 @@ class Endpoint(models.Model):
     effect_modifier_reference = models.CharField(max_length=128, blank=True)
     effect_modifier_anatomical = models.CharField(max_length=128, blank=True)
     effect_modifier_location = models.CharField(max_length=128, blank=True)
+    additional_tags = models.ManyToManyField(EffectTag, blank=True)
     comments = models.TextField(blank=True, help_text="TODO")
 
     def __str__(self):
@@ -301,6 +350,12 @@ class Endpoint(models.Model):
 
     def get_study(self):
         return self.experiment.get_study()
+
+    def clone(self):
+        self.id = None
+        self.name = clone_name(self, "name")
+        self.save()
+        return self
 
 
 class ObservationTime(models.Model):
@@ -332,6 +387,16 @@ class ObservationTime(models.Model):
     def get_study(self):
         return self.endpoint.get_study()
 
+    def __str__(self):
+        return (
+            f"{self.endpoint}: {self.observation_time} {self.get_observation_time_units_display()}"
+        )
+
+    def clone(self):
+        self.id = None
+        self.save()
+        return self
+
 
 class DataExtraction(models.Model):
     objects = managers.DataExtractionManager()
@@ -341,6 +406,9 @@ class DataExtraction(models.Model):
     )
     endpoint = models.ForeignKey(
         Endpoint, on_delete=models.CASCADE, related_name="v2_data_extractions"
+    )
+    treatment = models.ForeignKey(
+        Treatment, on_delete=models.CASCADE, related_name="v2_data_extractions"
     )
     observation_timepoint = models.ForeignKey(
         ObservationTime, on_delete=models.CASCADE, related_name="v2_data_extractions"
@@ -353,10 +421,14 @@ class DataExtraction(models.Model):
         blank=True,
         help_text="""Details on where the data are found in the literature (ex: "Figure 1", "Table 2", "Text, p. 24", "Figure 1 and Text, p.24")""",
     )
+    dataset_type = models.CharField(
+        blank=True, default="", max_length=2, choices=constants.DatasetType.choices
+    )
     variance_type = models.PositiveSmallIntegerField(
         default=constants.VarianceType.SD, choices=constants.VarianceType.choices
     )
     statistical_method = models.CharField(max_length=128, blank=True, help_text="TODO")
+    statistical_power = models.CharField(max_length=128, blank=True, help_text="TODO")
     method_to_control_for_litter_effects = models.PositiveSmallIntegerField(
         choices=constants.MethodToControlForLitterEffects.choices
     )
@@ -364,14 +436,10 @@ class DataExtraction(models.Model):
         default=False,
         help_text="Response values were estimated using a digital ruler or other methods",
     )
-    dataset_type = models.CharField(
-        blank=True, default="", max_length=2, choices=constants.DatasetType.choices
-    )
-    statistical_power = models.CharField(max_length=128, blank=True, help_text="TODO")
     response_units = models.CharField(
         max_length=32,
         blank=True,
-        help_text="Units the response was measured in (i.e., \u03BCg/dL, % control, etc.)",
+        help_text="Units the response was measured in (i.e., \u03bcg/dL, % control, etc.)",
     )
     dose_response_observations = models.TextField(help_text="TODO")
     result_details = models.TextField(help_text="TODO")
@@ -384,6 +452,11 @@ class DataExtraction(models.Model):
 
     def get_study(self):
         return self.experiment.get_study()
+
+    def clone(self):
+        self.id = None
+        self.save()
+        return self
 
 
 class DoseResponseGroupLevelData(models.Model):
