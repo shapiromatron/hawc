@@ -303,7 +303,7 @@ class Assessment(models.Model):
     )
     animal_version = models.PositiveSmallIntegerField(
         choices=constants.AnimalVersion,
-        default=constants.AnimalVersion.V2,
+        default=constants.AnimalVersion.V1,  # TODO - change to V2
         verbose_name="Animal schema version",
         help_text="Data extraction schema version used for animal studies",
     )

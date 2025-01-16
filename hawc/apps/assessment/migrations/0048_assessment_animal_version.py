@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
             name="animal_version",
             field=models.PositiveSmallIntegerField(
                 choices=[(1, "v1"), (2, "v2")],
-                default=2,
+                default=1,  # TODO - change to V2
                 help_text="Data extraction schema version used for animal studies",
                 verbose_name="Animal schema version",
             ),
