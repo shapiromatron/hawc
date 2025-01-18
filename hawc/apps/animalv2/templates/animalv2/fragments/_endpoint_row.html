@@ -1,0 +1,8 @@
+<tr hx-target="this" hx-swap="outerHTML" class="endpoint-{{object.id}}">
+  <td>{{object.name}}</td>
+  <td>{{object.system}}</td>
+  <td>{{object.organ}}</td>
+  <td>{{object.effect}}</td>
+  {% include "common/fragments/_object_row.html" with model="endpoint" app="animalv2" %}
+</tr>
+{% include "common/fragments/_create_row.html" with model="endpoint" %}

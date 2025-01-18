@@ -78,11 +78,11 @@ class MethodToControlForLitterEffects(models.IntegerChoices):
     NA = 2, "NA"
 
 
-class DatasetType(models.TextChoices):
+class DatasetType(models.TextChoices):  # TODO - nested dichotomous?
     CONTINUOUS = "C", "Continuous"
     DICHOTOMOUS = "D", "Dichotomous"
     PERCENT_DIFFERENCE = "PD", "Percent Difference"
-    DICHOTOMOUS_CANCER = "DC", "Dichotomous Cancer"
+    DICHOTOMOUS_CANCER = "DC", "Dichotomous Cancer"  # TODO - remove cancer?
     NOT_REPORTED = "NR", "Not reported"
 
 

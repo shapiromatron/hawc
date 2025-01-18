@@ -1,0 +1,10 @@
+<table class="table table-sm table-striped" hx-target="this" id="experiment-table">
+  {% bs4_colgroup '20,80' %}
+  <tbody>
+    {% optional_table_row "Experiment name" object.name %}
+    {% optional_table_row "Design" object.get_design_display %}
+    {% optional_table_row "Multiple generations" object.get_has_multiple_generations_display %}
+    {% optional_table_row "Guideline compliance" object.guideline_compliance %}
+    {% optional_table_row "Comments" object.comments %}
+  </tbody>
+</table>

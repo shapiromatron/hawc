@@ -1,0 +1,8 @@
+<tr hx-target="this" hx-swap="outerHTML" class="animalgroup-{{object.id}}">
+  <td>{{object.name}}</td>
+  <td>{{object.species}}</td>
+  <td>{{object.strain}}</td>
+  <td>{{object.sex}}</td>
+  {% include "common/fragments/_object_row.html" with model="animalgroup" app="animalv2"%}
+</tr>
+{% include "common/fragments/_create_row.html" with model="animalgroup" %}

@@ -1,15 +1,19 @@
 import logging
 from collections.abc import Callable, Iterable
+from dataclasses import dataclass
 from functools import wraps
 from typing import Any
 from urllib.parse import urlparse
 
 import reversion
+from crispy_forms import helper as cf
 from django.contrib import messages
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import PermissionDenied
 from django.db import models, transaction
+from django.db.models import Model
+from django.forms import BaseForm
 from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -798,3 +802,15 @@ def htmx_required(func):
         return func(request, *args, **kwargs)
 
     return wrapper
+
+
+@dataclass
+class FormsetConfiguration:
+    """Configuration for rendering a child formset in parent form."""
+
+    model_class: type[Model]  # class/type; subclass of django.db.models.Model
+    form_class: type[BaseForm]  # class/type; subclass of django.forms.ModelForm
+    helper_class: type[cf.FormHelper]  # class/type; a django form helper
+    form_prefix: str
+    sort_field: str
+    template: str  # formset template fragment
