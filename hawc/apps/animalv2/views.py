@@ -333,7 +333,13 @@ class StudyLevelValues(BaseList):
         return context
 
     def get_queryset(self):
-        queryset = super().get_queryset().filter(study=self.parent).order_by("-created")
+        queryset = (
+            super()
+            .get_queryset()
+            .filter(study=self.parent)
+            .select_related("units")
+            .order_by("-created")
+        )
         return queryset
 
 
