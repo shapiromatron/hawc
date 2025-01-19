@@ -1,0 +1,18 @@
+<table class="table table-sm table-striped">
+  {% if can_edit %}
+    {% bs4_thead 'System,Value Type,Value,Comments,Editing' %}
+    {% bs4_colgroup '20,20,20,20,20' %}
+  {% else %}
+    {% bs4_thead 'System,Value Type,Value,Comments' %}
+    {% bs4_colgroup '25,25,25,25' %}
+  {% endif %}
+  <tbody>
+    {% for object in object_list %}
+      {% include "animalv2/fragments/studylevelvalue_row.html" %}
+    {% endfor %}
+    {% if can_edit %}
+      {% include "common/fragments/_create_one.html" with text='No study level values to display. Click "Create new study level value" to add one.' %}
+      {% include "common/fragments/_create_row.html" with model="studylevelvalue" first=True %}
+    {% endif %}
+  </tbody>
+</table>

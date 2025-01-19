@@ -61,4 +61,15 @@ urlpatterns = [
         views.DataExtractionViewSet.as_view(),
         name="dataextraction-htmx",
     ),
+    # Study Level Values
+    path(
+        "study/<int:pk>/study-level-values/",
+        views.StudyLevelValues.as_view(),
+        name="studylevelvalues",
+    ),
+    path(
+        "study-level-values/<int:pk>/<slug:action>/",
+        views.StudyLevelValueViewSet.as_view(),
+        name="studylevelvalues-htmx",
+    ),
 ]

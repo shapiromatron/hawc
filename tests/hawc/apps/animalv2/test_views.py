@@ -7,6 +7,16 @@ from ..test_utils import check_200, check_403, get_client, get_first
 
 
 @pytest.mark.django_db
+def test_get_200(db_keys):
+    client = get_client("team")
+    urls = [
+        reverse("animalv2:studylevelvalues", args=(db_keys.study_working,)),
+    ]
+    for url in urls:
+        check_200(client, url)
+
+
+@pytest.mark.django_db
 class TestExperimentView:
     def test_permission(self, db_keys):
         experiment = get_first(models.Experiment)

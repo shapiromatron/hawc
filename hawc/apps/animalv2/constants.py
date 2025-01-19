@@ -98,3 +98,12 @@ class Lifestage(models.TextChoices):
     ADULT = "ADULT", "Adult"
     AG = "AG", "Adult (gestation)"
     ML = "ML", "Multi-lifestage"
+
+
+class StudyLevelTypeChoices(models.IntegerChoices):
+    LOEL = 0, "LOEL"
+    NOEL = 1, "NOEL"
+    LOAEL = 2, "LOAEL"
+    NOAEL = 3, "NOAEL"
+    BMDL = 4, "BMDL"
+    BMD = 5, "BMD"

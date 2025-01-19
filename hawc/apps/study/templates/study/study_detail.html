@@ -28,6 +28,7 @@
               <a class="dropdown-item" href="{% url 'animal:experiment_copy' object.pk %}">Copy from existing</a>
             {% elif assessment.animal_version == 2 %}
               <a class="dropdown-item" href="{% url 'animalv2:experiment_create' object.pk %}">Create new experiment</a>
+              <a class="dropdown-item" href="{% url 'animalv2:studylevelvalues' object.pk %}">View study level values</a>
             {% endif %}
           {% endif %}
 
@@ -111,6 +112,8 @@
       {% if assessment.animal_version == 1 %}
         {% include "animal/_experiment_list_tbl.html" with object_list=object.experiments.all %}
       {% elif assessment.animal_version == 2 %}
+        <h3>Study level values</h3>
+        {% include "animalv2/fragments/studylevelvalue_tbl.html" with object_list=object.values.all %}
         {% include "animalv2/fragments/_experiment_list_tbl.html" with object_list=object.v2_experiments.all %}
       {% endif %}
     {% endif %}

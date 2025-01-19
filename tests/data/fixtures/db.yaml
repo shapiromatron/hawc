@@ -4744,6 +4744,17 @@
     significant: false
     significance_level: null
     treatment_effect: null
+- model: animalv2.StudyLevelValue
+  pk: 1
+  fields:
+    study: 7
+    system: Cardiovascular
+    value_type: 1
+    value: 10
+    units: 1
+    comments: a comment
+    created: 2024-08-09 08:05:06.595126-04
+    last_updated: 2024-08-09 08:05:06.595126-04
 - model: animal.endpointgroup
   pk: 34
   fields:

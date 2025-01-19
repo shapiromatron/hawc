@@ -1,0 +1,11 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+  <div class="d-flex">
+    <h2 class="mb-2">Study Level Values</h2>
+    {% if obj_perms.edit %}
+      <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'animalv2:studylevelvalues-htmx' study.pk 'create' %}" hx-trigger="click" hx-target=".studylevelvalue-edit-row.create-row" hx-swap="outerHTML" href="/">Create New</a>
+    {% endif %}
+  </div>
+  {% include "animalv2/fragments/studylevelvalue_tbl.html" with object_list=object_list can_edit=obj_perms.edit %}
+{% endblock content %}
