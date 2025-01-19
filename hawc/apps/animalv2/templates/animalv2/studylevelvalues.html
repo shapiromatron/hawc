@@ -7,25 +7,5 @@
       <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto" hx-get="{% url 'animalv2:studylevelvalues-htmx' study.pk 'create' %}" hx-trigger="click" hx-target=".studylevelvalue-edit-row.create-row" hx-swap="outerHTML" href="/">Create New</a>
     {% endif %}
   </div>
-  <table class="table table-sm table-striped">
-    {% if obj_perms.edit %}
-      {% bs4_thead 'System,Value Type,Value,Comments,Editing' %}
-      {% bs4_colgroup '20,20,20,20,20' %}
-    {% else %}
-      {% bs4_thead 'System,Value Type,Value,Comments' %}
-      {% bs4_colgroup '25,25,25,25' %}
-    {% endif %}
-    <tbody>
-      {% for object in object_list %}
-        {% include "animalv2/fragments/studylevelvalue_row.html" %}
-      {% endfor %}
-      {% include "common/fragments/_create_one.html" with text='No study level values to display. Click "Create new study level value" to add one.' %}
-      {% include "common/fragments/_create_row.html" with model="studylevelvalue" first=True %}
-    </tbody>
-  </table>
-{% endblock %}
-
-{% block extrajs %}
-  {% include "common/htmx_autocomplete.html" %}
-  {% include "common/helptext_popup_js.html" %}
-{% endblock %}
+  {% include "animalv2/fragments/studylevelvalue_tbl.html" with object_list=object_list can_edit=obj_perms.edit %}
+{% endblock content %}

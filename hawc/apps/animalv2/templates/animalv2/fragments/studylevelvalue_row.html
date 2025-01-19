@@ -17,17 +17,19 @@
         </div>
       </form>
     </td>
-  {% elif obj_perms.edit or permissions.edit %}
-    <td>
-      <button
-        class="btn btn-sm btn-primary"
-        hx-get="{{ object.get_edit_url }}">
-        <i class="fa fa-fw fa-edit"></i>&nbsp;Update</button>
-      <button
-        class="btn btn-sm btn-danger"
-        hx-get="{{ object.get_delete_url }}">
-        <i class="fa fa-fw fa-trash"></i>&nbsp;Delete</button>
-    </td>
+  {% elif can_edit or permissions.edit %}
+    {% if obj_perms.edit or permissions.edit %}
+      <td>
+        <button
+          class="btn btn-sm btn-primary"
+          hx-get="{{ object.get_edit_url }}">
+          <i class="fa fa-fw fa-edit"></i>&nbsp;Update</button>
+        <button
+          class="btn btn-sm btn-danger"
+          hx-get="{{ object.get_delete_url }}">
+          <i class="fa fa-fw fa-trash"></i>&nbsp;Delete</button>
+      </td>
+    {% endif %}
   {% endif %}
 </tr>
 {% include "common/fragments/_create_row.html" with model="studylevelvalue" %}
