@@ -530,7 +530,7 @@ class StudyLevelValue(models.Model):
     units = models.ForeignKey("assessment.DoseUnits", on_delete=models.CASCADE)
     comments = models.TextField(
         blank=True, help_text="General comments related to the derivation of this value"
-    )
+    )  # TODO - review schema, add new comment types?
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
