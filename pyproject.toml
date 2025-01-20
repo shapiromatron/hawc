@@ -74,6 +74,7 @@ dev = [
   "django-debug-toolbar==4.4.6",
   "django-browser-reload==1.17.0",
   "django-extensions==3.2.3",
+  "dj-watchfiles==2.0.1",
   "faker==33.3.0",
   # tests
   "coverage==7.6.10",

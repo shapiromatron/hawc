@@ -11,6 +11,7 @@ ADMIN_URL_PREFIX = ""
 INSTALLED_APPS += (
     "debug_toolbar",
     "django_extensions",
+    "dj_watchfiles",
     "django_browser_reload",
 )
 
