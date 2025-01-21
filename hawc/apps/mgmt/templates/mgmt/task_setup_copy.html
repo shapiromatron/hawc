@@ -1,0 +1,33 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+  {% crispy form %}
+  <div id='extra_content' class='hidden'>
+    {% alert type="warning" %}
+      <h4>Warning!</h4>
+      <p>Copying this approach from another assessment will delete all management task setup
+        information currently saved in this assessment. This includes all tasks
+        which currently exist.</p>
+      <p>It does not change the assessment which the approach is copied from.</p>
+    {% endalert %}
+  </div>
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+    // move extra-content to appropriate location then make visible
+      $('#extra_content').appendTo($('#extra_content_insertion')).removeClass('hidden');
+
+      const updateLink = function(){
+        const url = `/mgmt/assessment/${$('#id_assessment').val()}/task-setup`,
+              name = $('#id_assessment option:selected').text(),
+              text = `<p>View approach for <a target="_blank" href="${url}">${name}<a/>.</p>`;
+        $('#approach').html(text);
+      };
+
+    // load approach on assessment change
+      $('#id_assessment').on('change', updateLink).trigger('change');
+    });
+  </script>
+{% endblock extrajs %}
