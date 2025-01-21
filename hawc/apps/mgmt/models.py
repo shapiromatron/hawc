@@ -51,11 +51,13 @@ class TaskStatus(models.Model):
     value = models.PositiveSmallIntegerField()
     description = models.TextField(blank=True)
     order = models.PositiveSmallIntegerField(help_text="Status order in assessment")
-    color = models.CharField(max_length=7, help_text="Hexadecimal color code")
+    color = models.CharField(
+        max_length=7, help_text="Hexadecimal color code"
+    )  # TODO - add ColorValidator
     terminal_status = models.BooleanField(
         default=False,
         help_text='If a study has this status, should it be considered "finished" for this task type. For example, completed/abandoned would be terminal, while started/ongoing would not be.',
-    )
+    )  # TODO - rename is_terminal
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -81,7 +83,7 @@ class TaskStatus(models.Model):
     def save(self, *args, **kwargs):
         """Alter model value"""
         if self.value is None:
-            self.value = self.order
+            self.value = self.order  # TODO - ?
         super().save(*args, **kwargs)
 
 
@@ -127,8 +129,12 @@ class Task(models.Model):
         related_name="tasks",
     )
     study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="tasks")
-    type = models.ForeignKey(TaskType, on_delete=models.CASCADE, blank=True, null=True)
-    status = models.ForeignKey(TaskStatus, on_delete=models.CASCADE, blank=True, null=True)
+    type = models.ForeignKey(
+        TaskType, on_delete=models.CASCADE, blank=True, null=True
+    )  # TODO - not blank/null
+    status = models.ForeignKey(
+        TaskStatus, on_delete=models.CASCADE, blank=True, null=True
+    )  # TODO - not blank/null
     notes = models.TextField(default="", help_text="User notes on status")
     due_date = models.DateTimeField(blank=True, null=True)
     started = models.DateTimeField(blank=True, null=True)
@@ -160,11 +166,7 @@ class Task(models.Model):
 
     def save(self, *args, **kwargs):
         """Alter model business logic for timestamps and completion"""
-        if self.status.terminal_status:
-            self.completed = timezone.now()
-        else:
-            self.completed = None
-
+        self.completed = timezone.now() if self.status and self.status.terminal_status else None
         super().save(*args, **kwargs)
 
     def start_if_unstarted(self, user):
@@ -175,7 +177,7 @@ class Task(models.Model):
             logger.info(f'Starting "{self.type}" task {self.id}')
             self.save()
 
-    def stop_if_started(self):
+    def stop_if_started(self):  # TODO - this doesn't work as implemented
         """Stop task if currently started."""
         if self.started:
             logger.info(f'Stopping "{self.type}" task {self.id}')
@@ -213,4 +215,9 @@ class Task(models.Model):
 
     @property
     def overdue(self):
-        return self.due_date and not self.status.terminal_status and self.due_date < now()
+        return (
+            self.due_date
+            and self.status
+            and not self.status.terminal_status
+            and self.due_date < now()
+        )

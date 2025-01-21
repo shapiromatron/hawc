@@ -21,13 +21,9 @@ class TaskForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         kwargs.update(prefix=f"task-{kwargs.get("instance").pk if "instance" in kwargs else "new"}")
         super().__init__(*args, **kwargs)
-        status_names = [
-            (status.id, status.name)
-            for status in models.TaskStatus.objects.filter(
-                assessment=self.instance.study.assessment
-            )
-        ]
-        self.fields["status"].widget = forms.Select(choices=status_names)
+        self.fields["status"].queryset = models.TaskStatus.objects.filter(
+            assessment_id=self.instance.study.assessment_id
+        )
         self.fields["owner"].queryset = self.instance.study.assessment.pms_and_team_users()
 
     @property
