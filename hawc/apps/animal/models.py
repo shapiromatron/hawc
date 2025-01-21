@@ -5,6 +5,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from django.apps import apps
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
@@ -21,6 +22,8 @@ from ..common.helper import (
     tryParseInt,
 )
 from ..study.models import Study
+from ..udf.models import ModelUDFContent
+from ..vocab.constants import VocabularyNamespace
 from ..vocab.models import Term
 from . import constants, managers
 
@@ -232,6 +235,8 @@ class AnimalGroup(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    udfs = GenericRelation(ModelUDFContent, related_query_name="animal_groups")
 
     BREADCRUMB_PARENT = "experiment"
 
@@ -632,6 +637,8 @@ class Endpoint(BaseEndpoint):
     )
     additional_fields = models.TextField(default="{}")
 
+    udfs = GenericRelation(ModelUDFContent, related_query_name="endpoints")
+
     BREADCRUMB_PARENT = "animal_group"
 
     class Meta:
@@ -806,11 +813,11 @@ class Endpoint(BaseEndpoint):
 
     @classmethod
     def get_vocabulary_settings(cls, assessment: Assessment, form: ModelForm) -> str:
+        vocab = VocabularyNamespace(assessment.vocabulary) if assessment.vocabulary else None
         return json.dumps(
             {
-                "debug": False,
-                "vocabulary": assessment.vocabulary,
-                "vocabulary_display": assessment.get_vocabulary_display(),
+                "vocabulary": vocab.value if vocab else None,
+                "vocabulary_display": vocab.display_name if vocab else None,
                 "object": {
                     "system": form["system"].value() or "",
                     "organ": form["organ"].value() or "",

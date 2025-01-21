@@ -89,11 +89,11 @@ class TestTimeSpentEditing:
 
     def _valid_cause(self):
         return {
-            "name": "Total N",
-            "term": 1,
-            "level": "0.054-12.4",
-            "level_units": "mg/L",
-            "duration": "NA",
+            "cause-new-name": "Total N",
+            "cause-new-term": 1,
+            "cause-new-level": "0.054-12.4",
+            "cause-new-level_units": "mg/L",
+            "cause-new-duration": "NA",
         }
 
     # check that TestTimeSpentEditing is captured for this app
@@ -136,7 +136,8 @@ class TestTimeSpentEditing:
         url = reverse("eco:cause-htmx", args=(cause.id, "update"))
         resp = client.get(url, headers=htmx_headers)
         time.sleep(0.05)
-        resp = client.post(url, data=self._valid_cause(), headers=htmx_headers)
+        data = {v.replace("new", str(cause.id)): k for v, k in self._valid_cause().items()}
+        resp = client.post(url, data=data, headers=htmx_headers)
         assert resp.status_code == 200
         latest = check_timespent(cause)
         assert latest.seconds > seconds

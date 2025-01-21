@@ -61,7 +61,8 @@ class HAWCUtils {
         );
         items.forEach(function(d) {
             if (d instanceof Object) {
-                $menu.append(`<a href="${d.url}" class="dropdown-item">${d.text}</a>`);
+                let attrs = _.map(d, (v, k) => (k == "text" ? "" : `${k}=${v}`)).join(" ");
+                $menu.append(`<a class="dropdown-item" ${attrs}>${d.text}</a>`);
             } else if (typeof d === "string") {
                 $menu.append(`<span class="dropdown-header">${d}</span>`);
             } else {
@@ -464,8 +465,8 @@ class HAWCUtils {
                     $(editElement).attr("scrolltop", scrollTo);
                 }
                 // animate scroll to form
-                const scrollTo = $(editElement).offset().top - 20;
-                $("body,html").animate({scrollTop: scrollTo}, 400);
+                const scrollTo = $(editElement).offset().top - 75;
+                $("body,html").animate({scrollTop: scrollTo}, 500);
             } else {
                 // if the form is being replaced by a read row, scroll to original position
                 if (
@@ -474,7 +475,7 @@ class HAWCUtils {
                     !$(elSwapIn).hasClass("clone")
                 ) {
                     const scrollTo = $(elSwapOut).attr("scrolltop");
-                    $("body,html").animate({scrollTop: scrollTo}, 400);
+                    $("body,html").animate({scrollTop: scrollTo}, 500);
                 }
             }
         });
@@ -489,6 +490,13 @@ class HAWCUtils {
                 }
             });
         }
+    }
+
+    static watchForHtmx(selector) {
+        // Process HTMX elements that are inserted into the DOM
+        const target = document.querySelector(selector),
+            observer = new MutationObserver(() => window.htmx.process(target));
+        observer.observe(target, {subtree: true, childList: true});
     }
 }
 export default HAWCUtils;

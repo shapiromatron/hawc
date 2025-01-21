@@ -25,8 +25,8 @@ class TestDesignChildren:
         url = reverse("epiv2:chemical-htmx", args=[design.id, "create"])
         dsstox_id = models.DSSTox.objects.first().dtxsid
         inputs = {
-            "name": "ex chemical",
-            "dsstox": dsstox_id,
+            "chemical-new-name": "ex chemical",
+            "chemical-new-dsstox": dsstox_id,
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/chemical_row.html")
@@ -57,7 +57,7 @@ class TestDesignChildren:
         url = reverse("epiv2:chemical-htmx", args=[chemical.id, "update"])
         dsstox_id = models.DSSTox.objects.first().dtxsid
         inputs = {
-            "name": "ex chemical update",
+            f"chemical-{chemical.id}-name": "ex chemical update",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/chemical_row.html")
@@ -69,9 +69,9 @@ class TestDesignChildren:
         # exposure create
         url = reverse("epiv2:exposure-htmx", args=[design.id, "create"])
         inputs = {
-            "name": "ex exposure",
-            "measurement_type_0": ["Food"],
-            "exposure_route": "OR",
+            "exposure-new-name": "ex exposure",
+            "exposure-new-measurement_type_0": ["Food"],
+            "exposure-new-exposure_route": "OR",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/exposure_row.html")
@@ -101,9 +101,9 @@ class TestDesignChildren:
         # exposure update
         url = reverse("epiv2:exposure-htmx", args=[exposure.id, "update"])
         inputs = {
-            "name": "ex exposure update",
-            "measurement_type_0": ["Drinking water"],
-            "exposure_route": "OR",
+            f"exposure-{exposure.id}-name": "ex exposure update",
+            f"exposure-{exposure.id}-measurement_type_0": ["Drinking water"],
+            f"exposure-{exposure.id}-exposure_route": "OR",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/exposure_row.html")
@@ -115,11 +115,11 @@ class TestDesignChildren:
         # exposure level create
         url = reverse("epiv2:exposurelevel-htmx", args=[design.id, "create"])
         inputs = {
-            "name": "ex exposure level",
-            "chemical": chemical.id,
-            "exposure_measurement": exposure.id,
-            "variance_type": 0,
-            "ci_type": "Rng",
+            "exposurelevel-new-name": "ex exposure level",
+            "exposurelevel-new-chemical": chemical.id,
+            "exposurelevel-new-exposure_measurement": exposure.id,
+            "exposurelevel-new-variance_type": 0,
+            "exposurelevel-new-ci_type": "Rng",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/exposurelevel_row.html")
@@ -152,12 +152,12 @@ class TestDesignChildren:
         # exposure level update
         url = reverse("epiv2:exposurelevel-htmx", args=[exposure_level.id, "update"])
         inputs = {
-            "name": "ex exposure level update",
-            "chemical": chemical.id,
-            "exposure_measurement": exposure.id,
-            "sub_population": "example sub population",
-            "variance_type": 0,
-            "ci_type": "Rng",
+            f"exposurelevel-{exposure_level.id}-name": "ex exposure level update",
+            f"exposurelevel-{exposure_level.id}-chemical": chemical.id,
+            f"exposurelevel-{exposure_level.id}-exposure_measurement": exposure.id,
+            f"exposurelevel-{exposure_level.id}-sub_population": "example sub population",
+            f"exposurelevel-{exposure_level.id}-variance_type": 0,
+            f"exposurelevel-{exposure_level.id}-ci_type": "Rng",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/exposurelevel_row.html")
@@ -172,9 +172,9 @@ class TestDesignChildren:
         # outcome create
         url = reverse("epiv2:outcome-htmx", args=[design.id, "create"])
         inputs = {
-            "endpoint": "ex outcome",
-            "effect": "ex health outcome",
-            "system": "CA",
+            "outcome-new-endpoint": "ex outcome",
+            "outcome-new-effect": "ex health outcome",
+            "outcome-new-system": "CA",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/outcome_row.html")
@@ -204,9 +204,9 @@ class TestDesignChildren:
         # outcome update
         url = reverse("epiv2:outcome-htmx", args=[outcome.id, "update"])
         inputs = {
-            "endpoint": "ex outcome update",
-            "effect": "ex health outcome update",
-            "system": "CA",
+            f"outcome-{outcome.id}-endpoint": "ex outcome update",
+            f"outcome-{outcome.id}-effect": "ex health outcome update",
+            f"outcome-{outcome.id}-system": "CA",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/outcome_row.html")
@@ -218,8 +218,8 @@ class TestDesignChildren:
         # adjustment factor create
         url = reverse("epiv2:adjustmentfactor-htmx", args=[design.id, "create"])
         inputs = {
-            "name": "ex adjustment factor",
-            "description": "smoking, drinking",
+            "adjustmentfactor-new-name": "ex adjustment factor",
+            "adjustmentfactor-new-description": "smoking, drinking",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/adjustment_factor_row.html")
@@ -249,8 +249,8 @@ class TestDesignChildren:
         # adjustment factor update
         url = reverse("epiv2:adjustmentfactor-htmx", args=[adjust_factor.id, "update"])
         inputs = {
-            "name": "ex adjustment factor update",
-            "description": "smoking, drinking, dancing",
+            f"adjustmentfactor-{adjust_factor.id}-name": "ex adjustment factor update",
+            f"adjustmentfactor-{adjust_factor.id}-description": "smoking, drinking, dancing",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/adjustment_factor_row.html")
@@ -262,17 +262,17 @@ class TestDesignChildren:
         # data extraction create
         url = reverse("epiv2:dataextraction-htmx", args=[design_id, "create"])
         inputs = {
-            "group": "ex sp",
-            "outcome": outcome.id,
-            "exposure_level": exposure_level.id,
-            "effect_estimate_type": "OR",
-            "effect_estimate": 1.5,
-            "exposure_rank": 1,
-            "significant": 2,
-            "factors": adjust_factor.id,
-            "variance_type": 0,
-            "ci_type": "Rng",
-            "adverse_direction": "unspecified",
+            "dataextraction-new-group": "ex sp",
+            "dataextraction-new-outcome": outcome.id,
+            "dataextraction-new-exposure_level": exposure_level.id,
+            "dataextraction-new-effect_estimate_type": "OR",
+            "dataextraction-new-effect_estimate": 1.5,
+            "dataextraction-new-exposure_rank": 1,
+            "dataextraction-new-significant": 2,
+            "dataextraction-new-factors": adjust_factor.id,
+            "dataextraction-new-variance_type": 0,
+            "dataextraction-new-ci_type": "Rng",
+            "dataextraction-new-adverse_direction": "unspecified",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/data_extraction_row.html")
@@ -307,17 +307,17 @@ class TestDesignChildren:
         # data extraction update
         url = reverse("epiv2:dataextraction-htmx", args=[data_extract.id, "update"])
         inputs = {
-            "group": "ex sp update",
-            "outcome": outcome.id,
-            "exposure_level": exposure_level.id,
-            "effect_estimate_type": "OR",
-            "effect_estimate": 2.5,
-            "exposure_rank": 4,
-            "significant": 1,
-            "factors": adjust_factor.id,
-            "variance_type": 1,
-            "ci_type": "P95",
-            "adverse_direction": "unspecified",
+            f"dataextraction-{data_extract.id}-group": "ex sp update",
+            f"dataextraction-{data_extract.id}-outcome": outcome.id,
+            f"dataextraction-{data_extract.id}-exposure_level": exposure_level.id,
+            f"dataextraction-{data_extract.id}-effect_estimate_type": "OR",
+            f"dataextraction-{data_extract.id}-effect_estimate": 2.5,
+            f"dataextraction-{data_extract.id}-exposure_rank": 4,
+            f"dataextraction-{data_extract.id}-significant": 1,
+            f"dataextraction-{data_extract.id}-factors": adjust_factor.id,
+            f"dataextraction-{data_extract.id}-variance_type": 1,
+            f"dataextraction-{data_extract.id}-ci_type": "P95",
+            f"dataextraction-{data_extract.id}-adverse_direction": "unspecified",
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "epiv2/fragments/data_extraction_row.html")

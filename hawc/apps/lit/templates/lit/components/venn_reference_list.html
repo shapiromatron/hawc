@@ -1,0 +1,1 @@
+<div class="list-group overflow-auto" style="max-height: 50vh;">{% for ref in qs %}<a href="{{ref.get_absolute_url}}" rel="noopener noreferrer" target="_blank" class="py-0 list-group-item list-group-item-action text-dark" title="{{ref.ref_full_citation}}">{{ref.ref_short_citation}}</a>{%empty%}<div class="list-group-item"><i>No references found.</i></div>{% endfor %}</div>

@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from ..assessment.models import LabeledItem
 from ..common.helper import SerializerHelper
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from . import constants, models
@@ -68,6 +69,8 @@ class VisualSerializer(serializers.ModelSerializer):
             ret["url_update"] = instance.get_update_url()
             ret["url_delete"] = instance.get_delete_url()
             ret["data_url"] = instance.get_data_url()
+            ret["label_htmx"] = LabeledItem.get_label_url(instance, "label")
+            ret["label_indicators_htmx"] = LabeledItem.get_label_url(instance, "label_indicators")
 
         if instance.visual_type in [
             constants.VisualType.ROB_HEATMAP,

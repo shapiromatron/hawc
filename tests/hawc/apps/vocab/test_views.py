@@ -9,6 +9,7 @@ def test_get_200():
     client = get_client("pm")
     urls = [
         reverse("vocab:ehv-browse"),
+        reverse("vocab:toxrefdb-browse"),
     ]
     for url in urls:
         check_200(client, url)

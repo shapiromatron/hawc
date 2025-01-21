@@ -16,12 +16,10 @@
             Exploratory heatmap</option>
           <option value="5" data-url="{% url viz_url_pattern assessment.id 5 %}">
             Embedded external website</option>
-          {% if feature_flags.ENABLE_WIP_VISUALS %}
-            <option value="7" data-url="{% url viz_url_pattern assessment.id 7 %}">
-              Plotly visual</option>
-            <option value="9" data-url="{% url viz_url_pattern assessment.id 9 %}">
-              PRISMA visual</option>
-          {% endif %}
+          <option value="7" data-url="{% url viz_url_pattern assessment.id 7 %}">
+            Plotly visual</option>
+          <option value="9" data-url="{% url viz_url_pattern assessment.id 9 %}">
+            PRISMA visual</option>
           <option value="2" data-url="{% url viz_url_pattern assessment.id 2 %}">
             {{assessment.get_rob_name_display}} heatmap</option>
           <option value="3" data-url="{% url viz_url_pattern assessment.id 3 %}">

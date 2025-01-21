@@ -6,7 +6,7 @@ import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 
 import BaseVisual from "./BaseVisual";
-import {handleVisualError} from "./common";
+import {addLabelIndicators, handleVisualError} from "./common";
 
 class LiteratureTagtree extends BaseVisual {
     constructor(data) {
@@ -78,6 +78,7 @@ class LiteratureTagtree extends BaseVisual {
 
     displayAsPage($el, options) {
         var title = $("<h2>").text(this.data.title),
+            labelIndicators = addLabelIndicators(this.data.label_indicators_htmx),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>");
@@ -91,6 +92,7 @@ class LiteratureTagtree extends BaseVisual {
         if (!options.visualOnly) {
             var headerRow = $('<div class="d-flex">').append([
                 title,
+                labelIndicators,
                 HAWCUtils.unpublished(this.data.published, window.isEditable),
                 actions,
             ]);

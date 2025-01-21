@@ -3,15 +3,13 @@ interactions:
     body: null
     headers:
       Accept:
-      - '*/*'
+      - application/json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Type:
-      - application/json
       User-Agent:
-      - python-requests/2.32.3
+      - hawc
       x-api-key:
       - <omitted>
     method: GET
@@ -29,15 +27,15 @@ interactions:
       Content-Type:
       - application/problem+json
       Date:
-      - Tue, 03 Sep 2024 20:50:08 GMT
+      - Thu, 05 Sep 2024 23:00:48 GMT
       Strict-Transport-Security:
       - max-age=31536000
       Transfer-Encoding:
       - chunked
       Via:
-      - 1.1 88b63cb2f8aab28c7291262ffc15282e.cloudfront.net (CloudFront)
+      - 1.1 5eb5e19c1a78889d10ff38f1551ed2aa.cloudfront.net (CloudFront)
       X-Amz-Cf-Id:
-      - zITufJi9d_sK9V-uxUTU4gIqdyJwufV_Lfde2ynfDwywcRVhQTVwag==
+      - QkxUHQsw5P2OEfQguc-yW3T0fJuxR3T7mwIQcBFFi_Zu3pXZ8dC-Ug==
       X-Amz-Cf-Pop:
       - IAD89-C1
       X-Cache:
@@ -47,7 +45,7 @@ interactions:
       X-Frame-Options:
       - DENY
       X-Vcap-Request-Id:
-      - 52352f2b-eb93-474c-5057-12e41675ffcc
+      - cc08d157-3ec9-40e6-4b23-cbdac3417363
       X-Xss-Protection:
       - 1; mode=block
     status:

@@ -72,6 +72,71 @@ class TestEhvTermViewSet:
 
 
 @pytest.mark.django_db
+class TestToxRefDBTermViewSet:
+    def test_permissions(self):
+        url = reverse("vocab:api:toxrefdb-system")
+        anon_client = APIClient()
+        auth_client = APIClient()
+        assert auth_client.login(username="team@hawcproject.org", password="pw") is True
+        assert anon_client.get(url).status_code == 403
+        assert auth_client.get(url).status_code == 200
+
+    def test_expected_response(self):
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+
+        test_cases = [
+            # test urls resolve
+            (reverse("vocab:api:toxrefdb-system"), [{"id": 7000, "name": "systemic"}]),
+            (reverse("vocab:api:toxrefdb-effect"), [{"id": 7001, "name": "pathology microscopic"}]),
+            (reverse("vocab:api:toxrefdb-effect-subtype"), [{"id": 7002, "name": "eye"}]),
+            (reverse("vocab:api:toxrefdb-endpoint-name"), [{"id": 7003, "name": "dysplasia"}]),
+        ]
+
+        for url, resp in test_cases:
+            assert client.get(url).json() == resp
+
+    def test_nested(self):
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+        url = reverse("vocab:api:toxrefdb-nested") + "?format=csv"
+        resp = client.get(url)
+        assert resp.status_code == 200
+        data = resp.content.decode().split("\n")
+        assert len(data) >= 2
+        assert (
+            data[0]
+            == "system_term_id,system,effect_term_id,effect,effect_subtype_term_id,effect_subtype,name_term_id,name"
+        )
+
+    def test_query_params(self):
+        client = APIClient()
+        assert client.login(username="team@hawcproject.org", password="pw") is True
+
+        test_cases = [
+            # test term lookup
+            (
+                reverse("vocab:api:toxrefdb-endpoint-name") + "?term=dysplasia",
+                [{"id": 7003, "name": "dysplasia"}],
+            ),
+            (reverse("vocab:api:toxrefdb-endpoint-name") + "?term=NONE", []),
+            # test parent lookup
+            (
+                reverse("vocab:api:toxrefdb-endpoint-name") + "?parent=7002",
+                [{"id": 7003, "name": "dysplasia"}],
+            ),
+            (reverse("vocab:api:toxrefdb-endpoint-name") + "?parent=7001", []),
+            (
+                reverse("vocab:api:toxrefdb-endpoint-name") + "?parent=text",
+                [{"id": 7003, "name": "dysplasia"}],
+            ),
+        ]
+
+        for url, resp in test_cases:
+            assert client.get(url).json() == resp
+
+
+@pytest.mark.django_db
 class TestTermViewSet:
     def test_bulk_permissions(self):
         url = reverse("vocab:api:term-bulk-create")

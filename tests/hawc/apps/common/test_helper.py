@@ -3,9 +3,11 @@ from io import StringIO
 import pandas as pd
 import pytest
 from django.core.exceptions import ValidationError as DjangoValidationError
+from django.test import RequestFactory
 from pydantic import BaseModel
 from rest_framework.serializers import ValidationError as DRFValidationError
 
+from hawc.apps.assessment.models import Assessment
 from hawc.apps.common import helper
 
 
@@ -173,3 +175,21 @@ def test_flatten(input, expected):
 )
 def test_unique_text_list(input, expected):
     assert list(helper.unique_text_list(input)) == expected
+
+
+def test_get_contrasting_text_color():
+    assert helper.get_contrasting_text_color("#000000") == "#ffffff"
+    assert helper.get_contrasting_text_color("#ffffff") == "#000000"
+
+
+@pytest.mark.django_db
+def test_paginate():
+    qs = Assessment.objects.all()
+    f = RequestFactory()
+
+    n_items = qs.count()
+    assert n_items >= 1
+
+    results = helper.paginate(qs, f.get("/"), n_items=1)
+    assert results["object_list"].count() == 1
+    assert results["paginator"].num_pages == n_items

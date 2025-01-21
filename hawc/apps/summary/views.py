@@ -22,6 +22,7 @@ from ..common.views import (
     BaseDetail,
     BaseFilterList,
     BaseUpdate,
+    add_csrf,
 )
 from ..riskofbias.models import RiskOfBiasMetric
 from . import constants, filterset, forms, models, prefilters, serializers
@@ -62,11 +63,13 @@ class SummaryTableList(BaseFilterList):
         if self.assessment.user_is_team_member_or_higher(self.request.user):
             return dict(
                 main_field="title",
-                appended_fields=["type", "published"],
+                appended_fields=["type", "label", "published"],
             )
         else:
             return dict(
-                main_field="title", appended_fields=["type"], dynamic_fields=["title", "type"]
+                main_field="title",
+                appended_fields=["type", "label"],
+                dynamic_fields=["title", "type", "label"],
             )
 
 
@@ -299,11 +302,13 @@ class VisualizationList(BaseFilterList):
         if self.assessment.user_is_team_member_or_higher(self.request.user):
             return dict(
                 main_field="title",
-                appended_fields=["type", "published"],
+                appended_fields=["type", "label", "published"],
             )
         else:
             return dict(
-                main_field="title", appended_fields=["type"], dynamic_fields=["title", "type"]
+                main_field="title",
+                appended_fields=["type", "label"],
+                dynamic_fields=["title", "type", "label"],
             )
 
     def get_context_data(self, **kwargs):
@@ -331,6 +336,7 @@ class VisualizationDetail(GetVisualizationObjectMixin, BaseDetail):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
+        context.update(config=add_csrf(self.object.read_config(), self.request))
         return context
 
     def get_template_names(self):
@@ -406,10 +412,7 @@ class VisualizationCreate(BaseCreate):
 
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
-        if (
-            visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
-            and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
-        ):
+        if visual_type in [] and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
             raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
@@ -423,26 +426,31 @@ class VisualizationCreate(BaseCreate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["dose_units"] = models.Visual.get_dose_units()
-        context["instance"] = {}
-        context["visual_type"] = int(self.kwargs.get("visual_type"))
-        context["evidence_type"] = self.evidence_type
-        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["rob_metrics"] = json.dumps(
-            list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
+        visual = self.get_initial_visual(context)
+        context.update(
+            dose_units=models.Visual.get_dose_units(),
+            instance={},
+            visual_type=visual.visual_type,
+            evidence_type=visual.evidence_type,
+            initial_data=json.dumps(serializers.VisualSerializer().to_representation(visual)),
+            smart_tag_form=forms.SmartTagForm(assessment_id=self.assessment.id),
+            rob_metrics=json.dumps(
+                list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
+            ),
+            **visual.update_config(),
         )
-        context["initial_data"] = json.dumps(self.get_initial_visual(context))
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
         )
-        if context["visual_type"] == constants.VisualType.PRISMA:
-            context.update(prisma_data=models.Visual.get_prisma_data(self.assessment))
         return context
 
-    def get_initial_visual(self, context) -> dict:
+    def get_initial_visual(self, context) -> models.Visual:
         instance = context["form"].instance
         instance.id = instance.FAKE_INITIAL_ID
-        return serializers.VisualSerializer().to_representation(instance)
+        instance.assessment = self.assessment
+        instance.visual_type = int(self.kwargs.get("visual_type"))
+        instance.evidence_type = self.evidence_type
+        return instance
 
 
 class VisualizationCreateTester(VisualizationCreate):
@@ -510,10 +518,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
 
     def get_template_names(self):
         visual_type = self.object.visual_type
-        if (
-            visual_type in [constants.VisualType.PLOTLY, constants.VisualType.PRISMA]
-            and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS
-        ):
+        if visual_type in [] and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
             raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
@@ -527,18 +532,18 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["dose_units"] = models.Visual.get_dose_units()
-        context["instance"] = self.object.get_json()
-        context["visual_type"] = self.object.visual_type
-        context["evidence_type"] = self.object.evidence_type
-        context["smart_tag_form"] = forms.SmartTagForm(assessment_id=self.assessment.id)
-        context["rob_metrics"] = json.dumps(
-            list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
-        )
-        if context["visual_type"] == constants.VisualType.PRISMA:
-            context.update(prisma_data=models.Visual.get_prisma_data(self.assessment))
-        context["initial_data"] = json.dumps(
-            serializers.VisualSerializer().to_representation(self.object)
+        visual = self.object
+        context.update(
+            dose_units=models.Visual.get_dose_units(),
+            instance=visual.get_json(),
+            visual_type=visual.visual_type,
+            evidence_type=visual.evidence_type,
+            initial_data=json.dumps(serializers.VisualSerializer().to_representation(visual)),
+            smart_tag_form=forms.SmartTagForm(assessment_id=self.assessment.id),
+            rob_metrics=json.dumps(
+                list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.assessment.id))
+            ),
+            **visual.update_config(),
         )
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
@@ -558,6 +563,7 @@ class VisualizationDelete(GetVisualizationObjectMixin, BaseDelete):
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )
+        context.update(config=add_csrf(self.object.read_config(), self.request))
         return context
 
 

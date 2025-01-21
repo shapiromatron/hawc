@@ -3,9 +3,20 @@ import pandas as pd
 from ..common.exports import Exporter, ModelExport
 
 
-def expand_content(df: pd.DataFrame, content_column: str) -> pd.DataFrame:
+def expand_content(
+    df: pd.DataFrame, content_column: str, prefix: str = "", flatten: bool = False
+) -> pd.DataFrame:
     # expand JSON representation into individual columns
-    return pd.DataFrame(data=list(df[content_column].values)).add_prefix(f"{content_column}-field-")
+    df2 = df[content_column].dropna()
+    df3 = pd.DataFrame(data=list(df2.values), index=df2.index).add_prefix(
+        prefix if prefix else f"{content_column}-field-"
+    )
+    if flatten:
+        lists = df3.columns[df3.iloc[0:10].map(lambda x: isinstance(x, list)).any()]
+        df3[lists] = df3[lists].map(
+            lambda el: "|".join(map(str, el)) if isinstance(el, list) else el
+        )
+    return df3
 
 
 class ContentTypeExport(ModelExport):
@@ -27,9 +38,9 @@ class ModelUDFContentExport(ModelExport):
         }
 
     def prepare_df(self, df: pd.DataFrame) -> pd.DataFrame:
-        if df.shape[0] > 0:
+        if not df.empty:
             df2 = expand_content(df, content_column=self.get_column_name("content"))
-            df = df.merge(df2, left_index=True, right_index=True)
+            df = pd.merge(df, df2, how="left", left_index=True, right_index=True)
         return df
 
 
@@ -53,7 +64,7 @@ class TagUDFContentExport(ModelExport):
         }
 
     def prepare_df(self, df: pd.DataFrame) -> pd.DataFrame:
-        if df.shape[0] > 0:
+        if not df.empty:
             df2 = expand_content(df, content_column=self.get_column_name("content"))
             df = df.merge(df2, left_index=True, right_index=True)
         return df

@@ -3,7 +3,7 @@ from pathlib import Path
 from django.apps import apps
 from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
-from django.db.models import Count, Model
+from django.db.models import Count, Model, Q
 from django.http import Http404
 from django.urls import reverse
 from django_filters.rest_framework.backends import DjangoFilterBackend
@@ -268,6 +268,19 @@ class Assessment(AssessmentEditViewSet):
     @action(detail=False, permission_classes=(permissions.AllowAny,))
     def public(self, request):
         queryset = self.model.objects.all().public()
+        serializer = serializers.AssessmentSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, permission_classes=(permissions.IsAuthenticated,), url_path="team-member")
+    def team_member(self, request):
+        """Get the list of assessments where the user is a team member or project manager."""
+        queryset = (
+            self.model.objects.filter(
+                Q(project_manager=request.user) | Q(team_members=request.user)
+            )
+            .prefetch_related("project_manager", "team_members", "reviewers", "dtxsids")
+            .distinct()
+        )
         serializer = serializers.AssessmentSerializer(queryset, many=True)
         return Response(serializer.data)
 

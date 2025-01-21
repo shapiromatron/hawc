@@ -1,9 +1,41 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <div id="main"></div>
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="tree-tab" data-toggle="tab" data-target="#tree" type="button" role="tab" aria-controls="tree" aria-selected="true">Tree</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="venn-tab" data-toggle="tab" data-target="#venn" type="button" role="tab" aria-controls="venn" aria-selected="false">Venn</button>
+    </li>
+  </ul>
+  <div class="tab-content mt-2" id="myTabContent">
+    <div class="tab-pane fade show active" id="tree" role="tabpanel" aria-labelledby="tree-tab">
+      <div id="main"></div>
+    </div>
+    <div class="tab-pane fade" id="venn" role="tabpanel" aria-labelledby="venn-tab">
+      <div id="venn-container" hx-swap="outerHTML" hx-target="#venn-container" hx-select="#venn-container" >
+        <div id="venn-main"></div>
+        {% crispy venn.form %}
+        {{ venn.app|json_script:"venn-config" }}
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block extrajs %}
   {{ config|json_script:"config" }}
+  <script>
+    const loadVenn = function(){
+      const config = document.getElementById("venn-config"),
+            content = config ? JSON.parse(config.textContent) : {},
+            el = document.getElementById("venn-main");
+      window.app.startup(content.app, app => {
+        const func = content.page ? app[content.page] : app;
+        func(el, content.data);
+      });
+    }
+    window.addEventListener("DOMContentLoaded", loadVenn);
+    window.addEventListener("htmx:afterSwap", loadVenn)
+  </script>
 {% endblock extrajs %}

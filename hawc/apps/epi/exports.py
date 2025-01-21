@@ -368,7 +368,9 @@ class EpiDataPivotExporter(Exporter):
                 include=("id", "short_citation", "study_identifier", "published"),
             ),
             StudyPopulationExport(
-                "sp", "study_population", include=("id", "name", "age_profile", "source", "design")
+                "sp",
+                "study_population",
+                include=("id", "name", "age_profile", "source", "design", "countries"),
             ),
             OutcomeExport(
                 "outcome",
@@ -593,6 +595,7 @@ class OutcomeDataPivot(FlatFileExporter):
                 "sp-age_profile": "study population age profile",
                 "sp-source": "study population source",
                 "sp-design": "design",
+                "sp-countries": "countries",
                 "outcome-id": "outcome id",
                 "outcome-name": "outcome name",
                 "outcome-system": "outcome system",

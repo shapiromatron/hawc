@@ -9,6 +9,7 @@
 {% block content %}
   <div class="d-flex">
     <h2>{{object}}</h2>
+    {% include "assessment/fragments/label_indicators.html" %}
     {% include "common/unpublished_badge.html" %}
     {% actions %}
       <a class="dropdown-item" href="{{object.get_download_url|safe}}?format=xlsx">Download data file</a>
@@ -17,21 +18,16 @@
         <a class="dropdown-item" href="{% url 'summary:dp_update' assessment.pk object.slug %}">Edit display settings</a>
         <a class="dropdown-item" href="{% if object.datapivotquery %}{% url 'summary:dp_query-update' assessment.pk object.slug %}{% else %}{% url 'summary:dp_file-update' assessment.pk object.slug %}{% endif %}">Edit other settings</a>
         <a class="dropdown-item" href="{% url 'summary:dp_delete' assessment.pk object.slug %}">Delete Pivot</a>
+        {% include "assessment/components/label_modal_button.html" %}
       {% endif %}
     {% endactions %}
   </div>
-
   {% block dp_content %}
-
     <div id="dp_display"></div>
-
     <div id="loading_div"></div>
-
     <div id="caption">{{object.caption|safe}}</div>
-
-
   {% endblock dp_content %}
-
+  {% include "assessment/components/label_modal.html" with modal_id="label-modal" %}
 {% endblock %}
 
 {% block extrajs %}

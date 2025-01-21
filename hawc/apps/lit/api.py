@@ -62,8 +62,10 @@ class LiteratureAssessmentViewSet(BaseAssessmentViewSet):
             create_object_log(
                 "Updated (tagtree replace)", assessment, assessment.id, self.request.user.id
             )
+        elif self.request.method == "HEAD":
+            return Response({})
         else:
-            raise ValueError()
+            raise ValidationError(f"Request method {self.request.method} is not allowed.")
         return Response(serializer.data)
 
     @action(
@@ -205,11 +207,13 @@ class LiteratureAssessmentViewSet(BaseAssessmentViewSet):
             raise ValidationError(fs.errors)
 
         tags = models.ReferenceFilterTag.get_all_tags(assessment.id)
-        Exporter = (
-            exports.TableBuilderFormat
-            if request.query_params.get("export_format") == "table-builder"
-            else exports.ReferenceFlatComplete
-        )
+        match request.query_params.get("export_format"):
+            case "table-builder":
+                Exporter = exports.TableBuilderFormat
+            case "long":
+                Exporter = exports.ReferenceTagLongExport
+            case _:
+                Exporter = exports.ReferenceFlatComplete
         export = Exporter(
             queryset=fs.qs,
             filename=f"references-{assessment.name}",

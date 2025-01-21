@@ -185,6 +185,18 @@ class AnimalAssessmentViewSet(BaseAssessmentViewSet):
         df = term_check(pk)
         return FlatExport.api_response(df, f"term-report-{pk}")
 
+    @action(
+        detail=True,
+        url_path="bmds-export",
+        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
+        renderer_classes=PandasRenderers,
+    )
+    def bmds_export(self, request, pk):
+        self.assessment = self.get_object()
+        published_only = get_published_only(self.assessment, request)
+        exporter = exports.EndpointBmdsExport(self.assessment.pk, published_only=published_only)
+        return Response(exporter.build_export())
+
 
 class Experiment(mixins.CreateModelMixin, AssessmentViewSet):
     assessment_filter_args = "study__assessment"
