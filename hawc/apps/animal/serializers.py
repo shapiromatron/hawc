@@ -427,5 +427,6 @@ class DosingRegimeCleanupFieldsSerializer(DynamicFieldsMixin, serializers.ModelS
         return obj.dosed_animals.experiment.study.short_citation
 
 
-SerializerHelper.add_serializer(models.AnimalGroup, AnimalGroupSerializer)
-SerializerHelper.add_serializer(models.Endpoint, EndpointSerializer)
+def register_serializers():
+    SerializerHelper.add_serializer(models.AnimalGroup, AnimalGroupSerializer)
+    SerializerHelper.add_serializer(models.Endpoint, EndpointSerializer)

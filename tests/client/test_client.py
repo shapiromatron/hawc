@@ -11,7 +11,7 @@ from hawc.apps.animal.models import Experiment
 from hawc.apps.assessment import constants
 from hawc.apps.assessment.models import DoseUnits, Strain
 from hawc.apps.epi.models import ResultMetric
-from hawc.apps.lit.models import Reference
+from hawc.apps.lit.models import Reference, ReferenceFilterTag
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.study import constants as studyconstants
 from hawc.apps.study.models import Study
@@ -98,6 +98,11 @@ class TestClient(LiveServerTestCase, TestCase):
     def test_animal_data_summary(self):
         client = HawcClient(self.live_server_url)
         response = client.animal.data_summary(self.db_keys.assessment_client)
+        assert isinstance(response, pd.DataFrame)
+
+    def test_animal_bmds(self):
+        client = HawcClient(self.live_server_url)
+        response = client.animal.bmds_endpoints(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
     def test_animal_endpoints(self):
@@ -274,6 +279,12 @@ class TestClient(LiveServerTestCase, TestCase):
     def test_assessment_public(self):
         client = HawcClient(self.live_server_url)
         response = client.assessment.public()
+        assert isinstance(response, list)
+
+    def test_assessment_team_member(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        response = client.assessment.team_member()
         assert isinstance(response, list)
 
     def test_assessment_create_value(self):
@@ -1154,6 +1165,38 @@ class TestClient(LiveServerTestCase, TestCase):
         updated_hero = updated_reference.identifiers.get(database=2)
         assert updated_hero.unique_id == "1037739"
 
+    def test_tags(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+
+        # create
+        data = {"assessment_id": self.db_keys.assessment_working, "name": "Test", "parent": 28}
+        instance = client.lit.create_tag(data)
+        assert instance["name"] == "Test"
+
+        # update
+        data = {"name": "Test2"}
+        tag_id = instance["id"]
+        instance = client.lit.update_tag(tag_id, data)
+        assert instance["name"] == "Test2"
+
+        # delete
+        response = client.lit.delete_tag(tag_id)
+        assert response.status_code == 204
+
+        # move tag
+        tags = ReferenceFilterTag.get_assessment_qs(3)
+        tag = tags.get(name="Tier I")
+
+        qs = tags.get(name="Exclusion").get_descendants().values_list("name", flat=True)
+        assert list(qs) == ["Tier I", "Tier II", "Tier III"]
+
+        response = client.lit.move_tag(tag.id, new_index=2).json()
+        assert response["status"] is True
+
+        qs = tags.get(name="Exclusion").get_descendants().values_list("name", flat=True)
+        assert list(qs) == ["Tier II", "Tier III", "Tier I"]
+
     ##############
     # Mgmt tests #
     ##############
@@ -1290,7 +1333,7 @@ class TestClient(LiveServerTestCase, TestCase):
         visual_id = visual["id"]
 
         # read
-        visual = client.summary.get_visual(visual_id).json()
+        visual = client.summary.get_visual(visual_id)
         assert visual["title"] == visual_title
 
         # update
@@ -1302,7 +1345,7 @@ class TestClient(LiveServerTestCase, TestCase):
         # read
         slug = "animal-bioassay-data-pivot-endpoint"
         dp_id = DataPivot.objects.get(slug=slug).pk
-        dp = client.summary.get_datapivot(dp_id).json()
+        dp = client.summary.get_datapivot(dp_id)
         assert dp["slug"] == slug
 
         # create

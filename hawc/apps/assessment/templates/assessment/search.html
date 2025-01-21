@@ -1,0 +1,106 @@
+{% extends 'crumbless.html' %}
+
+{% block title %}Search | HAWC{% endblock title %}
+
+{% block content %}
+  <h2>Search</h2>
+  <div id='response' style='display:none' >
+    {% crispy form %}
+    <div id="results">
+      {% if form.is_bound %}
+        {% if form.type.value == 'study' %}
+          <table class="table table-sm table-striped">
+            {% bs4_colgroup '20,40,20,20' %}
+            {% bs4_thead 'Study,Full Citation,Assessment,Last Updated' %}
+            <tbody>
+              {% for object in object_list %}
+                <tr>
+                  <td>
+                    <a href="{{ object.get_absolute_url }}">{{object.short_citation}}</a>
+                    {% if not object.published %}
+                      <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {{object.full_citation}}
+                    {% for ident in object.identifiers.all %}
+                      {% with url=ident.get_url %}
+                        {% if url %}
+                          <a class="badge badge-secondary" target="_blank" href="{{url}}">
+                            {{ident.get_database_display}}
+                          </a>
+                        {% endif %}
+                      {% endwith %}
+                    {% endfor %}
+                  </td>
+                  <td>
+                    <a href="{{ object.assessment.get_absolute_url }}">{{object.assessment}}</a>
+                    {% if object.assessment.public_on is None %}
+                      <i class="fa fa-eye-slash" title="Not Public" aria-hidden="true"></i>
+                    {% endif %}
+                  </td>
+                  <td>{{object.last_updated}}</td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="4">No studies found</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% include "includes/paginator.html" with plural_object_name="studies" %}
+        {% elif form.type.value == 'visual' or form.type.value == 'data-pivot' %}
+          <table class="table table-sm table-striped">
+            {% bs4_colgroup '40,20,20,20' %}
+            {% bs4_thead 'Title,Type,Assessment,Last Updated' %}
+            <tbody>
+              {% for object in object_list %}
+                <tr>
+                  <td>
+                    <a href="{{ object.get_absolute_url }}">{{object.title}}</a>
+                    {% if not object.published %}
+                      <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
+                    {% endif %}
+                    {% for labeled_item in object.shown_labels %}
+                      {% include "assessment/fragments/label.html" with label=labeled_item.label anchor_tag=True %}
+                    {% endfor %}
+                    {% if object.caption %}
+                      <div class='text-muted' title="{{object.caption|striptags|safe}}">{{object.caption|striptags|truncatewords:20|safe}}</div>
+                    {% endif %}
+                  </td>
+                  <td>
+                    {{object.get_visual_type_display}}
+                  </td>
+                  <td>
+                    <a href="{{ object.assessment.get_absolute_url }}">{{object.assessment}}</a>
+                    {% if object.assessment.public_on is None %}
+                      <i class="fa fa-eye-slash" title="Not Public" aria-hidden="true"></i>
+                    {% endif %}
+                  </td>
+                  <td>{{object.last_updated}}</td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="4">No visuals found</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% include "includes/paginator.html" with plural_object_name="visuals" %}
+        {% endif %}
+      {% endif %}
+    </div>
+  </div>
+{% endblock content %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    $(document).ready(function () {
+      const public_div = $('#div_id_public'),
+            internal_div = $('#div_id_internal');
+      $('#id_all_public').on('change', e=>(e.target.checked)?public_div.hide():public_div.show()).trigger('change')
+      $('#id_all_internal').on('change', e=>(e.target.checked)?internal_div.hide():internal_div.show()).trigger('change')
+      $('#response').fadeIn();
+    })
+  </script>
+{% endblock extrajs %}

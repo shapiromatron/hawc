@@ -10,7 +10,7 @@ from django.conf import settings
 from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.storage import FileSystemStorage
 from django.db import IntegrityError, connection, models, router, transaction
 from django.db.models import Case, CharField, Choices, Q, QuerySet, TextField, URLField, Value, When
@@ -148,7 +148,7 @@ class AssessmentRootMixin:
     @classmethod
     def get_assessment_root(cls, assessment_id):
         try:
-            return cls.objects.get(name=cls.get_assessment_root_name(assessment_id))
+            return cls.objects.get(name=cls.get_assessment_root_name(assessment_id), depth=1)
         except ObjectDoesNotExist:
             return cls.create_root(assessment_id)
 
@@ -270,17 +270,14 @@ class AssessmentRootMixin:
     @classmethod
     def create_tag(cls, assessment_id, parent_id=None, **kwargs):
         # get parent
-        if parent_id:
+        root = cls.get_assessment_root(assessment_id)
+        if parent_id is None or parent_id == root.pk:
+            parent = root
+        else:
             descendants = cls.get_descendants_pks(assessment_id=assessment_id)
             if parent_id not in descendants:
                 raise ObjectDoesNotExist("parent_id is not a descendant of assessment_id")
             parent = cls.objects.get(pk=parent_id)
-        else:
-            parent = cls.get_assessment_root(assessment_id)
-
-        # make sure name is valid and not root-like
-        if kwargs.get("name") == cls.get_assessment_root_name(assessment_id):
-            raise SuspiciousOperation("attempting to create new root")
 
         # clear cache and create!
         cls.clear_cache(assessment_id)
@@ -424,11 +421,8 @@ class CustomURLField(URLField):
     default_validators = [validators.CustomURLValidator()]
 
     def formfield(self, **kwargs):
-        # As with CharField, this will cause URL validation to be performed
-        # twice.
-        defaults = {
-            "form_class": forms.CustomURLField,
-        }
+        # As with CharField, this will cause URL validation to be performed twice.
+        defaults = {"form_class": forms.CustomURLField}
         defaults.update(kwargs)
         return super().formfield(**defaults)
 
@@ -651,6 +645,13 @@ def sql_query_to_dicts(sql: str, params: Iterable | None = None) -> Iterator[dic
         cursor.execute(sql, params)
         columns = [col[0] for col in cursor.description]
         yield from (dict(zip(columns, row, strict=True)) for row in cursor.fetchall())
+
+
+class ColorField(models.CharField):
+    default_validators = [validators.ColorValidator()]
+
+    def formfield(self, **kwargs):
+        return super().formfield(**{"form_class": forms.ColorField, **kwargs})
 
 
 def search_query(value: str) -> SearchQuery:

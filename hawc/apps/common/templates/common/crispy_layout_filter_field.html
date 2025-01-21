@@ -2,16 +2,18 @@
 {% load crispy_forms_filters %}
 {% comment %} Adapted from https://github.com/django-crispy-forms/crispy-bootstrap4/blob/main/crispy_bootstrap4/templates/bootstrap4/field.html {% endcomment %}
 <div id="div_{{ field.auto_id }}" class="form-group mb-0">
+  <label for="{{ field.id_for_label }}" class="sr-only">{{ field.label }}</label>
+  <div id="{{ field.id_for_label }}_helptext" class="sr-only">{{ field.help_text }}</div>
   <div class="input-group flex-nowrap">
     {% if expandable %}
       <div class="input-group-prepend">
-        <a id="ff-expand-form-toggle" class="btn btn-secondary d-flex align-items-center" data-toggle="collapse" data-target="#ff-expand-form" title="Toggle advanced options"><i class="fa fa-caret-down" aria-hidden="true"></i></a>
+        <a id="ff-expand-form-toggle" class="btn btn-secondary d-flex align-items-center {% if form.data.is_expanded != 'true' %} collapsed {% endif %}" data-toggle="collapse" data-target="#ff-expand-form" title="Toggle advanced options"><i class="fa fa-caret-down collapsible-icon" aria-hidden="true"></i></a>
       </div>
     {% endif %}
-    {% if field|is_select %}
-      {% crispy_field field 'class' 'custom-select' %}
+    {% if field.errors %}
+      {% crispy_field field 'class' 'form-control is-invalid z-top' 'placeholder' field.help_text %}
     {% else %}
-      <input type="text" name="{% if field.name|wordcount > 1 %}{{ field.name|slugify }}{% else %}{{ field.name }}{% endif %}"  class="form-control {% if field.errors %} is-invalid {% endif %}" placeholder="{{field.help_text}}" aria-label="{{field.label}}" value="{% if field.value %}{{ field.value }}{% endif %}" {{ field.flat_attrs }}>
+      {% crispy_field field 'class' 'form-control h-fit-content' 'placeholder' field.help_text %}
     {% endif %}
     <div class="input-group-append">
       {% for field in appended_fields %}
@@ -26,14 +28,17 @@
             {% endif %}
           </div>
         {% elif field|is_select and use_custom_control %}
-          <div title="{{field.help_text}}">
-            {{field.widget}}
+          <div {% if field.errors %} title="{% for error in field.errors %} {{error}} {% endfor %}" {% else %} title="{{field.help_text}} {% endif %}">
+            <label for="{{ field.id_for_label }}" class="custom-control-label sr-only">{{ field.label }}</label>
             {% if field.errors %}
-              {% crispy_field field 'class' 'custom-select form-sm-field is-invalid' %}
+              {% crispy_field field 'class' 'custom-select form-sm-field is-invalid' 'placeholder' field.help_text %}
             {% else %}
-              {% crispy_field field 'class' 'custom-select form-sm-field' %}
+              {% crispy_field field 'class' 'custom-select form-sm-field' 'placeholder' field.help_text %}
             {% endif %}
+            <div id="{{ field.id_for_label }}_helptext" class="sr-only">{{ field.help_text }}</div>
           </div>
+        {% else %}
+          <div class="alert alert-danger">NOT IMPLEMENTED: {{field.id_for_label}}</div>
         {% endif %}
       {% endfor %}
       <a role="button" style="border: #ced4da solid 1px !important;" class="btn btn-light d-flex flex-wrap align-content-center px-3" href="." title="Reset form"><span aria-hidden="true">&times;</span></a>

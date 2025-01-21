@@ -13,7 +13,7 @@
       <h6 class="mb-1 font-size-regular font-weight-bold">Literature Review</h6>
       <div class="list-group my-2">
         {% url 'lit:api:assessment-reference-export' assessment.pk as the_url %}
-        {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='references' text="Reference Export" help_text="All references and tags." allow_unpublished=False %}
+        {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='references' text="Reference Export" help_text="All references and tags. Wide format is one row per reference (and one column per tag); long format is one row per reference-tag combination." allow_unpublished=False reference_long=True %}
         {% if obj_perms.edit and assessment.literature_settings.conflict_resolution %}
           {% url 'lit:api:assessment-user-tag-export' assessment.pk as the_url %}
           {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='references-usertags' text='User Tag Export' help_text="All references and tags, including user tags. Team members only." allow_unpublished=False %}
@@ -40,6 +40,8 @@
         {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-data' text='Complete Export' help_text="Complete animal bioassay data export, where each row is a endpoint-group for all data extracted." %}
         {% url 'animal:api:assessment-endpoint-export' assessment.pk as the_url %}
         {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-summary' text='Endpoint Summary' help_text="Endpoint summary animal bioassay data, where each row is an extracted endpoint." %}
+        {% url 'animal:api:assessment-bmds-export' assessment.pk as the_url %}
+        {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='animal-bmds' text='BMD Modeling' help_text="Data in a format ready for dose-response modeling. Includes just the dose-response data; you may need to combine with other non-quantitative metadata to determine what to model." %}
       </div>
     {% endif %}
 
@@ -56,6 +58,8 @@
           {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epi-data' text='Complete Export' help_text="Complete epidemiology export, where each row is an individual result associated with a health outcome." %}
           {% url 'epiv2:api:assessment-study-export' assessment.pk as the_url %}
           {% include "assessment/fragments/downloads_select.html" with link=the_url format="xlsx" name='epi-study-design' text='Study Summary' help_text="Epidemiology study summary, where each row is a study. Columns with multiple values are pipe \"|\" delimited." %}
+          {% url 'epiv2:api:assessment-tabular-export' assessment.pk as the_url %}
+          {% include "assessment/fragments/downloads_select.html" with link=the_url disabled_format=True format="xlsx" name='tabular-export' text='Tabular Export' help_text="Relational database export (xlsx only); one worksheet per table, one row per item." %}
         {% endif %}
       </div>
     {% endif %}
@@ -99,5 +103,5 @@
 {% endblock %}
 
 {% block extrajs %}
-  {% include "assessment/fragments/downloads_select_js.html" with name_list="#references, #references-usertags, #rob-final, #rob-all, #animal-data, #animal-summary, #epi-data, #epi-study-design, #epimeta-data, #invitro-data, #eco-data, #udf-model-content, #udf-tag-content" %}
+  {% include "assessment/fragments/downloads_select_js.html" with name_list="#references, #references-usertags, #rob-final, #rob-all, #animal-data, #animal-summary, #animal-bmds, #epi-data, #epi-study-design, #epimeta-data, #invitro-data, #eco-data, #udf-model-content, #udf-tag-content" %}
 {% endblock extrajs %}

@@ -45,7 +45,7 @@
       "initial_data": {{initial_data|safe}},
       "api_heatmap_datasets": "{{form.instance.get_api_heatmap_datasets}}",
       "clear_cache_url": "{{assessment.get_clear_cache_url}}"
-      {% if prisma_data %},"prisma_data": {{prisma_data|safe}}{% endif %}
+      {% if api_data_url %},"api_data_url": "{{api_data_url|safe}}"{% endif %}
     }
   </script>
   <script type="text/javascript">

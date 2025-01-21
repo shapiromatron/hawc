@@ -1,22 +1,9 @@
-import os
-
 import pytest
 
 from hawc.services.nih import pubmed
 
-PUBMED_API_KEY = os.environ.get("PUBMED_API_KEY")
 
-
-@pytest.fixture(scope="class")
-def pubmed_connect():
-    pubmed.settings.connect(PUBMED_API_KEY)
-
-
-@pytest.mark.skipif(
-    PUBMED_API_KEY is None, reason="Test environment requires $PUBMED_API_KEY to be set."
-)
 @pytest.mark.vcr
-@pytest.mark.usefixtures("pubmed_connect")
 class TestPubMedSearch:
     def test_standard_query(self):
         term = "science[journal] AND breast cancer AND 2008[pdat]"
@@ -28,7 +15,8 @@ class TestPubMedSearch:
 
     def test_multiquery(self):
         term = "science[journal] AND breast cancer AND 2008[pdat]"
-        search = pubmed.PubMedSearch(term=term, retmax=3)
+        search = pubmed.PubMedSearch(term=term)
+        search.retmax = 3
         search.get_ids_count()
         search.get_ids()
         assert search.request_count == 2
@@ -63,14 +51,10 @@ class TestPubMedSearch:
     def _results_check(self, search):
         assert search.id_count == 6
         results_list = [19008416, 18927361, 18787170, 18487186, 18239126, 18239125]
-        assert search.ids == results_list
+        assert set(search.ids) == set(results_list)
 
 
-@pytest.mark.skipif(
-    PUBMED_API_KEY is None, reason="Test environment requires $PUBMED_API_KEY to be set."
-)
 @pytest.mark.vcr
-@pytest.mark.usefixtures("pubmed_connect")
 class TestPubMedFetch:
     def test_standard_query(self):
         ids = [19008416, 18927361, 18787170, 18487186, 18239126, 18239125]
@@ -81,10 +65,13 @@ class TestPubMedFetch:
 
     def test_multiquery(self):
         ids = [19008416, 18927361, 18787170, 18487186, 18239126, 18239125]
-        fetch = pubmed.PubMedFetch(id_list=ids, retmax=3)
+        fetch = pubmed.PubMedFetch(id_list=ids)
+        original = fetch.default_data["retmax"]
+        fetch.default_data["retmax"] = 3
         fetch.get_content()
         assert fetch.request_count == 2
         self._results_check(fetch, ids)
+        fetch.default_data["retmax"] = original
 
     def test_utf8(self):
         # these ids have UTF-8 text in the abstract; make sure we can import

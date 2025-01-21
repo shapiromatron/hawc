@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.db import transaction
+from django.db.models import QuerySet
 from django.http import (
     Http404,
     HttpRequest,
@@ -26,8 +27,8 @@ from django.views.generic.edit import CreateView
 
 from ...services.utils.rasterize import get_styles_svg_definition
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig, cacheable
-from ..common.htmx import HtmxViewSet, action, can_edit, can_view
+from ..common.helper import WebappConfig, cacheable, paginate
+from ..common.htmx import HtmxView, HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
     BaseDelete,
@@ -45,6 +46,7 @@ from ..common.views import (
 )
 from ..materialized.models import refresh_all_mvs
 from ..mgmt.analytics.overall import compute_object_counts
+from ..summary import models as summary_models
 from . import constants, filterset, forms, models, serializers
 
 logger = logging.getLogger(__name__)
@@ -160,6 +162,49 @@ class Error401Response(TemplateResponse):
 class Error401(TemplateView):
     response_class = Error401Response
     template_name = "401.html"
+
+
+class Search(FormView):
+    template_name = "assessment/search.html"
+    form_class = forms.SearchForm
+
+    def get_form_kwargs(self) -> dict:
+        kw = super().get_form_kwargs()
+        data = self.request.GET or None
+        kw.update(data=data, user=self.request.user)
+        return kw
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        if context["form"].is_valid():
+            context.update(paginate(context["form"].search(), self.request))
+            if context["object_list"].model in (
+                summary_models.Visual,
+                summary_models.DataPivotQuery,
+            ):
+                self.set_visible_labels(self.request.user, context["object_list"])
+        return context
+
+    def set_visible_labels(self, user, qs: QuerySet):
+        # filter labels to only show those a user can view
+        show_all = self.request.user.is_superuser
+        can_view_visible = (
+            set(
+                user.assessment_pms.all()
+                .union(user.assessment_teams.all())
+                .values_list("id", flat=True)
+            )
+            if user.is_authenticated
+            else set()
+        )
+        for item in qs:
+            item.shown_labels = [
+                label
+                for label in item.labels.all()
+                if label.label.published
+                or show_all
+                or label.label.assessment_id in can_view_visible
+            ]
 
 
 # Assessment Object
@@ -413,6 +458,9 @@ class AssessmentValueUpdate(BaseUpdate):
 
 class AssessmentValueDetail(BaseDetail):
     model = models.AssessmentValue
+
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related("studies")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -814,6 +862,7 @@ class PublishedItemsChecklist(HtmxViewSet):
         "dataset": apps.get_model("assessment", "Dataset"),
         "summarytable": apps.get_model("summary", "SummaryTable"),
         "attachment": apps.get_model("assessment", "Attachment"),
+        "label": models.Label,
     }
 
     @action(permission=can_edit, htmx_only=False)
@@ -827,12 +876,24 @@ class PublishedItemsChecklist(HtmxViewSet):
     @action(permission=can_edit, methods={"post"})
     def update_item(self, request: HttpRequest, *args, **kwargs):
         instance = self.get_instance(request.item, kwargs["type"], kwargs["object_id"])
-        self.perform_update(request, instance)
+        can_update, can_update_message = self.can_update(instance)
+        if can_update:
+            self.perform_update(request, instance)
         return render(
             request,
             "assessment/fragments/publish_item_td.html",
-            {"name": kwargs["type"], "object": instance, "assessment": request.item.assessment},
+            {
+                "name": kwargs["type"],
+                "object": instance,
+                "assessment": request.item.assessment,
+                "can_update_message": can_update_message,
+            },
         )
+
+    def can_update(self, instance) -> tuple[bool, str]:
+        if hasattr(instance, "can_change_published"):
+            return instance.can_change_published()
+        return True, ""
 
     def get_instance(self, item, type: str, object_id: int):
         Model = self.model_lookups.get(type)
@@ -881,6 +942,7 @@ class PublishedItemsChecklist(HtmxViewSet):
         attachments = apps.get_model("assessment", "Attachment").objects.get_attachments(
             assessment, False
         )
+        labels = models.Label.get_assessment_qs(assessment.pk, include_root=False)
         return {
             "assessment": assessment,
             "breadcrumbs": crumbs,
@@ -890,6 +952,7 @@ class PublishedItemsChecklist(HtmxViewSet):
             "datasets": datasets,
             "summarytables": summarytables,
             "attachments": attachments,
+            "labels": labels,
         }
 
 
@@ -909,3 +972,185 @@ def check_published_status(user, published: bool, assessment: models.Assessment)
     """
     if not published and not assessment.user_is_team_member_or_higher(user):
         raise PermissionDenied()
+
+
+class LabelList(BaseList):
+    parent_model = models.Assessment
+    model = models.Label
+    assessment_permission = constants.AssessmentViewPermissions.TEAM_MEMBER
+
+    def get_queryset(self):
+        # include root for permission checking
+        self.queryset = models.Label.get_assessment_qs(self.assessment.pk, include_root=True)
+        return super().get_queryset()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # remove root from object list
+        context["object_list"] = context["object_list"][1:]
+        return context
+
+
+class LabeledItemList(BaseFilterList):
+    parent_model = models.Assessment
+    model = models.LabeledItem
+    template_name = "assessment/labeleditem_list.html"
+    filterset_class = filterset.LabeledItemFilterset
+
+    def get_filterset_form_kwargs(self):
+        return dict(
+            main_field="name",
+            appended_fields=["label"],
+        )
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("label")
+            .prefetch_content_objects()
+            .order_by("content_type", "object_id")
+            .distinct("content_type", "object_id")
+        )
+
+
+class LabelViewSet(HtmxViewSet):
+    actions = {"create", "read", "update", "delete"}
+    parent_model = models.Assessment
+    model = models.Label
+    form_fragment = "assessment/fragments/label_edit_row.html"
+    detail_fragment = "assessment/fragments/label_row.html"
+    list_fragment = "assessment/fragments/label_list.html"
+
+    def get_queryset(self, request):
+        return models.Label.get_assessment_qs(request.item.assessment.pk)
+
+    @action(permission=can_view, htmx_only=False)
+    def read(self, request: HttpRequest, *args, **kwargs):
+        return render(request, self.detail_fragment, self.get_context_data())
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def create(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        kwargs = {}
+        retarget_form = False
+        if request.method == "POST":
+            form = forms.LabelForm(request.POST, assessment=request.item.assessment)
+            if form.is_valid():
+                self.perform_create(request.item, form)
+                template = self.list_fragment
+                kwargs = {"object_list": self.get_queryset(request)}
+            else:
+                retarget_form = True
+        else:
+            form = forms.LabelForm(assessment=request.item.assessment)
+        context = self.get_context_data(form=form, **kwargs)
+        response = render(request, template, context)
+        if retarget_form:
+            # form validation error - swap form div instead of labels div
+            response["HX-Retarget"] = "#label-edit-row-new"
+        return response
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def update(self, request: HttpRequest, *args, **kwargs):
+        template = self.form_fragment
+        kwargs = {}
+        retarget_form = False
+        if request.method == "POST":
+            form = forms.LabelForm(request.POST, instance=request.item.object)
+            if form.is_valid():
+                self.perform_update(request.item, form)
+                template = self.list_fragment
+                kwargs = {"object_list": self.get_queryset(request)}
+            else:
+                retarget_form = True
+        else:
+            form = forms.LabelForm(data=None, instance=request.item.object)
+        context = self.get_context_data(form=form, **kwargs)
+        response = render(request, template, context)
+        if retarget_form:
+            # form validation error - swap form div instead of labels div
+            response["HX-Retarget"] = f"#label-edit-row-{request.item.object.id}"
+        return response
+
+    @action(methods=("get", "post"), permission=can_edit)
+    def delete(self, request: HttpRequest, *args, **kwargs):
+        kwargs = {}
+        if request.method == "POST":
+            self.perform_delete(request.item)
+            kwargs = {"object_list": self.get_queryset(request)}
+            template = self.list_fragment
+        else:
+            form = forms.LabelForm(data=None, instance=request.item.object)
+            template = self.form_fragment
+            kwargs = {"form": form}
+        return render(request, template, self.get_context_data(**kwargs))
+
+
+class LabelItem(HtmxView):
+    actions = {"label", "label_indicators"}
+
+    def dispatch(self, request, *args, **kwargs):
+        self.content_type = self.kwargs.get("content_type")
+        self.object_id = self.kwargs.get("object_id")
+
+        try:
+            self.content_object = ContentType.objects.get_for_id(
+                self.content_type
+            ).get_object_for_this_type(pk=self.object_id)
+        except ObjectDoesNotExist as err:
+            raise Http404() from err
+
+        try:
+            self.assessment = self.content_object.get_assessment()
+        except AttributeError as err:
+            raise Http404() from err
+
+        handler = self.get_handler(request)
+        return handler(request, *args, **kwargs)
+
+    def label(self, request: HttpRequest, *args, **kwargs):
+        if not self.assessment.user_can_edit_object(request.user):
+            raise PermissionDenied()
+        context = dict(
+            content_type=self.content_type, object_id=self.object_id, assessment=self.assessment
+        )
+        if request.method == "GET":
+            form = forms.LabelItemForm(
+                data=dict(
+                    labels=models.Label.objects.filter(
+                        items__content_type=self.content_type, items__object_id=self.object_id
+                    )
+                ),
+                content_object=self.content_object,
+                content_type=self.content_type,
+                object_id=self.object_id,
+            )
+        else:
+            form = forms.LabelItemForm(
+                data=request.POST,
+                content_object=self.content_object,
+                content_type=self.content_type,
+                object_id=self.object_id,
+            )
+            if form.is_valid():
+                form.save()
+                context["saved"] = True
+                context["labels"] = models.Label.objects.get_applied(self.content_object)
+        context["form"] = form
+        return render(request, "assessment/components/label_modal_content.html", context)
+
+    def label_indicators(self, request: HttpRequest, *args, **kwargs):
+        if not self.assessment.user_can_view_object(request.user):
+            raise PermissionDenied()
+        labels = models.Label.objects.get_applied(self.content_object)
+        if not self.assessment.user_can_edit_object(request.user):
+            labels = labels.filter(published=True)
+        context = dict(
+            content_type=self.content_type,
+            object_id=self.object_id,
+            assessment=self.assessment,
+            labels=labels,
+            oob=True,
+        )
+        return render(request, "assessment/fragments/label_indicators.html", context)

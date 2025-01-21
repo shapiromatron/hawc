@@ -2,7 +2,7 @@ import json
 import logging
 import uuid
 from collections import namedtuple
-from typing import Any, NamedTuple
+from typing import Any, Literal, NamedTuple
 
 import numpy as np
 import pandas as pd
@@ -23,11 +23,18 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from pydantic import BaseModel as PydanticModel
 from reversion import revisions as reversion
+from treebeard.mp_tree import MP_Node
 
 from ...services.epa.dsstox import DssSubstance
 from ..common.exceptions import AssessmentNotFound
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper, cacheable, new_window_a
-from ..common.models import get_private_data_storage
+from ..common.helper import (
+    HAWCDjangoJSONEncoder,
+    SerializerHelper,
+    cacheable,
+    get_contrasting_text_color,
+    new_window_a,
+)
+from ..common.models import AssessmentRootMixin, ColorField, get_private_data_storage
 from ..common.validators import FlatJSON, validate_hyperlink
 from ..materialized.models import refresh_all_mvs
 from ..myuser.models import HAWCUser
@@ -271,7 +278,7 @@ class Assessment(models.Model):
         help_text="What term should be used to refer to risk of bias/study evaluation questions?",
     )
     vocabulary = models.PositiveSmallIntegerField(
-        choices=VocabularyNamespace.display_choices(),
+        choices=VocabularyNamespace.choices,
         default=VocabularyNamespace.EHV,
         blank=True,
         null=True,
@@ -366,12 +373,8 @@ class Assessment(models.Model):
         perms = self.get_permissions()
         return perms.project_manager_or_higher(user)
 
-    def get_vocabulary_display(self) -> str:
-        # override default method
-        if self.vocabulary:
-            return VocabularyNamespace(self.vocabulary).display_name
-        else:
-            return ""
+    def get_vocabulary_display(self) -> str | None:
+        return VocabularyNamespace(self.vocabulary).display_name if self.vocabulary else None
 
     def get_noel_names(self) -> NoelNames:
         if self.noel_name == constants.NoelName.NEL:
@@ -471,6 +474,10 @@ class Assessment(models.Model):
             bool: True if data exists, False otherwise
         """
         return apps.get_model(app, model).objects.filter(**{filter: self}).count() > 0
+
+    @property
+    def is_public(self) -> bool:
+        return self.public_on is not None
 
     @property
     def has_lit_data(self) -> bool:
@@ -601,12 +608,17 @@ class AssessmentValue(models.Model):
         choices=constants.ValueType,
         help_text="Type of derived value",
     )
+    value_type_qualifier = models.CharField(
+        blank=True,
+        max_length=64,
+        help_text="A optional qualifier displayed with the Value Type. E.g., Adult-based. This value is typically used to clarify when a value has an adjustment applied like an ADAF.",
+    )
     value = models.FloatField(
-        help_text="The derived value",
+        help_text="The derived value (e.g., 2.1E-09)",
     )
     value_unit = models.CharField(verbose_name="Value units", max_length=32)
     adaf = models.BooleanField(
-        verbose_name="Apply ADAF?",
+        verbose_name="ADAF has been applied?",
         default=False,
         help_text="When checked, the ADAF note will appear as a footnote for the value. Add supporting information about ADAF in the comments.",
     )
@@ -635,7 +647,7 @@ class AssessmentValue(models.Model):
         verbose_name="POD Value",
         blank=True,
         null=True,
-        help_text="The Point of Departure (POD)",
+        help_text="The Point of Departure (POD) (e.g., 2.1E-06)",
     )
     pod_unit = models.CharField(
         verbose_name="POD units",
@@ -655,13 +667,12 @@ class AssessmentValue(models.Model):
         verbose_name="Species and strain",
         help_text="Provide information about the animal(s) studied, including species and strain information",
     )
-    study = models.ForeignKey(
+    studies = models.ManyToManyField(
         "study.Study",
-        on_delete=models.SET_NULL,
         blank=True,
-        null=True,
-        verbose_name="Key study",
-        help_text="Link to Key Study in HAWC. If it does not exist or there are multiple studies, leave blank and explain in comments",
+        verbose_name="Key studies",
+        help_text="Link to Key Study or Studies in HAWC. If it does not exist, leave blank and explain in comments",
+        related_name="assessment_values",
     )
     evidence = models.TextField(
         verbose_name="Evidence characterization",
@@ -695,6 +706,11 @@ class AssessmentValue(models.Model):
 
     class Meta:
         verbose_name_plural = "values"
+
+    @property
+    def get_combined_value_type_display(self) -> str:
+        text = self.get_value_type_display()
+        return f"{self.value_type_qualifier} {text}" if self.value_type_qualifier else text
 
     @property
     def show_cancer_fields(self):
@@ -995,10 +1011,8 @@ class Dataset(models.Model):
         return self.name
 
     def user_can_view(self, user) -> bool:
-        return (
-            self.published
-            and self.assessment.user_can_view_object(user)
-            or self.assessment.user_can_edit_object(user)
+        return self.assessment.user_can_edit_object(user) or (
+            self.published and self.assessment.user_can_view_object(user)
         )
 
     def get_absolute_url(self) -> str:
@@ -1123,7 +1137,7 @@ class DatasetRevision(models.Model):
         except Exception as exc:
             raise ValueError("Unable load dataframe") from exc
 
-        if df.shape[0] == 0:
+        if df.empty:
             raise ValueError("Dataframe contains no rows")
 
         if df.shape[1] == 0:
@@ -1333,6 +1347,103 @@ class Content(models.Model):
         return cache_html
 
 
+class Label(AssessmentRootMixin, MP_Node):
+    objects = managers.LabelManager()
+
+    name = models.CharField(max_length=64)
+    description = models.TextField(blank=True)
+    color = ColorField(default="#4d8055")
+    assessment = models.ForeignKey(Assessment, models.CASCADE, related_name="labels")
+    published = models.BooleanField(default=False)
+    text_color = ColorField(default="#000000")
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    cache_template_taglist = "assessment.label.labellist.assessment-{0}"
+    cache_template_tagtree = "assessment.label.labeltree.assessment-{0}"
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def create_root(cls, assessment_id: int, **kw):
+        kw.update(
+            name=cls.get_assessment_root_name(assessment_id),
+            assessment_id=assessment_id,
+            published=True,
+        )
+        return cls.add_root(**kw)
+
+    def save(self, *args, **kwargs):
+        self.text_color = get_contrasting_text_color(self.color)
+        super().save(*args, **kwargs)
+
+    def get_nested_name(self) -> str:
+        return "<root-node>" if self.is_root() else f"{'━ ' * (self.depth - 1)}{self.name}"
+
+    def get_labelled_items_url(self):
+        return reverse("assessment:labeled-items", args=(self.assessment_id,)) + f"?label={self.id}"
+
+    def get_absolute_url(self):
+        return reverse("assessment:label-htmx", args=(self.pk, "read"))
+
+    def get_edit_url(self):
+        return reverse("assessment:label-htmx", args=(self.pk, "update"))
+
+    def get_delete_url(self):
+        return reverse("assessment:label-htmx", args=(self.pk, "delete"))
+
+    def can_change_published(self) -> tuple[bool, str]:
+        """Check that the item can be published or unpublished
+
+        Returns:
+            tuple[bool, str]: boolean, status message if false
+        """
+        next = not self.published
+        if next:
+            if self.depth == 1:
+                # any depth of 1 tag can be published
+                return True, ""
+            parent_published = self.get_parent().published
+            return (
+                parent_published,
+                "" if parent_published else "Parent must be published to publish child",
+            )
+        else:
+            all_unpublished = all(child.published is False for child in self.get_children())
+            return (
+                all_unpublished,
+                "" if all_unpublished else "All children must be unpublished to unpublish",
+            )
+
+
+class LabeledItem(models.Model):
+    objects = managers.LabeledItemManager()
+
+    label = models.ForeignKey(Label, models.CASCADE, related_name="items")
+    content_type = models.ForeignKey(ContentType, models.CASCADE, related_name="labeled_items")
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey("content_type", "object_id")
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["label", "content_type", "object_id"], name="label_item"
+            )
+        ]
+        ordering = ("content_type", "object_id", "label__path")
+
+    def __str__(self):
+        return f"{self.label} on {self.content_object}"
+
+    @classmethod
+    def get_label_url(cls, object, action: Literal["label", "label_indicators"]):
+        type = ContentType.objects.get_for_model(object)
+        return reverse("assessment:label-item", args=(type.id, object.id)) + f"?action={action}"
+
+
 reversion.register(DSSTox)
 reversion.register(Assessment)
 reversion.register(AssessmentDetail)
@@ -1347,3 +1458,5 @@ reversion.register(DatasetRevision)
 reversion.register(Job)
 reversion.register(Communication)
 reversion.register(Content)
+reversion.register(Label)
+reversion.register(LabeledItem)

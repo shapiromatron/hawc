@@ -16,6 +16,7 @@ from hawc.apps.lit.forms import (
     ReferenceForm,
     RisImportForm,
     TagsCopyForm,
+    VennForm,
 )
 from hawc.apps.lit.models import Reference, ReferenceFilterTag
 from hawc.apps.study.models import Study
@@ -527,3 +528,15 @@ class TestReferenceExcelUploadForm:
             )
             assert form.is_valid() is False
             assert error_msg in form.errors["excel_file"][0]
+
+
+@pytest.mark.django_db
+class TestVennForm:
+    def test_success(self):
+        form = VennForm(
+            assessment=Assessment.objects.get(id=2),
+            tags=ReferenceFilterTag.get_assessment_qs(2),
+            data={"tag1": 11, "tag2": 12, "tag3": None, "tag4": None},
+        )
+        assert form.is_valid() is True
+        assert len(form.get_venn()) == 2

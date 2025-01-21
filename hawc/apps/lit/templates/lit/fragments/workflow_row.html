@@ -1,3 +1,6 @@
+{% if action == 'create' %}
+  <div class="create-row hidden"></div>
+{% endif %}
 <div
   {% if obj_perms.edit_assessment or permissions.edit_assessment %}
     hx-get="{{ object.get_edit_url }}"

@@ -12,7 +12,7 @@ import h from "shared/utils/helpers";
 import $ from "$";
 
 import BaseVisual from "./BaseVisual";
-import {handleVisualError} from "./common";
+import {addLabelAction, addLabelIndicators, handleVisualError} from "./common";
 import {NULL_VALUE} from "./constants";
 import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
 import DatasetTable from "./heatmap/DatasetTable";
@@ -168,12 +168,15 @@ class ExploreHeatmap extends BaseVisual {
             opts.push(
                 ...[
                     "Visualization editing",
-                    {url: this.data.url_update, text: '<i class="fa fa-edit"></i>&nbsp;Update'},
-                    {url: this.data.url_delete, text: '<i class="fa fa-trash"></i>&nbsp;Delete'},
+                    {href: this.data.url_update, text: '<i class="fa fa-edit"></i>&nbsp;Update'},
+                    {href: this.data.url_delete, text: '<i class="fa fa-trash"></i>&nbsp;Delete'},
+                    addLabelAction(this.data.label_htmx),
                 ]
             );
         }
-        opts.push(...["Dataset", {url: csv_url, text: csv_text}, {url: xlsx_url, text: xlsx_text}]);
+        opts.push(
+            ...["Dataset", {href: csv_url, text: csv_text}, {href: xlsx_url, text: xlsx_text}]
+        );
         return HAWCUtils.pageActionsButton(opts);
     }
 
@@ -181,6 +184,7 @@ class ExploreHeatmap extends BaseVisual {
         options = options || {};
 
         var title = $("<h2>").text(this.data.title),
+            labelIndicators = addLabelIndicators(this.data.label_indicators_htmx),
             captionDiv = $("<div>").html(this.data.caption),
             caption = new SmartTagContainer(captionDiv),
             $plotDiv = $("<div>"),
@@ -205,6 +209,7 @@ class ExploreHeatmap extends BaseVisual {
                         if (!options.visualOnly) {
                             var headerRow = $('<div class="d-flex">').append([
                                 title,
+                                labelIndicators,
                                 HAWCUtils.unpublished(this.data.published, window.isEditable),
                                 actions,
                             ]);

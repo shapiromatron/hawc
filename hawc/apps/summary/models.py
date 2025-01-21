@@ -3,6 +3,7 @@ import logging
 import os
 
 import pandas as pd
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -21,7 +22,7 @@ from ...tools.tables.set import StudyEvaluationTable
 from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.constants import EpiVersion, RobName
-from ..assessment.models import Assessment, BaseEndpoint, DoseUnits
+from ..assessment.models import Assessment, BaseEndpoint, DoseUnits, LabeledItem
 from ..common.helper import (
     FlatExport,
     PydanticToDjangoError,
@@ -70,6 +71,7 @@ class SummaryTable(models.Model):
         help_text="For assessments marked for public viewing, mark table to be viewable by public",
     )
     caption = models.TextField(blank=True, validators=[validate_html_tags, validate_hyperlinks])
+    labels = GenericRelation(LabeledItem, related_query_name="summary_tables")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -228,6 +230,7 @@ class Visual(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+    labels = GenericRelation(LabeledItem, related_query_name="visuals")
 
     BREADCRUMB_PARENT = "assessment"
 
@@ -362,8 +365,20 @@ class Visual(models.Model):
                         ),
                         HeatmapDataset(
                             type="Epi",
+                            name="Epidemiology evidence map (including unpublished HAWC data)",
+                            url=reverse("epiv2:api:assessment-study-export", args=(assessment.id,))
+                            + "?unpublished=true",
+                        ),
+                        HeatmapDataset(
+                            type="Epi",
                             name="Epidemiology data extractions",
                             url=reverse("epiv2:api:assessment-export", args=(assessment.id,)),
+                        ),
+                        HeatmapDataset(
+                            type="Epi",
+                            name="Epidemiology data extractions (including unpublished HAWC data)",
+                            url=reverse("epiv2:api:assessment-export", args=(assessment.id,))
+                            + "?unpublished=true",
                         ),
                     ]
                 )
@@ -376,29 +391,70 @@ class Visual(models.Model):
         datasets.extend(additional_datasets)
         return HeatmapDatasets(datasets=datasets)
 
-    @classmethod
-    def get_prisma_data(cls, assessment: Assessment) -> str:
-        return json.dumps(
-            {
-                "reference_tag_pairs": list(
-                    Reference.objects.tag_pairs(assessment.references.all())
-                ),
-                "reference_search_pairs": list(
-                    Reference.searches.through.objects.filter(
-                        reference_id__in=assessment.references.all()
-                    ).values("search_id", "reference_id")
-                ),
-                "searches": list(
-                    Search.objects.filter(assessment_id=assessment.id).values("id", "title")
-                ),
-                "tags": list(
-                    ReferenceFilterTag.as_dataframe(assessment.id).to_dict(orient="records")
-                ),
-                "references": list(
-                    Reference.objects.filter(assessment=assessment.id).values_list("id", flat=True)
-                ),
-            }
-        )
+    def get_prisma_data(self) -> dict:
+        return {
+            "reference_tag_pairs": list(
+                Reference.objects.tag_pairs(self.assessment.references.all().order_by("id"))
+            ),
+            "reference_search_pairs": list(
+                Reference.searches.through.objects.filter(
+                    reference_id__in=self.assessment.references.all()
+                )
+                .values("search_id", "reference_id")
+                .order_by("search_id", "reference_id")
+            ),
+            "searches": list(
+                Search.objects.filter(assessment_id=self.assessment.id)
+                .values("id", "title")
+                .order_by("id")
+            ),
+            "tags": list(
+                ReferenceFilterTag.as_dataframe(self.assessment.id).to_dict(orient="records")
+            ),
+            "references": list(
+                Reference.objects.filter(assessment=self.assessment.id)
+                .values_list("id", flat=True)
+                .order_by("id")
+            ),
+            "reference_detail_url": reverse("lit:interactive", args=(self.assessment.id,))
+            + "?action=venn_reference_list",
+        }
+
+    def get_data(self) -> dict:
+        """Get data needed to display Visual."""
+        match self.visual_type:
+            case constants.VisualType.PRISMA:
+                return self.get_prisma_data()
+            case _:
+                return {}
+
+    def update_config(self) -> dict:
+        """
+        Configuration required to create/update a visual.
+
+        This visual may be a mock instance which has not yet been saved to the database.
+        """
+        match self.visual_type:
+            case constants.VisualType.PRISMA:
+                return dict(
+                    settings=self.settings,
+                    api_data_url=reverse(
+                        "summary:api:assessment-json-data", args=(self.assessment.id,)
+                    ),
+                )
+            case _:
+                return {}
+
+    def read_config(self) -> dict:
+        """Configuration required to render an instance of the visual in read-only views."""
+        match self.visual_type:
+            case constants.VisualType.PRISMA:
+                return dict(
+                    settings=self.settings,
+                    api_data_url=reverse("summary:api:visual-json-data", args=(self.id,)),
+                )
+            case _:
+                return {}
 
     @staticmethod
     def get_dose_units():
@@ -617,6 +673,13 @@ class DataPivot(models.Model):
         else:
             return self.datapivotquery.visual_type
 
+    @property
+    def visible_labels(self):
+        if hasattr(self, "datapivotupload"):
+            return self.datapivotupload.visible_upload_labels
+        else:
+            return self.datapivotquery.visible_query_labels
+
     def get_visual_type_display(self):
         return self.visual_type
 
@@ -640,6 +703,7 @@ class DataPivotUpload(DataPivot):
         max_length=64,
         blank=True,
     )
+    labels = GenericRelation(LabeledItem, related_query_name="datapivot_uploads")
 
     @property
     def visual_type(self):
@@ -682,6 +746,7 @@ class DataPivotQuery(DataPivot):
         "creating one plot similar, but not identical, dose-units.",
     )
     prefilters = models.JSONField(default=dict)
+    labels = GenericRelation(LabeledItem, related_query_name="datapivot_queries")
 
     def clean(self):
         count = self.get_queryset().count()

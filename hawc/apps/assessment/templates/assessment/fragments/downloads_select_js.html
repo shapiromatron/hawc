@@ -19,5 +19,13 @@
       }
       return false;
     });
+    $('.reference-format-selector').each(function(){
+      const selector = $(this);
+      selector.on('change', function(event){
+        const a = $(event.target).parent().find('a'),
+              url = a.attr("href").replace(/export_format=(\w+)/, `export_format=${this.value}`)
+        a.attr("href", url)
+      }).trigger('change')
+    });
   });
 </script>

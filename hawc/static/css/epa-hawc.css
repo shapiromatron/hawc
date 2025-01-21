@@ -31,18 +31,13 @@
     color: white !important;
 }
 
-/* Top nav */
-.hawc-header .navbar-toggler {
-    color: initial;
+/* HAWC navbar */
+.navbar .nav-link {
+    padding: 0 0 0 1em;
 }
-.hawc-header .navbar-toggler:focus {
-    outline: initial;
-}
-.hawc-header a {
-    text-decoration: none;
-}
-.unstyled-action-button {
-    color: var(--epa-primary);
+.navbar-dark > .nav > .nav-item > a.nav-link,
+.navbar-dark > h2 > a {
+    color: #e1e1e1;
 }
 
 /* Sidebar  */

@@ -1,3 +1,5 @@
+import pandas as pd
+from django.db.models import QuerySet
 from django.utils.html import strip_tags
 
 from ..common.helper import FlatFileExporter
@@ -129,3 +131,54 @@ class TableBuilderFormat(FlatFileExporter):
             ]
             for ref in self.queryset
         ]
+
+
+def _long_export(qs: QuerySet, assessment_id: int) -> pd.DataFrame:
+    """
+    One row per reference-tag combination, including references with no tag.
+
+    Args:
+        qs (QuerySet): A Reference queryset
+        assessment_id (int): Assessment ID
+    """
+
+    tags = models.ReferenceFilterTag.as_dataframe(assessment_id).rename(
+        columns=dict(name="tag_name", nested_name="tag_nested_name")
+    )
+    refs = (
+        pd.DataFrame(
+            qs.filter(assessment=assessment_id)
+            .with_identifiers()
+            .values("id", "pubmed_id", "hero_id", "doi", "authors_short", "year", "title")
+        )
+        .rename(columns=dict(authors_short="authors"))
+        .astype(
+            dict(
+                year=pd.Int64Dtype(),
+                pubmed_id=pd.Int64Dtype(),
+                hero_id=pd.Int64Dtype(),
+            )
+        )
+    )
+    ref_tags = pd.DataFrame(
+        models.Reference.objects.tag_pairs(
+            models.Reference.objects.filter(assessment=assessment_id)
+        )
+    )
+    return (
+        refs.merge(
+            ref_tags.merge(tags, left_on="tag_id", right_on="id", how="left").drop(
+                columns=["id", "depth"]
+            ),
+            left_on="id",
+            right_on="reference_id",
+            how="left",
+        )
+        .drop(columns=["reference_id"])
+        .astype(dict(tag_id=pd.Int64Dtype()))
+    )
+
+
+class ReferenceTagLongExport(FlatFileExporter):
+    def build_df(self) -> pd.DataFrame:
+        return _long_export(qs=self.queryset, assessment_id=self.kwargs["assessment"].id)

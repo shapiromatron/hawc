@@ -9,7 +9,7 @@ from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from hawc.apps.assessment.forms import ContactForm
-from hawc.apps.assessment.models import Assessment
+from hawc.apps.assessment.models import Assessment, Label
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.study.models import Study
 
@@ -91,7 +91,7 @@ class TestAboutPage:
         url = reverse("about")
         response = client.get(url)
         assert "counts" in response.context
-        assert response.context["counts"]["assessments"] == 4
+        assert response.context["counts"]["assessments"] == 5
         assert response.context["counts"]["users"] == 5
 
     def test_settings_external(self):
@@ -187,9 +187,9 @@ class TestAttachmentViewSet:
         resp = client.post(
             url,
             {
-                "title": "test",
-                "description": "test",
-                "attachment": SimpleUploadedFile("zzzz.txt", b"test"),
+                "attachment-new-title": "test",
+                "attachment-new-description": "test",
+                "attachment-new-attachment": SimpleUploadedFile("zzzz.txt", b"test"),
             },
             follow=True,
         )
@@ -219,9 +219,9 @@ class TestAttachmentViewSet:
         resp = client.post(
             url,
             {
-                "title": "test2",
-                "description": "test2",
-                "attachment": SimpleUploadedFile("test2.txt", b"test2"),
+                f"attachment-{instance_id}-title": "test2",
+                f"attachment-{instance_id}-description": "test2",
+                f"attachment-{instance_id}-attachment": SimpleUploadedFile("test2.txt", b"test2"),
             },
             follow=True,
         )
@@ -388,6 +388,17 @@ class TestBulkPublishItems:
         study.refresh_from_db()
         assert study.published is False
 
+    def test_publish_label(self):
+        label = Label.objects.get(id=2)
+        assert label.published is True
+        url = reverse("assessment:publish-update", args=(1, "label", label.id))
+        pm = get_client("pm", api=False, htmx=True)
+        pm.post(url)
+        label.refresh_from_db()
+        assert label.published is False
+        label.published = True
+        label.save()
+
 
 @pytest.mark.django_db
 class TestUpdateSession:
@@ -419,12 +430,25 @@ class TestRasterizeCss:
 
 
 @pytest.mark.django_db
+class TestSearch:
+    def test_success(self):
+        anon = get_client()
+        url = reverse("search")
+        resp = anon.get(
+            url, data={"all_public": "on", "query": "plotly", "type": "visual", "order_by": "name"}
+        )
+        assert resp.status_code == 200
+        assert resp.context["object_list"].count() == 1
+
+
+@pytest.mark.django_db
 def test_get_200():
     client = get_client("admin")
     main = 1
     log_content_type = 16
     log_obj_id = 1
     urls = [
+        reverse("search"),
         reverse("assessment:full_list"),
         reverse("assessment:public_list"),
         reverse("assessment:detail", args=(main,)),
@@ -455,6 +479,9 @@ def test_get_200():
         reverse("assessment:content_types"),
         reverse("assessment:close_window"),
         reverse("assessment:clean_study_metrics", args=(main,)),
+        reverse("assessment:bulk-publish", args=(main,)),
+        reverse("assessment:labeled-items", args=(main,)),
+        reverse("assessment:manage-labels", args=(main,)),
         reverse("assessment:bulk-publish", args=(main,)),
     ]
     for url in urls:

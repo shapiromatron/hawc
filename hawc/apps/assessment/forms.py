@@ -1,6 +1,7 @@
 from pathlib import Path
 from textwrap import dedent
 
+from crispy_forms import layout as cfl
 from django import forms
 from django.conf import settings
 from django.contrib import admin
@@ -8,12 +9,18 @@ from django.contrib.admin.widgets import AutocompleteSelectMultiple
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
 from django.db import transaction
+from django.db.models import QuerySet
+from django.db.models.base import ModelBase
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
 from ...services.epa.dsstox import DssSubstance
 from ..common.auth.turnstile import Turnstile
-from ..common.autocomplete import AutocompleteSelectMultipleWidget, AutocompleteTextWidget
+from ..common.autocomplete import (
+    AutocompleteMultipleChoiceField,
+    AutocompleteSelectMultipleWidget,
+    AutocompleteTextWidget,
+)
 from ..common.forms import (
     BaseFormHelper,
     QuillField,
@@ -23,8 +30,11 @@ from ..common.forms import (
 from ..common.helper import new_window_a
 from ..common.widgets import DateCheckboxInput
 from ..myuser.autocomplete import UserAutocomplete
-from ..study.models import Study
+from ..study.autocomplete import StudyAutocomplete
+from ..summary import models as summary_models
+from ..vocab.constants import VocabularyNamespace
 from . import autocomplete, constants, models
+from .actions import search
 
 
 class AssessmentForm(forms.ModelForm):
@@ -174,6 +184,12 @@ class AssessmentValueForm(forms.ModelForm):
     CREATE_HELP_TEXT = ""
     UPDATE_HELP_TEXT = "Update current assessment value."
 
+    studies = AutocompleteMultipleChoiceField(
+        autocomplete_class=StudyAutocomplete,
+        help_text=models.AssessmentValue.studies.field.help_text,
+        required=False,
+    )
+
     class Meta:
         model = models.AssessmentValue
         exclude = ["assessment"]
@@ -197,6 +213,10 @@ class AssessmentValueForm(forms.ModelForm):
             "evidence": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="evidence"
             ),
+            "value_type_qualifier": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.AssessmentValueAutocomplete,
+                field="value_type_qualifier",
+            ),
             "value_unit": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.AssessmentValueAutocomplete, field="value_unit"
             ),
@@ -216,7 +236,7 @@ class AssessmentValueForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if assessment:
             self.instance.assessment = assessment
-        self.fields["study"].queryset = Study.objects.filter(assessment=self.instance.assessment)
+        self.fields["studies"].set_filters({"assessment_id": self.instance.assessment.id})
 
     def clean(self):
         cleaned_data = super().clean()
@@ -256,7 +276,9 @@ class AssessmentValueForm(forms.ModelForm):
 
         helper.set_textarea_height(("comments", "basis", "extra"), 3)
         helper.add_row("evaluation_type", 2, "col-md-6")
-        helper.add_row("value_type", 4, "col-md-3")
+        helper.add_row(
+            "value_type", 5, ["col-md-3", "col-md-3", "col-md-2", "col-md-2", "col-md-2"]
+        )
         helper.add_row("confidence", 3, "col-md-4")
         helper.add_row("pod_type", 4, "col-md-3")
         helper.add_row("species_studied", 3, "col-md-4")
@@ -309,6 +331,7 @@ class AssessmentModulesForm(forms.ModelForm):
         self.fields[
             "enable_risk_of_bias"
         ].label = f"Enable {self.instance.get_rob_name_display().lower()}"
+        self.fields["vocabulary"].choices = VocabularyNamespace.display_choices()
 
     @property
     def helper(self):
@@ -341,7 +364,8 @@ class AttachmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         obj = kwargs.pop("parent", None)
-        super().__init__(*args, **kwargs)
+        prefix = f"attachment-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
         if obj:
             self.instance.content_type = ContentType.objects.get_for_model(obj)
             self.instance.object_id = obj.id
@@ -539,6 +563,146 @@ class ContactForm(forms.Form):
         return self.cleaned_data
 
 
+class SearchForm(forms.Form):
+    all_public = forms.BooleanField(required=False, initial=True, label="All public assessments")
+    public = forms.ModelMultipleChoiceField(
+        queryset=models.Assessment.objects.all(),
+        required=False,
+        label="Public Assessments",
+    )
+    all_internal = forms.BooleanField(
+        required=False, initial=True, label="All internal assessments"
+    )
+    internal = forms.ModelMultipleChoiceField(
+        queryset=models.Assessment.objects.all(), required=False, label="Internal assessments"
+    )
+    type = forms.ChoiceField(
+        required=True,
+        label="Search for",
+        choices=(
+            ("study", "Studies"),
+            ("visual", "Visuals"),
+            ("data-pivot", "Data Pivots"),
+        ),
+    )
+    order_by = forms.ChoiceField(
+        required=True,
+        initial="-last_updated",
+        choices=(
+            ("name", "↑ Title"),
+            ("-name", "↓ Title"),
+            ("last_updated", "↑ Last Updated"),
+            ("-last_updated", "↓ Last Updated"),
+        ),
+    )
+    query = forms.CharField(max_length=128, required=False)
+
+    order_by_override = {
+        ("visual", "name"): "title",
+        ("visual", "-name"): "-title",
+        ("data-pivot", "name"): "title",
+        ("data-pivot", "-name"): "-title",
+        ("study", "name"): "short_citation",
+        ("study", "-name"): "-short_citation",
+    }
+    model_class: dict[str, ModelBase] = {
+        "visual": summary_models.Visual,
+        "data-pivot": summary_models.DataPivotQuery,
+    }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+        self.fields["public"].queryset = self.fields["public"].queryset.public().order_by("name")
+        if self.user.is_anonymous:
+            self.fields.pop("all_internal")
+            self.fields.pop("internal")
+        else:
+            self.fields["internal"].queryset = (
+                self.fields["internal"].queryset.user_can_view(self.user).order_by("name")
+            )
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_method = "GET"
+        helper.form_class = "p-3"
+
+        internal_fields = tuple() if self.user.is_anonymous else ("all_internal", "internal")
+
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("query", css_class="col-6"),
+                cfl.Column("type", css_class="col-3"),
+                cfl.Column("order_by", css_class="col-3"),
+            ),
+            cfl.Fieldset(
+                "Assessment Search Options",
+                cfl.Row(
+                    cfl.Column("all_public", "public"),
+                    cfl.Column(*internal_fields),
+                ),
+            ),
+            cfl.Row(
+                cfl.Column(
+                    cfl.Submit("search", "Search", css_class="btn-block"),
+                    cfl.HTML(
+                        """<i class="fa fa-spinner fa-spin htmx-indicator align-items-center d-flex ml-2" id="spinner" aria-hidden="true"></i>"""
+                    ),
+                    css_class="col-md-5 offset-md-4",
+                ),
+            ),
+        )
+        helper.attrs.update(
+            **{
+                "hx-get": ".",
+                "hx-target": "#results",
+                "hx-swap": "outerHTML",
+                "hx-select": "#results",
+                "hx-trigger": "submit",
+                "hx-push-url": "true",
+                "hx-indicator": "#spinner",
+            }
+        )
+        return helper
+
+    def search(self):
+        data = self.cleaned_data
+        order_by = self.order_by_override.get((data["type"], data["order_by"]), data["order_by"])
+        match data["type"]:
+            case "study":
+                return (
+                    search.search_studies(
+                        query=data["query"],
+                        all_public=data["all_public"],
+                        public=data["public"],
+                        all_internal=data.get("all_internal", False),
+                        internal=data.get("internal", None),
+                        user=self.user if self.user.is_authenticated else None,
+                    )
+                    .select_related("assessment")
+                    .prefetch_related("identifiers")
+                    .order_by(order_by)
+                )
+            case "visual" | "data-pivot":
+                return (
+                    search.search_visuals(
+                        model_cls=self.model_class[data["type"]],
+                        query=data["query"],
+                        all_public=data["all_public"],
+                        public=data["public"],
+                        all_internal=data.get("all_internal", False),
+                        internal=data.get("internal", None),
+                        user=self.user if self.user.is_authenticated else None,
+                    )
+                    .select_related("assessment")
+                    .prefetch_related("labels__label")
+                    .order_by(order_by)
+                )
+            case _:
+                raise ValueError("Unknown Type")
+
+
 class DatasetForm(forms.ModelForm):
     revision_version = forms.IntegerField(
         disabled=True,
@@ -664,3 +828,150 @@ class DatasetForm(forms.ModelForm):
         model = models.Dataset
         fields = ("name", "description", "published")
         field_classes = {"description": QuillField}
+
+
+class LabelForm(forms.ModelForm):
+    parent = forms.ModelChoiceField(None, empty_label=None)
+
+    after = forms.ModelChoiceField(
+        None,
+        required=False,
+        empty_label="--- last ---",
+        initial=None,
+        help_text="Move label after a sibling label.",
+    )
+
+    class Meta:
+        model = models.Label
+        fields = ["name", "description", "parent", "color", "published"]
+
+    def __init__(self, *args, **kwargs):
+        assessment = kwargs.pop("assessment", None)
+        prefix = f"label-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        super().__init__(*args, prefix=prefix, **kwargs)
+        if assessment:
+            self.instance.assessment = assessment
+        if self.instance.pk is not None:
+            self.fields["parent"].initial = self.instance.get_parent()
+        tree_queryset, root = self.get_tree_queryset()
+        self.fields["parent"].queryset = tree_queryset
+        self.fields["after"].queryset = tree_queryset.exclude(id=root.pk)
+        self.fields["parent"].label_from_instance = lambda label: label.get_nested_name()
+        self.fields["after"].label_from_instance = lambda label: label.get_nested_name()
+        self.fields["after"].hover_help = True
+        self.fields["description"].widget.attrs["rows"] = 2
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("name", "published", css_class="col-md-2"),
+                cfl.Column("color", css_class="col-md-1"),
+                cfl.Column("description", css_class="col"),
+                cfl.Column("parent", css_class="col-md-2"),
+                cfl.Column("after", css_class="col-md-2"),
+            ),
+        )
+        return helper
+
+    def get_tree_queryset(self) -> tuple[QuerySet[models.Label], models.Label]:
+        root = models.Label.get_assessment_root(self.instance.assessment.pk)
+        queryset = models.Label.get_tree(root)
+        if self.instance.pk is not None:
+            queryset = queryset.exclude(
+                path__startswith=self.instance.path, depth__gte=self.instance.depth
+            )
+        return queryset, root
+
+    def clean(self):
+        cleaned_data = super().clean()
+        parent_conflict_msg = "Cannot be published: parent label is unpublished."
+        descendant_conflict_msg = "Cannot be unpublished: child label is published."
+        after_conflict_msg = "Must be a child of the 'parent' label."
+        #  check that 'after' and parent align
+        if "after" in self.changed_data:
+            if not self.cleaned_data["after"].is_child_of(self.cleaned_data["parent"]):
+                self.add_error("after", after_conflict_msg)
+        # if published changed, check parent and subtree published status
+        if "published" in self.changed_data:
+            if cleaned_data["published"] and not cleaned_data["parent"].published:
+                self.add_error("published", parent_conflict_msg)
+            elif not cleaned_data["published"] and self.instance.pk is not None:
+                descendants = self.instance.get_descendants()
+                if any(_.published for _ in descendants):
+                    self.add_error("published", descendant_conflict_msg)
+        # else if parent changed, check parent published status
+        elif "parent" in self.changed_data:
+            if cleaned_data["published"] and not cleaned_data["parent"].published:
+                self.add_error("parent", parent_conflict_msg)
+        return cleaned_data
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if commit:
+            parent = self.cleaned_data["parent"]
+            after = self.cleaned_data["after"]
+            # handle new instance
+            if instance.pk is None:
+                instance = models.Label.create_tag(
+                    assessment_id=instance.assessment.pk, parent_id=parent.pk, instance=instance
+                )
+                if "after" in self.changed_data:
+                    instance.move(after, pos="right")
+            # handle existing instance
+            else:
+                instance.save()
+                if "after" in self.changed_data:
+                    instance.move(after, pos="right")
+                elif "parent" in self.changed_data:
+                    instance.move(parent, pos="last-child")
+            self.save_m2m()
+        return instance
+
+
+class LabelItemForm(forms.Form):
+    labels = forms.ModelMultipleChoiceField(
+        required=False,
+        queryset=models.Label.objects.all(),
+        label="Labels",
+        help_text="Select label(s) to apply.",
+    )
+
+    def __init__(self, *args, **kwargs):
+        content_object = kwargs.pop("content_object", None)
+        self.content_type = kwargs.pop("content_type")
+        self.object_id = kwargs.pop("object_id")
+        super().__init__(*args, **kwargs)
+        labels = models.Label.get_assessment_qs(content_object.get_assessment().pk)
+        self.fields["labels"].queryset = labels
+        self.fields["labels"].label_from_instance = lambda label: label.get_nested_name()
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        return helper
+
+    @transaction.atomic
+    def save(self):
+        qs = models.LabeledItem.objects.filter(
+            content_type_id=self.content_type, object_id=self.object_id
+        )
+        existing = set(qs.values_list("label_id", flat=True))
+        next = set(label.id for label in self.cleaned_data["labels"])
+
+        deletes = existing - next
+        if deletes:
+            qs.filter(label_id__in=deletes).delete()
+
+        creates = next - existing
+        if creates:
+            labels = [
+                models.LabeledItem(
+                    label_id=label_id, content_type_id=self.content_type, object_id=self.object_id
+                )
+                for label_id in creates
+            ]
+            models.LabeledItem.objects.bulk_create(labels)

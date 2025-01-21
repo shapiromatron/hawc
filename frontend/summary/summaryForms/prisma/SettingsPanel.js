@@ -2,33 +2,26 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import TextInput from "shared/components/TextInput";
 
+import GlobalSettings from "./GlobalSettings";
 import PrismaDataTab from "./PrismaDataTab";
 
 @inject("store")
 @observer
 class SettingsPanel extends Component {
     render() {
-        const {settings, changeSettings} = this.props.store.subclass;
+        const {store} = this.props;
         return (
-            <Tabs>
+            <Tabs selectedIndex={store.activeTab} onSelect={store.changeActiveTab}>
                 <TabList>
-                    <Tab>Overall</Tab>
                     <Tab>Flowchart</Tab>
+                    <Tab>Styling</Tab>
                 </TabList>
                 <TabPanel>
-                    <div>
-                        <TextInput
-                            name="title"
-                            label="Plot Title"
-                            value={settings.title}
-                            onChange={e => changeSettings(e.target.name, e.target.value)}
-                        />
-                    </div>
+                    <PrismaDataTab />
                 </TabPanel>
                 <TabPanel>
-                    <PrismaDataTab />
+                    <GlobalSettings />
                 </TabPanel>
             </Tabs>
         );

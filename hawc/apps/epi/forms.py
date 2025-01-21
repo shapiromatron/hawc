@@ -418,9 +418,9 @@ class ComparisonSet(forms.ModelForm):
         self.parent = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
         if self.parent:
-            if type(self.parent) == models.StudyPopulation:
+            if isinstance(self.parent, models.StudyPopulation):
                 self.instance.study_population = self.parent
-            elif type(self.parent) == models.Outcome:
+            elif isinstance(self.parent, models.Outcome):
                 self.instance.outcome = self.parent
 
         filters = {}

@@ -1,0 +1,33 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+  <div class="d-flex mt-1">
+    <h2 class="mb-0">Labels</h2>
+    <button class="btn btn-primary ml-2 ml-auto align-self-start flex-shrink-0"
+            hx-get="{% url 'assessment:label-htmx' assessment.pk 'create' %}"
+            hx-target=".create-row"
+            hx-swap="outerHTML">
+      <i class="fa fa-fw fa-save"></i>&nbsp;
+      Create label
+    </button>
+  </div>
+  <div>
+    {% include "assessment/fragments/label_list.html" %}
+  </div>
+{% endblock content %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    function linkLabel(e) {
+      url = $(this).attr("label_url");
+      window.location = url
+      e.stopPropagation();
+    }
+    $(window).ready(function() {
+      $(".label").on("click", linkLabel);
+    });
+    $("body").on("htmx:afterSwap", function(evt) {
+      $(evt.detail.elt).find(".label").first().on("click", linkLabel);
+    });
+  </script>
+{% endblock %}

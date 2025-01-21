@@ -19,6 +19,7 @@ class TaskForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        kwargs.update(prefix=f"task-{kwargs.get("instance").pk if "instance" in kwargs else "new"}")
         super().__init__(*args, **kwargs)
         status_names = [
             (status.id, status.name)

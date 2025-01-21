@@ -193,7 +193,7 @@ class BulkReferenceTagSerializer(serializers.Serializer):
             )
 
         # ensure we have some data
-        if df.shape[0] == 0:
+        if df.empty:
             raise serializers.ValidationError("CSV has no data")
 
         expected_assessment_id = self.context["assessment"].id

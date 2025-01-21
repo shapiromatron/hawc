@@ -230,11 +230,7 @@ class TagTreeViz extends D3Plot {
                     .attr("transform", () => `translate(${source.y0},${source.x0})`)
                     .on("click", function(event, d) {
                         if (event.ctrlKey || event.metaKey) {
-                            if (d.depth == 0) {
-                                alert("Cannot view details on root-node.");
-                            } else {
-                                fetch_references(d.data.nestedTag);
-                            }
+                            fetch_references(d.data.nestedTag);
                         } else {
                             toggle(d);
                             update(event, d);
