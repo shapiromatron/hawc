@@ -81,6 +81,11 @@ class Node extends React.Component {
                             <i className={nodeClickIcon} />
                         </button>
                         {node.data.name}
+                        {node.data.tagCount ? (
+                            <span title="Tag count" className="ml-2 badge badge-dark">
+                                {node.data.tagCount}
+                            </span>
+                        ) : null}
                     </p>
                 )}
                 <div ref={this.props.sortableGroupDecorator} style={{display: displayChildren}}>

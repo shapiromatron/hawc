@@ -11,6 +11,9 @@ class TagEditorStore {
 
     constructor(config) {
         this.config = config;
+        this.tagCounts = false;
+        this.tagCounts =
+            "references" in this.config ? _.countBy(this.config.references, "tag_id") : false;
     }
 
     @action.bound fetchTags() {
@@ -30,12 +33,13 @@ class TagEditorStore {
                 opts.unshift([NO_PARENT, "---"]);
                 return opts;
             },
-            addDepth = function(node, depth) {
+            addDepthAndCount = function(node, depth, tagCounts) {
                 // add depth to each node, and recursively to child nodes
                 node.data.depth = depth;
+                node.data.tagCount = tagCounts ? tagCounts[node.id] : false;
 
                 if (node.children) {
-                    node.children.forEach(d => addDepth(d, depth + 1));
+                    node.children.forEach(d => addDepthAndCount(d, depth + 1, tagCounts));
                 }
             };
 
@@ -43,7 +47,7 @@ class TagEditorStore {
             .then(response => response.json())
             .then(allTags => {
                 let tags = allTags[0].children || [];
-                tags.forEach(d => addDepth(d, 0));
+                tags.forEach(d => addDepthAndCount(d, 0, this.tagCounts));
 
                 this.tags = tags;
                 this.parentOptions = getOptions(tags);
