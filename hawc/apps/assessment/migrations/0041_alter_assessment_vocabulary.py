@@ -12,10 +12,7 @@ class Migration(migrations.Migration):
             name="vocabulary",
             field=models.PositiveSmallIntegerField(
                 blank=True,
-                choices=[
-                    (1, "EPA Environmental health vocabulary"),
-                    (2, "EPA ToxRefDB vocabulary"),
-                ],
+                choices=[(1, "EHV"), (2, "ToxRefDB")],
                 default=1,
                 help_text="Attempt to use a controlled vocabulary for entering bioassay data into HAWC.\n        You still have the option to enter terms which are not available in the vocabulary.",
                 null=True,
