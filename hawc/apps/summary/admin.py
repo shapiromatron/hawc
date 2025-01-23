@@ -21,6 +21,7 @@ class VisualAdmin(admin.ModelAdmin):
     list_filter = ("visual_type", "published", ("assessment", admin.RelatedOnlyFieldListFilter))
     search_fields = ("assessment__name", "title")
     raw_id_fields = ("endpoints",)
+    show_facets = admin.ShowFacets.ALWAYS
 
     @admin.display(description="URL")
     def show_url(self, obj):
@@ -37,5 +38,5 @@ class SummaryTableAdmin(VersionAdmin):
         "published",
         "created",
     )
-
     list_filter = ("table_type", "published", ("assessment", admin.RelatedOnlyFieldListFilter))
+    show_facets = admin.ShowFacets.ALWAYS
