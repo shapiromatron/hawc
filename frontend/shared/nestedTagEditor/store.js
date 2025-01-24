@@ -8,12 +8,16 @@ class TagEditorStore {
     @observable tagsLoaded = false;
     @observable tags = [];
     @observable parentOptions = [];
+    @observable tagCounts = false;
 
     constructor(config) {
         this.config = config;
-        this.tagCounts = false;
-        this.tagCounts =
-            "references" in this.config ? _.countBy(this.config.references, "tag_id") : false;
+        this.tagReferences =
+            "references" in config
+                ? _.mapValues(_.groupBy(config.references, "tag_id"), refs =>
+                      refs.map(ref => ref.reference_id)
+                  )
+                : false;
     }
 
     @action.bound fetchTags() {
@@ -33,22 +37,35 @@ class TagEditorStore {
                 opts.unshift([NO_PARENT, "---"]);
                 return opts;
             },
-            addDepthAndCount = function(node, depth, tagCounts) {
+            addNodeDepth = function(node, depth) {
                 // add depth to each node, and recursively to child nodes
                 node.data.depth = depth;
-                node.data.tagCount = tagCounts ? tagCounts[node.id] : false;
-
                 if (node.children) {
-                    node.children.forEach(d => addDepthAndCount(d, depth + 1, tagCounts));
+                    node.children.forEach(d => addNodeDepth(d, depth + 1));
                 }
+            },
+            addNodeReferenceCount = function(node, tagReferences) {
+                // add references to each node, and recursively to child nodes
+                node.data.references = new Set(tagReferences[node.id]);
+                if (node.children) {
+                    node.children.forEach(
+                        d =>
+                            (node.data.references = node.data.references.union(
+                                addNodeReferenceCount(d, tagReferences)
+                            ))
+                    );
+                }
+                node.data.tagCount = node.data.references.size;
+                return node.data.references;
             };
-
         fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(allTags => {
                 let tags = allTags[0].children || [];
-                tags.forEach(d => addDepthAndCount(d, 0, this.tagCounts));
-
+                tags.forEach(d => addNodeDepth(d, 0));
+                if (this.tagReferences) {
+                    tags.forEach(d => addNodeReferenceCount(d, this.tagReferences));
+                }
                 this.tags = tags;
                 this.parentOptions = getOptions(tags);
                 this.tagsLoaded = true;

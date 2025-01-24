@@ -81,7 +81,7 @@ class Node extends React.Component {
                             <i className={nodeClickIcon} />
                         </button>
                         {node.data.name}
-                        {node.data.tagCount ? (
+                        {"tagCount" in node.data ? (
                             <span title="Tag count" className="ml-2 badge badge-dark">
                                 {node.data.tagCount}
                             </span>
