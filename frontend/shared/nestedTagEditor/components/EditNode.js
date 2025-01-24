@@ -16,12 +16,12 @@ class EditNodeForm extends React.Component {
         var deleteText = "Delete this tag";
         if (this.props.node.data.tagCount > 0) {
             if (this.props.node.children) {
-                deleteText = `Delete this tag, including its child tags, and all ${this.props.node.data.tagCount} uses of these tags`;
+                deleteText = `Delete this tag, including its child tag(s), and all ${this.props.node.data.tagCount} use(s) of these tags`;
             } else {
-                deleteText = `Delete this tag and all ${this.props.node.data.tagCount} uses of this tag`;
+                deleteText = `Delete this tag and all ${this.props.node.data.tagCount} use(s) of this tag`;
             }
         } else if (this.props.node.children) {
-            deleteText = `Delete this tag and its ${this.props.node.children.length} child tags`;
+            deleteText = `Delete this tag and its ${this.props.node.children.length} child tag(s)`;
         }
 
         return (
