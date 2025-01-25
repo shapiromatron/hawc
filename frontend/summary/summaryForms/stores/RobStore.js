@@ -19,7 +19,7 @@ class RobStore {
         return _getDefaultSettings();
     }
 
-    @action.bound changeSettings(path, value) {
+    @action.bound changeSetting(path, value) {
         _.set(this.settings, path, value);
     }
 

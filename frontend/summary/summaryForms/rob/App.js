@@ -5,6 +5,8 @@ import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import FormActions from "shared/components/FormActions";
 
 import OverallTab from "../shared/OverallTab";
+import PreviewPanel from "./PreviewPanel";
+import SettingsPanel from "./SettingsPanel";
 
 @inject("store")
 @observer
@@ -26,9 +28,14 @@ class App extends Component {
                     </TabList>
                     <TabPanel>
                         <OverallTab legend="ROB" helpText="HelpText" />
+                        <p>TODO - add prefilters</p>
                     </TabPanel>
-                    <TabPanel>b</TabPanel>
-                    <TabPanel>c</TabPanel>
+                    <TabPanel>
+                        <SettingsPanel />
+                    </TabPanel>
+                    <TabPanel>
+                        <PreviewPanel />
+                    </TabPanel>
                 </Tabs>
                 <FormActions handleSubmit={handleSubmit} cancel={cancel_url} />
             </div>
