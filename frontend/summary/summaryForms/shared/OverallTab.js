@@ -11,13 +11,12 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 @observer
 class OverallPanel extends Component {
     render() {
-        const {isCreate, djangoFormData, updateDjangoFormData} = this.props.store.base;
+        const {store, legend, helpText} = this.props,
+            {isCreate, djangoFormData, updateDjangoFormData} = store.base;
         return (
             <div>
-                <legend>Exploratory heatmap settings</legend>
-                <p className="form-text text-muted">
-                    Overall plot settings (eg., title, caption, visibility.)
-                </p>
+                <legend>{legend}</legend>
+                <p className="form-text text-muted">{helpText}</p>
                 <TextInput
                     name="title"
                     label="Title"
@@ -64,6 +63,8 @@ class OverallPanel extends Component {
     }
 }
 OverallPanel.propTypes = {
+    legend: PropTypes.string,
+    helpText: PropTypes.string,
     store: PropTypes.object,
 };
 export default OverallPanel;
