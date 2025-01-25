@@ -34,3 +34,21 @@ Documentation = "https://hawc.readthedocs.io/client/"
 [build-system]
 requires = ["flit_core ~=3.9"]
 build-backend = "flit_core.buildapi"
+
+[tool.poe.tasks.build]
+help = "Build package"
+cmd = "uv build"
+
+[tool.poe.tasks.upload-testpypi]
+help = "Upload package to testpypi"
+sequence = [
+  "build",
+  {cmd = "uv publish --publish-url=https://test.pypi.org/legacy/"},
+]
+
+[tool.poe.tasks.upload-pypi]
+help = "Upload package to pypi"
+sequence = [
+  "build",
+  {cmd = "uv publish"},
+]

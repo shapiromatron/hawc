@@ -37,9 +37,8 @@ jobs:
         python-version: '3.12'
         architecture: 'x64'
     - name: Install uv
-      uses: astral-sh/setup-uv@v3
+      uses: astral-sh/setup-uv@v5
       with:
-        enable-cache: true
         cache-dependency-glob: "**/pyproject.toml"
     - name: install
       run: |
@@ -48,10 +47,10 @@ jobs:
         uv pip install --system -e client
     - name: lint-py
       run: |
-        make lint-py
+        poe lint-py
     - name: lint-html
       run: |
-        make lint-html
+        poe lint-html
     - name: test
       env:
         DJANGO_DB_NAME: hawc
@@ -72,7 +71,7 @@ jobs:
       run: |
         sudo apt-get install -y cloc
         echo "# Lines of code report" >> $GITHUB_STEP_SUMMARY
-        make loc >> $GITHUB_STEP_SUMMARY
+        poe loc >> $GITHUB_STEP_SUMMARY
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v4
       with:

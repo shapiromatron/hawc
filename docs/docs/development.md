@@ -93,7 +93,7 @@ cd ~/dev/hawc
 source ./venv/bin/activate
 
 # update python/js packages; sync app state with database
-make sync-dev
+poe sync-dev
 
 # run development webserver  (use one of these commands)
 python manage.py runserver
@@ -127,7 +127,7 @@ conda activate hawc
 pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
 
 :: update python/js packages; sync app state with database
-make sync-dev
+poe sync-dev
 
 :: run development webserver  (use one of these commands)
 python manage.py runserver
@@ -155,42 +155,44 @@ If you navigate to [localhost](http://127.0.0.1:8000/) and see a website, you're
 ### Useful utilities
 
 There are a number of helpful utility commands available from the command line.
-A full list of these commands is located in the ``Makefile`` or ``make.bat`` (depending on the OS), but they are called using the same commands.
 
 ```bash
+# show all available commands
+poe
+
 # run unit tests
-make test
-make test-js
+poe test
+poe test-js
 
 # run integration tests
-make test-integration
+poe test-integration
 
 # run integration tests with a visible chrome window and debugger
-make test-integration-debug
+poe test-integration-debug
 
 # lint code (show changes required) - all, javascript-only, or python-only
-make lint
-make lint-js
-make lint-py
+poe lint
+poe lint-js
+poe lint-py
 
 # format code (try to make changes) - all,  javascript-only, or python-only
-make format
-make format-js
-make format-py
+poe format
+poe format-js
+poe format-py
 ```
 
 On Mac/Linux; if you have [tmux](https://github.com/tmux/tmux/wiki) installed, there's a one-line command to start the environment
 
 ```bash
 # use the bundled dev `tmux` dev environment
-make dev
+poe dev
 ```
 
 On Windows; if you created the pgdata folder in %HOMEPATH%\dev, there's a short command to start the database
 
 ```bash
 # start postgres db (if pgdata folder is located in %HOMEPATH%\dev)
-make startdb
+poe startdb
 ```
 
 ### Pre commit hooks
@@ -332,7 +334,7 @@ pg_dump -U hawc hawc | gzip > db_dump.sql.gz
 
 ### Mocking external resources in tests
 
-When writing tests for code that accesses external resources (e.g., data from PubMed API endpoints), the ``vcr`` python package is used to save "cassettes" of expected responses for faster tests and stability in case external resources are intermittently offline. These cassettes can be rebuilt by running ``make test-refresh``, which will delete the ``cassettes`` directory and run the python test suite, which will recreate the cassettes based on actual responses.
+When writing tests for code that accesses external resources (e.g., data from PubMed API endpoints), the ``vcr`` python package is used to save "cassettes" of expected responses for faster tests and stability in case external resources are intermittently offline. Periodically we may need to  delete the ``cassettes`` directory and run the python test suite, which will recreate the cassettes based on actual responses.
 
 If a test uses an external resource, ensure that it is decorated with ``@pytest.mark.vcr`` to generate a cassette; see our current tests suite for examples.
 
@@ -381,7 +383,7 @@ While the standard tests check that the backend views and models interact as des
 
 ```bash title="Mac/Linux"
 # to run all
-make test-integration-debug
+poe test-integration-debug
 
 # or a custom method to run a single test
 export INTEGRATION_TESTS=1
@@ -390,7 +392,7 @@ py.test -sv tests/integration/test_login.py --pdb
 
 ```batch title="Windows"
 :: to run all
-make test-integration-debug
+poe test-integration-debug
 
 :: or a custom method to run a single test
 set INTEGRATION_TESTS=1
@@ -406,7 +408,7 @@ playwright codegen 127.0.0.1:8000
 By default, the integration tests run in "headless" mode, or without a browser being shown. When editing integration tests, use the interactive mode to capture user operations:
 
 ```bash
-make test-integration-debug
+poe test-integration-debug
 
 # use set instead of export on windows
 export INTEGRATION_TESTS=1
@@ -538,7 +540,7 @@ You may need to do this periodically if your data is stale.
 To generate a report on the lines of code, install [cloc](https://github.com/AlDanial/cloc) and then run the make command:
 
 ```bash
-make loc
+poe loc
 ```
 
 ### Testing the client

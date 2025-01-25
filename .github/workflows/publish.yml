@@ -1,6 +1,7 @@
 name: publish
 
 on:
+  pull_request: # TODO - remove after it works
   push:
     tags:
       - "hawc-client-[0-9]+.[0-9]+"
@@ -18,26 +19,29 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
           architecture: 'x64'
-          cache: 'pip'
-
-      - name: install
-        run: python -m pip install -U pip wheel flit
-
-      - name: Build client
-        run: cd client && flit build
-
-      - name: Publish package to PyPI
-        env:
-          PUBLISH_PYPI: ${{ secrets.PUBLISH_PYPI }}
-        if: env.PUBLISH_PYPI != null
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: actions/setup-python@v5
         with:
-          verbose: true
-          attestations: true
-          print-hash: true
-          packages-dir: client/dist/
+          python-version: '3.12'
+          architecture: 'x64'
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          cache-dependency-glob: "**/pyproject.toml"
+      - name: Install environment
+        run: 'uv pip install -e ".[dev]"'
+      - name: Build client
+        run: cd client && poe build
+      # - name: Publish package to PyPI
+      #   env:
+      #     PUBLISH_PYPI: ${{ secrets.PUBLISH_PYPI }}
+      #   if: env.PUBLISH_PYPI != null
+      #   uses: pypa/gh-action-pypi-publish@release/v1
+      #   with:
+      #     verbose: true
+      #     attestations: true
+      #     print-hash: true
+      #     packages-dir: client/dist/
