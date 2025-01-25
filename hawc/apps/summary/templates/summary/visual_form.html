@@ -58,6 +58,11 @@
           summaryForms.exploratoryHeatmapFormAppStartup(mainElement.get(0), config, djangoForm);
           mainElement.show();
         });
+      } else if (config.visual_type === 2 || config.visual_type === 3){
+        window.app.startup("summaryFormsStartup", function (summaryForms) {
+          summaryForms.robFormAppStartup(mainElement.get(0), config, djangoForm);
+          mainElement.show();
+        });
       } else if (config.visual_type === 9){
         window.app.startup("summaryFormsStartup", function (summaryForms) {
           summaryForms.prismaFormAppStartup(mainElement.get(0), config, djangoForm);
