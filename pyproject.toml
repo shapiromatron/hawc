@@ -178,57 +178,39 @@ sequence = [
   {cmd = "python manage.py recreate_views"},
 ]
 
-[tool.poe.tasks.build]
-help = "build hawc package"
+[tool.poe.tasks.run-py]
+help = "Run python developer environment"
+cmd = "python manage.py runserver"
+
+[tool.poe.tasks.run-js]
+help = "Run javascript developer environment"
+cmd = "npm --prefix ./frontend run start"
+
+[tool.poe.tasks.test]
+help = "Run python tests"
+cmd = "py.test"
+
+[tool.poe.tasks.test-integration]
+help = "Run integration tests (requires `npm run start`)"
 sequence = [
-  {cmd = "npm --prefix ./frontend run build"},
-  {cmd = "python manage.py set_git_commit"},
-  {cmd = "uv build"},
+  {cmd = "playwright install --with-deps chromium"},
+  {shell = "INTEGRATION_TESTS=1 py.test -sv tests/integration/"},
 ]
 
-[tool.poe.tasks.docs]
-help = "Build documentation"
-cwd = "docs"
-cmd = "mkdocs build --strict"
+[tool.poe.tasks.test-integration-debug]
+help = "Run integration tests in debug mode (requires `npm run start`)"
+sequence = [
+  {cmd = "playwright install --with-deps chromium"},
+  {shell = "INTEGRATION_TESTS=1 PWDEBUG=1 py.test -sv tests/integration/"},
+]
 
-[tool.poe.tasks.docs-serve]
-help = "Generate documentation"
-cwd = "docs"
-cmd = "mkdocs serve -a localhost:8010"
-
-[tool.poe.tasks.loc]
-help = "Generate lines of code report"
-cmd = """cloc \
-		--exclude-dir=migrations,node_modules,public,private,vendor,venv \
-		--exclude-ext=json,yaml,svg,toml,ini \
-		--vcs=git \
-		--counted loc-files.txt \
-		--md \
-		.
-"""
-
-[tool.poe.tasks.lint]
-help = "Check formatting issues"
-sequence = ["lint-py", "lint-js", "lint-html"]
+[tool.poe.tasks.test-js]
+help = "Run javascript tests"
+cmd = "npm --prefix ./frontend run test"
 
 [tool.poe.tasks.format]
 help = "Fix formatting issues where possible"
 sequence = ["format-py", "format-js", "format-html"]
-
-[tool.poe.tasks.lint-py]
-help = "Check python formatting issues"
-sequence = [
-  {cmd = "ruff format . --check"},
-  {cmd = "ruff check ."},
-]
-
-[tool.poe.tasks.lint-js]
-help = "Check javascript formatting issues"
-cmd = "npm --prefix ./frontend run lint"
-
-[tool.poe.tasks.lint-html]
-help = "Check HTML formatting issues where possible"
-cmd = "djhtml --tabwidth 2 --check hawc/"
 
 [tool.poe.tasks.format-py]
 help = "Fix python formatting issues where possible"
@@ -245,31 +227,57 @@ cmd = "npm --prefix ./frontend run format"
 help = "Fix HTML formatting issues where possible"
 cmd = "djhtml --tabwidth 2 hawc/"
 
-[tool.poe.tasks.test]
-help = "Run python tests"
-cmd = "py.test"
+[tool.poe.tasks.lint]
+help = "Check formatting issues"
+sequence = ["lint-py", "lint-js", "lint-html"]
 
-[tool.poe.tasks.test-integration]
-help = "Run integration tests (requires `npm run start`)"
+[tool.poe.tasks.lint-py]
+help = "Check python formatting issues"
 sequence = [
-  {cmd = "playwright install --with-deps chromium"},
-  {shell = "INTEGRATION_TESTS=1 py.test -sv tests/integration/"},
+  {cmd = "ruff format . --check"},
+  {cmd = "ruff check ."},
 ]
 
-[tool.poe.tasks.test-integration-debug]
-help = "Run integration tests in debug mode (requires npm run start)"
-sequence = [
-  {cmd = "playwright install --with-deps chromium"},
-  {shell = "INTEGRATION_TESTS=1 PWDEBUG=1 py.test -sv tests/integration/"},
-]
+[tool.poe.tasks.lint-js]
+help = "Check javascript formatting issues"
+cmd = "npm --prefix ./frontend run lint"
 
-[tool.poe.tasks.test-js]
-help = "Run javascript tests"
-cmd = "npm --prefix ./frontend run test"
+[tool.poe.tasks.lint-html]
+help = "Check HTML formatting issues where possible"
+cmd = "djhtml --tabwidth 2 --check hawc/"
+
+[tool.poe.tasks.build]
+help = "Build package"
+sequence = [
+  {cmd = "npm --prefix ./frontend run build"},
+  {cmd = "python manage.py set_git_commit"},
+  {cmd = "uv build"},
+]
 
 [tool.poe.tasks.coverage]
-help = "Run coverage and create html report"
+help = "Run python coverage and create HTML report"
 sequence = [
   {cmd = "coverage run -m pytest"},
   {cmd = "coverage html -d coverage_html -i"},
 ]
+
+[tool.poe.tasks.loc]
+help = "Generate lines of code report"
+cmd = """cloc \
+		--exclude-dir=migrations,node_modules,public,private,vendor,venv \
+		--exclude-ext=json,yaml,svg,toml,ini \
+		--vcs=git \
+		--counted loc-files.txt \
+		--md \
+		.
+"""
+
+[tool.poe.tasks.docs]
+help = "Build documentation"
+cwd = "docs"
+cmd = "mkdocs build --strict"
+
+[tool.poe.tasks.docs-serve]
+help = "Run documentation server"
+cwd = "docs"
+cmd = "mkdocs serve -a localhost:8010"

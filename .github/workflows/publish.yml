@@ -32,7 +32,9 @@ jobs:
         with:
           cache-dependency-glob: "**/pyproject.toml"
       - name: Install environment
-        run: 'uv pip install -e ".[dev]"'
+        run: |
+          uv pip install --system -e ".[dev,docs]"
+          uv pip install --system -e client
       - name: Build client
         run: cd client && poe build
       # - name: Publish package to PyPI
