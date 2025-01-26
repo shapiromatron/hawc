@@ -338,7 +338,7 @@ class VisualizationCreate(BaseCreate):
                 not in constants.VISUAL_EVIDENCE_CHOICES[kwargs["visual_type"]]
             ):
                 raise Http404
-        self.evidence_type = kwargs["evidence_type"]
+        self.evidence_type = constants.StudyType(kwargs["evidence_type"])
         return kwargs
 
     def get_template_names(self):

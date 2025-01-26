@@ -127,9 +127,9 @@ class VisualForm(forms.ModelForm):
         if assessment:
             self.instance.assessment = assessment
         if visual_type is not None:  # required if value is 0
-            self.instance.visual_type = visual_type
+            self.instance.visual_type = constants.VisualType(visual_type)
         if self.instance.id is None:
-            self.instance.evidence_type = evidence_type
+            self.instance.evidence_type = constants.StudyType(evidence_type)
 
     def setHelper(self):
         if self.instance.id:
@@ -297,10 +297,17 @@ class RoBForm(VisualForm):
         self.helper = self.setHelper()
 
     def update_context(self, context):
+        data = self.instance.get_rob_data()
         context.update(
+            rob_config=json.dumps(
+                {
+                    "metrics": list(data["metrics"]),
+                    "scores": list(data["scores"]),
+                }
+            ),
             rob_metrics=json.dumps(
                 list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.instance.assessment.id))
-            )
+            ),
         )
 
     class Meta:

@@ -41,6 +41,7 @@
       "endpoint_url": "{% url 'autocomplete' 'animal-endpointautocomplete' %}",
       "preview_url": "{% url 'summary:visualization_create_tester' assessment.id visual_type evidence_type %}",
       {% if rob_metrics %}"rob_metrics": {{rob_metrics|safe}},{% endif %}
+      {% if rob_config %}"rob_config": {{rob_config|safe}},{% endif %}
       {% if api_data_url %}"api_data_url": "{{api_data_url|safe}}",{% endif %}
       "initial_data": {{initial_data|safe}},
       "api_heatmap_datasets": "{{form.instance.get_api_heatmap_datasets}}",

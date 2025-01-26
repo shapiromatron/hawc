@@ -39,6 +39,7 @@ from ..riskofbias.models import RiskOfBiasScore
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
 from . import constants, managers, prefilters
+from .actions.rob import get_rob_visual_form_data
 
 logger = logging.getLogger(__name__)
 
@@ -447,6 +448,11 @@ class Visual(models.Model):
             "reference_detail_url": reverse("lit:interactive", args=(self.assessment.id,))
             + "?action=venn_reference_list",
         }
+
+    def get_rob_data(self) -> dict:
+        return get_rob_visual_form_data(
+            assessment_id=self.assessment_id, study_type=self.evidence_type
+        )
 
     def get_data(self) -> dict:
         """Get data needed to display Visual."""

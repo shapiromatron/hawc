@@ -10,6 +10,30 @@ class StudyType(models.IntegerChoices):
     ECO = 5, "Ecology"
     OTHER = 3, "Other"
 
+    def study_filter_prefix(self):
+        mapping = {
+            0: "bioassay",
+            1: "epi",
+            4: "epi_meta",
+            2: "in_vitro",
+            5: "eco",
+        }
+        try:
+            return mapping[self]
+        except KeyError:
+            raise ValueError(f"No study_filter_prefix for {self}") from None
+
+    def rob_prefix(self):
+        mapping = {
+            0: "required_animal",
+            1: "required_epi",
+            2: "required_invitro",
+        }
+        try:
+            return mapping[self]
+        except KeyError:
+            raise ValueError(f"No rob_prefix for {self}") from None
+
 
 class TableType(models.IntegerChoices):
     GENERIC = 0

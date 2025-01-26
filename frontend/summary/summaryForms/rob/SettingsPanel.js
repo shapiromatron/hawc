@@ -12,7 +12,7 @@ import TextInput from "shared/components/TextInput";
 class GeneralSettingsTab extends Component {
     render() {
         const {store} = this.props,
-            {changeSetting, settings} = store.subclass;
+            {changeSetting, settings, isHeatmap, isBarchart} = store.subclass;
         return (
             <div className="row">
                 <div className="col-4">
@@ -71,47 +71,86 @@ class GeneralSettingsTab extends Component {
                         onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
                     />
                 </div>
-                <div className="col-3">
-                    <IntegerInput
-                        name="cell_size"
-                        value={settings.cell_size}
-                        label="Cell Size (px)"
-                        onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
-                    />
-                </div>
-                <div className="col-3">
-                    <SelectInput
-                        choices={[
-                            {id: "study", label: "Study"},
-                            {id: "metric", label: "Metric"},
-                        ]}
-                        value={settings.x_field}
-                        handleSelect={value => changeSetting("x_field", value)}
-                        label="X Axis Field"
-                    />
-                </div>
-                <div className="col-3">
-                    <SelectInput
-                        choices={[
-                            {id: "short_citation", label: "Short Citation"},
-                            {id: "overall_confidence", label: "Final Study Confidence"},
-                        ]}
-                        value={settings.sort_order}
-                        handleSelect={value => changeSetting("sort_order", value)}
-                        label="Study Sort Order"
-                    />
-                </div>
-                <div className="col-3">
-                    <SelectInput
-                        choices={[
-                            {id: "short_citation", label: "Short Citation"},
-                            {id: "study_identifier", label: "Study Identifier"},
-                        ]}
-                        value={settings.study_label_field}
-                        handleSelect={value => changeSetting("study_label_field", value)}
-                        label="Study Label"
-                    />
-                </div>
+                {isHeatmap ? (
+                    <>
+                        <div className="col-3">
+                            <IntegerInput
+                                name="cell_size"
+                                value={settings.cell_size}
+                                label="Cell Size (px)"
+                                onChange={e =>
+                                    changeSetting(e.target.name, parseInt(e.target.value))
+                                }
+                            />
+                        </div>
+                        <div className="col-3">
+                            <SelectInput
+                                choices={[
+                                    {id: "study", label: "Study"},
+                                    {id: "metric", label: "Metric"},
+                                ]}
+                                value={settings.x_field}
+                                handleSelect={value => changeSetting("x_field", value)}
+                                label="X Axis Field"
+                            />
+                        </div>
+                        <div className="col-3">
+                            <SelectInput
+                                choices={[
+                                    {id: "short_citation", label: "Short Citation"},
+                                    {id: "overall_confidence", label: "Final Study Confidence"},
+                                ]}
+                                value={settings.sort_order}
+                                handleSelect={value => changeSetting("sort_order", value)}
+                                label="Study Sort Order"
+                            />
+                        </div>
+                        <div className="col-3">
+                            <SelectInput
+                                choices={[
+                                    {id: "short_citation", label: "Short Citation"},
+                                    {id: "study_identifier", label: "Study Identifier"},
+                                ]}
+                                value={settings.study_label_field}
+                                handleSelect={value => changeSetting("study_label_field", value)}
+                                label="Study Label"
+                            />
+                        </div>
+                    </>
+                ) : null}
+                {isBarchart ? (
+                    <>
+                        <div className="col-4">
+                            <IntegerInput
+                                name="plot_width"
+                                value={settings.plot_width}
+                                label="Plot Width (px)"
+                                onChange={e =>
+                                    changeSetting(e.target.name, parseInt(e.target.value))
+                                }
+                            />
+                        </div>
+                        <div className="col-4">
+                            <IntegerInput
+                                name="row_height"
+                                value={settings.row_height}
+                                label="Row Height (px)"
+                                onChange={e =>
+                                    changeSetting(e.target.name, parseInt(e.target.value))
+                                }
+                            />
+                        </div>
+                        <div className="col-4">
+                            <p className="my-1">&nbsp;</p>
+                            <CheckboxInput
+                                name="show_values"
+                                label="Show Values on Plot"
+                                onChange={e => changeSetting(e.target.name, e.target.checked)}
+                                checked={settings.show_values}
+                            />
+                        </div>
+                    </>
+                ) : null}
             </div>
         );
     }
@@ -125,7 +164,7 @@ GeneralSettingsTab.propTypes = {
 class MetricTab extends Component {
     render() {
         const {store} = this.props,
-            {changeSetting} = store.subclass;
+            {metricTableData, toggleMetricInclusion} = store.subclass;
         return (
             <div className="row">
                 <div className="col">
@@ -141,7 +180,23 @@ class MetricTab extends Component {
                                 <th>Metric</th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody>
+                            {metricTableData.map(d => {
+                                return (
+                                    <tr key={d.id}>
+                                        <td>
+                                            <CheckboxInput
+                                                onChange={e =>
+                                                    toggleMetricInclusion(d.id, e.target.checked)
+                                                }
+                                                checked={d.selected}
+                                            />
+                                        </td>
+                                        <td>{d.name}</td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -157,7 +212,7 @@ MetricTab.propTypes = {
 class JudgmentTab extends Component {
     render() {
         const {store} = this.props,
-            {changeSetting} = store.subclass;
+            {excludedScoreData, toggleExcludedScores} = store.subclass;
         return (
             <div className="row">
                 <div className="col">
@@ -177,7 +232,33 @@ class JudgmentTab extends Component {
                                 <th>Judgment</th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody>
+                            {excludedScoreData.scores.map(d => {
+                                const label = d.is_default ? "<none> (overall)" : d.label,
+                                    judgment = `${d.score_label} (${d.score_symbol})`;
+                                return (
+                                    <tr key={d.id}>
+                                        <td>
+                                            <CheckboxInput
+                                                onChange={e =>
+                                                    toggleExcludedScores(d.id, e.target.checked)
+                                                }
+                                                checked={!excludedScoreData.excluded.has(d.id)}
+                                            />
+                                        </td>
+                                        <td>{d.metric__name}</td>
+                                        <td>{d.riskofbias__study__short_citation}</td>
+                                        <td>
+                                            <p className="score">
+                                                <b>Label:</b>&nbsp;{label}
+                                                <br />
+                                                <b>Judgment:</b>&nbsp;{judgment}
+                                            </p>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
                     </table>
                 </div>
             </div>
