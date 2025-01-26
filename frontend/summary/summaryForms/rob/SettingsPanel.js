@@ -12,71 +12,71 @@ import TextInput from "shared/components/TextInput";
 class GeneralSettingsTab extends Component {
     render() {
         const {store} = this.props,
-            {changeSetting} = store;
+            {changeSetting, settings} = store.subclass;
         return (
             <div className="row">
                 <div className="col-4">
                     <TextInput
-                        name="zzz"
-                        value="zzz"
+                        name="title"
+                        value={settings.title}
                         label="Title"
-                        onChange={e => changeSetting("z", e.target.value)}
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
                     />
                 </div>
                 <div className="col-4">
                     <TextInput
-                        name="zzz"
-                        value="zzz"
+                        name="xAxisLabel"
+                        value={settings.xAxisLabel}
                         label="X-axis Label"
-                        onChange={e => changeSetting("z", e.target.value)}
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
                     />
                 </div>
                 <div className="col-4">
                     <TextInput
-                        name="zzz"
-                        value="zzz"
+                        name="yAxisLabel"
+                        value={settings.yAxisLabel}
                         label="Y-axis Label"
-                        onChange={e => changeSetting("z", e.target.value)}
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
                     />
                 </div>
                 <div className="col-3">
                     <IntegerInput
-                        name="styles.section.padding_x"
-                        value={1234}
+                        name="padding_top"
+                        value={settings.padding_top}
                         label="Padding Top (px)"
-                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                        onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
                     />
                 </div>
                 <div className="col-3">
                     <IntegerInput
-                        name="styles.section.padding_x"
-                        value={1234}
+                        name="padding_right"
+                        value={settings.padding_right}
                         label="Padding Right (px)"
-                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                        onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
                     />
                 </div>
                 <div className="col-3">
                     <IntegerInput
-                        name="styles.section.padding_x"
-                        value={1234}
+                        name="padding_bottom"
+                        value={settings.padding_bottom}
                         label="Padding Bottom (px)"
-                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                        onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
                     />
                 </div>
                 <div className="col-3">
                     <IntegerInput
-                        name="styles.section.padding_x"
-                        value={1234}
+                        name="padding_left"
+                        value={settings.padding_left}
                         label="Padding Left (px)"
-                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                        onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
                     />
                 </div>
                 <div className="col-3">
                     <IntegerInput
-                        name="styles.section.padding_x"
-                        value={1234}
+                        name="cell_size"
+                        value={settings.cell_size}
                         label="Cell Size (px)"
-                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                        onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
                     />
                 </div>
                 <div className="col-3">
@@ -85,8 +85,8 @@ class GeneralSettingsTab extends Component {
                             {id: "study", label: "Study"},
                             {id: "metric", label: "Metric"},
                         ]}
-                        value={"study"}
-                        handleSelect={value => changeSetting("", value)}
+                        value={settings.x_field}
+                        handleSelect={value => changeSetting("x_field", value)}
                         label="X Axis Field"
                     />
                 </div>
@@ -96,8 +96,8 @@ class GeneralSettingsTab extends Component {
                             {id: "short_citation", label: "Short Citation"},
                             {id: "overall_confidence", label: "Final Study Confidence"},
                         ]}
-                        value={"short_citation"}
-                        handleSelect={value => changeSetting("", value)}
+                        value={settings.sort_order}
+                        handleSelect={value => changeSetting("sort_order", value)}
                         label="Study Sort Order"
                     />
                 </div>
@@ -107,8 +107,8 @@ class GeneralSettingsTab extends Component {
                             {id: "short_citation", label: "Short Citation"},
                             {id: "study_identifier", label: "Study Identifier"},
                         ]}
-                        value={"short_citation"}
-                        handleSelect={value => changeSetting("", value)}
+                        value={settings.study_label_field}
+                        handleSelect={value => changeSetting("study_label_field", value)}
                         label="Study Label"
                     />
                 </div>
@@ -125,7 +125,7 @@ GeneralSettingsTab.propTypes = {
 class MetricTab extends Component {
     render() {
         const {store} = this.props,
-            {changeSetting} = store;
+            {changeSetting} = store.subclass;
         return (
             <div className="row">
                 <div className="col">
@@ -157,7 +157,7 @@ MetricTab.propTypes = {
 class JudgmentTab extends Component {
     render() {
         const {store} = this.props,
-            {changeSetting} = store;
+            {changeSetting} = store.subclass;
         return (
             <div className="row">
                 <div className="col">
@@ -193,15 +193,15 @@ JudgmentTab.propTypes = {
 class LegendSettingsTab extends Component {
     render() {
         const {store} = this.props,
-            {changeSetting} = store;
+            {settings, changeSetting} = store.subclass;
         return (
             <div className="row">
                 <div className="col-6">
                     <CheckboxInput
                         label="Show Legend"
-                        name="..."
+                        name="show_legend"
                         onChange={e => changeSetting(e.target.name, e.target.checked)}
-                        checked={true}
+                        checked={settings.show_legend}
                         helpText={"Overrides cell dimensions for calculated best fit"}
                     />
                 </div>
@@ -209,35 +209,35 @@ class LegendSettingsTab extends Component {
                 <div className="col-6">
                     <CheckboxInput
                         label="Show N/A in legend"
-                        name="..."
+                        name="show_na_legend"
                         onChange={e => changeSetting(e.target.name, e.target.checked)}
-                        checked={true}
-                        helpText={'Show "Not applicable" in the legend'}
+                        checked={settings.show_na_legend}
+                        helpText={'Show "Not Applicable" in the legend'}
                     />
                 </div>
                 <div className="col-6">
                     <CheckboxInput
                         label="Show NR in legend"
-                        name="..."
+                        name="show_nr_legend"
                         onChange={e => changeSetting(e.target.name, e.target.checked)}
-                        checked={true}
-                        helpText={'Show "Not reported" in the legend'}
+                        checked={settings.show_nr_legend}
+                        helpText={'Show "Not Reported" in the legend'}
                     />
                 </div>
                 <div className="col-6">
                     <IntegerInput
-                        name="styles.section.padding_x"
-                        value={1234}
+                        name="legend_x"
+                        value={settings.legend_x}
                         label="Legend X Location (px)"
-                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                        onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
                     />
                 </div>
                 <div className="col-6">
                     <IntegerInput
-                        name="styles.section.padding_x"
-                        value={1234}
+                        name="legend_y"
+                        value={settings.legend_y}
                         label="Legend Y Location (px)"
-                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                        onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
                     />
                 </div>
             </div>

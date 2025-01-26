@@ -1,17 +1,33 @@
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
-import {deleteArrayElement} from "shared/components/EditableRowData";
+import {toJS} from "mobx";
 import h from "shared/utils/helpers";
-import {NULL_VALUE} from "summary/summary/constants";
-
 const _getDefaultSettings = function() {
-    return {};
+    return {
+        title: "",
+        xAxisLabel: "",
+        yAxisLabel: "",
+        padding_top: 20,
+        padding_right: 20,
+        padding_bottom: 20,
+        padding_left: 20,
+        cell_size: 10,
+        x_field: "study",
+        sort_order: "short_citation",
+        study_label_field: "short_citation",
+        included_metrics: [],
+        excluded_score_ids: [],
+        show_legend: true,
+        show_na_legend: false,
+        show_nr_legend: false,
+        legend_x: 5,
+        legend_y: 5,
+    };
 };
 
 class RobStore {
     constructor(rootStore) {
         this.root = rootStore;
-        this.getDataset();
     }
     @observable settings = null;
 
@@ -21,26 +37,11 @@ class RobStore {
 
     @action.bound changeSetting(path, value) {
         _.set(this.settings, path, value);
+        console.log(toJS(this.settings));
     }
 
     @action setFromJsonSettings(settings, firstTime) {
         this.settings = settings;
-    }
-
-    @action.bound getDataset() {
-        const {config} = this.root.base,
-            payload = {config: {visual_type: config.visual_type}};
-        h.handleSubmit(
-            config.api_data_url,
-            "POST",
-            config.csrf,
-            payload,
-            response => {
-                this.data = response;
-            },
-            err => console.error(err),
-            err => console.error(err)
-        );
     }
 
     @computed get settingsHash() {
