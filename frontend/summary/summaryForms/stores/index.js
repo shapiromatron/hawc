@@ -1,3 +1,4 @@
+import BaseDjangoStore from "./BaseDjangoStore";
 import BaseStore from "./BaseStore";
 import ExploratoryHeatmapStore from "./ExploratoryHeatmapStore";
 import PrismaStore from "./PrismaStore";
@@ -19,7 +20,7 @@ class Prisma {
 
 class Rob {
     constructor(config) {
-        this.base = new BaseStore(this, config);
+        this.base = new BaseDjangoStore(this, config);
         this.subclass = new RobStore(this);
     }
 }

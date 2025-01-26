@@ -4,7 +4,7 @@ import React, {Component} from "react";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import FormActions from "shared/components/FormActions";
 
-import OverallTab from "../shared/OverallTab";
+import OverallPanel from "./OverallPanel";
 import PreviewPanel from "./PreviewPanel";
 import SettingsPanel from "./SettingsPanel";
 
@@ -27,8 +27,7 @@ class App extends Component {
                         <Tab>Preview</Tab>
                     </TabList>
                     <TabPanel>
-                        <OverallTab legend="ROB" helpText="HelpText" />
-                        <p>TODO - add prefilters</p>
+                        <OverallPanel />
                     </TabPanel>
                     <TabPanel>
                         <SettingsPanel />

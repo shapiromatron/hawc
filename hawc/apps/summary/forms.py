@@ -314,6 +314,23 @@ class RoBForm(VisualForm):
         model = models.Visual
         fields = ("title", "slug", "settings", "caption", "published")
 
+    def setHelper(self):
+        if self.instance.id:
+            inputs = {
+                "legend_text": f"Update {self.instance}",
+                "help_text": "Update an existing visualization.",
+            }
+        else:
+            inputs = {
+                "legend_text": "Create new visualization",
+                "help_text": "Create a new visualization.",
+            }
+
+        helper = BaseFormHelper(self, **inputs)
+        helper.set_textarea_height(("settings",), n_rows=2)
+        helper.form_id = "visualForm"
+        return helper
+
 
 class TagtreeForm(VisualForm):
     root_node = forms.TypedChoiceField(
