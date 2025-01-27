@@ -149,16 +149,34 @@ class DynamicFormWidget(Widget):
     def format_value(self, value):
         """Value used in rendering."""
         #import pdb; pdb.set_trace()
-        if value is not None:
+        if value is not None and not isinstance(value,dict):
             value = json.loads(value)
         if value:
             value = {self.add_prefix(k): v for k, v in value.items()}
         return self.form_class(data=value, **self.form_kwargs)
 
+    def get_context(self, name, value, attrs):
+        if value is not None and not isinstance(value,dict):
+            value = json.loads(value)
+        if value:
+            value = {f"{name}-{k}": v for k, v in value.items()}
+        foobar= self.form_class(data=value, prefix=name)
+        return {
+            "widget": {
+                "name": name,
+                "is_hidden": self.is_hidden,
+                "required": self.is_required,
+                "value": foobar,
+                "attrs": self.build_attrs(self.attrs, attrs),
+                "template_name": self.template_name,
+            },
+        }
+
     def value_from_datadict(self, data, files, name):
         """Parse value from POST request."""
         form = self.form_class(data=data, **self.form_kwargs)
         form.full_clean()
+        #import pdb; pdb.set_trace()
         return form.cleaned_data
 
     class Media:

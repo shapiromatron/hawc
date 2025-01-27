@@ -61,17 +61,25 @@ class ArrayWidget(forms.MultiWidget):
 
     template_name = "udf/widget.html"
 
-    class Media:
+    #class Media:
         # may not be necessary if done entirely with alpineJS
-        js = (f"{settings.STATIC_URL}js/array.js",)
+        #js = (f"{settings.STATIC_URL}js/array.js",)
 
-    def __init__(self, attrs=None):
+    def __init__(self, default_widget, attrs=None):
         super(forms.MultiWidget,self).__init__(attrs)
+        self.default_widget = default_widget
+        self.suffix = "[]"
         self.widgets_names = []
         self.widgets = []
 
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        # TODO handle this more like in super?
+        context["default_widget"] = self.default_widget.get_context(name+self.suffix, None, attrs)["widget"]
+        return context
+
     def initialize_widgets(self, widgets:list):
-        self.widgets_names = ["[]" for _ in widgets]
+        self.widgets_names = [self.suffix for _ in range(len(widgets))]
         self.widgets = [w() if isinstance(w, type) else w for w in widgets]
 
     def initialize_widgets_from_fields(self, fields:list):
@@ -79,31 +87,52 @@ class ArrayWidget(forms.MultiWidget):
         self.initialize_widgets(widgets)
 
     def value_from_datadict(self, data, files, name):
-        # note: this function does not handle files
-        data = {f"{name}_{index}":value for index,value in enumerate(data.get(name,[]))}
-        # TODO have base widget and iterate over length of data
-        return [
-            widget.value_from_datadict(data, files, f"{name}_{index}")
-            for index, widget in enumerate(self.widgets)
-        ]
+        #import pdb; pdb.set_trace()
+        try:
+            getter = data.getlist
+        except AttributeError:
+            getter = data.get
+
+        # TODO replace this logic with index based logic;
+        # should look cleaner here, but trickier on frontend
+        keys = [_ for _ in data.keys() if _.startswith(name+self.suffix)]
+        lists = [getter(key) for key in keys]
+        values = [{(name + k.removeprefix(name+self.suffix)):v[i] for i,k in enumerate(keys)} for v in zip(*lists)]
+
+        
+        if values:
+            foo = [
+                self.default_widget.value_from_datadict(value, files, name)
+                for value in values
+            ]
+            #import pdb; pdb.set_trace()
+            return foo
+        
+        return getter(name) or []
 
     def value_omitted_from_data(self, data, files, name):
-        # note: this function does not handle files
-        data = {f"{name}_{index}":value for index,value in enumerate(data.get(name,[]))}
+        try:
+            getter = data.getlist
+        except AttributeError:
+            getter = data.get
+        values = {index:value for index, value in enumerate(getter(name+self.suffix) or [])}
         return all(
-            widget.value_omitted_from_data(data, files, f"{name}_{index}")
+            widget.value_omitted_from_data(values, files, index)
             for index, widget in enumerate(self.widgets)
         )
     
     def decompress(self, value):
-        # TODO figure out what to return when no value is given; list of Nones with len(self.widgets)?
-        return [None,None,None]
+        # no need to decompress; value should always be a list
+        return value
 
 
 class ArrayField(forms.MultiValueField):
     widget = ArrayWidget
 
     def __init__(self, field, *, require_all_fields=True, **kwargs):
+        widget = kwargs.get("widget") or self.widget
+        if isinstance(widget, type):
+            kwargs["widget"] = widget(default_widget=field.widget)
         super(forms.MultiValueField,self).__init__(**kwargs)
         self.require_all_fields = require_all_fields
         self.field = field
@@ -124,47 +153,242 @@ class ArrayField(forms.MultiValueField):
         self.widget.initialize_widgets_from_fields(self.fields)
 
     def initialize_fields_from_value(self, value:list):
+        #import pdb; pdb.set_trace()
         fields = [deepcopy(self.field) for _ in value]
         self.initialize_fields(fields)
 
     def compress(self, data_list):
+        # no compression; we want the array
+        # ie check clean method, it returns this
         return data_list
 
 
 class FieldForm(forms.Form):
-    # type = select field w/ conditional logic 
-    name = forms.CharField()
-    required = forms.BooleanField()
-    label = forms.CharField()
-    label_suffix = forms.CharField()
+    type = forms.ChoiceField(
+        required=True,
+        choices=(
+            ("boolean", "Boolean"),
+            ("char", "Text"),
+            ("integer", "Integer"),
+            ("float", "Float"),
+            ("choice", "Choice"),
+            ("yes_no", "Yes/No"),
+            ("multiple_choice", "Multiple Choice"),
+        ),
+    )
+    name = forms.CharField(required=True)
+    required = forms.BooleanField(required=False)
+    label = forms.CharField(required=False)
+    label_suffix = forms.CharField(required=False)
     # initial = anything (ie same as condition comparison_value)
-    help_text = forms.CharField()
-    css_class = forms.CharField()
+    help_text = forms.CharField(required=False)
+    css_class = forms.CharField(required=False)
 
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("type"),
+            ),
+            cfl.Row(
+                cfl.Column("name"),
+                cfl.Column("required"),
+            ),
+            cfl.Row(
+                cfl.Column("label"),
+                cfl.Column("label_suffix"),
+                cfl.Column("help_text"),
+            ),
+            cfl.Row(
+                cfl.Column("css_class"),
+            ),
+        )
+        return helper
 
 class ConditionForm(forms.Form):
-    subject = forms.CharField()
-    observers = forms.CharField() # make array, test
+    subject = forms.CharField(required=False)
+    observers = forms.CharField(required=False) # make array, test
     # comparison = select field
     # comparison_value = anything (not sure how to do this, maybe conditional logic)
     # behavior = select field
 
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        return helper
 
-class UDFForm(forms.Form):
-    fields = ArrayField(DynamicFormField(prefix="",form_class=FieldForm))
-    conditions = ArrayField(DynamicFormField(prefix="",form_class=ConditionForm))
+
+class Foobar(forms.Form):
+    fields = ArrayField(DynamicFormField(prefix="schema_builder-fields",form_class=FieldForm))
+    #conditions = ArrayField(DynamicFormField(required=False,prefix="schema_builder-conditions",form_class=ConditionForm))
 
     def __init__(self,*args,**kwargs):
-        kwargs.pop("instance")
-        kwargs.pop("user")
+        #kwargs.pop("instance")
+        #kwargs.pop("user")
+        #kwargs["data"] = {"fields":[1,2,3]}
         super().__init__(*args,**kwargs)
+        #import pdb; pdb.set_trace()
         #self.fields["fields"].initialize_fields_from_value(kwargs.get("data",{}).get("fields",[]))
-        self.fields["fields"].initialize_fields_from_value([1,2,3])
-        self.fields["conditions"].initialize_fields_from_value([1,2])
+        #self.fields["conditions"].initialize_fields_from_value(kwargs.get("data",{}).get("conditions",[]))
+        #import pdb; pdb.set_trace()
+        self.fields["fields"].initialize_fields_from_value(self.fields["fields"].widget.value_from_datadict(self.data, None, 'schema_builder-fields') or [])
+        #self.fields["conditions"].initialize_fields_from_value(self.fields["conditions"].widget.value_from_datadict(self.data, None, "conditions") or [])
+        #import pdb; pdb.set_trace()
+        return
     
 
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        return helper
+
+class UDFForm(forms.ModelForm):
+    schema_builder = DynamicFormField(
+        prefix="schema_builder",
+        form_class=Foobar,
+        validators=[PydanticValidator(Schema)],)
+
+
+    schema = forms.JSONField(
+        initial=Schema(fields=[]).model_dump(),
+        validators=[PydanticValidator(Schema)],
+    )
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+        if schema:=self.initial.get("schema"):
+            self.initial["schema_builder"] = schema
+        if self.instance.id is None:
+            self.instance.creator = user
+
+        # filter assessment list to a subset of those available
+        self.fields["assessments"].queryset = (
+            Assessment.objects.all().user_can_view(self.instance.creator).order_by("name")
+        )
+        self.fields[
+            "assessments"
+        ].help_text += (
+            f" Only assessments the creator ({self.instance.creator}) can view are shown."
+        )
+
+        self.fields["schema"].label_append_button = {
+            "btn_attrs": {
+                "hx-indicator": "#spinner",
+                "id": "schema-preview-btn",
+                "hx-post": reverse_lazy("udf:schema_preview"),
+                "hx-target": "#schema-preview-fieldset",
+                "hx-swap": "innerHTML",
+                "class": "ml-2 btn btn-primary",
+            },
+            "btn_content": "Preview",
+        }
+        self.fields["schema"].help_text = (
+            models.UserDefinedForm.schema.field.help_text
+            + "&nbsp;<a id='load-example' href='#'>Load an example</a>."
+        )
+
+    def clean_name(self):
+        # check unique_together ("creator", "name")
+        name = self.cleaned_data.get("name")
+        if (
+            name != self.instance.name
+            and self._meta.model.objects.filter(creator=self.instance.creator, name=name).exists()
+        ):
+            raise forms.ValidationError("The UDF name must be unique for your account.")
+        return name
+
+    def clean(self):
+        #import pdb; pdb.set_trace()
+        # remove errors if schema has manually been changed
+        cleaned_data = super().clean()
+        if "schema" in self.changed_data:
+            self._errors.pop("schema_builder",None)
+        elif "schema_builder" in cleaned_data:
+            cleaned_data["schema"] = cleaned_data["schema_builder"]
+        return cleaned_data
+
+    @transaction.atomic
+    def save(self, commit=True):
+        verb = "Created" if self.instance.id is None else "Updated"
+        instance = super().save(commit=commit)
+        if commit:
+            create_object_log(verb, instance, None, self.instance.creator_id, "")
+        return instance
+
+    class Meta:
+        model = models.UserDefinedForm
+        fields = (
+            "name",
+            "description",
+            "schema",
+            "editors",
+            "assessments",
+            "published",
+            "deprecated",
+        )
+        widgets = {
+            "editors": AutocompleteSelectMultipleWidget(UserAutocomplete),
+        }
+
+    @property
+    def helper(self):
+        legend_text = (
+            "Update User Defined Fields (UDF)"
+            if self.instance.id
+            else "Create a set of User Defined Fields (UDF)"
+        )
+        helper = BaseFormHelper(self)
+        helper.set_textarea_height(("description",), 8)
+        helper.layout = cfl.Layout(
+            cfl.Fieldset(
+                legend_text,
+                cfl.Row(
+                    cfl.Column("name", css_class="col-md-6"),
+                    cfl.Column(
+                        "published",
+                        "deprecated" if self.instance.id else None,
+                        css_class="col-md-6 align-items-center d-flex",
+                    ),
+                ),
+                cfl.Row(
+                    cfl.Column("description", css_class="col-md-6"),
+                    cfl.Column("editors", "assessments", css_class="col-md-6"),
+                ),
+                css_class="fieldset-border mx-2 mb-4",
+            ),
+            cfl.Fieldset(
+                "Form Schema",
+                cfl.Row(
+                    cfl.Column("schema_builder"),
+                ),
+                cfl.Row(
+                    cfl.Column("schema"),
+                ),
+                cfl.Row(
+                    cfl.Fieldset(
+                        legend="",
+                        css_id="schema-preview-fieldset",
+                        css_class="bg-lightblue rounded w-100 box-shadow p-4 mx-3 mt-2 mb-4 collapse",
+                    )
+                ),
+                css_class="fieldset-border mx-2 mb-4",
+            ),
+            form_actions_big(cancel_url=reverse("udf:udf_list")),
+        )
+        return helper
+
+
+
+
+
+
+
 class UDFForm1(forms.ModelForm):
-    # schema = FormAsField(SchemaForm)
     schema = forms.JSONField(
         initial=Schema(fields=[]).model_dump(),
         validators=[PydanticValidator(Schema)],
