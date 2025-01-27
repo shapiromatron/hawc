@@ -2,20 +2,20 @@
 
 <div x-data="{data: [], count: 0}">
 
-    {% for widget in widget.subwidgets %}
-        <div x-ref="initial_{{forloop.counter0}}">
-            {% include widget.template_name %}
-            <button type="button" @click="$refs.initial_{{forloop.counter0}}.remove()">Remove Row</button>
-        </div>
-    {% endfor %}
+  {% for widget in widget.subwidgets %}
+    <div x-ref="initial_{{forloop.counter0}}">
+      {% include widget.template_name %}
+      <button type="button" @click="$refs.initial_{{forloop.counter0}}.remove()">Remove Row</button>
+    </div>
+  {% endfor %}
 
-    <template x-for="(_, index) in data" :key="index">
-        <div>
-            {% include default_widget.template_name with widget=default_widget %}
-            <button type="button" @click="data.splice(index, 1)">Remove Row</button>
-        </div>
-    </template>
+  <template x-for="(_, index) in data" :key="index">
+    <div>
+      {% include default_widget.template_name with widget=default_widget %}
+      <button type="button" @click="data.splice(index, 1)">Remove Row</button>
+    </div>
+  </template>
 
-    <button type="button" @click="data.push(count++)">Add Row</button>
+  <button type="button" @click="data.push(count++)">Add Row</button>
 
 </div>
