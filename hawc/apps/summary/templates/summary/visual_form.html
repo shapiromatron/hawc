@@ -13,7 +13,6 @@
         <a class="nav-link" href="#preview" data-toggle="tab">Preview</a>
       </li>
     </ul>
-
     <div class="tab-content">
       <div id="data"     class="tab-pane active">
         {% crispy form %}
@@ -22,7 +21,6 @@
       <div id="preview"  class="tab-pane"></div>
     </div>
   </div>
-
   <div id="main" style="display:none;"></div>
   {% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
 {% endblock %}
@@ -59,13 +57,11 @@
           summaryForms.exploratoryHeatmapFormAppStartup(mainElement.get(0), config, djangoForm);
           mainElement.show();
         });
-        {% if crud == "Create" %}
-          } else if (config.visual_type === 2 || config.visual_type === 3){
-            window.app.startup("summaryFormsStartup", function (summaryForms) {
-              summaryForms.robFormAppStartup(mainElement.get(0), config, djangoForm);
-              mainElement.show();
-            });
-        {% endif %}
+      } else if (config.visual_type === 2 || config.visual_type === 3){
+        window.app.startup("summaryFormsStartup", function (summaryForms) {
+          summaryForms.robFormAppStartup(mainElement.get(0), config, djangoForm);
+          mainElement.show();
+        });
       } else if (config.visual_type === 9){
         window.app.startup("summaryFormsStartup", function (summaryForms) {
           summaryForms.prismaFormAppStartup(mainElement.get(0), config, djangoForm);
