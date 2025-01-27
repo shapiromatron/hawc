@@ -459,6 +459,9 @@ class DynamicFormField(forms.JSONField):
         if not form.is_valid():
             raise forms.ValidationError(self.error_messages["invalid"])
 
+class NewDynamicFormField(DynamicFormField):
+    widget = widgets.NewDynamicFormWidget
+
 
 class InlineRadioChoiceField(forms.ChoiceField):
     """Choice widget that uses radio buttons that are inline."""

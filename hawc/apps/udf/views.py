@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.exceptions import BadRequest, PermissionDenied
 from django.db.models.query import QuerySet
 from django.http import HttpRequest
@@ -56,10 +57,13 @@ class CreateUDFView(LoginRequiredMixin, MessageMixin, CreateView):
     success_url = reverse_lazy("udf:udf_list")
     success_message = "Form created."
 
+    def get_form_class(self):
+        """Return the form class to use in this view."""
+        return forms.NewUDFForm if settings.HAWC_FEATURES.ENABLE_SCHEMA_BUILDER else forms.UDFForm
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs.update(user=self.request.user)
-        #kwargs.update(data={"fields":["a","b","c"]})
         return kwargs
 
 
@@ -69,6 +73,10 @@ class UpdateUDFView(MessageMixin, UpdateView):
     model = models.UserDefinedForm
     success_url = reverse_lazy("udf:udf_list")
     success_message = "Form updated."
+
+    def get_form_class(self):
+        """Return the form class to use in this view."""
+        return forms.NewUDFForm if settings.HAWC_FEATURES.ENABLE_SCHEMA_BUILDER else forms.UDFForm
 
     def get_object(self, **kw):
         obj = super().get_object(**kw)
