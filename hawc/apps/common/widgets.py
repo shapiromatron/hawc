@@ -148,7 +148,7 @@ class DynamicFormWidget(Widget):
 
     def format_value(self, value):
         """Value used in rendering."""
-        if value is not None and not isinstance(value,dict):
+        if value is not None and not isinstance(value, dict):
             value = json.loads(value)
         if value:
             value = {self.add_prefix(k): v for k, v in value.items()}
@@ -156,18 +156,20 @@ class DynamicFormWidget(Widget):
 
     def value_from_datadict(self, data, files, name):
         """Parse value from POST request."""
-        self.form_kwargs.pop("prefix",None)
-        form = self.form_class(data=data,prefix=name, **self.form_kwargs)
+        self.form_kwargs.pop("prefix", None)
+        form = self.form_class(data=data, prefix=name, **self.form_kwargs)
         form.full_clean()
         return form.cleaned_data
 
     class Media:
         js = ["js/udf.js"]
 
+
 class NewDynamicFormWidget(DynamicFormWidget):
     """Dynamic form widget that uses name instead of prefix."""
+
     def get_context(self, name, value, attrs):
-        if value is not None and not isinstance(value,dict):
+        if value is not None and not isinstance(value, dict):
             value = json.loads(value)
         if value:
             value = {f"{name}-{k}": v for k, v in value.items()}
@@ -185,10 +187,11 @@ class NewDynamicFormWidget(DynamicFormWidget):
 
     def value_from_datadict(self, data, files, name):
         """Parse value from POST request."""
-        self.form_kwargs.pop("prefix",None)
-        form = self.form_class(data=data,prefix=name, **self.form_kwargs)
+        self.form_kwargs.pop("prefix", None)
+        form = self.form_class(data=data, prefix=name, **self.form_kwargs)
         form.full_clean()
         return form.cleaned_data
+
 
 class ColorInput(TextInput):
     input_type = "color"

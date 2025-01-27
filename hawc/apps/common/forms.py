@@ -459,6 +459,7 @@ class DynamicFormField(forms.JSONField):
         if not form.is_valid():
             raise forms.ValidationError(self.error_messages["invalid"])
 
+
 class NewDynamicFormField(DynamicFormField):
     widget = widgets.NewDynamicFormWidget
 

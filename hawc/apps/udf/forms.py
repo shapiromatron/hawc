@@ -1,7 +1,7 @@
 from copy import deepcopy
+
 from crispy_forms import layout as cfl
 from django import forms
-from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models import F, Value
@@ -11,19 +11,19 @@ from django.urls import reverse, reverse_lazy
 from ..assessment.models import Assessment
 from ..common.autocomplete.forms import AutocompleteSelectMultipleWidget
 from ..common.dynamic_forms.schemas import Schema
-from ..common.forms import BaseFormHelper, PydanticValidator, form_actions_big, NewDynamicFormField
+from ..common.forms import BaseFormHelper, NewDynamicFormField, PydanticValidator, form_actions_big
 from ..common.helper import get_current_user
 from ..common.views import create_object_log
 from ..lit.models import ReferenceFilterTag
 from ..myuser.autocomplete import UserAutocomplete
 from . import cache, constants, models
 
-class ArrayWidget(forms.MultiWidget):
 
+class ArrayWidget(forms.MultiWidget):
     template_name = "udf/widget.html"
 
     def __init__(self, default_widget, attrs=None):
-        super(forms.MultiWidget,self).__init__(attrs)
+        super(forms.MultiWidget, self).__init__(attrs)
         self.default_widget = default_widget
         self.suffix = "[]"
         self.widgets_names = []
@@ -32,14 +32,16 @@ class ArrayWidget(forms.MultiWidget):
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
         # TODO handle this more like in super?
-        context["default_widget"] = self.default_widget.get_context(name+self.suffix, None, attrs)["widget"]
+        context["default_widget"] = self.default_widget.get_context(
+            name + self.suffix, None, attrs
+        )["widget"]
         return context
 
-    def initialize_widgets(self, widgets:list):
+    def initialize_widgets(self, widgets: list):
         self.widgets_names = [self.suffix for _ in range(len(widgets))]
         self.widgets = [w() if isinstance(w, type) else w for w in widgets]
 
-    def initialize_widgets_from_fields(self, fields:list):
+    def initialize_widgets_from_fields(self, fields: list):
         widgets = [field.widget for field in fields]
         self.initialize_widgets(widgets)
 
@@ -49,16 +51,16 @@ class ArrayWidget(forms.MultiWidget):
         except AttributeError:
             getter = data.get
 
-        keys = [_ for _ in data.keys() if _.startswith(name+self.suffix)]
+        keys = [_ for _ in data.keys() if _.startswith(name + self.suffix)]
         lists = [getter(key) for key in keys]
-        values = [{(name + k.removeprefix(name+self.suffix)):v[i] for i,k in enumerate(keys)} for v in zip(*lists)]
+        values = [
+            {(name + k.removeprefix(name + self.suffix)): v[i] for i, k in enumerate(keys)}
+            for v in zip(*lists, strict=False)
+        ]
 
         if values:
-            return  [
-                self.default_widget.value_from_datadict(value, files, name)
-                for value in values
-            ]
-        
+            return [self.default_widget.value_from_datadict(value, files, name) for value in values]
+
         return getter(name) or []
 
     def value_omitted_from_data(self, data, files, name):
@@ -66,12 +68,12 @@ class ArrayWidget(forms.MultiWidget):
             getter = data.getlist
         except AttributeError:
             getter = data.get
-        values = {index:value for index, value in enumerate(getter(name+self.suffix) or [])}
+        values = {index: value for index, value in enumerate(getter(name + self.suffix) or [])}
         return all(
             widget.value_omitted_from_data(values, files, index)
             for index, widget in enumerate(self.widgets)
         )
-    
+
     def decompress(self, value):
         # no need to decompress; value should always be a list
         return value
@@ -84,12 +86,12 @@ class ArrayField(forms.MultiValueField):
         widget = kwargs.get("widget") or self.widget
         if isinstance(widget, type):
             kwargs["widget"] = widget(default_widget=field.widget)
-        super(forms.MultiValueField,self).__init__(**kwargs)
+        super(forms.MultiValueField, self).__init__(**kwargs)
         self.require_all_fields = require_all_fields
         self.field = field
         self.fields = []
 
-    def initialize_fields(self, fields:list):
+    def initialize_fields(self, fields: list):
         for f in fields:
             f.error_messages.setdefault("incomplete", self.error_messages["incomplete"])
             if self.disabled:
@@ -103,7 +105,7 @@ class ArrayField(forms.MultiValueField):
 
         self.widget.initialize_widgets_from_fields(self.fields)
 
-    def initialize_fields_from_value(self, value:list):
+    def initialize_fields_from_value(self, value: list):
         fields = [deepcopy(self.field) for _ in value]
         self.initialize_fields(fields)
 
@@ -157,9 +159,10 @@ class FieldForm(forms.Form):
         )
         return helper
 
+
 class ConditionForm(forms.Form):
     subject = forms.CharField(required=False)
-    observers = forms.CharField(required=False) # make array, test
+    observers = forms.CharField(required=False)  # make array, test
     # comparison = select field
     # comparison_value = anything (not sure how to do this, maybe conditional logic)
     # behavior = select field
@@ -172,14 +175,18 @@ class ConditionForm(forms.Form):
 
 
 class SchemaForm(forms.Form):
-    fields = ArrayField(NewDynamicFormField(prefix="schema_builder-fields",form_class=FieldForm))
-    #conditions = ArrayField(NewDynamicFormField(required=False,prefix="schema_builder-conditions",form_class=ConditionForm))
+    fields = ArrayField(NewDynamicFormField(prefix="schema_builder-fields", form_class=FieldForm))
+    # conditions = ArrayField(NewDynamicFormField(required=False,prefix="schema_builder-conditions",form_class=ConditionForm))
 
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args,**kwargs)
-        self.fields["fields"].initialize_fields_from_value(self.fields["fields"].widget.value_from_datadict(self.data, None, 'schema_builder-fields') or [])
-        #self.fields["conditions"].initialize_fields_from_value(self.fields["conditions"].widget.value_from_datadict(self.data, None, "schema_builder-conditions") or [])
-    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["fields"].initialize_fields_from_value(
+            self.fields["fields"].widget.value_from_datadict(
+                self.data, None, "schema_builder-fields"
+            )
+            or []
+        )
+        # self.fields["conditions"].initialize_fields_from_value(self.fields["conditions"].widget.value_from_datadict(self.data, None, "schema_builder-conditions") or [])
 
     @property
     def helper(self):
@@ -308,24 +315,22 @@ class NewUDFForm(UDFForm):
     schema_builder = NewDynamicFormField(
         prefix="schema_builder",
         form_class=SchemaForm,
-        validators=[PydanticValidator(Schema)],)
+        validators=[PydanticValidator(Schema)],
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if schema:=self.initial.get("schema"):
+        if schema := self.initial.get("schema"):
             self.initial["schema_builder"] = schema
-
 
     def clean(self):
         # remove errors if schema has manually been changed
         cleaned_data = super().clean()
         if "schema" in self.changed_data:
-            self._errors.pop("schema_builder",None)
+            self._errors.pop("schema_builder", None)
         elif "schema_builder" in cleaned_data:
             cleaned_data["schema"] = cleaned_data["schema_builder"]
         return cleaned_data
-
-
 
     @property
     def helper(self):
@@ -373,6 +378,7 @@ class NewUDFForm(UDFForm):
             form_actions_big(cancel_url=reverse("udf:udf_list")),
         )
         return helper
+
 
 class SchemaPreviewForm(forms.Form):
     """Form for previewing a Dynamic Form schema."""
