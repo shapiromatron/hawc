@@ -333,7 +333,6 @@ LegendSettingsTab.propTypes = {
 @observer
 class SettingsPanel extends Component {
     render() {
-        // TODO - show settings for barchart vs heatmap
         const {store} = this.props;
         return (
             <Tabs selectedIndex={store.activeTab} onSelect={store.changeActiveTab}>

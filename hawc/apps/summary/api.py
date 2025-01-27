@@ -16,7 +16,7 @@ from ..common.api import DisabledPagination
 from ..common.helper import FlatExport, PydanticToDjangoError, cacheable
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
-from . import models, schemas, serializers, table_serializers
+from . import constants, forms, models, schemas, serializers, table_serializers
 
 
 class UnpublishedFilter(BaseFilterBackend):
@@ -57,6 +57,17 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
     def json_data(self, request, pk):
         """Get json data for a Visual using a configuration given in the payload."""
         assessment = self.get_object()
+        if request.data.get("visual_type") in [2, 3]:
+            data = request.data.copy()
+            data["evidence_type"] = constants.StudyType(data["evidence_type"])
+            form = forms.RoBForm(
+                data,
+                evidence_type=data["evidence_type"],
+                visual_type=data["visual_type"],
+                parent=assessment,
+            )
+            form.instance.id = -1
+            return Response(serializers.VisualSerializer(form.instance).data)
         with PydanticToDjangoError(drf=True):
             config = schemas.VisualDataRequest.model_validate(request.data.get("config", {}))
         instance = config.mock_visual(assessment)

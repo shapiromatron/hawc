@@ -451,7 +451,8 @@ class Visual(models.Model):
 
     def get_rob_data(self) -> dict:
         return get_rob_visual_form_data(
-            assessment_id=self.assessment_id, study_type=constants.StudyType(self.evidence_type)
+            assessment_id=self.assessment_id,
+            study_type=constants.StudyType(self.evidence_type),
         )
 
     def get_data(self) -> dict:

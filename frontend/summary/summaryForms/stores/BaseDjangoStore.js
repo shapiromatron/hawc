@@ -10,6 +10,7 @@ class BaseDjangoStore {
 
     config = null;
     @observable currentTab = 0;
+    @observable refetchDataRequired = false;
 
     @action setInitialData() {
         const {initial_data} = this.config,
@@ -48,11 +49,14 @@ class BaseDjangoStore {
                 break;
         }
     }
+    @action.bound toJsonObject() {
+        return h.formToJsonObject(this.djangoForm);
+    }
     @computed get isCreate() {
         return this.config.crud === "Create";
     }
     @computed get settingsHash() {
-        return h.hashString(this.djangoFormData.settings);
+        return h.hashString(this.settingsField.value);
     }
 }
 

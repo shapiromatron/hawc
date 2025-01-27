@@ -55,12 +55,10 @@ class RobStore {
         this.scores = this.root.base.config.rob_config.scores;
     }
     @observable settings = null;
-
     getDefaultSettings() {
         const metrics = this.metrics.map(d => d.id);
         return _getDefaultSettings(this.visual_type, metrics);
     }
-
     @computed get metricTableData() {
         const selectedMetrics = new Set(this.settings.included_metrics);
         return this.metrics.map(d => {
@@ -79,7 +77,6 @@ class RobStore {
     @computed get isBarchart() {
         return this.visual_type === 3;
     }
-
     @action.bound changeSetting(path, value) {
         _.set(this.settings, path, value);
     }
@@ -93,15 +90,56 @@ class RobStore {
         include ? set.delete(id) : set.add(id);
         this.settings.excluded_score_ids = Array.from(set);
     }
-
     @action setFromJsonSettings(settings, firstTime) {
         this.settings = settings;
     }
-
     @computed get settingsHash() {
         return h.hashString(JSON.stringify(this.settings));
     }
 
+    // visualization data
+    @observable visualData = null;
+    @action.bound getVisualData() {
+        const {config} = this.root.base,
+            url = `/summary/api/assessment/${config.assessment}/json_data/`,
+            payload = this.root.base.toJsonObject();
+        payload["visual_type"] = config.visual_type;
+        payload["evidence_type"] = config.initial_data.evidence_type;
+        h.handleSubmit(
+            url,
+            "POST",
+            config.csrf,
+            payload,
+            response => {
+                console.log(response);
+                this.currentDataHash = this.visualDataHash;
+                this.visualData = response;
+                this.dataFetchRequired = false;
+            },
+            err => {
+                console.error(err);
+            },
+            err => {
+                console.error(err);
+            }
+        );
+    }
+
+    // check if visualization data is needed
+    @observable currentDataHash = null;
+    @observable dataFetchRequired = true;
+    @action.bound checkDataHash() {
+        if (this.currentDataHash == null || this.currentDataHash != this.visualDataHash) {
+            this.dataFetchRequired = true;
+            this.getVisualData();
+        }
+    }
+    @computed get visualDataHash() {
+        // compute settings hash for if we have the correct data to build the visual
+        const settings = this.root.base.toJsonObject();
+        _.each(["title", "slug", "caption", "settings", "published"], d => delete settings[d]);
+        return h.hashString(JSON.stringify(settings));
+    }
     // active tab
     @observable activeTab = 0;
     @action.bound changeActiveTab(index) {
