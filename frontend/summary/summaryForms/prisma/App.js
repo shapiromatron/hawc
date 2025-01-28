@@ -5,7 +5,7 @@ import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import FormActions from "shared/components/FormActions";
 import UnderDevelopment from "shared/components/UnderDevelopment";
 
-import OverallTab from "../shared/OverallTab";
+import OverallPanel from "../shared/OverallPanel";
 import PreviewPanel from "./PreviewPanel";
 import SettingsPanel from "./SettingsPanel";
 
@@ -29,7 +29,7 @@ class App extends Component {
                         <Tab>Preview</Tab>
                     </TabList>
                     <TabPanel>
-                        <OverallTab legend="Prisma Settings" helpText="..." />
+                        <OverallPanel />
                     </TabPanel>
                     <TabPanel>
                         <SettingsPanel />

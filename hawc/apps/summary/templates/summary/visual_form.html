@@ -41,52 +41,16 @@
       {% if api_data_url %}"api_data_url": "{{api_data_url|safe}}",{% endif %}
       "initial_data": {{initial_data|safe}},
       "api_heatmap_datasets": "{{form.instance.get_api_heatmap_datasets}}",
-      "clear_cache_url": "{{assessment.get_clear_cache_url}}"
+      "clear_cache_url": "{{assessment.get_clear_cache_url}}",
+      "isCreate": {% if crud == "Create" %}true{% else %}false{% endif %}
     }
   </script>
   <script type="text/javascript">
     window.app.startup("summaryFormsStartup", function(summaryForms){
       const config = window.app.getConfig(),
-            djangoForm = $('#data form').get(0),
-            mainElement = $("#main");
-
-      if (config.visual_type === 6){
-        window.app.startup("summaryFormsStartup", function (summaryForms) {
-          summaryForms.exploratoryHeatmapFormAppStartup(mainElement.get(0), config, djangoForm);
-          mainElement.show();
-        });
-      } else if (config.visual_type === 2 || config.visual_type === 3){
-        window.app.startup("summaryFormsStartup", function (summaryForms) {
-          summaryForms.robFormAppStartup(mainElement.get(0), config, djangoForm);
-          mainElement.show();
-        });
-      } else if (config.visual_type === 9){
-        window.app.startup("summaryFormsStartup", function (summaryForms) {
-          summaryForms.prismaFormAppStartup(mainElement.get(0), config, djangoForm);
-          mainElement.show();
-        });
-      } else {
-        const mountElement = $('.tabbable');
-        mountElement.show();
-        summaryForms.VisualForm.create(config.visual_type, mountElement, config);
-      }
-
-      if (config.visual_type !== 6) {
-        $('input[data-pf]').each(window.app.HAWCUtils.bindCheckboxToPrefilter)
-
-        window.app.startup("smartTagsStartup", function (smartTags) {
-          new smartTags.SmartTagEditor(
-            $('#id_caption'),
-            {submitEl: '#visualForm', takeFocusEl: "#id_title"}
-          );
-        });
-
-        {% if crud == "Create" %}
-          $('#id_title').on('keyup', function () {
-            $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));
-          });
-        {% endif %}
-      }
+            djangoForm = document.querySelector('#visualForm'),
+            mainElement = document.querySelector('#main');
+      summaryForms.startup(config, djangoForm, mainElement);
     });
   </script>
 {% endblock %}

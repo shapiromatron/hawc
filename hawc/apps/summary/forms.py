@@ -525,6 +525,8 @@ class ExternalSiteForm(VisualForm):
 
 
 class ExploreHeatmapForm(VisualForm):
+    SUBMIT_DIV: bool = False
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
@@ -572,6 +574,8 @@ class PlotlyVisualForm(VisualForm):
 
 
 class PrismaVisualForm(VisualForm):
+    SUBMIT_DIV: bool = False
+
     class Meta:
         model = models.Visual
         fields = ("title", "slug", "settings", "caption", "published")

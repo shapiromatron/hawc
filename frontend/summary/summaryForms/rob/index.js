@@ -8,9 +8,7 @@ import {createRobStore} from "../stores";
 import App from "./App";
 
 const robFormAppStartup = function(el, config, djangoForm) {
-    const store = createRobStore(config);
-    store.base.setDjangoForm(djangoForm);
-    store.base.setInitialData();
+    const store = createRobStore(config, djangoForm);
     ReactDOM.render(
         <Provider store={store}>
             <App />

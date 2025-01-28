@@ -4,7 +4,7 @@ import React, {Component} from "react";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import FormActions from "shared/components/FormActions";
 
-import OverallTab from "../shared/OverallTab";
+import OverallPanel from "../shared/OverallPanel";
 import DataPanel from "./DataPanel";
 import PreviewPanel from "./PreviewPanel";
 import VisualCustomizationPanel from "./VisualCustomizationPanel";
@@ -25,14 +25,11 @@ class App extends Component {
                     <TabList>
                         <Tab>Overall</Tab>
                         <Tab>Data</Tab>
-                        <Tab>Figure customization</Tab>
+                        <Tab>Figure Customization</Tab>
                         <Tab>Preview</Tab>
                     </TabList>
                     <TabPanel>
-                        <OverallTab
-                            legend="Exploratory heatmap settings"
-                            helpText="Overall plot settings (eg., title, caption, visibility.)"
-                        />
+                        <OverallPanel />
                     </TabPanel>
                     <TabPanel>
                         <DataPanel />

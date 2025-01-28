@@ -86,7 +86,7 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
             return Response(serializers.VisualSerializer(instance).data)
 
         with PydanticToDjangoError(drf=True):
-            config = schemas.VisualDataRequest.model_validate(request.data.get("config", {}))
+            config = schemas.VisualDataRequest.model_validate(request.data)
         instance = config.mock_visual(assessment)
         data = instance.get_data()
         return Response(data)

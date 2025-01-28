@@ -1,36 +1,36 @@
-import BaseDjangoStore from "./BaseDjangoStore";
 import BaseStore from "./BaseStore";
 import ExploratoryHeatmapStore from "./ExploratoryHeatmapStore";
 import PrismaStore from "./PrismaStore";
 import RobStore from "./RobStore";
 
 class ExploratoryHeatmap {
-    constructor(config) {
+    constructor(config, djangoForm) {
         this.base = new BaseStore(this, config);
         this.subclass = new ExploratoryHeatmapStore(this);
+        this.base.setDjangoForm(djangoForm);
+        this.base.setInitialData();
     }
 }
 
 class Prisma {
-    constructor(config) {
+    constructor(config, djangoForm) {
         this.base = new BaseStore(this, config);
         this.subclass = new PrismaStore(this);
+        this.base.setDjangoForm(djangoForm);
+        this.base.setInitialData();
     }
 }
 
 class Rob {
-    constructor(config) {
-        this.base = new BaseDjangoStore(this, config);
+    constructor(config, djangoForm) {
+        this.base = new BaseStore(this, config);
         this.subclass = new RobStore(this);
+        this.base.setDjangoForm(djangoForm);
+        this.base.setInitialData();
     }
 }
 
-export const createExploratoryHeatmapStore = function(config) {
-        return new ExploratoryHeatmap(config);
-    },
-    createPrismaStore = function(config) {
-        return new Prisma(config);
-    },
-    createRobStore = function(config) {
-        return new Rob(config);
-    };
+export const createExploratoryHeatmapStore = (config, djangoForm) =>
+        new ExploratoryHeatmap(config, djangoForm),
+    createPrismaStore = (config, djangoForm) => new Prisma(config, djangoForm),
+    createRobStore = (config, djangoForm) => new Rob(config, djangoForm);
