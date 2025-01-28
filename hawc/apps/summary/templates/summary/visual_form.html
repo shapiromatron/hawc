@@ -1,6 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
+  <div id="main" style="display:none;"></div>
   <div class="tabbable" style="display:none;">
     <ul class="nav nav-tabs">
       <li class="nav-item">
@@ -21,7 +22,6 @@
       <div id="preview"  class="tab-pane"></div>
     </div>
   </div>
-  <div id="main" style="display:none;"></div>
   {% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
 {% endblock %}
 

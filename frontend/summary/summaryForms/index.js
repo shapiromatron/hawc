@@ -3,6 +3,7 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 
 import $ from "$";
 
+import crossviewStartup from "./crossview";
 import exploratoryHeatmapFormAppStartup from "./heatmap";
 import prismaFormAppStartup from "./prisma";
 import robFormAppStartup from "./rob";
@@ -10,6 +11,7 @@ import VisualForm from "./VisualForm";
 
 const startup = (config, djangoForm, el) => {
     const startupMapping = {
+        1: crossviewStartup,
         2: robFormAppStartup,
         3: robFormAppStartup,
         6: exploratoryHeatmapFormAppStartup,

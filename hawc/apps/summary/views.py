@@ -469,10 +469,12 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
         }:
-            return ["summary/visual_form_django.html"]
+            return [
+                "summary/visual_form_django.html"
+            ]  # TODO - delete this after refactoring; should be unnecessary
         return super().get_template_names()
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs):  # TODO - refactor; use `get_app_config`
         context = super().get_context_data(**kwargs)
         visual = self.object
         context.update(
