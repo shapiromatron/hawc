@@ -60,6 +60,10 @@ Client tutorials for common operations are below:
 
 #### NEXT (TBD)
 
+* Remove data pivot API endpoints; all behaviors can be accomplished using the visual API
+
+#### [2024-4](https://pypi.org/project/hawc-client/2024.4/) (January 2024)
+
 * Added literature tag API {create, update, delete, move}
 
 #### [2024-3](https://pypi.org/project/hawc-client/2024.3/) (October 2024)

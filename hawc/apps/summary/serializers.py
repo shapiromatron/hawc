@@ -6,50 +6,6 @@ from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from . import constants, models
 
 
-class CollectionDataPivotSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source="get_absolute_url")
-    visual_type = serializers.CharField(source="get_visual_type_display")
-
-    class Meta:
-        model = models.DataPivot
-        fields = (
-            "id",
-            "slug",
-            "title",
-            "url",
-            "visual_type",
-            "caption",
-            "published",
-            "created",
-            "last_updated",
-        )
-
-
-class DataPivotSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source="get_absolute_url", read_only=True)
-    data_url = serializers.CharField(source="get_data_url", read_only=True)
-    download_url = serializers.CharField(source="get_download_url", read_only=True)
-
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret["visual_type"] = instance.get_visual_type_display()
-        return ret
-
-    class Meta:
-        model = models.DataPivot
-        fields = "__all__"
-
-
-class DataPivotQuerySerializer(DataPivotSerializer):
-    preferred_units = serializers.ListField(
-        allow_empty=True, child=serializers.IntegerField(min_value=0)
-    )
-
-    class Meta:
-        model = models.DataPivotQuery
-        fields = "__all__"
-
-
 class CollectionVisualSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url")
     visual_type = serializers.CharField(source="get_visual_type_display")

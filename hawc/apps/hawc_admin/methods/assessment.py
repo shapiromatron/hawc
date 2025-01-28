@@ -14,7 +14,7 @@ from ...common.helper import HAWCtoDateString
 from ...lit.models import Reference
 from ...riskofbias.models import RiskOfBias
 from ...study.models import Study
-from ...summary.models import DataPivot, Visual
+from ...summary.models import Visual
 from .constants import PandasDurationGrouper
 
 
@@ -40,7 +40,6 @@ def growth_matrix(days: int = 180):
             _get_data(RiskOfBias, "study__assessment_id", days=days),
             _get_data(Endpoint, days=days),
             _get_data(Visual, days=days),
-            _get_data(DataPivot, days=days),
         ]
     )
 
@@ -50,11 +49,11 @@ def growth_matrix(days: int = 180):
     df2 = df2.drop(columns=["assess_id", "name"])
 
     df3 = df2.pivot(index="assessment", columns="field").fillna(0).astype(int).droplevel(0, axis=1)
-    df3 = df3[["Reference", "Study", "RiskOfBias", "Endpoint", "Visual", "DataPivot"]]
+    df3 = df3[["Reference", "Study", "RiskOfBias", "Endpoint", "Visual"]]
 
     # relative effort for each item in a count; a visual is 10x harder to create than a study
     # a study is 20x harder to select than a reference
-    weights = pd.Series([0.05, 1, 2, 3, 10, 10], index=df3.columns.tolist())
+    weights = pd.Series([0.05, 1, 2, 3, 10], index=df3.columns.tolist())
     order = df3.dot(weights).sort_values(ascending=False).index
     return df3.reindex(order)[:20].style.background_gradient(cmap="PuBu")
 
@@ -84,7 +83,6 @@ class AssessmentGrowthSettings(forms.Form):
             (RiskOfBias, "study__assessment_id"),
             (Endpoint, "assessment_id"),
             (Visual, "assessment_id"),
-            (DataPivot, "assessment_id"),
         ]
 
         dfs = []
@@ -144,8 +142,7 @@ def size_df() -> pd.DataFrame:
         dict(num_epi_outcomes=Count("baseendpoint__outcome")),
         dict(num_epi_results=Count("baseendpoint__outcome__results")),
         dict(num_invitro_ivendpoints=Count("baseendpoint__ivendpoint")),
-        dict(num_datapivots=Count("datapivot")),
-        dict(num_viusals=Count("visuals")),
+        dict(num_visuals=Count("visuals")),
     ]:
         qs = Assessment.objects.all().values("id").annotate(**annotation)
         df2 = pd.DataFrame(qs).set_index("id")

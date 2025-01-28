@@ -1,11 +1,28 @@
 {
   "assessment": 2,
+  "assessment_name": "Chemical X (2020)",
+  "assessment_rob_name": "Risk of bias",
   "caption": "<p>demo.</p>",
   "created": "2020-05-11T00:10:29.880052-04:00",
-  "data_url": "/summary/api/data_pivot/5/data/?format=tsv",
-  "download_url": "/summary/api/data_pivot/5/data/",
-  "id": 5,
+  "data_url": "/summary/api/visual/21/data/",
+  "dataset": null,
+  "dose_units": null,
+  "dp_id": 5,
+  "dp_slug": "data-pivot-invitro-endpoint",
+  "endpoints": [],
+  "evidence_type": 2,
+  "id": 21,
+  "image": null,
+  "label_htmx": "/assessment/label-item/129/21/?action=label",
+  "label_indicators_htmx": "/assessment/label-item/129/21/?action=label_indicators",
   "last_updated": "2020-05-11T00:15:33.309627-04:00",
+  "prefilters": {
+    "export_style": 1,
+    "preferred_units": [],
+    "prefilters": {
+      "published_only": true
+    }
+  },
   "published": true,
   "settings": {
     "barchart": {
@@ -1005,7 +1022,10 @@
     }
   },
   "slug": "data-pivot-invitro-endpoint",
+  "studies": [],
   "title": "data pivot - invitro - endpoint",
-  "url": "/summary/data-pivot/assessment/2/data-pivot-invitro-endpoint/",
+  "url": "/summary/visual/assessment/2/data-pivot-invitro-endpoint/",
+  "url_delete": "/summary/visual/assessment/2/data-pivot-invitro-endpoint/delete/",
+  "url_update": "/summary/visual/assessment/2/data-pivot-invitro-endpoint/update/",
   "visual_type": "Data pivot (in vitro)"
 }

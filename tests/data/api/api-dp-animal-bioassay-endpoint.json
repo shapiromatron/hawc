@@ -1,11 +1,30 @@
 {
   "assessment": 2,
+  "assessment_name": "Chemical X (2020)",
+  "assessment_rob_name": "Risk of bias",
   "caption": "",
   "created": "2020-05-08T13:52:21.928839-04:00",
-  "data_url": "/summary/api/data_pivot/2/data/?format=tsv",
-  "download_url": "/summary/api/data_pivot/2/data/",
-  "id": 2,
+  "data_url": "/summary/api/visual/18/data/",
+  "dataset": null,
+  "dose_units": null,
+  "dp_id": 2,
+  "dp_slug": "animal-bioassay-data-pivot-endpoint",
+  "endpoints": [],
+  "evidence_type": 0,
+  "id": 18,
+  "image": null,
+  "label_htmx": "/assessment/label-item/129/18/?action=label",
+  "label_indicators_htmx": "/assessment/label-item/129/18/?action=label_indicators",
   "last_updated": "2020-05-08T15:46:02.216322-04:00",
+  "prefilters": {
+    "export_style": 1,
+    "preferred_units": [
+      1
+    ],
+    "prefilters": {
+      "published_only": true
+    }
+  },
   "published": true,
   "settings": {
     "barchart": {
@@ -1046,7 +1065,10 @@
     }
   },
   "slug": "animal-bioassay-data-pivot-endpoint",
+  "studies": [],
   "title": "data pivot - animal bioassay - endpoint",
-  "url": "/summary/data-pivot/assessment/2/animal-bioassay-data-pivot-endpoint/",
+  "url": "/summary/visual/assessment/2/animal-bioassay-data-pivot-endpoint/",
+  "url_delete": "/summary/visual/assessment/2/animal-bioassay-data-pivot-endpoint/delete/",
+  "url_update": "/summary/visual/assessment/2/animal-bioassay-data-pivot-endpoint/update/",
   "visual_type": "Data pivot (animal bioassay)"
 }

@@ -37,21 +37,6 @@
         {% bs4_colgroup '20,80' %}
         {% bs4_thead 'Published,Visual' %}
         <tbody>
-          {% for dp in datapivots %}
-            {% if forloop.first %}
-              <tr>
-                <th colspan="2">Data Pivots</th>
-              </tr>
-            {% endif %}
-            <tr>
-              {% include 'assessment/fragments/publish_item_td.html' with name="datapivot" object=dp %}
-              <td><a href="{{dp.get_absolute_url}}">{{dp}}</a></td>
-            </tr>
-          {% empty %}
-            <tr>
-              <td colspan="2"><i>No data pivots exist.</i></td>
-            </tr>
-          {% endfor %}
           {% for visual in visuals %}
             {% ifchanged visual.visual_type %}
               <tr>

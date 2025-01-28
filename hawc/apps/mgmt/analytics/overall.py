@@ -73,10 +73,7 @@ def compute_object_counts() -> dict:
         .count()
     )
 
-    visuals = (
-        apps.get_model("summary", "Visual").objects.count()
-        + apps.get_model("summary", "DataPivot").objects.count()
-    )
+    visuals = apps.get_model("summary", "Visual").objects.count()
 
     assessments_with_visuals = len(
         set(
@@ -84,13 +81,6 @@ def compute_object_counts() -> dict:
             .annotate(vc=Count("visuals"))
             .filter(vc__gt=0)
             .values_list("id", flat=True)
-        ).union(
-            set(
-                Assessment.objects.order_by("-created")
-                .annotate(dp=Count("datapivot"))
-                .filter(dp__gt=0)
-                .values_list("id", flat=True)
-            )
         )
     )
     logger.info("Setting about-page cache")

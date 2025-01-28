@@ -6,7 +6,6 @@ from rest_framework.status import HTTP_400_BAD_REQUEST
 
 from ..assessment.api import (
     AssessmentEditViewSet,
-    AssessmentViewSet,
     BaseAssessmentViewSet,
     EditPermissionsCheckMixin,
     InAssessmentFilter,
@@ -63,46 +62,6 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
         instance = config.mock_visual(assessment)
         data = instance.get_data()
         return Response(data)
-
-
-class DataPivotViewSet(AssessmentViewSet):
-    """
-    For list view, return simplified data-pivot view.
-
-    For all other views, use the detailed visual view.
-    """
-
-    assessment_filter_args = "assessment"
-    model = models.DataPivot
-    pagination_class = DisabledPagination
-    filter_backends = (InAssessmentFilter, UnpublishedFilter)
-
-    def get_queryset(self):
-        return self.model.objects.select_related("datapivotquery", "datapivotupload").all()
-
-    def get_serializer_class(self):
-        cls = serializers.DataPivotSerializer
-        if self.action == "list":
-            cls = serializers.CollectionDataPivotSerializer
-        return cls
-
-    @action(
-        detail=True,
-        action_perms=AssessmentViewSetPermissions.CAN_VIEW_OBJECT,
-        renderer_classes=PandasRenderers,
-    )
-    def data(self, request, pk):
-        obj = self.get_object()
-        export = obj.get_dataset()
-        return Response(export)
-
-
-class DataPivotQueryViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
-    edit_check_keys = ["assessment"]
-    assessment_filter_args = "assessment"
-    model = models.DataPivotQuery
-    filter_backends = (InAssessmentFilter, UnpublishedFilter)
-    serializer_class = serializers.DataPivotQuerySerializer
 
 
 class VisualViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):

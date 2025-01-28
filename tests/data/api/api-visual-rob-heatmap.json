@@ -5,13 +5,16 @@
   "caption": "<p>caption</p>",
   "created": "2020-05-08T15:35:41.634588-04:00",
   "data_url": "/summary/api/visual/3/data/",
+  "dataset": null,
   "dose_units": null,
+  "dp_id": null,
+  "dp_slug": "",
   "endpoints": [],
   "evidence_type": 0,
   "id": 3,
   "image": null,
-  "label_htmx": "/assessment/label-item/132/3/?action=label",
-  "label_indicators_htmx": "/assessment/label-item/132/3/?action=label_indicators",
+  "label_htmx": "/assessment/label-item/129/3/?action=label",
+  "label_indicators_htmx": "/assessment/label-item/129/3/?action=label_indicators",
   "last_updated": "2020-05-08T15:36:41.324440-04:00",
   "prefilters": {
     "studies": [

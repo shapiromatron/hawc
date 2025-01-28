@@ -1,11 +1,28 @@
 {
   "assessment": 2,
+  "assessment_name": "Chemical X (2020)",
+  "assessment_rob_name": "Risk of bias",
   "caption": "",
   "created": "2020-05-08T23:22:01.190725-04:00",
-  "data_url": "/summary/api/data_pivot/3/data/?format=tsv",
-  "download_url": "/summary/api/data_pivot/3/data/",
-  "id": 3,
+  "data_url": "/summary/api/visual/19/data/",
+  "dataset": null,
+  "dose_units": null,
+  "dp_id": 3,
+  "dp_slug": "data-pivot-epimeta",
+  "endpoints": [],
+  "evidence_type": 4,
+  "id": 19,
+  "image": null,
+  "label_htmx": "/assessment/label-item/129/19/?action=label",
+  "label_indicators_htmx": "/assessment/label-item/129/19/?action=label_indicators",
   "last_updated": "2020-05-08T23:23:45.812012-04:00",
+  "prefilters": {
+    "export_style": 0,
+    "preferred_units": [],
+    "prefilters": {
+      "published_only": true
+    }
+  },
   "published": true,
   "settings": {
     "barchart": {
@@ -1012,7 +1029,10 @@
     }
   },
   "slug": "data-pivot-epimeta",
+  "studies": [],
   "title": "data pivot - epimeta",
-  "url": "/summary/data-pivot/assessment/2/data-pivot-epimeta/",
+  "url": "/summary/visual/assessment/2/data-pivot-epimeta/",
+  "url_delete": "/summary/visual/assessment/2/data-pivot-epimeta/delete/",
+  "url_update": "/summary/visual/assessment/2/data-pivot-epimeta/update/",
   "visual_type": "Data pivot (epidemiology meta-analysis/pooled-analysis)"
 }

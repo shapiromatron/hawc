@@ -331,20 +331,13 @@ class LabeledItemQuerySet(QuerySet):
                 "content_object",
                 [
                     apps.get_model("summary", "Visual").objects.all(),
-                    apps.get_model("summary", "DataPivotUpload").objects.all(),
-                    apps.get_model("summary", "DataPivotQuery").objects.all(),
                     apps.get_model("summary", "SummaryTable").objects.all(),
                 ],
             )
         )
 
     def filter_title(self, query: str):
-        filter = (
-            Q(summary_table__title__icontains=query)
-            | Q(visual__title__icontains=query)
-            | Q(datapivot_query__title__icontains=query)
-            | Q(datapivot_upload__title__icontains=query)
-        )
+        filter = Q(summary_tables__title__icontains=query) | Q(visuals__title__icontains=query)
         return self.filter(filter)
 
     def matching_all_labels(self, labels: list):

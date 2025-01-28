@@ -8,7 +8,7 @@
 {% block content %}
   <div class="visualization">
     <div class='d-flex'>
-      <h2>{{object.title}}</h2>
+      <h2>{% debug_badge object.id %}{{object.title}}</h2>
       {% include "common/unpublished_badge.html" %}
       {% if obj_perms.edit %}
         {% actions %}
