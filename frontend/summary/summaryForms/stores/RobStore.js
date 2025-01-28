@@ -127,9 +127,10 @@ class RobStore {
     }
     @computed get visualDataHash() {
         // compute settings hash for if we have the correct data to build the visual
-        const settings = this.root.base.toJsonObject();
+        const settings = this.root.base.toFormData();
         _.each(["title", "slug", "caption", "settings", "published"], d => delete settings[d]);
-        return h.hashString(JSON.stringify(settings));
+        const params = new URLSearchParams(settings).toString();
+        return h.hashString(params);
     }
     // active tab
     @observable activeTab = 0;

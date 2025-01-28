@@ -49,9 +49,6 @@ class BaseDjangoStore {
                 break;
         }
     }
-    @action.bound toJsonObject() {
-        return h.formToJsonObject(this.djangoForm);
-    }
     @action.bound toFormData() {
         return new FormData(this.djangoForm);
     }

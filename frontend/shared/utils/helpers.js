@@ -106,17 +106,6 @@ const helpers = {
             body: JSON.stringify({csrfmiddlewaretoken: csrf}),
         };
     },
-    formToJsonObject(formEl) {
-        return _.transform(
-            $(formEl).serializeArray(),
-            (result, field) => {
-                _.has(result, field.name)
-                    ? (result[field.name] = _.concat(result[field.name], field.value))
-                    : (result[field.name] = field.value);
-            },
-            {}
-        );
-    },
     handleSubmit(url, verb, csrf, obj, success, failure, error) {
         const payload = this.fetchPost(csrf, obj, verb);
         fetch(url, payload)
