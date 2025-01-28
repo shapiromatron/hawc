@@ -2,25 +2,8 @@
 
 {% block content %}
   <div id="main" style="display:none;"></div>
-  <div class="tabbable" style="display:none;">
-    <ul class="nav nav-tabs">
-      <li class="nav-item">
-        <a class="nav-link active" href="#data" data-toggle="tab">Visualization settings</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#settings" data-toggle="tab">Figure customization</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#preview" data-toggle="tab">Preview</a>
-      </li>
-    </ul>
-    <div class="tab-content">
-      <div id="data"     class="tab-pane active">
-        {% crispy form %}
-      </div>
-      <div id="settings" class="tab-pane"></div>
-      <div id="preview"  class="tab-pane"></div>
-    </div>
+  <div id="formContainer" style="display:none;">
+    {% crispy form %}
   </div>
   {% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
 {% endblock %}
@@ -36,7 +19,7 @@
       "visual_type": {{visual_type}},
       "cancel_url": "{% if crud == "Create" %}{% url 'summary:visualization_list' pk=assessment.id %}{% else %}{{object.get_absolute_url}}{% endif %}",
       "data_url": "{% url 'summary:api:visual-list' %}",
-      "preview_url": "{% url 'summary:visualization_create_tester' assessment.id visual_type evidence_type %}",
+      {% if crossview_config %}"crossview_config": {{crossview_config|safe}},{% endif %}
       {% if rob_config %}"rob_config": {{rob_config|safe}},{% endif %}
       {% if api_data_url %}"api_data_url": "{{api_data_url|safe}}",{% endif %}
       "initial_data": {{initial_data|safe}},

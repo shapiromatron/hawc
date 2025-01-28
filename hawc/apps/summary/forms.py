@@ -252,6 +252,8 @@ class EndpointAggregationForm(VisualForm):
 
 
 class CrossviewForm(VisualForm):
+    SUBMIT_DIV = False
+
     class Meta:
         model = models.Visual
         fields = ("title", "slug", "dose_units", "settings", "caption", "prefilters", "published")
@@ -277,6 +279,9 @@ class CrossviewForm(VisualForm):
         form = prefilter.form
         prefilter.set_form_options(form)
         return form
+
+    def update_context(self, context):
+        context.update(crossview_config={})
 
 
 class RoBForm(VisualForm):

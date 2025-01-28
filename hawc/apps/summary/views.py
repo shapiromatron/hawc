@@ -2,7 +2,7 @@ import json
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpResponseRedirect, JsonResponse
+from django.http import Http404, HttpResponseRedirect
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -389,18 +389,6 @@ class VisualizationCreate(BaseCreate):
         if self.object.is_data_pivot:
             return self.object.get_dp_update_settings()
         return super().get_success_url()
-
-
-class VisualizationCreateTester(VisualizationCreate):
-    parent_model = Assessment
-    http_method_names = ["post"]
-
-    def post(self, request, *args, **kwargs):
-        self.object = None
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        response = form.instance.get_editing_dataset(request)
-        return JsonResponse(response)
 
 
 class VisualizationCopySelector(BaseDetail):

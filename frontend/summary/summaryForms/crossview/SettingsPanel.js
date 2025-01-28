@@ -38,11 +38,7 @@ class ArrayTableRow extends Component {
                         </thead>
                         <tbody>
                             {settings[arrayName].map((item, index) => (
-                                <Row
-                                    key={`${index}-${JSON.stringify(toJS(item))}`}
-                                    index={index}
-                                    arrayName={arrayName}
-                                />
+                                <Row key={index} index={index} arrayName={arrayName} />
                             ))}
                         </tbody>
                     </table>
