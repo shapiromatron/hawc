@@ -148,16 +148,14 @@ class DynamicFormWidget(Widget):
 
     def format_value(self, value):
         """Value used in rendering."""
-        if value is not None and not isinstance(value, dict):
-            value = json.loads(value)
+        value = json.loads(value)
         if value:
             value = {self.add_prefix(k): v for k, v in value.items()}
         return self.form_class(data=value, **self.form_kwargs)
 
     def value_from_datadict(self, data, files, name):
         """Parse value from POST request."""
-        self.form_kwargs.pop("prefix", None)
-        form = self.form_class(data=data, prefix=name, **self.form_kwargs)
+        form = self.form_class(data=data, **self.form_kwargs)
         form.full_clean()
         return form.cleaned_data
 
