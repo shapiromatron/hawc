@@ -125,25 +125,25 @@ class CrossviewStore {
                 this.settings.filters.push(createFilter());
                 break;
             case "reflines_dose":
-                this.reflines_dose.push(createReflines());
+                this.settings.reflines_dose.push(createReflines());
                 break;
             case "refranges_dose":
-                this.refranges_dose.push(createRefranges());
+                this.settings.refranges_dose.push(createRefranges());
                 break;
             case "reflines_response":
-                this.reflines_response.push(createReflines());
+                this.settings.reflines_response.push(createReflines());
                 break;
             case "refranges_response":
-                this.refranges_response.push(createRefranges());
+                this.settings.refranges_response.push(createRefranges());
                 break;
             case "labels":
-                this.labels.push(createLabels());
+                this.settings.labels.push(createLabels());
                 break;
             case "colorFilters":
-                this.colorFilters.push(createColorFilters());
+                this.settings.colorFilters.push(createColorFilters());
                 break;
             case "endpointFilters":
-                this.endpointFilters.push(createEndpointFilters());
+                this.settings.endpointFilters.push(createEndpointFilters());
                 break;
         }
     }

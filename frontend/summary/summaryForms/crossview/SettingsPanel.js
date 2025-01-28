@@ -5,11 +5,62 @@ import React, {Component} from "react";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import CheckboxInput from "shared/components/CheckboxInput";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
+import FloatInput from "shared/components/FloatInput";
 import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 
 import FilterLogic from "../shared/FilterLogic";
+
+@inject("store")
+@observer
+class ArrayTableRow extends Component {
+    render() {
+        const {store, widths, names, heading, helpText, arrayName, Row} = this.props,
+            {settings, createArrayElement} = store.subclass;
+        return (
+            <div className="row">
+                <div className="col">
+                    {heading ? <h4>{heading}</h4> : null}
+                    <table className="table table-sm table-striped">
+                        <colgroup>
+                            {widths.map((d, i) => (
+                                <col key={i} width={`${d}%`} />
+                            ))}
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                {names.map((d, i) => (
+                                    <th key={i}>{d}</th>
+                                ))}
+                                <ActionsTh onClickNew={d => createArrayElement(arrayName)} />
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {settings[arrayName].map((item, index) => (
+                                <Row
+                                    key={`${index}-${JSON.stringify(toJS(item))}`}
+                                    index={index}
+                                    arrayName={arrayName}
+                                />
+                            ))}
+                        </tbody>
+                    </table>
+                    {helpText ? <p className="text-muted">{helpText}</p> : null}
+                </div>
+            </div>
+        );
+    }
+}
+ArrayTableRow.propTypes = {
+    store: PropTypes.object,
+    widths: PropTypes.arrayOf(PropTypes.number).isRequired,
+    names: PropTypes.arrayOf(PropTypes.string).isRequired,
+    heading: PropTypes.string,
+    helpText: PropTypes.string,
+    arrayName: PropTypes.string.isRequired,
+    Row: PropTypes.elementType.isRequired,
+};
 
 @inject("store")
 @observer
@@ -181,7 +232,7 @@ GeneralSettingsTab.propTypes = {
 @observer
 class CrossviewFilterRow extends Component {
     render() {
-        const {store, index} = this.props,
+        const {store, index, arrayName} = this.props,
             {
                 changeSetting,
                 moveArrayElementUp,
@@ -189,13 +240,13 @@ class CrossviewFilterRow extends Component {
                 deleteArrayElement,
                 settings,
             } = store.subclass,
-            item = settings.filters[index];
+            item = settings[arrayName][index];
         return (
             <tr>
                 <td>{index + 1}</td>
                 <td>
                     <TextInput
-                        name={`filters[${index}].name`}
+                        name={`${arrayName}[${index}].name`}
                         value={item.name}
                         onChange={e => changeSetting(e.target.name, e.target.value)}
                     />
@@ -203,7 +254,7 @@ class CrossviewFilterRow extends Component {
                 </td>
                 <td>
                     <CheckboxInput
-                        name={`filters[${index}].allValues`}
+                        name={`${arrayName}[${index}].allValues`}
                         label="Show All Values"
                         onChange={e => changeSetting(e.target.name, e.target.checked)}
                         checked={item.allValues}
@@ -212,29 +263,29 @@ class CrossviewFilterRow extends Component {
                 </td>
                 <td>
                     <IntegerInput
-                        name={`filters[${index}].column`}
+                        name={`${arrayName}[${index}].column`}
                         value={item.column}
                         onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
                     />
                 </td>
                 <td>
                     <IntegerInput
-                        name={`filters[${index}].x`}
+                        name={`${arrayName}[${index}].x`}
                         value={item.x}
                         onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
                     />
                 </td>
                 <td>
                     <IntegerInput
-                        name={`filters[${index}].y`}
+                        name={`${arrayName}[${index}].y`}
                         value={item.y}
                         onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
                     />
                 </td>
                 <MoveRowTd
-                    onMoveUp={() => moveArrayElementUp("filters", index)}
-                    onMoveDown={() => moveArrayElementDown("filters", index)}
-                    onDelete={() => deleteArrayElement("filters", index)}
+                    onMoveUp={() => moveArrayElementUp(arrayName, index)}
+                    onMoveDown={() => moveArrayElementDown(arrayName, index)}
+                    onDelete={() => deleteArrayElement(arrayName, index)}
                 />
             </tr>
         );
@@ -243,52 +294,7 @@ class CrossviewFilterRow extends Component {
 CrossviewFilterRow.propTypes = {
     store: PropTypes.object,
     index: PropTypes.number.isRequired,
-};
-
-@inject("store")
-@observer
-class ArrayTableRow extends Component {
-    render() {
-        const {store, widths, names, heading, helpText, arrayName, Row} = this.props,
-            {settings, createArrayElement} = store.subclass;
-        return (
-            <div className="row">
-                <div className="col">
-                    {heading ? <h4>{heading}</h4> : null}
-                    <table className="table table-sm table-striped">
-                        <colgroup>
-                            {widths.map((d, i) => (
-                                <col key={i} width={`${d}%`} />
-                            ))}
-                        </colgroup>
-                        <thead>
-                            <tr>
-                                {names.map((d, i) => (
-                                    <th key={i}>{d}</th>
-                                ))}
-                                <ActionsTh onClickNew={d => createArrayElement(arrayName)} />
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {settings[arrayName].map((item, index) => (
-                                <Row key={`${index}-${JSON.stringify(toJS(item))}`} index={index} />
-                            ))}
-                        </tbody>
-                    </table>
-                    {helpText ? <p className="text-muted">{helpText}</p> : null}
-                </div>
-            </div>
-        );
-    }
-}
-ArrayTableRow.propTypes = {
-    store: PropTypes.object,
-    widths: PropTypes.arrayOf(PropTypes.number).isRequired,
-    names: PropTypes.arrayOf(PropTypes.string).isRequired,
-    heading: PropTypes.string,
-    helpText: PropTypes.string,
     arrayName: PropTypes.string.isRequired,
-    Row: PropTypes.elementType.isRequired,
 };
 
 @inject("store")
@@ -319,6 +325,57 @@ CrossviewFilterTab.propTypes = {
 
 @inject("store")
 @observer
+class ReferenceLineRow extends Component {
+    render() {
+        const {store, index, arrayName} = this.props,
+            {
+                changeSetting,
+                moveArrayElementUp,
+                moveArrayElementDown,
+                deleteArrayElement,
+                settings,
+            } = store.subclass,
+            item = settings[arrayName][index];
+        return (
+            <tr>
+                <td>
+                    <FloatInput
+                        name={`${arrayName}[${index}].value`}
+                        value={item.value}
+                        onChange={e => changeSetting(e.target.name, parseFloat(e.target.value))}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${arrayName}[${index}].title`}
+                        value={item.title}
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${arrayName}[${index}].style`}
+                        value={item.style}
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                    />
+                </td>
+                <MoveRowTd
+                    onMoveUp={() => moveArrayElementUp(arrayName, index)}
+                    onMoveDown={() => moveArrayElementDown(arrayName, index)}
+                    onDelete={() => deleteArrayElement(arrayName, index)}
+                />
+            </tr>
+        );
+    }
+}
+ReferenceLineRow.propTypes = {
+    store: PropTypes.object,
+    index: PropTypes.number.isRequired,
+    arrayName: PropTypes.string.isRequired,
+};
+
+@inject("store")
+@observer
 class ReferencesTab extends Component {
     render() {
         return (
@@ -328,7 +385,7 @@ class ReferencesTab extends Component {
                     names={["Line Value", "Caption", "Style"]}
                     heading="Dose Reference Line"
                     arrayName="reflines_dose"
-                    Row={CrossviewFilterRow}
+                    Row={ReferenceLineRow}
                 />
                 <ArrayTableRow
                     widths={[10, 10, 40, 20, 20]}
@@ -342,7 +399,7 @@ class ReferencesTab extends Component {
                     names={["Line Value", "Caption", "Style"]}
                     heading="Response Reference Line"
                     arrayName="reflines_response"
-                    Row={CrossviewFilterRow}
+                    Row={ReferenceLineRow}
                 />
                 <ArrayTableRow
                     widths={[10, 10, 40, 20, 20]}
