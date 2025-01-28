@@ -21,13 +21,7 @@ from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.constants import EpiVersion, RobName
 from ..assessment.models import Assessment, BaseEndpoint, DoseUnits, LabeledItem
-from ..common.helper import (
-    FlatExport,
-    PydanticToDjangoError,
-    ReportExport,
-    SerializerHelper,
-    tryParseInt,
-)
+from ..common.helper import FlatExport, PydanticToDjangoError, ReportExport, SerializerHelper
 from ..common.validators import validate_html_tags, validate_hyperlinks
 from ..eco.exports import EcoFlatComplete
 from ..epi.exports import OutcomeDataPivot
@@ -504,32 +498,10 @@ class Visual(models.Model):
     def get_filterset(self, data, assessment, **kwargs):
         return self.get_filterset_class()(data=data, assessment=assessment, **kwargs)
 
-    def get_request_prefilters(self, request):
-        # find all keys that start with "prefilters-" prefix
-        prefix = "prefilters-"
-        return {
-            key[len(prefix) :]: value
-            for key, value in request.POST.lists()
-            if key.startswith(prefix)
-        }
-
-    def get_endpoints(self, request=None) -> models.QuerySet[Endpoint]:
-        if self.visual_type == constants.VisualType.BIOASSAY_AGGREGATION:
-            ids = (
-                request.POST.getlist("endpoints")
-                if request
-                else self.endpoints.values_list("id", flat=True)
-            )
-            return Endpoint.objects.assessment_qs(self.assessment).filter(id__in=ids)
-
-        elif self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
-            dose_units_id = (
-                tryParseInt(request.POST.get("dose_units"), -1) if request else self.dose_units_id
-            )
-            filters = {"animal_group__dosing_regime__doses__dose_units_id": dose_units_id}
-
-            prefilters = self.get_request_prefilters(request) if request else self.prefilters
-            fs = self.get_filterset(prefilters, self.assessment)
+    def get_endpoints(self) -> models.QuerySet[Endpoint]:
+        if self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
+            filters = {"animal_group__dosing_regime__doses__dose_units_id": self.dose_units_id}
+            fs = self.get_filterset(self.prefilters, self.assessment)
             form = fs.form
             fs.set_passthrough_options(form)
             fs.form.is_valid()
@@ -537,7 +509,7 @@ class Visual(models.Model):
 
         return Endpoint.objects.none()
 
-    def get_studies(self, request=None) -> list[Study]:
+    def get_studies(self) -> models.QuerySet[Study]:
         """
         If there are endpoint-level prefilters, we get all studies which
         match this criteria. Otherwise, we use the M2M list of studies attached
@@ -549,8 +521,7 @@ class Visual(models.Model):
             constants.VisualType.ROB_HEATMAP,
             constants.VisualType.ROB_BARCHART,
         ]:
-            prefilters = self.get_request_prefilters(request) if request else self.prefilters
-            fs = self.get_filterset(prefilters, self.assessment)
+            fs = self.get_filterset(self.prefilters, self.assessment)
             form = fs.form
             fs.set_passthrough_options(form)
             fs.form.is_valid()

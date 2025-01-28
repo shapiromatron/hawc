@@ -263,6 +263,8 @@ class CrossviewForm(VisualForm):
         self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(
             self.instance.assessment
         )
+        self.fields["dose_units"].required = True
+        self.fields["dose_units"].empty_label = None
         self.prefilter_cls = prefilters.get_prefilter_cls(
             self.instance.visual_type, self.instance.evidence_type, self.instance.assessment
         )

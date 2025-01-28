@@ -67,6 +67,20 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
             tryParseInt(request.data.get("visual_type", -1)), constants.VisualType
         )
 
+        if visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
+            data = request.data.copy()
+            uuid = str(uuid4())
+            evidence_type = constants.StudyType.BIOASSAY
+            data.update(title=uuid, slug=uuid, evidence_type=evidence_type)
+            form = forms.CrossviewForm(
+                data, evidence_type=evidence_type, visual_type=visual_type, parent=assessment
+            )
+            if form.is_valid() is False:
+                raise ValidationError(form.errors)
+            instance = form.save(commit=False)
+            instance.id = -1
+            return Response(serializers.VisualSerializer(instance).data)
+
         # check ROB style visuals
         if visual_type in [constants.VisualType.ROB_HEATMAP, constants.VisualType.ROB_BARCHART]:
             # data is not JSON; it's POST form data for proper prefilter form validation logic
