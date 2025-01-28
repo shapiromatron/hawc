@@ -19,12 +19,18 @@ class PreviewPanel extends Component {
         store.checkDataHash();
         if (this.visualRef.current) {
             const data = toJS(store.visualData),
-                el = $(this.visualRef.current);
-            // TODO - update legend dragging x/y somehow?
+                el = $(this.visualRef.current),
+                opts = {
+                    dev: true,
+                    handleLegendDrag: (x, y) => {
+                        store.changeSetting("legend_x", x);
+                        store.changeSetting("legend_y", y);
+                    },
+                };
             if (store.isHeatmap) {
-                new RoBHeatmap(data, {}).displayAsPreview(el);
+                new RoBHeatmap(data, {}).displayAsPreview(el, opts);
             } else if (store.isBarchart) {
-                new RoBBarchart(data, {}).displayAsPreview(el);
+                new RoBBarchart(data, {}).displayAsPreview(el, opts);
             }
         }
     }
