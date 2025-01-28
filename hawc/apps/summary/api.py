@@ -1,7 +1,5 @@
-from typing import TypeVar
 from uuid import uuid4
 
-from django.db.models import Choices
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -18,19 +16,11 @@ from ..assessment.api import (
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import DisabledPagination
+from ..common.api.validation import get_enum_or_400
 from ..common.helper import FlatExport, PydanticToDjangoError, cacheable, tryParseInt
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import constants, forms, models, schemas, serializers, table_serializers
-
-T = TypeVar("T", bound=Choices)
-
-
-def get_enum_or_400(value, Choice: type[T]) -> T:
-    try:
-        return Choice(value)
-    except ValueError:
-        raise ValidationError([f"Invalid choice {value}"]) from None
 
 
 class UnpublishedFilter(BaseFilterBackend):
@@ -90,7 +80,7 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
                 data, evidence_type=evidence_type, visual_type=visual_type, parent=assessment
             )
             if form.is_valid() is False:
-                return Response({"error": "Bad Request"}, status=HTTP_400_BAD_REQUEST)
+                raise ValidationError(form.errors)
             instance = form.save(commit=False)
             instance.id = -1
             return Response(serializers.VisualSerializer(instance).data)
