@@ -119,6 +119,8 @@ class SummaryTableCopySelectorForm(CopyForm):
 
 
 class VisualForm(forms.ModelForm):
+    SUBMIT_DIV: bool = True
+
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
         visual_type = kwargs.pop("visual_type", None)
@@ -151,6 +153,8 @@ class VisualForm(forms.ModelForm):
                 "cancel_url": self.instance.get_list_url(self.instance.assessment_id),
             }
 
+        if not self.SUBMIT_DIV:
+            inputs.pop("cancel_url")
         helper = BaseFormHelper(self, **inputs)
         if "settings" in self.fields:
             helper.set_textarea_height(("settings",), n_rows=2)
@@ -249,14 +253,9 @@ class EndpointAggregationForm(VisualForm):
 
 
 class CrossviewForm(VisualForm):
-    def _get_prefilter_form(self, data, **form_kwargs):
-        prefix = form_kwargs.pop("prefix", None)
-        prefilter = self.prefilter_cls(
-            data=data, prefix=prefix, assessment=self.instance.assessment, form_kwargs=form_kwargs
-        )
-        form = prefilter.form
-        prefilter.set_form_options(form)
-        return form
+    class Meta:
+        model = models.Visual
+        fields = ("title", "slug", "dose_units", "settings", "caption", "prefilters", "published")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -271,12 +270,6 @@ class CrossviewForm(VisualForm):
         )
         self.helper = self.setHelper()
 
-    class Meta:
-        model = models.Visual
-        fields = ("title", "slug", "dose_units", "settings", "caption", "prefilters", "published")
-
-
-class RoBForm(VisualForm):
     def _get_prefilter_form(self, data, **form_kwargs):
         prefix = form_kwargs.pop("prefix", None)
         prefilter = self.prefilter_cls(
@@ -285,6 +278,14 @@ class RoBForm(VisualForm):
         form = prefilter.form
         prefilter.set_form_options(form)
         return form
+
+
+class RoBForm(VisualForm):
+    SUBMIT_DIV = False
+
+    class Meta:
+        model = models.Visual
+        fields = ("title", "slug", "settings", "caption", "prefilters", "published")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -295,6 +296,15 @@ class RoBForm(VisualForm):
             prefix="prefilters", form_class=self._get_prefilter_form, label=""
         )
         self.helper = self.setHelper()
+
+    def _get_prefilter_form(self, data, **form_kwargs):
+        prefix = form_kwargs.pop("prefix", None)
+        prefilter = self.prefilter_cls(
+            data=data, prefix=prefix, assessment=self.instance.assessment, form_kwargs=form_kwargs
+        )
+        form = prefilter.form
+        prefilter.set_form_options(form)
+        return form
 
     def update_context(self, context):
         data = self.instance.get_rob_data()
@@ -309,27 +319,6 @@ class RoBForm(VisualForm):
                 list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.instance.assessment.id))
             ),
         )
-
-    class Meta:
-        model = models.Visual
-        fields = ("title", "slug", "settings", "caption", "prefilters", "published")
-
-    def setHelper(self):
-        if self.instance.id:
-            inputs = {
-                "legend_text": f"Update {self.instance}",
-                "help_text": "Update an existing visualization.",
-            }
-        else:
-            inputs = {
-                "legend_text": "Create new visualization",
-                "help_text": "Create a new visualization.",
-            }
-
-        helper = BaseFormHelper(self, **inputs)
-        helper.set_textarea_height(("settings",), n_rows=2)
-        helper.form_id = "visualForm"
-        return helper
 
 
 class TagtreeForm(VisualForm):
