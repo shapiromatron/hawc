@@ -1,20 +1,45 @@
+import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import Loading from "shared/components/Loading";
 
+import RoBBarchart from "../../summary/RoBBarchart";
+import RoBHeatmap from "../../summary/RoBHeatmap";
+
 @inject("store")
 @observer
 class PreviewPanel extends Component {
+    constructor(props) {
+        super(props);
+        this.visualRef = React.createRef();
+    }
+    _maybeShowVisual() {
+        const store = this.props.store.subclass;
+        store.checkDataHash();
+        if (this.visualRef.current) {
+            const data = toJS(store.visualData),
+                el = $(this.visualRef.current);
+            // TODO - update legend dragging x/y somehow?
+            if (store.isHeatmap) {
+                new RoBHeatmap(data, {}).displayAsPreview(el);
+            } else if (store.isBarchart) {
+                new RoBBarchart(data, {}).displayAsPreview(el);
+            }
+        }
+    }
     componentDidMount() {
-        this.props.store.subclass.checkDataHash();
+        this._maybeShowVisual();
+    }
+    componentDidUpdate() {
+        this._maybeShowVisual();
     }
     renderVisual() {
         const {store} = this.props;
         if (store.subclass.dataFetchRequired) {
             return <Loading />;
         }
-        return <p>Visual</p>;
+        return <div ref={this.visualRef}></div>;
     }
     render() {
         return (

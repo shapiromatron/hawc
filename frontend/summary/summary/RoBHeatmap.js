@@ -96,6 +96,12 @@ class RoBHeatmap extends BaseVisual {
             .show({maxWidth: 1200});
     }
 
+    displayAsPreview(el) {
+        const options = {dev: true},
+            data = this.getPlotData();
+        return new RoBHeatmapPlot(this, data, options).render($(el));
+    }
+
     getPlotData() {
         return {
             aggregation: this.roba,

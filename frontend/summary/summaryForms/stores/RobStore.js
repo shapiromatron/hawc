@@ -102,27 +102,18 @@ class RobStore {
     @action.bound getVisualData() {
         const {config} = this.root.base,
             url = `/summary/api/assessment/${config.assessment}/json_data/`,
-            payload = this.root.base.toJsonObject();
-        payload["visual_type"] = config.visual_type;
-        payload["evidence_type"] = config.initial_data.evidence_type;
-        h.handleSubmit(
-            url,
-            "POST",
-            config.csrf,
-            payload,
-            response => {
-                console.log(response);
+            formData = this.root.base.toFormData();
+        formData.append("visual_type", config.visual_type);
+        formData.append("evidence_type", config.initial_data.evidence_type);
+
+        fetch(url, h.fetchPostForm(config.csrf, formData))
+            .then(resp => resp.json())
+            .then(response => {
+                response.settings = this.settings;
                 this.currentDataHash = this.visualDataHash;
                 this.visualData = response;
                 this.dataFetchRequired = false;
-            },
-            err => {
-                console.error(err);
-            },
-            err => {
-                console.error(err);
-            }
-        );
+            });
     }
 
     // check if visualization data is needed

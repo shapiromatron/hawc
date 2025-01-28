@@ -52,6 +52,9 @@ class BaseDjangoStore {
     @action.bound toJsonObject() {
         return h.formToJsonObject(this.djangoForm);
     }
+    @action.bound toFormData() {
+        return new FormData(this.djangoForm);
+    }
     @computed get isCreate() {
         return this.config.crud === "Create";
     }

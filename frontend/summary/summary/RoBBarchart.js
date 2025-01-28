@@ -63,6 +63,12 @@ class RoBBarchart extends RoBHeatmap {
             .show({maxWidth: 1200});
     }
 
+    displayAsPreview(el) {
+        const options = {dev: true},
+            data = this.getPlotData();
+        return new RoBBarchartPlot(this, data, options).render($(el));
+    }
+
     getPlotData() {
         return {
             aggregation: this.roba,

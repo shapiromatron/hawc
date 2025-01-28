@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.filters import BaseFilterBackend
@@ -13,7 +15,7 @@ from ..assessment.api import (
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import DisabledPagination
-from ..common.helper import FlatExport, PydanticToDjangoError, cacheable
+from ..common.helper import FlatExport, PydanticToDjangoError, cacheable, tryParseInt
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import constants, forms, models, schemas, serializers, table_serializers
@@ -55,19 +57,35 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
         action_perms=AssessmentViewSetPermissions.TEAM_MEMBER_OR_HIGHER,
     )
     def json_data(self, request, pk):
-        """Get json data for a Visual using a configuration given in the payload."""
+        """Get json data for a Visual; designed for create/update operations."""
         assessment = self.get_object()
-        if request.data.get("visual_type") in [2, 3]:
+
+        # get visual_type
+        try:
+            visual_type = constants.VisualType(tryParseInt(request.data.get("visual_type", -1)))
+        except ValueError:
+            return Response({"error": "Bad Request"}, status=HTTP_400_BAD_REQUEST)
+
+        # check ROB style visuals
+        if visual_type in [constants.VisualType.ROB_HEATMAP, constants.VisualType.ROB_BARCHART]:
+            # data is not JSON; it's POST form data for proper prefilter form validation logic
             data = request.data.copy()
-            data["evidence_type"] = constants.StudyType(data["evidence_type"])
+            try:
+                evidence_type = constants.StudyType(tryParseInt(data["evidence_type"], -1))
+            except ValueError:
+                return Response({"error": "Bad Request"}, status=HTTP_400_BAD_REQUEST)
+            uuid = str(uuid4())
+            data.update(title=uuid, slug=uuid, evidence_type=evidence_type)
             form = forms.RoBForm(
-                data,
-                evidence_type=data["evidence_type"],
-                visual_type=data["visual_type"],
-                parent=assessment,
+                data, evidence_type=evidence_type, visual_type=visual_type, parent=assessment
             )
-            form.instance.id = -1
-            return Response(serializers.VisualSerializer(form.instance).data)
+            if form.is_valid() is False:
+                return Response({"error": "Bad Request"}, status=HTTP_400_BAD_REQUEST)
+            instance = form.save(commit=False)
+            instance.prefilters = form.cleaned_data["prefilters"]
+            instance.id = -1
+            return Response(serializers.VisualSerializer(instance).data)
+
         with PydanticToDjangoError(drf=True):
             config = schemas.VisualDataRequest.model_validate(request.data.get("config", {}))
         instance = config.mock_visual(assessment)
