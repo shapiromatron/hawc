@@ -4,8 +4,7 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import Loading from "shared/components/Loading";
 
-import RoBBarchart from "../../summary/RoBBarchart";
-import RoBHeatmap from "../../summary/RoBHeatmap";
+import Crossview from "../../summary/Crossview";
 
 @inject("store")
 @observer
@@ -27,11 +26,7 @@ class PreviewPanel extends Component {
                         store.changeSetting("legend_y", y);
                     },
                 };
-            if (store.isHeatmap) {
-                new RoBHeatmap(data, {}).displayAsPreview(el, opts);
-            } else if (store.isBarchart) {
-                new RoBBarchart(data, {}).displayAsPreview(el, opts);
-            }
+            new Crossview(data, {}).displayAsPreview(el, opts);
         }
     }
     componentDidMount() {

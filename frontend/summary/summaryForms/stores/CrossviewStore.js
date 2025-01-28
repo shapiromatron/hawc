@@ -1,3 +1,4 @@
+import Endpoint from "animal/Endpoint";
 import _ from "lodash";
 import {action, computed, observable} from "mobx";
 import {
@@ -176,6 +177,8 @@ class CrossviewStore {
 
     // visualization data
     @observable visualData = null;
+    @observable visualDataFetching = false;
+
     @action.bound getVisualData() {
         const {config} = this.root.base,
             url = `/summary/api/assessment/${config.assessment}/json_data/`,
@@ -183,10 +186,20 @@ class CrossviewStore {
         formData.append("visual_type", config.visual_type);
         formData.append("evidence_type", config.initial_data.evidence_type);
 
+        if (this.visualDataFetching) {
+            return;
+        }
+        this.visualDataFetching = true;
         fetch(url, h.fetchPostForm(config.csrf, formData))
             .then(resp => resp.json())
             .then(response => {
+                response.endpoints.map(d => {
+                    var e = new Endpoint(d);
+                    e.doseUnits.activate(response.dose_units);
+                    return e;
+                });
                 response.settings = this.settings;
+                this.visualDataFetching = false;
                 this.currentDataHash = this.visualDataHash;
                 this.visualData = response;
                 this.dataFetchRequired = false;

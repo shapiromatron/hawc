@@ -282,9 +282,6 @@ class CrossviewForm(VisualForm):
         prefilter.set_form_options(form)
         return form
 
-    def update_context(self, context):
-        context.update(crossview_config={})
-
 
 class RoBForm(VisualForm):
     SUBMIT_DIV = False
