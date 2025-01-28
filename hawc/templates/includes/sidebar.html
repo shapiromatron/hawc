@@ -5,6 +5,9 @@
   <li class="{{li_class}}">
     <a class="{{a_class}}" href="{% url 'assessment:public_list' %}">Assessments</a>
   </li>
+  <li class="{{li_class}}">
+    <a class="{{a_class}}" href="{% url 'search' %}">Global Search</a>
+  </li>
   {% if assessment %}
     <li class="{{li_class}}">
       <a class="{{a_class}}" href="{{ assessment.get_absolute_url }}">{{ assessment }}</a>
