@@ -76,16 +76,17 @@ const _getDefaultSettings = function() {
         return {
             caption: "",
             style: "",
-            max_width: 0,
+            max_width: 100,
             x: 0,
             y: 0,
         };
     },
     createColorFilters = function() {
         return {
+            field: "",
             value: "",
             headerName: "",
-            color: "#000000",
+            color: "#8BA870",
         };
     },
     createEndpointFilters = function() {

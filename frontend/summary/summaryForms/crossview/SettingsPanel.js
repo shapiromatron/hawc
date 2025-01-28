@@ -376,6 +376,129 @@ ReferenceLineRow.propTypes = {
 
 @inject("store")
 @observer
+class ReferenceRangeRow extends Component {
+    render() {
+        const {store, index, arrayName} = this.props,
+            {
+                changeSetting,
+                moveArrayElementUp,
+                moveArrayElementDown,
+                deleteArrayElement,
+                settings,
+            } = store.subclass,
+            item = settings[arrayName][index];
+        return (
+            <tr>
+                <td>
+                    <FloatInput
+                        name={`${arrayName}[${index}].lower`}
+                        value={item.lower}
+                        onChange={e => changeSetting(e.target.name, parseFloat(e.target.lower))}
+                    />
+                </td>
+                <td>
+                    <FloatInput
+                        name={`${arrayName}[${index}].upper`}
+                        value={item.upper}
+                        onChange={e => changeSetting(e.target.name, parseFloat(e.target.upper))}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${arrayName}[${index}].title`}
+                        value={item.title}
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${arrayName}[${index}].style`}
+                        value={item.style}
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                    />
+                </td>
+                <MoveRowTd
+                    onMoveUp={() => moveArrayElementUp(arrayName, index)}
+                    onMoveDown={() => moveArrayElementDown(arrayName, index)}
+                    onDelete={() => deleteArrayElement(arrayName, index)}
+                />
+            </tr>
+        );
+    }
+}
+ReferenceRangeRow.propTypes = {
+    store: PropTypes.object,
+    index: PropTypes.number.isRequired,
+    arrayName: PropTypes.string.isRequired,
+};
+
+@inject("store")
+@observer
+class CaptionRow extends Component {
+    render() {
+        const {store, index, arrayName} = this.props,
+            {
+                changeSetting,
+                moveArrayElementUp,
+                moveArrayElementDown,
+                deleteArrayElement,
+                settings,
+            } = store.subclass,
+            item = settings[arrayName][index];
+        return (
+            <tr>
+                <td>
+                    <TextInput
+                        name={`${arrayName}[${index}].caption`}
+                        value={item.caption}
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${arrayName}[${index}].style`}
+                        value={item.style}
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                    />
+                </td>
+                <td>
+                    <IntegerInput
+                        name={`${arrayName}[${index}].max_width`}
+                        value={item.max_width}
+                        onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
+                    />
+                </td>
+                <td>
+                    <IntegerInput
+                        name={`${arrayName}[${index}].x`}
+                        value={item.x}
+                        onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
+                    />
+                </td>
+                <td>
+                    <IntegerInput
+                        name={`${arrayName}[${index}].y`}
+                        value={item.y}
+                        onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
+                    />
+                </td>
+                <MoveRowTd
+                    onMoveUp={() => moveArrayElementUp(arrayName, index)}
+                    onMoveDown={() => moveArrayElementDown(arrayName, index)}
+                    onDelete={() => deleteArrayElement(arrayName, index)}
+                />
+            </tr>
+        );
+    }
+}
+CaptionRow.propTypes = {
+    store: PropTypes.object,
+    index: PropTypes.number.isRequired,
+    arrayName: PropTypes.string.isRequired,
+};
+
+@inject("store")
+@observer
 class ReferencesTab extends Component {
     render() {
         return (
@@ -392,7 +515,7 @@ class ReferencesTab extends Component {
                     names={["Lower Value", "Upper Value", "Caption", "Style"]}
                     heading="Dose Reference Range"
                     arrayName="refranges_dose"
-                    Row={CrossviewFilterRow}
+                    Row={ReferenceRangeRow}
                 />
                 <ArrayTableRow
                     widths={[20, 40, 20, 20]}
@@ -406,14 +529,14 @@ class ReferencesTab extends Component {
                     names={["Lower Value", "Upper Value", "Caption", "Style"]}
                     heading="Response Reference Range"
                     arrayName="refranges_response"
-                    Row={CrossviewFilterRow}
+                    Row={ReferenceRangeRow}
                 />
                 <ArrayTableRow
-                    widths={[45, 15, 10, 10, 10, 10]}
-                    names={["Caption", "Style", "Max Width (px)", "X", "Y "]}
+                    widths={[40, 15, 10, 10, 10, 15]}
+                    names={["Caption", "Style", "Max Width (px)", "X", "Y"]}
                     heading="Figure Captions"
                     arrayName="labels"
-                    Row={CrossviewFilterRow}
+                    Row={CaptionRow}
                 />
             </>
         );
@@ -421,6 +544,65 @@ class ReferencesTab extends Component {
 }
 ReferencesTab.propTypes = {
     store: PropTypes.object,
+};
+
+@inject("store")
+@observer
+class StyleRow extends Component {
+    render() {
+        const {store, index, arrayName} = this.props,
+            {
+                changeSetting,
+                moveArrayElementUp,
+                moveArrayElementDown,
+                deleteArrayElement,
+                settings,
+            } = store.subclass,
+            item = settings[arrayName][index];
+        return (
+            <tr>
+                <td>
+                    <TextInput
+                        name={`${arrayName}[${index}].field`}
+                        value={item.field}
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${arrayName}[${index}].value`}
+                        value={item.value}
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${arrayName}[${index}].headerName`}
+                        value={item.headerName}
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${arrayName}[${index}].color`}
+                        value={item.color}
+                        type="color"
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                    />
+                </td>
+                <MoveRowTd
+                    onMoveUp={() => moveArrayElementUp(arrayName, index)}
+                    onMoveDown={() => moveArrayElementDown(arrayName, index)}
+                    onDelete={() => deleteArrayElement(arrayName, index)}
+                />
+            </tr>
+        );
+    }
+}
+StyleRow.propTypes = {
+    store: PropTypes.object,
+    index: PropTypes.number.isRequired,
+    arrayName: PropTypes.string.isRequired,
 };
 
 @inject("store")
@@ -466,7 +648,7 @@ class StylesTab extends Component {
                     heading="Color Filters"
                     helpText="Custom colors can be applied to paths; these colors are applied based on selectors added below. The first-row is applied last; so if two rules match the same path, the upper-row color will be applied."
                     arrayName="colorFilters"
-                    Row={CrossviewFilterRow}
+                    Row={StyleRow}
                 />
                 <div className="row">
                     <div className="col-md-4">
@@ -510,6 +692,57 @@ StylesTab.propTypes = {
 
 @inject("store")
 @observer
+class FilterRow extends Component {
+    render() {
+        const {store, index, arrayName} = this.props,
+            {
+                changeSetting,
+                moveArrayElementUp,
+                moveArrayElementDown,
+                deleteArrayElement,
+                settings,
+            } = store.subclass,
+            item = settings[arrayName][index];
+        return (
+            <tr>
+                <td>
+                    <TextInput
+                        name={`${arrayName}[${index}].field`}
+                        value={item.field}
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${arrayName}[${index}].fieldType`}
+                        value={item.fieldType}
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                    />
+                </td>
+                <td>
+                    <TextInput
+                        name={`${arrayName}[${index}].value`}
+                        value={item.value}
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                    />
+                </td>
+                <MoveRowTd
+                    onMoveUp={() => moveArrayElementUp(arrayName, index)}
+                    onMoveDown={() => moveArrayElementDown(arrayName, index)}
+                    onDelete={() => deleteArrayElement(arrayName, index)}
+                />
+            </tr>
+        );
+    }
+}
+FilterRow.propTypes = {
+    store: PropTypes.object,
+    index: PropTypes.number.isRequired,
+    arrayName: PropTypes.string.isRequired,
+};
+
+@inject("store")
+@observer
 class FiltersTab extends Component {
     render() {
         const {store} = this.props,
@@ -521,7 +754,7 @@ class FiltersTab extends Component {
                     names={["Field Name", "Filter Type", "Value"]}
                     helpText="Filters used to determine which dose-response datasets should be included; by default all plottable datasets are included."
                     arrayName="endpointFilters"
-                    Row={CrossviewFilterRow}
+                    Row={FilterRow}
                 />
                 <div className="row">
                     <div className="col">
