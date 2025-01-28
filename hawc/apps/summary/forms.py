@@ -273,7 +273,7 @@ class CrossviewForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        fields = ("title", "slug", "dose_units", "settings", "caption", "published")
+        fields = ("title", "slug", "dose_units", "settings", "caption", "prefilters", "published")
 
 
 class RoBForm(VisualForm):
@@ -312,7 +312,7 @@ class RoBForm(VisualForm):
 
     class Meta:
         model = models.Visual
-        fields = ("title", "slug", "settings", "caption", "published")
+        fields = ("title", "slug", "settings", "caption", "prefilters", "published")
 
     def setHelper(self):
         if self.instance.id:
