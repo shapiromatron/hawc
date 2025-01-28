@@ -333,9 +333,9 @@ LegendSettingsTab.propTypes = {
 @observer
 class SettingsPanel extends Component {
     render() {
-        const {store} = this.props;
+        const {activeTab, changeActiveTab} = this.props.store.subclass;
         return (
-            <Tabs selectedIndex={store.activeTab} onSelect={store.changeActiveTab}>
+            <Tabs selectedIndex={activeTab} onSelect={changeActiveTab}>
                 <TabList>
                     <Tab>General Settings</Tab>
                     <Tab>Included Metrics</Tab>

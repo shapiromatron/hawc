@@ -1,7 +1,10 @@
+from typing import TypeVar
 from uuid import uuid4
 
+from django.db.models import Choices
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.filters import BaseFilterBackend
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
@@ -19,6 +22,15 @@ from ..common.helper import FlatExport, PydanticToDjangoError, cacheable, tryPar
 from ..common.renderers import DocxRenderer, PandasRenderers
 from ..common.serializers import UnusedSerializer
 from . import constants, forms, models, schemas, serializers, table_serializers
+
+T = TypeVar("T", bound=Choices)
+
+
+def get_enum_or_400(value, Choice: type[T]) -> T:
+    try:
+        return Choice(value)
+    except ValueError:
+        raise ValidationError([f"Invalid choice {value}"]) from None
 
 
 class UnpublishedFilter(BaseFilterBackend):
@@ -61,19 +73,17 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
         assessment = self.get_object()
 
         # get visual_type
-        try:
-            visual_type = constants.VisualType(tryParseInt(request.data.get("visual_type", -1)))
-        except ValueError:
-            return Response({"error": "Bad Request"}, status=HTTP_400_BAD_REQUEST)
+        visual_type = get_enum_or_400(
+            tryParseInt(request.data.get("visual_type", -1)), constants.VisualType
+        )
 
         # check ROB style visuals
         if visual_type in [constants.VisualType.ROB_HEATMAP, constants.VisualType.ROB_BARCHART]:
             # data is not JSON; it's POST form data for proper prefilter form validation logic
             data = request.data.copy()
-            try:
-                evidence_type = constants.StudyType(tryParseInt(data["evidence_type"], -1))
-            except ValueError:
-                return Response({"error": "Bad Request"}, status=HTTP_400_BAD_REQUEST)
+            evidence_type = get_enum_or_400(
+                tryParseInt(request.data.get("evidence_type", -1)), constants.StudyType
+            )
             uuid = str(uuid4())
             data.update(title=uuid, slug=uuid, evidence_type=evidence_type)
             form = forms.RoBForm(
@@ -82,7 +92,6 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
             if form.is_valid() is False:
                 return Response({"error": "Bad Request"}, status=HTTP_400_BAD_REQUEST)
             instance = form.save(commit=False)
-            instance.prefilters = form.cleaned_data["prefilters"]
             instance.id = -1
             return Response(serializers.VisualSerializer(instance).data)
 

@@ -19,7 +19,7 @@ class App extends Component {
             };
 
         return (
-            <div>
+            <>
                 <Tabs onSelect={handleTabSelection}>
                     <TabList>
                         <Tab>Overall</Tab>
@@ -37,7 +37,7 @@ class App extends Component {
                     </TabPanel>
                 </Tabs>
                 <FormActions handleSubmit={handleSubmit} cancel={cancel_url} />
-            </div>
+            </>
         );
     }
 }
