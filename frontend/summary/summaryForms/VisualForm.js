@@ -1,6 +1,4 @@
 import CrossviewForm from "./CrossviewForm";
-import RoBBarchartForm from "./RoBBarchartForm";
-import RoBHeatmapForm from "./RoBHeatmapForm";
 
 class VisualForm {
     static create(visual_type, $el, config) {
@@ -8,12 +6,6 @@ class VisualForm {
         switch (visual_type) {
             case 1:
                 Cls = CrossviewForm;
-                break;
-            case 2:
-                Cls = RoBHeatmapForm;
-                break;
-            case 3:
-                Cls = RoBBarchartForm;
                 break;
             case 0:
             case 4:

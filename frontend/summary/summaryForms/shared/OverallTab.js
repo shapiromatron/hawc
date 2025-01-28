@@ -10,6 +10,7 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 @inject("store")
 @observer
 class OverallPanel extends Component {
+    // TODO - remove - switch to the rob one
     render() {
         const {store, legend, helpText} = this.props,
             {isCreate, djangoFormData, updateDjangoFormData} = store.base;

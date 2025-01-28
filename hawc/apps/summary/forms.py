@@ -26,7 +26,6 @@ from ..common.forms import (
 from ..common.helper import new_window_a
 from ..common.validators import validate_html_tags, validate_hyperlinks, validate_json_pydantic
 from ..lit.models import ReferenceFilterTag
-from ..riskofbias.models import RiskOfBiasMetric
 from ..study.autocomplete import StudyAutocomplete
 from . import autocomplete, constants, models, prefilters
 
@@ -314,10 +313,7 @@ class RoBForm(VisualForm):
                     "metrics": list(data["metrics"]),
                     "scores": list(data["scores"]),
                 }
-            ),
-            rob_metrics=json.dumps(
-                list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.instance.assessment.id))
-            ),
+            )
         )
 
 
