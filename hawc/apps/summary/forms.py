@@ -26,7 +26,6 @@ from ..common.forms import (
 from ..common.helper import new_window_a
 from ..common.validators import validate_html_tags, validate_hyperlinks, validate_json_pydantic
 from ..lit.models import ReferenceFilterTag
-from ..riskofbias.models import RiskOfBiasMetric
 from ..study.autocomplete import StudyAutocomplete
 from . import autocomplete, constants, models, prefilters
 
@@ -119,6 +118,8 @@ class SummaryTableCopySelectorForm(CopyForm):
 
 
 class VisualForm(forms.ModelForm):
+    SUBMIT_DIV: bool = True
+
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
         visual_type = kwargs.pop("visual_type", None)
@@ -127,9 +128,9 @@ class VisualForm(forms.ModelForm):
         if assessment:
             self.instance.assessment = assessment
         if visual_type is not None:  # required if value is 0
-            self.instance.visual_type = visual_type
+            self.instance.visual_type = constants.VisualType(visual_type)
         if self.instance.id is None:
-            self.instance.evidence_type = evidence_type
+            self.instance.evidence_type = constants.StudyType(evidence_type)
 
     def setHelper(self):
         if self.instance.id:
@@ -151,6 +152,8 @@ class VisualForm(forms.ModelForm):
                 "cancel_url": self.instance.get_list_url(self.instance.assessment_id),
             }
 
+        if not self.SUBMIT_DIV:
+            inputs.pop("cancel_url")
         helper = BaseFormHelper(self, **inputs)
         if "settings" in self.fields:
             helper.set_textarea_height(("settings",), n_rows=2)
@@ -249,20 +252,19 @@ class EndpointAggregationForm(VisualForm):
 
 
 class CrossviewForm(VisualForm):
-    def _get_prefilter_form(self, data, **form_kwargs):
-        prefix = form_kwargs.pop("prefix", None)
-        prefilter = self.prefilter_cls(
-            data=data, prefix=prefix, assessment=self.instance.assessment, form_kwargs=form_kwargs
-        )
-        form = prefilter.form
-        prefilter.set_form_options(form)
-        return form
+    SUBMIT_DIV = False
+
+    class Meta:
+        model = models.Visual
+        fields = ("title", "slug", "dose_units", "settings", "caption", "prefilters", "published")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["dose_units"].queryset = DoseUnits.objects.get_animal_units(
             self.instance.assessment
         )
+        self.fields["dose_units"].required = True
+        self.fields["dose_units"].empty_label = None
         self.prefilter_cls = prefilters.get_prefilter_cls(
             self.instance.visual_type, self.instance.evidence_type, self.instance.assessment
         )
@@ -271,12 +273,6 @@ class CrossviewForm(VisualForm):
         )
         self.helper = self.setHelper()
 
-    class Meta:
-        model = models.Visual
-        fields = ("title", "slug", "dose_units", "settings", "caption", "prefilters", "published")
-
-
-class RoBForm(VisualForm):
     def _get_prefilter_form(self, data, **form_kwargs):
         prefix = form_kwargs.pop("prefix", None)
         prefilter = self.prefilter_cls(
@@ -285,6 +281,14 @@ class RoBForm(VisualForm):
         form = prefilter.form
         prefilter.set_form_options(form)
         return form
+
+
+class RoBForm(VisualForm):
+    SUBMIT_DIV = False
+
+    class Meta:
+        model = models.Visual
+        fields = ("title", "slug", "settings", "caption", "prefilters", "published")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -296,16 +300,25 @@ class RoBForm(VisualForm):
         )
         self.helper = self.setHelper()
 
+    def _get_prefilter_form(self, data, **form_kwargs):
+        prefix = form_kwargs.pop("prefix", None)
+        prefilter = self.prefilter_cls(
+            data=data, prefix=prefix, assessment=self.instance.assessment, form_kwargs=form_kwargs
+        )
+        form = prefilter.form
+        prefilter.set_form_options(form)
+        return form
+
     def update_context(self, context):
+        data = self.instance.get_rob_data()
         context.update(
-            rob_metrics=json.dumps(
-                list(RiskOfBiasMetric.objects.get_metrics_for_visuals(self.instance.assessment.id))
+            rob_config=json.dumps(
+                {
+                    "metrics": list(data["metrics"]),
+                    "scores": list(data["scores"]),
+                }
             )
         )
-
-    class Meta:
-        model = models.Visual
-        fields = ("title", "slug", "settings", "caption", "prefilters", "published")
 
 
 class TagtreeForm(VisualForm):
@@ -516,6 +529,8 @@ class ExternalSiteForm(VisualForm):
 
 
 class ExploreHeatmapForm(VisualForm):
+    SUBMIT_DIV: bool = False
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
@@ -563,6 +578,8 @@ class PlotlyVisualForm(VisualForm):
 
 
 class PrismaVisualForm(VisualForm):
+    SUBMIT_DIV: bool = False
+
     class Meta:
         model = models.Visual
         fields = ("title", "slug", "settings", "caption", "published")

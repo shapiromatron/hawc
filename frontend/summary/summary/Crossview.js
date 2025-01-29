@@ -32,7 +32,6 @@ class Crossview extends EndpointAggregation {
             ]);
             $el.prepend(headerRow).append(captionDiv);
         }
-
         new CrossviewPlot(this, data, options).render($plotDiv);
         caption.renderAndEnable();
         return this;
@@ -61,6 +60,11 @@ class Crossview extends EndpointAggregation {
             .addBody([$plotDiv, captionDiv])
             .addFooter("")
             .show({maxWidth: 1200});
+    }
+
+    displayAsPreview(el, options) {
+        const data = this.getPlotData();
+        return new CrossviewPlot(this, data, options).render($(el));
     }
 
     getPlotData() {

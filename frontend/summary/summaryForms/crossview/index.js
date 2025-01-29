@@ -4,11 +4,11 @@ import ReactDOM from "react-dom";
 
 import $ from "$";
 
-import {createPrismaStore} from "../stores";
+import {createCrossviewStore} from "../stores";
 import App from "./App";
 
-const prismaFormAppStartup = function(el, config, djangoForm) {
-    const store = createPrismaStore(config, djangoForm);
+const startup = function(el, config, djangoForm) {
+    const store = createCrossviewStore(config, djangoForm);
     ReactDOM.render(
         <Provider store={store}>
             <App />
@@ -18,4 +18,4 @@ const prismaFormAppStartup = function(el, config, djangoForm) {
     $(el).fadeIn();
 };
 
-export default prismaFormAppStartup;
+export default startup;

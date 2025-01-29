@@ -1,6 +1,5 @@
 import pandas as pd
 import pytest
-from django.test.client import RequestFactory
 
 from hawc.apps.summary import constants, models
 
@@ -24,12 +23,6 @@ class TestSummaryTable:
 
 @pytest.mark.django_db
 class TestVisual:
-    def test_get_editing_dataset(self):
-        obj = models.Visual.objects.filter(visual_type=constants.VisualType.ROB_HEATMAP).first()
-        rf = RequestFactory()
-        request = rf.get("/")
-        obj.get_editing_dataset(request)
-
     def test_get_plotly_from_json(self):
         # fails with non plotly visual
         obj = models.Visual.objects.filter(

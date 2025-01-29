@@ -21,13 +21,7 @@ from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.constants import EpiVersion, RobName
 from ..assessment.models import Assessment, BaseEndpoint, DoseUnits, LabeledItem
-from ..common.helper import (
-    FlatExport,
-    PydanticToDjangoError,
-    ReportExport,
-    SerializerHelper,
-    tryParseInt,
-)
+from ..common.helper import FlatExport, PydanticToDjangoError, ReportExport, SerializerHelper
 from ..common.validators import validate_html_tags, validate_hyperlinks
 from ..eco.exports import EcoFlatComplete
 from ..epi.exports import OutcomeDataPivot
@@ -39,6 +33,7 @@ from ..riskofbias.models import RiskOfBiasScore
 from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
 from . import constants, managers, prefilters
+from .actions.rob import get_rob_visual_form_data
 
 logger = logging.getLogger(__name__)
 
@@ -448,6 +443,12 @@ class Visual(models.Model):
             + "?action=venn_reference_list",
         }
 
+    def get_rob_data(self) -> dict:
+        return get_rob_visual_form_data(
+            assessment_id=self.assessment_id,
+            study_type=constants.StudyType(self.evidence_type),
+        )
+
     def get_data(self) -> dict:
         """Get data needed to display Visual."""
         match self.visual_type:
@@ -484,45 +485,16 @@ class Visual(models.Model):
             case _:
                 return {}
 
-    @staticmethod
-    def get_dose_units():
-        return DoseUnits.objects.json_all()
-
-    def get_json(self, json_encode=True):
-        return SerializerHelper.get_serialized(self, json=json_encode)
-
     def get_filterset_class(self):
         return prefilters.get_prefilter_cls(self.visual_type, self.evidence_type, self.assessment)
 
     def get_filterset(self, data, assessment, **kwargs):
         return self.get_filterset_class()(data=data, assessment=assessment, **kwargs)
 
-    def get_request_prefilters(self, request):
-        # find all keys that start with "prefilters-" prefix
-        prefix = "prefilters-"
-        return {
-            key[len(prefix) :]: value
-            for key, value in request.POST.lists()
-            if key.startswith(prefix)
-        }
-
-    def get_endpoints(self, request=None) -> models.QuerySet[Endpoint]:
-        if self.visual_type == constants.VisualType.BIOASSAY_AGGREGATION:
-            ids = (
-                request.POST.getlist("endpoints")
-                if request
-                else self.endpoints.values_list("id", flat=True)
-            )
-            return Endpoint.objects.assessment_qs(self.assessment).filter(id__in=ids)
-
-        elif self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
-            dose_units_id = (
-                tryParseInt(request.POST.get("dose_units"), -1) if request else self.dose_units_id
-            )
-            filters = {"animal_group__dosing_regime__doses__dose_units_id": dose_units_id}
-
-            prefilters = self.get_request_prefilters(request) if request else self.prefilters
-            fs = self.get_filterset(prefilters, self.assessment)
+    def get_endpoints(self) -> models.QuerySet[Endpoint]:
+        if self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
+            filters = {"animal_group__dosing_regime__doses__dose_units_id": self.dose_units_id}
+            fs = self.get_filterset(self.prefilters, self.assessment)
             form = fs.form
             fs.set_passthrough_options(form)
             fs.form.is_valid()
@@ -530,7 +502,7 @@ class Visual(models.Model):
 
         return Endpoint.objects.none()
 
-    def get_studies(self, request=None) -> list[Study]:
+    def get_studies(self) -> models.QuerySet[Study]:
         """
         If there are endpoint-level prefilters, we get all studies which
         match this criteria. Otherwise, we use the M2M list of studies attached
@@ -542,8 +514,7 @@ class Visual(models.Model):
             constants.VisualType.ROB_HEATMAP,
             constants.VisualType.ROB_BARCHART,
         ]:
-            prefilters = self.get_request_prefilters(request) if request else self.prefilters
-            fs = self.get_filterset(prefilters, self.assessment)
+            fs = self.get_filterset(self.prefilters, self.assessment)
             form = fs.form
             fs.set_passthrough_options(form)
             fs.form.is_valid()

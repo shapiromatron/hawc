@@ -61,7 +61,7 @@ class RoBLegend {
 
     render() {
         const {legend_x, legend_y} = this.settings,
-            {dev, default_x, default_y} = this.options;
+            {dev, default_x, default_y, handleLegendDrag} = this.options;
 
         let svg = d3.select(this.svg),
             svgW = parseInt(svg.attr("width"), 10),
@@ -75,10 +75,9 @@ class RoBLegend {
             dim = this.svg.getBBox(),
             cursor = dev ? "pointer" : "auto",
             drag = dev
-                ? HAWCUtils.updateDragLocationTransform((x, y) => {
-                      this.settings.legend_x = parseInt(x);
-                      this.settings.legend_y = parseInt(y);
-                  })
+                ? HAWCUtils.updateDragLocationTransform((x, y) =>
+                      handleLegendDrag(parseInt(x), parseInt(y))
+                  )
                 : function() {},
             fields = this.get_data(),
             title,

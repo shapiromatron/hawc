@@ -1,15 +1,6 @@
 import {action, computed, observable} from "mobx";
 import h from "shared/utils/helpers";
 
-import $ from "$";
-
-const TABS = {
-    OVERALL: 0,
-    DATA: 1,
-    CUSTOMIZATION: 2,
-    PREVIEW: 3,
-};
-
 class BaseStore {
     constructor(rootStore, config) {
         this.root = rootStore;
@@ -18,6 +9,7 @@ class BaseStore {
 
     config = null;
     djangoForm = null;
+    settingsField = null;
     currentTab = 0;
 
     @observable dataError = null;
@@ -33,53 +25,36 @@ class BaseStore {
                 Object.keys(initial_data.settings).length > 0
                     ? initial_data.settings
                     : this.root.subclass.getDefaultSettings();
-
-        this.djangoFormData = {
-            title: initial_data.title,
-            slug: initial_data.slug,
-            settings: JSON.stringify(settings, null, 2),
-            caption: initial_data.caption,
-            published: initial_data.published,
-        };
-        this.root.subclass.setFromJsonSettings(settings, true);
+        this.updateDjangoSettings(settings);
+        this.updateReactSettings(true);
     }
     @action setDjangoForm = djangoForm => {
         this.djangoForm = djangoForm;
-    };
-    @action updateDjangoFormData = (name, value) => {
-        this.djangoFormData[name] = value;
+        this.settingsField = djangoForm.querySelector("#id_settings");
     };
     @action.bound handleSubmit() {
-        // make sure our overall tab form is synced
-        this.handleTabChange(TABS.OVERALL, this.currentTab);
-
-        // insert the data in this form to the from we submit to the server
-        const $form = $(this.djangoForm);
-        $form.find("#id_title").val(this.djangoFormData.title);
-        $form.find("#id_slug").val(this.djangoFormData.slug);
-        $form.find("#id_settings").val(this.djangoFormData.settings);
-        $form.find("#id_caption").val(this.djangoFormData.caption);
-        $form.find("#id_published").prop("checked", this.djangoFormData.published);
-        $form.submit();
+        this.updateDjangoSettings(this.root.subclass.settings);
+        this.djangoForm.submit();
     }
-
+    @action.bound updateDjangoSettings(settings) {
+        this.settingsField.value = JSON.stringify(settings, null, 2);
+    }
+    @action.bound updateReactSettings(firstTime) {
+        const settings = JSON.parse(this.settingsField.value);
+        this.root.subclass.setFromJsonSettings(settings, firstTime);
+    }
+    @action.bound toFormData() {
+        return new FormData(this.djangoForm);
+    }
     @action.bound handleTabChange(newIndex, lastIndex) {
         // make sure that data cross tabs are synced
         this.currentTab = newIndex;
         switch (lastIndex) {
-            case TABS.OVERALL:
-                this.root.subclass.setFromJsonSettings(
-                    JSON.parse(this.djangoFormData.settings),
-                    false
-                );
+            case 0:
+                this.updateReactSettings(false);
                 break;
-            case TABS.DATA:
-                this.djangoFormData.settings = JSON.stringify(this.root.subclass.settings, null, 2);
-                break;
-            case TABS.CUSTOMIZATION:
-                this.djangoFormData.settings = JSON.stringify(this.root.subclass.settings, null, 2);
-                break;
-            case TABS.PREVIEW:
+            default:
+                this.updateDjangoSettings(this.root.subclass.settings);
                 break;
         }
     }
@@ -119,7 +94,7 @@ class BaseStore {
         return this.config.crud === "Create";
     }
     @computed get settingsHash() {
-        return h.hashString(this.djangoFormData.settings);
+        return h.hashString(this.settingsField.value);
     }
 }
 

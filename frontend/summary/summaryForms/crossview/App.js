@@ -5,9 +5,8 @@ import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import FormActions from "shared/components/FormActions";
 
 import OverallPanel from "../shared/OverallPanel";
-import DataPanel from "./DataPanel";
 import PreviewPanel from "./PreviewPanel";
-import VisualCustomizationPanel from "./VisualCustomizationPanel";
+import SettingsPanel from "./SettingsPanel";
 
 @inject("store")
 @observer
@@ -20,29 +19,25 @@ class App extends Component {
             };
 
         return (
-            <div>
+            <>
                 <Tabs onSelect={handleTabSelection}>
                     <TabList>
                         <Tab>Overall</Tab>
-                        <Tab>Data</Tab>
-                        <Tab>Figure Customization</Tab>
+                        <Tab>Settings</Tab>
                         <Tab>Preview</Tab>
                     </TabList>
                     <TabPanel>
                         <OverallPanel />
                     </TabPanel>
                     <TabPanel>
-                        <DataPanel />
-                    </TabPanel>
-                    <TabPanel>
-                        <VisualCustomizationPanel />
+                        <SettingsPanel />
                     </TabPanel>
                     <TabPanel>
                         <PreviewPanel />
                     </TabPanel>
                 </Tabs>
                 <FormActions handleSubmit={handleSubmit} cancel={cancel_url} />
-            </div>
+            </>
         );
     }
 }

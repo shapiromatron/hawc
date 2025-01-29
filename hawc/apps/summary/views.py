@@ -2,7 +2,7 @@ import json
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpResponseRedirect, JsonResponse
+from django.http import Http404, HttpResponseRedirect
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -306,8 +306,10 @@ class VisualizationCreate(BaseCreate):
     model = models.Visual
 
     def get_form_class(self):
-        visual_type = int(self.kwargs.get("visual_type"))
-        return forms.get_visual_form(visual_type)
+        try:
+            return forms.get_visual_form(int(self.kwargs.get("visual_type")))
+        except ValueError as err:
+            raise Http404 from err
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -338,12 +340,12 @@ class VisualizationCreate(BaseCreate):
                 not in constants.VISUAL_EVIDENCE_CHOICES[kwargs["visual_type"]]
             ):
                 raise Http404
-        self.evidence_type = kwargs["evidence_type"]
+        self.evidence_type = constants.StudyType(kwargs["evidence_type"])
         return kwargs
 
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
-        if visual_type in [] and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
+        if visual_type in constants.WIP_VISUALS and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
             raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
@@ -389,18 +391,6 @@ class VisualizationCreate(BaseCreate):
         if self.object.is_data_pivot:
             return self.object.get_dp_update_settings()
         return super().get_success_url()
-
-
-class VisualizationCreateTester(VisualizationCreate):
-    parent_model = Assessment
-    http_method_names = ["post"]
-
-    def post(self, request, *args, **kwargs):
-        self.object = None
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        response = form.instance.get_editing_dataset(request)
-        return JsonResponse(response)
 
 
 class VisualizationCopySelector(BaseDetail):
@@ -472,11 +462,10 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
             return ["summary/visual_form_django.html"]
         return super().get_template_names()
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs):  # TODO - refactor; use `get_app_config`
         context = super().get_context_data(**kwargs)
         visual = self.object
         context.update(
-            instance=visual.get_json(),
             visual_type=visual.visual_type,
             evidence_type=visual.evidence_type,
             initial_data=json.dumps(serializers.VisualSerializer().to_representation(visual)),
