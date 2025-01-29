@@ -21,8 +21,7 @@
   <script type="text/javascript">
     window.addEventListener("DOMContentLoaded", function(){
 
-      var printf = window.app.HAWCUtils.printf,
-          elFormset = $("#rFormset").insertBefore($('#rForm .form-actions')),
+      var elFormset = $("#rFormset").insertBefore($('#rForm .form-actions')),
           isNew = "{{crud|lower}}" == "create",
           fs = new window.app.DynamicFormset(elFormset, 'form', {oneFormRequired: true}),
           comparison_set_id = {{ form.comparison_set.value|default:"null" }},
@@ -79,7 +78,7 @@
       // bind formset change to group-change
       $('#id_comparison_set').change(function(){
         var val = parseInt(this.value),
-            url = printf("/epi/api/comparison-set/{0}/", val);
+            url = `/epi/api/comparison-set/${val}/`;
         if (_.isNaN(val)){
           updateFormset();
         } else if (val !== comparison_set_id || isNew){
@@ -93,17 +92,13 @@
           thVar = $("th:contains('Variance') span");
 
       $('#id_estimate_type').change(function(e){
-        var txt = (e.target.value === "0")
-          ? "Estimate" :
-          printf("Estimate<br>({0})", $(e.target).find('option:selected').text());
-        thEst.html(txt);
+        const value = $(e.target).find('option:selected').text();
+        thEst.html(value=="---" ? "Estimate" : `Estimate<br>(${value})`);
       }).trigger('change');
 
       $('#id_variance_type').change(function(e){
-        var txt = (e.target.value === "0")
-          ? "Variance" :
-          printf("Variance<br>({0})", $(e.target).find('option:selected').text());
-        thVar.html(txt);
+        const value = $(e.target).find('option:selected').text();
+        thVar.html(value=="---" ? "Variance" : `Variance<br>(${value})`);
       }).trigger('change');
 
       // pass group-id back to server
