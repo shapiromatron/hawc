@@ -306,8 +306,10 @@ class VisualizationCreate(BaseCreate):
     model = models.Visual
 
     def get_form_class(self):
-        visual_type = int(self.kwargs.get("visual_type"))
-        return forms.get_visual_form(visual_type)
+        try:
+            return forms.get_visual_form(int(self.kwargs.get("visual_type")))
+        except ValueError as err:
+            raise Http404 from err
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -343,7 +345,7 @@ class VisualizationCreate(BaseCreate):
 
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
-        if visual_type in [] and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
+        if visual_type in constants.WIP_VISUALS and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
             raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
@@ -457,16 +459,13 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
         }:
-            return [
-                "summary/visual_form_django.html"
-            ]  # TODO - delete this after refactoring; should be unnecessary
+            return ["summary/visual_form_django.html"]
         return super().get_template_names()
 
     def get_context_data(self, **kwargs):  # TODO - refactor; use `get_app_config`
         context = super().get_context_data(**kwargs)
         visual = self.object
         context.update(
-            instance=visual.get_json(),
             visual_type=visual.visual_type,
             evidence_type=visual.evidence_type,
             initial_data=json.dumps(serializers.VisualSerializer().to_representation(visual)),

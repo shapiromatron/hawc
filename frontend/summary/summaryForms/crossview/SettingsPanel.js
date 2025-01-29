@@ -10,8 +10,8 @@ import IntegerInput from "shared/components/IntegerInput";
 import Loading from "shared/components/Loading";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
-import {DATA_FILTER_OPTIONS} from "summary/summary/filters";
 
+import {DATA_FILTER_OPTIONS} from "../../summary/filters";
 import FilterLogic from "../shared/FilterLogic";
 
 const fieldChoiceLabel = (value, choices) => _.find(choices, {id: value}).label;
@@ -71,12 +71,11 @@ class GeneralSettingsTab extends Component {
         return (
             <div className="row">
                 <div className="col-4">
-                    <IntegerInput
-                        name="width"
-                        value={settings.width}
-                        label="Overall Width (px)"
-                        onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
-                        helpText="Overall width, including plot and tags"
+                    <TextInput
+                        name="title"
+                        value={settings.title}
+                        label="Title"
+                        onChange={e => changeSetting(e.target.name, e.target.value)}
                     />
                 </div>
                 <div className="col-4">
@@ -357,6 +356,7 @@ class ReferenceLineRow extends Component {
                 moveArrayElementDown,
                 deleteArrayElement,
                 settings,
+                lineStyleChoices,
             } = store.subclass,
             item = settings[arrayName][index];
         return (
@@ -376,10 +376,12 @@ class ReferenceLineRow extends Component {
                     />
                 </td>
                 <td>
-                    <TextInput
-                        name={`${arrayName}[${index}].style`}
+                    <SelectInput
+                        choices={lineStyleChoices}
                         value={item.style}
-                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                        handleSelect={value => {
+                            changeSetting(`${arrayName}[${index}].style`, value);
+                        }}
                     />
                 </td>
                 <MoveRowTd
@@ -408,6 +410,7 @@ class ReferenceRangeRow extends Component {
                 moveArrayElementDown,
                 deleteArrayElement,
                 settings,
+                rectangleStyleChoices,
             } = store.subclass,
             item = settings[arrayName][index];
         return (
@@ -416,14 +419,14 @@ class ReferenceRangeRow extends Component {
                     <FloatInput
                         name={`${arrayName}[${index}].lower`}
                         value={item.lower}
-                        onChange={e => changeSetting(e.target.name, parseFloat(e.target.lower))}
+                        onChange={e => changeSetting(e.target.name, parseFloat(e.target.value))}
                     />
                 </td>
                 <td>
                     <FloatInput
                         name={`${arrayName}[${index}].upper`}
                         value={item.upper}
-                        onChange={e => changeSetting(e.target.name, parseFloat(e.target.upper))}
+                        onChange={e => changeSetting(e.target.name, parseFloat(e.target.value))}
                     />
                 </td>
                 <td>
@@ -434,10 +437,12 @@ class ReferenceRangeRow extends Component {
                     />
                 </td>
                 <td>
-                    <TextInput
-                        name={`${arrayName}[${index}].style`}
+                    <SelectInput
+                        choices={rectangleStyleChoices}
                         value={item.style}
-                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                        handleSelect={value => {
+                            changeSetting(`${arrayName}[${index}].style`, value);
+                        }}
                     />
                 </td>
                 <MoveRowTd
@@ -466,6 +471,7 @@ class CaptionRow extends Component {
                 moveArrayElementDown,
                 deleteArrayElement,
                 settings,
+                textStyleChoices,
             } = store.subclass,
             item = settings[arrayName][index];
         return (
@@ -478,10 +484,12 @@ class CaptionRow extends Component {
                     />
                 </td>
                 <td>
-                    <TextInput
-                        name={`${arrayName}[${index}].style`}
+                    <SelectInput
+                        choices={textStyleChoices}
                         value={item.style}
-                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                        handleSelect={value => {
+                            changeSetting(`${arrayName}[${index}].style`, value);
+                        }}
                     />
                 </td>
                 <td>

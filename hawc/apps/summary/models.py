@@ -485,13 +485,6 @@ class Visual(models.Model):
             case _:
                 return {}
 
-    @staticmethod
-    def get_dose_units():
-        return DoseUnits.objects.json_all()
-
-    def get_json(self, json_encode=True):
-        return SerializerHelper.get_serialized(self, json=json_encode)
-
     def get_filterset_class(self):
         return prefilters.get_prefilter_cls(self.visual_type, self.evidence_type, self.assessment)
 

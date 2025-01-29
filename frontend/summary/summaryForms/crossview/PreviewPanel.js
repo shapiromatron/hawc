@@ -21,10 +21,7 @@ class PreviewPanel extends Component {
                 el = $(this.visualRef.current),
                 opts = {
                     dev: true,
-                    handleLegendDrag: (x, y) => {
-                        store.changeSetting("legend_x", x);
-                        store.changeSetting("legend_y", y);
-                    },
+                    updateSettingFunc: store.changeSetting,
                 };
             new Crossview(data, {}).displayAsPreview(el, opts);
         }

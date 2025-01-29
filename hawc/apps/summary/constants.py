@@ -56,6 +56,8 @@ class VisualType(models.IntegerChoices):
     DATA_PIVOT_FILE = 11, "Data Pivot File"
 
 
+WIP_VISUALS = []
+
 VISUAL_EVIDENCE_CHOICES = {
     VisualType.BIOASSAY_AGGREGATION: {StudyType.BIOASSAY},
     VisualType.BIOASSAY_CROSSVIEW: {StudyType.BIOASSAY},

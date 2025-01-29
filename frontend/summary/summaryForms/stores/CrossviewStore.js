@@ -7,7 +7,10 @@ import {
     moveArrayElementUp,
 } from "shared/components/EditableRowData";
 import h from "shared/utils/helpers";
-import CrossviewPlot from "summary/summary/CrossviewPlot";
+
+import CrossviewPlot from "../../summary/CrossviewPlot";
+import D3Visualization from "../../summary/D3Visualization";
+import {DATA_FILTER_CONTAINS} from "../../summary/filters";
 
 const _getDefaultSettings = function() {
         return {
@@ -59,26 +62,26 @@ const _getDefaultSettings = function() {
             y: 0,
         };
     },
-    createReflines = function() {
+    createReflines = function(style) {
         return {
             value: 1,
             title: "",
-            style: "",
+            style: style.id,
         };
     },
-    createRefranges = function() {
+    createRefranges = function(style) {
         return {
             lower: 1,
             upper: 2,
             title: "",
-            style: "",
+            style: style.id,
         };
     },
-    createLabels = function() {
+    createLabels = function(style) {
         return {
             caption: "",
-            style: "",
-            max_width: 100,
+            style: style.id,
+            max_width: 150,
             x: 0,
             y: 0,
         };
@@ -91,10 +94,10 @@ const _getDefaultSettings = function() {
             color: "#8BA870",
         };
     },
-    createEndpointFilters = function(field) {
+    createEndpointFilters = function(field, filter) {
         return {
             field: field.id,
-            filterType: "",
+            filterType: DATA_FILTER_CONTAINS,
             value: "",
         };
     };
@@ -116,19 +119,21 @@ class CrossviewStore {
                 this.settings.filters.push(createFilter(this.fieldChoices[0]));
                 break;
             case "reflines_dose":
-                this.settings.reflines_dose.push(createReflines());
+                this.settings.reflines_dose.push(createReflines(this.lineStyleChoices[0]));
                 break;
             case "refranges_dose":
-                this.settings.refranges_dose.push(createRefranges());
+                this.settings.refranges_dose.push(createRefranges(this.rectangleStyleChoices[0]));
                 break;
             case "reflines_response":
-                this.settings.reflines_response.push(createReflines());
+                this.settings.reflines_response.push(createReflines(this.lineStyleChoices[0]));
                 break;
             case "refranges_response":
-                this.settings.refranges_response.push(createRefranges());
+                this.settings.refranges_response.push(
+                    createRefranges(this.rectangleStyleChoices[0])
+                );
                 break;
             case "labels":
-                this.settings.labels.push(createLabels());
+                this.settings.labels.push(createLabels(this.textStyleChoices[0]));
                 break;
             case "colorFilters":
                 this.settings.colorFilters.push(createColorFilters(this.fieldChoices[0]));
@@ -227,6 +232,21 @@ class CrossviewStore {
                 .value();
         });
         return options;
+    }
+    @computed get lineStyleChoices() {
+        return D3Visualization.styles.lines.map(d => {
+            return {id: d.name, label: d.name};
+        });
+    }
+    @computed get rectangleStyleChoices() {
+        return D3Visualization.styles.rectangles.map(d => {
+            return {id: d.name, label: d.name};
+        });
+    }
+    @computed get textStyleChoices() {
+        return D3Visualization.styles.texts.map(d => {
+            return {id: d.name, label: d.name};
+        });
     }
 
     // active tab
