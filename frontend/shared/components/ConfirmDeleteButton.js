@@ -9,7 +9,7 @@ class ConfirmDeleteButton extends React.Component {
         };
     }
     render() {
-        const {handleDelete} = this.props,
+        const {handleDelete, deleteText} = this.props,
             {deleteInitiated} = this.state,
             handleClick = e => {
                 if (deleteInitiated) {
@@ -19,7 +19,7 @@ class ConfirmDeleteButton extends React.Component {
                 }
             },
             buttonClass = deleteInitiated ? "btn btn-outline-danger" : "btn btn-danger",
-            buttonText = deleteInitiated ? "Click again to confirm" : "Delete";
+            buttonText = deleteInitiated ? "Click again to confirm" : deleteText;
 
         return (
             <button className={buttonClass} onClick={handleClick}>
@@ -32,6 +32,11 @@ class ConfirmDeleteButton extends React.Component {
 
 ConfirmDeleteButton.propTypes = {
     handleDelete: PropTypes.func.isRequired,
+    deleteText: PropTypes.string,
+};
+
+ConfirmDeleteButton.defaultProps = {
+    deleteText: "Delete",
 };
 
 export default ConfirmDeleteButton;

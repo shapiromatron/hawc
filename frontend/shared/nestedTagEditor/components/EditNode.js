@@ -13,6 +13,16 @@ class EditNodeForm extends React.Component {
 
     render() {
         const isNew = this.props.node.id === null;
+        var deleteText = "Delete this tag";
+        if (this.props.node.data.tagCount > 0) {
+            if (this.props.node.children) {
+                deleteText = `Delete this tag, including its child tag(s), and all ${this.props.node.data.tagCount} use(s) of these tags`;
+            } else {
+                deleteText = `Delete this tag and all ${this.props.node.data.tagCount} use(s) of this tag`;
+            }
+        } else if (this.props.node.children) {
+            deleteText = `Delete this tag and its ${this.props.node.children.length} child tag(s)`;
+        }
 
         return (
             <div className="editNodeForm container-fluid">
@@ -82,7 +92,10 @@ class EditNodeForm extends React.Component {
                     {isNew ? null : (
                         <div className="col-md-6">
                             <div className="float-right">
-                                <ConfirmDeleteButton handleDelete={this.props.handleDelete} />
+                                <ConfirmDeleteButton
+                                    handleDelete={this.props.handleDelete}
+                                    deleteText={deleteText}
+                                />
                             </div>
                         </div>
                     )}
