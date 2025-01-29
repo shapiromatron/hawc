@@ -591,9 +591,14 @@ class PydanticDrfSerializer(BaseModel):
         except PydanticError as err:
             errors = defaultdict(list)
             for e in err.errors():
-                for key in e["loc"]:
-                    error_key = key if key != "__root__" else "non_field_errors"
-                    errors[error_key].append(e["msg"])
+                if len(e["loc"]) > 0:
+                    for key in e["loc"]:
+                        error_key = (
+                            key if key != "__root__" and len(key) > 0 else "non_field_errors"
+                        )
+                        errors[error_key].append(e["msg"])
+                else:
+                    errors["non_field_errors"].append(e["msg"])
             raise DrfValidationError(errors) from err
 
 

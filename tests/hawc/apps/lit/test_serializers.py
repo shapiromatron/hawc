@@ -1,9 +1,16 @@
+import re
+
 import pytest
+from rest_framework import exceptions
 
 from hawc.apps.assessment.models import Assessment
 from hawc.apps.lit import constants
 from hawc.apps.lit.models import Reference, ReferenceTags
-from hawc.apps.lit.serializers import BulkReferenceTagSerializer, ReferenceReplaceHeroIdSerializer
+from hawc.apps.lit.serializers import (
+    BulkReferenceTagSerializer,
+    FilterReferences,
+    ReferenceReplaceHeroIdSerializer,
+)
 
 
 @pytest.mark.django_db
@@ -225,3 +232,81 @@ class TestReferenceReplaceHeroIdSerializer:
         serializer = ReferenceReplaceHeroIdSerializer(data=data, context={"assessment": assessment})
         assert serializer.is_valid() is False
         assert serializer.errors["replace"][0] == "Reference IDs not all from assessment 1."
+
+
+@pytest.mark.django_db
+class TestFilterReferencesSerializer:
+    def test_bad_search_id(self, db_keys):
+        data = {"search_id": -1}
+        expected_error = "Invalid search id"
+        with pytest.raises(exceptions.ValidationError, match=re.escape(expected_error)):
+            FilterReferences.from_drf(data=data, assessment_id=db_keys.assessment_working)
+
+    def test_bad_tag_id(self, db_keys):
+        data = {"tag_id": -1}
+        expected_error = "Invalid tag id"
+        with pytest.raises(exceptions.ValidationError, match=re.escape(expected_error)):
+            FilterReferences.from_drf(data=data, assessment_id=db_keys.assessment_working)
+
+    def test_bad_list(self, db_keys):
+        data = {"required_tags": -1}
+        expected_error = "Expected a comma-delimited list of ids"
+        with pytest.raises(exceptions.ValidationError, match=re.escape(expected_error)):
+            FilterReferences.from_drf(data=data, assessment_id=db_keys.assessment_working)
+
+        data = {"pruned_tags": -1}
+        expected_error = "Expected a comma-delimited list of ids"
+        with pytest.raises(exceptions.ValidationError, match=re.escape(expected_error)):
+            FilterReferences.from_drf(data=data, assessment_id=db_keys.assessment_working)
+
+    def test_bad_tag_ids(self, db_keys):
+        data = {"pruned_tags": "3,-1"}
+        expected_error = "Invalid tag ids"
+        with pytest.raises(exceptions.ValidationError, match=re.escape(expected_error)):
+            FilterReferences.from_drf(data=data, assessment_id=db_keys.assessment_working)
+
+        data = {"required_tags": "3,-1"}
+        expected_error = "Invalid tag ids"
+        with pytest.raises(exceptions.ValidationError, match=re.escape(expected_error)):
+            FilterReferences.from_drf(data=data, assessment_id=db_keys.assessment_working)
+
+    def test_contraints(self, db_keys):
+        data = {"untagged": True, "required_tags": "1,2"}
+        expected_error = "Do not combine 'untagged' with other tag filters"
+        with pytest.raises(exceptions.ValidationError, match=re.escape(expected_error)):
+            FilterReferences.from_drf(data=data, assessment_id=db_keys.assessment_working)
+
+        data = {"untagged": True, "pruned_tags": "1,2"}
+        expected_error = "Do not combine 'untagged' with other tag filters"
+        with pytest.raises(exceptions.ValidationError, match=re.escape(expected_error)):
+            FilterReferences.from_drf(data=data, assessment_id=db_keys.assessment_working)
+
+        data = {"untagged": True, "tag_id": "2"}
+        expected_error = "Do not combine 'untagged' with other tag filters"
+        with pytest.raises(exceptions.ValidationError, match=re.escape(expected_error)):
+            FilterReferences.from_drf(data=data, assessment_id=db_keys.assessment_working)
+
+        data = {"required_tags": "2,1"}
+        expected_error = (
+            "'required_tags' and 'pruned_tags' require a root 'tag_id' to function correctly."
+        )
+        with pytest.raises(exceptions.ValidationError, match=re.escape(expected_error)):
+            FilterReferences.from_drf(data=data, assessment_id=db_keys.assessment_working)
+
+        data = {"pruned_tags": "2,1"}
+        expected_error = (
+            "'required_tags' and 'pruned_tags' require a root 'tag_id' to function correctly."
+        )
+        with pytest.raises(exceptions.ValidationError, match=re.escape(expected_error)):
+            FilterReferences.from_drf(data=data, assessment_id=db_keys.assessment_working)
+
+    def test_success_search(self, db_keys):
+        assessment_id = db_keys.assessment_conflict_resolution
+        data = {
+            "search_id": 7,
+            "untagged": False,
+            "tag_id": "33",
+            "required_tags": "33",
+        }
+        serializer = FilterReferences.from_drf(data=data, assessment_id=assessment_id)
+        assert db_keys.reference_tagged in serializer.get_queryset().values_list("id", flat=True)

@@ -97,6 +97,14 @@ class TestLiterature(PlaywrightTestCase):
 
         expect(page.get_by_role("heading", name="Workflows")).to_be_visible()
 
+        # delete existing workflow
+        page.get_by_title("Click to update").click()
+        page.get_by_role("button", name=" Delete").click()
+        expect(page.get_by_text("Are you sure you want to")).to_be_visible()
+        page.get_by_role("button", name=" Delete").click()
+        expect(page.get_by_role("button", name=" Delete")).not_to_be_visible()
+        expect(page.get_by_title("Click to update")).not_to_be_visible()
+
         # Create workflow
         page.get_by_role("link", name="Create new workflow").click()
         page.get_by_label("Title*").click()
@@ -135,7 +143,7 @@ class TestLiterature(PlaywrightTestCase):
         expect(page.get_by_role("link", name="1  needs tagging")).to_be_visible()
         expect(page.get_by_role("link", name=re.compile(r"\d+ ≠ with conflicts"))).to_be_visible()
 
-        # go back and check delete
+        # go back and check delete again
         page.get_by_text("Actions").click()
         page.get_by_role("link", name="View Workflows").click()
         page.get_by_title("Click to update").click()
