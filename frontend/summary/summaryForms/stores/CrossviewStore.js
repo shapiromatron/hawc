@@ -7,6 +7,7 @@ import {
     moveArrayElementUp,
 } from "shared/components/EditableRowData";
 import h from "shared/utils/helpers";
+import CrossviewPlot from "summary/summary/CrossviewPlot";
 
 const _getDefaultSettings = function() {
         return {
@@ -47,10 +48,10 @@ const _getDefaultSettings = function() {
             filtersQuery: "",
         };
     },
-    createFilter = function() {
+    createFilter = function(field) {
         return {
-            name: "",
-            headerName: "",
+            name: field.id,
+            headerName: field.label,
             allValues: true,
             values: [],
             column: 1,
@@ -82,17 +83,17 @@ const _getDefaultSettings = function() {
             y: 0,
         };
     },
-    createColorFilters = function() {
+    createColorFilters = function(field) {
         return {
-            field: "",
+            field: field.id,
             value: "",
-            headerName: "",
+            headerName: field.label,
             color: "#8BA870",
         };
     },
-    createEndpointFilters = function() {
+    createEndpointFilters = function(field) {
         return {
-            field: "",
+            field: field.id,
             filterType: "",
             value: "",
         };
@@ -106,25 +107,13 @@ class CrossviewStore {
     getDefaultSettings() {
         return _getDefaultSettings();
     }
-    @computed get metricTableData() {
-        const selectedMetrics = new Set(this.settings.included_metrics);
-        return this.metrics.map(d => {
-            return {id: d.id, selected: selectedMetrics.has(d.id), name: d.name};
-        });
-    }
-    @computed get excludedScoreData() {
-        return {
-            excluded: new Set(this.settings.excluded_score_ids),
-            scores: this.scores,
-        };
-    }
     @action.bound changeSetting(path, value) {
         _.set(this.settings, path, value);
     }
     @action.bound createArrayElement(type) {
         switch (type) {
             case "filters":
-                this.settings.filters.push(createFilter());
+                this.settings.filters.push(createFilter(this.fieldChoices[0]));
                 break;
             case "reflines_dose":
                 this.settings.reflines_dose.push(createReflines());
@@ -142,10 +131,10 @@ class CrossviewStore {
                 this.settings.labels.push(createLabels());
                 break;
             case "colorFilters":
-                this.settings.colorFilters.push(createColorFilters());
+                this.settings.colorFilters.push(createColorFilters(this.fieldChoices[0]));
                 break;
             case "endpointFilters":
-                this.settings.endpointFilters.push(createEndpointFilters());
+                this.settings.endpointFilters.push(createEndpointFilters(this.fieldChoices[0]));
                 break;
         }
     }
@@ -158,16 +147,6 @@ class CrossviewStore {
     @action.bound moveArrayElementDown(type, index) {
         moveArrayElementDown(this.settings[type], index);
     }
-    @action.bound toggleMetricInclusion(id, include) {
-        const set = new Set(this.settings.included_metrics);
-        include ? set.add(id) : set.delete(id);
-        this.settings.included_metrics = Array.from(set).sort();
-    }
-    @action.bound toggleExcludedScores(id, include) {
-        const set = new Set(this.settings.excluded_score_ids);
-        include ? set.delete(id) : set.add(id);
-        this.settings.excluded_score_ids = Array.from(set);
-    }
     @action setFromJsonSettings(settings, firstTime) {
         this.settings = settings;
     }
@@ -176,9 +155,9 @@ class CrossviewStore {
     }
 
     // visualization data
+    @observable formData = null;
     @observable visualData = null;
     @observable visualDataFetching = false;
-
     @action.bound getVisualData() {
         const {config} = this.root.base,
             url = `/summary/api/assessment/${config.assessment}/json_data/`,
@@ -193,15 +172,19 @@ class CrossviewStore {
         fetch(url, h.fetchPostForm(config.csrf, formData))
             .then(resp => resp.json())
             .then(response => {
-                response.endpoints.map(d => {
-                    var e = new Endpoint(d);
-                    e.doseUnits.activate(response.dose_units);
-                    return e;
-                });
                 response.settings = this.settings;
                 this.visualDataFetching = false;
                 this.currentDataHash = this.visualDataHash;
                 this.visualData = response;
+
+                const formData = _.cloneDeep(response);
+                formData.endpoints = formData.endpoints.map(d => {
+                    var e = new Endpoint(d);
+                    e.doseUnits.activate(formData.dose_units);
+                    return e;
+                });
+                this.formData = formData;
+
                 this.dataFetchRequired = false;
             });
     }
@@ -222,6 +205,30 @@ class CrossviewStore {
         const params = new URLSearchParams(settings).toString();
         return h.hashString(params);
     }
+
+    // endpoint field options
+    @computed get fieldChoices() {
+        return _.map(CrossviewPlot._filters, (k, v) => {
+            return {id: v, label: k};
+        });
+    }
+    @computed get fieldOptionChoices() {
+        const options = {};
+        _.keys(CrossviewPlot._filters).forEach(key => {
+            const func = CrossviewPlot._cw_filter_process[key];
+            options[key] = _.chain(this.formData.endpoints)
+                .map(endpoint => func(endpoint))
+                .flatten()
+                .uniq()
+                .filter(d => d.length > 0)
+                .map(d => {
+                    return {id: d, label: d};
+                })
+                .value();
+        });
+        return options;
+    }
+
     // active tab
     @observable activeTab = 0;
     @action.bound changeActiveTab(index) {

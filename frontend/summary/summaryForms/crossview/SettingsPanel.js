@@ -1,4 +1,4 @@
-import {toJS} from "mobx";
+import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -7,10 +7,14 @@ import CheckboxInput from "shared/components/CheckboxInput";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import FloatInput from "shared/components/FloatInput";
 import IntegerInput from "shared/components/IntegerInput";
+import Loading from "shared/components/Loading";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
+import {DATA_FILTER_OPTIONS} from "summary/summary/filters";
 
 import FilterLogic from "../shared/FilterLogic";
+
+const fieldChoiceLabel = (value, choices) => _.find(choices, {id: value}).label;
 
 @inject("store")
 @observer
@@ -235,18 +239,31 @@ class CrossviewFilterRow extends Component {
                 moveArrayElementDown,
                 deleteArrayElement,
                 settings,
+                fieldChoices,
+                fieldOptionChoices,
             } = store.subclass,
             item = settings[arrayName][index];
         return (
             <tr>
-                <td>{index + 1}</td>
+                <td>
+                    <SelectInput
+                        choices={fieldChoices}
+                        value={item.name}
+                        handleSelect={value => {
+                            changeSetting(`${arrayName}[${index}].name`, value);
+                            changeSetting(
+                                `${arrayName}[${index}].headerName`,
+                                fieldChoiceLabel(value, fieldChoices)
+                            );
+                        }}
+                    />
+                </td>
                 <td>
                     <TextInput
-                        name={`${arrayName}[${index}].name`}
-                        value={item.name}
+                        name={`${arrayName}[${index}].headerName`}
+                        value={item.headerName}
                         onChange={e => changeSetting(e.target.name, e.target.value)}
                     />
-                    <p>TODO - add field name select</p>
                 </td>
                 <td>
                     <CheckboxInput
@@ -255,7 +272,17 @@ class CrossviewFilterRow extends Component {
                         onChange={e => changeSetting(e.target.name, e.target.checked)}
                         checked={item.allValues}
                     />
-                    <p>TODO - add values select multiple</p>
+                    {item.allValues ? null : (
+                        <SelectInput
+                            choices={fieldOptionChoices[item.name]}
+                            value={item.values}
+                            handleSelect={values => {
+                                changeSetting(`${arrayName}[${index}].values`, values);
+                            }}
+                            multiple={true}
+                            selectSize={10}
+                        />
+                    )}
                 </td>
                 <td>
                     <IntegerInput
@@ -553,22 +580,32 @@ class StyleRow extends Component {
                 moveArrayElementDown,
                 deleteArrayElement,
                 settings,
+                fieldChoices,
+                fieldOptionChoices,
             } = store.subclass,
             item = settings[arrayName][index];
         return (
             <tr>
                 <td>
-                    <TextInput
-                        name={`${arrayName}[${index}].field`}
+                    <SelectInput
+                        choices={fieldChoices}
                         value={item.field}
-                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                        handleSelect={value => {
+                            const firstValue = fieldOptionChoices[value][0].id;
+                            changeSetting(`${arrayName}[${index}].headerName`, firstValue);
+                            changeSetting(`${arrayName}[${index}].value`, firstValue);
+                            changeSetting(`${arrayName}[${index}].field`, value);
+                        }}
                     />
                 </td>
                 <td>
-                    <TextInput
-                        name={`${arrayName}[${index}].value`}
+                    <SelectInput
+                        choices={fieldOptionChoices[item.field]}
                         value={item.value}
-                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                        handleSelect={value => {
+                            changeSetting(`${arrayName}[${index}].value`, value);
+                            changeSetting(`${arrayName}[${index}].headerName`, value);
+                        }}
                     />
                 </td>
                 <td>
@@ -697,22 +734,27 @@ class FilterRow extends Component {
                 moveArrayElementDown,
                 deleteArrayElement,
                 settings,
+                fieldChoices,
             } = store.subclass,
             item = settings[arrayName][index];
         return (
             <tr>
                 <td>
-                    <TextInput
-                        name={`${arrayName}[${index}].field`}
+                    <SelectInput
+                        choices={fieldChoices}
                         value={item.field}
-                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                        handleSelect={value => {
+                            changeSetting(`${arrayName}[${index}].field`, value);
+                        }}
                     />
                 </td>
                 <td>
-                    <TextInput
-                        name={`${arrayName}[${index}].fieldType`}
-                        value={item.fieldType}
-                        onChange={e => changeSetting(e.target.name, e.target.value)}
+                    <SelectInput
+                        choices={DATA_FILTER_OPTIONS}
+                        value={item.filterType}
+                        handleSelect={value => {
+                            changeSetting(`${arrayName}[${index}].filterType`, value);
+                        }}
                     />
                 </td>
                 <td>
@@ -774,8 +816,24 @@ FiltersTab.propTypes = {
 @inject("store")
 @observer
 class SettingsPanel extends Component {
+    componentDidMount() {
+        const store = this.props.store.subclass;
+        store.checkDataHash();
+    }
+    componentDidUpdate() {
+        const store = this.props.store.subclass;
+        store.checkDataHash();
+    }
     render() {
-        const {activeTab, changeActiveTab} = this.props.store.subclass;
+        const {activeTab, changeActiveTab, formData} = this.props.store.subclass;
+        if (!formData) {
+            return (
+                <>
+                    {<Loading />}
+                    <p className="text-muted">Data loading, please wait...</p>
+                </>
+            );
+        }
         return (
             <Tabs selectedIndex={activeTab} onSelect={changeActiveTab}>
                 <TabList>
