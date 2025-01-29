@@ -78,7 +78,6 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
             if form.is_valid() is False:
                 raise ValidationError(form.errors)
             instance = form.save(commit=False)
-            instance.id = -1
             return Response(serializers.VisualSerializer(instance).data)
 
         # check ROB style visuals
@@ -96,7 +95,6 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
             if form.is_valid() is False:
                 raise ValidationError(form.errors)
             instance = form.save(commit=False)
-            instance.id = -1
             return Response(serializers.VisualSerializer(instance).data)
 
         with PydanticToDjangoError(drf=True):

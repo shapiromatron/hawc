@@ -26,6 +26,20 @@ const startup = (config, djangoForm, el) => {
     if (config.isCreate) {
         $("#id_title").on("keyup", e => $("#id_slug").val(HAWCUtils.urlify(e.target.value)));
     }
+
+    const pdu = document.getElementById("pduDiv");
+    if (pdu) {
+        // TODO - continue
+        console.log(pdu);
+        // {% if form.fields.preferred_units %}
+        //     window.app.startup("assessmentStartup", function(app){
+        //       new app.DoseUnitsWidget($('form'), {
+        //         choices: JSON.parse('{{form.fields.preferred_units.choices|safe}}'),
+        //         el: '#id_preferred_units',
+        //       });
+        //     });
+        //   {% endif %}
+    }
 };
 
 export default {

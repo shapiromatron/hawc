@@ -189,8 +189,6 @@ class HeatmapDatasets(PydanticModel):
 class Visual(models.Model):
     objects = managers.VisualManager()
 
-    FAKE_INITIAL_ID = -1
-
     title = models.CharField(max_length=128)
     slug = models.SlugField(
         verbose_name="URL Name",
@@ -457,23 +455,6 @@ class Visual(models.Model):
             case _:
                 return {}
 
-    def update_config(self) -> dict:
-        """
-        Configuration required to create/update a visual.
-
-        This visual may be a mock instance which has not yet been saved to the database.
-        """
-        match self.visual_type:
-            case constants.VisualType.PRISMA:
-                return dict(
-                    settings=self.settings,
-                    api_data_url=reverse(
-                        "summary:api:assessment-json-data", args=(self.assessment.id,)
-                    ),
-                )
-            case _:
-                return {}
-
     def read_config(self) -> dict:
         """Configuration required to render an instance of the visual in read-only views."""
         match self.visual_type:
@@ -492,7 +473,11 @@ class Visual(models.Model):
         return self.get_filterset_class()(data=data, assessment=assessment, **kwargs)
 
     def get_endpoints(self) -> models.QuerySet[Endpoint]:
-        if self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
+        if self.visual_type == constants.VisualType.BIOASSAY_AGGREGATION:
+            return Endpoint.objects.assessment_qs(self.assessment).filter(
+                id__in=self.endpoints.values_list("id", flat=True)
+            )
+        elif self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
             filters = {"animal_group__dosing_regime__doses__dose_units_id": self.dose_units_id}
             fs = self.get_filterset(self.prefilters, self.assessment)
             form = fs.form

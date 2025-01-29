@@ -20,10 +20,10 @@ class BaseStore {
     @observable djangoFormData = {};
 
     @action setInitialData() {
-        const {initial_data} = this.config,
+        const {initial_settings} = this.config,
             settings =
-                Object.keys(initial_data.settings).length > 0
-                    ? initial_data.settings
+                Object.keys(initial_settings).length > 0
+                    ? initial_settings
                     : this.root.subclass.getDefaultSettings();
         this.updateDjangoSettings(settings);
         this.updateReactSettings(true);

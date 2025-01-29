@@ -179,7 +179,7 @@ class VisualForm(forms.ModelForm):
                 f"Invalid evidence type {evidence_type} for visual {visual_type}."
             )
 
-    def update_context(self, context):
+    def update_form_config(self, config: dict):
         # Add any additional html view context required for the form
         pass
 
@@ -282,6 +282,11 @@ class CrossviewForm(VisualForm):
         prefilter.set_form_options(form)
         return form
 
+    def update_form_config(self, config: dict):
+        config.update(
+            initial_settings=self.instance.settings,
+        )
+
 
 class RoBForm(VisualForm):
     SUBMIT_DIV = False
@@ -309,15 +314,14 @@ class RoBForm(VisualForm):
         prefilter.set_form_options(form)
         return form
 
-    def update_context(self, context):
+    def update_form_config(self, config: dict):
         data = self.instance.get_rob_data()
-        context.update(
-            rob_config=json.dumps(
-                {
-                    "metrics": list(data["metrics"]),
-                    "scores": list(data["scores"]),
-                }
-            )
+        config.update(
+            initial_settings=self.instance.settings,
+            rob_config=dict(
+                metrics=list(data["metrics"]),
+                scores=list(data["scores"]),
+            ),
         )
 
 
@@ -539,6 +543,13 @@ class ExploreHeatmapForm(VisualForm):
         model = models.Visual
         fields = ("title", "slug", "settings", "caption", "published")
 
+    def update_form_config(self, config: dict):
+        config.update(
+            initial_settings=self.instance.settings,
+            api_heatmap_datasets=self.instance.get_api_heatmap_datasets(),
+            clear_cache_url=self.instance.assessment.get_clear_cache_url(),
+        )
+
 
 class PlotlyVisualForm(VisualForm):
     def __init__(self, *args, **kwargs):
@@ -587,6 +598,14 @@ class PrismaVisualForm(VisualForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = self.setHelper()
+
+    def update_form_config(self, config: dict):
+        config.update(
+            initial_settings=self.instance.settings,
+            api_data_url=reverse(
+                "summary:api:assessment-json-data", args=(self.instance.assessment.id,)
+            ),
+        )
 
 
 class ImageVisualForm(VisualForm):
@@ -740,14 +759,9 @@ class DataPivotQueryForm(VisualForm):
         return form
 
     def __init__(self, *args, **kwargs):
-        evidence_type = kwargs.pop("evidence_type", None)
         super().__init__(*args, **kwargs)
 
         self.fields["settings"].required = False
-
-        if self.instance.id is None:
-            self.instance.evidence_type = evidence_type
-
         instance_data = self.instance.prefilters
         if "export_style" in instance_data:
             self.fields["export_style"].initial = instance_data["export_style"]

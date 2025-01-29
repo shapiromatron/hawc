@@ -168,7 +168,7 @@ class CrossviewStore {
             url = `/summary/api/assessment/${config.assessment}/json_data/`,
             formData = this.root.base.toFormData();
         formData.append("visual_type", config.visual_type);
-        formData.append("evidence_type", config.initial_data.evidence_type);
+        formData.append("evidence_type", config.evidence_type);
 
         if (this.visualDataFetching) {
             return;

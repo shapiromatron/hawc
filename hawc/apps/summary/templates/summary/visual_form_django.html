@@ -7,12 +7,7 @@
 
 {% block extrajs %}
   {{ smart_tag_form.media }}
-  <script id="config" type="text/json" charset="utf-8">
-    {
-      "visual_type": {{visual_type}},
-      "isCreate": {% if crud == "Create" %}true{% else %}false{% endif %}
-    }
-  </script>
+  {{ config|json_script:"config" }}
   <script type="text/javascript">
     window.app.startup("summaryFormsStartup", function(summaryForms){
       const config = window.app.getConfig();
