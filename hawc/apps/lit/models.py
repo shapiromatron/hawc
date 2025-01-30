@@ -14,6 +14,7 @@ from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.forms import MultipleChoiceField
 from django.urls import reverse
@@ -33,6 +34,7 @@ from ..common.models import (
     AssessmentRootMixin,
     CustomURLField,
     NonUniqueTagBase,
+    get_private_data_storage,
 )
 from ..myuser.models import HAWCUser
 from ..udf.models import TagBinding, TagUDFContent
@@ -1456,6 +1458,107 @@ class Workflow(models.Model):
             self.description
             or "Go to 'View Workflows' under the actions button for more information."
         )
+
+
+class TrainedVectorizer(models.Model):
+    """Stores a trained vectorizer that can be shared across models"""
+
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    vectorizer = models.FileField(
+        upload_to="trained-vectorizers/", storage=get_private_data_storage()
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
+class TrainedModel(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    vectorizer = models.ForeignKey(
+        TrainedVectorizer,
+        on_delete=models.PROTECT,
+        related_name="trained_models",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ["-updated_at"]
+
+
+class TrainedModelVersion(models.Model):
+    trained_model = models.ForeignKey(
+        TrainedModel, on_delete=models.CASCADE, related_name="versions"
+    )
+    version = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    model = models.FileField(
+        upload_to="trained-models/",
+        storage=get_private_data_storage(),
+    )
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.trained_model.name} v{self.version}"
+
+    class Meta:
+        ordering = ["-version"]
+        unique_together = ["trained_model", "version"]
+
+
+class ModelLabel(models.Model):
+    trained_model = models.ForeignKey(TrainedModel, on_delete=models.CASCADE, related_name="labels")
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        unique_together = ["trained_model", "name"]
+
+
+class ModelPredictionRun(models.Model):
+    model_version = models.ForeignKey(
+        TrainedModelVersion, on_delete=models.CASCADE, related_name="prediction_runs"
+    )
+    workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE, related_name="trained_models")
+    run_date = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"Run of {self.model_version} on {self.workflow}"
+
+
+class ModelPrediction(models.Model):
+    prediction_run = models.ForeignKey(
+        ModelPredictionRun, on_delete=models.CASCADE, related_name="model_predictions"
+    )
+    reference = models.ForeignKey(
+        Reference, on_delete=models.CASCADE, related_name="model_predictions"
+    )
+    label = models.ForeignKey(
+        ModelLabel, on_delete=models.CASCADE, related_name="model_predictions"
+    )
+    score = models.FloatField(
+        validators=[MinValueValidator(0)],
+        default=0,
+    )
+    is_approved = models.BooleanField(
+        blank=True,
+        null=True,
+        help_text="Manually approve this prediction",
+    )
+
+    class Meta:
+        unique_together = ["prediction_run", "reference", "label"]
 
 
 reversion.register(LiteratureAssessment)
