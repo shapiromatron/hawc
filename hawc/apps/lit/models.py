@@ -1478,11 +1478,6 @@ class TrainedVectorizer(models.Model):
 class TrainedModel(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
-    vectorizer = models.ForeignKey(
-        TrainedVectorizer,
-        on_delete=models.PROTECT,
-        related_name="trained_models",
-    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -1502,6 +1497,11 @@ class TrainedModelVersion(models.Model):
         upload_to="trained-models/",
         storage=get_private_data_storage(),
     )
+    vectorizer = models.ForeignKey(
+        TrainedVectorizer,
+        on_delete=models.PROTECT,
+        related_name="trained_models",
+    )
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -1513,8 +1513,10 @@ class TrainedModelVersion(models.Model):
         unique_together = ["trained_model", "version"]
 
 
-class ModelLabel(models.Model):
-    trained_model = models.ForeignKey(TrainedModel, on_delete=models.CASCADE, related_name="labels")
+class PredictionClass(models.Model):
+    trained_model = models.ForeignKey(
+        TrainedModel, on_delete=models.CASCADE, related_name="prediction_classes"
+    )
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
 
@@ -1544,8 +1546,8 @@ class ModelPrediction(models.Model):
     reference = models.ForeignKey(
         Reference, on_delete=models.CASCADE, related_name="model_predictions"
     )
-    label = models.ForeignKey(
-        ModelLabel, on_delete=models.CASCADE, related_name="model_predictions"
+    prediction_class = models.ForeignKey(
+        PredictionClass, on_delete=models.CASCADE, related_name="model_predictions"
     )
     score = models.FloatField(
         validators=[MinValueValidator(0)],
@@ -1556,9 +1558,10 @@ class ModelPrediction(models.Model):
         null=True,
         help_text="Manually approve this prediction",
     )
+    notes = models.TextField(blank=True)
 
     class Meta:
-        unique_together = ["prediction_run", "reference", "label"]
+        unique_together = ["prediction_run", "reference", "prediction_class"]
 
 
 reversion.register(LiteratureAssessment)
