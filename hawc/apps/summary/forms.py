@@ -777,12 +777,7 @@ class DataPivotQueryForm(VisualForm):
 
         if self.instance.evidence_type == constants.StudyType.BIOASSAY:
             self.fields["preferred_units"].required = False
-            self.fields["preferred_units"].choices = json.dumps(
-                [
-                    {"id": obj.id, "name": obj.name}
-                    for obj in DoseUnits.objects.get_animal_units(self.instance.assessment)
-                ]
-            )
+            self._preferred_units_qs = DoseUnits.objects.get_animal_units(self.instance.assessment)
         else:
             self.fields.pop("preferred_units")
 
@@ -807,6 +802,15 @@ class DataPivotQueryForm(VisualForm):
     def clean_settings(self):
         # if settings is None make it an empty dictionary
         return self.cleaned_data["settings"] or {}
+
+    def update_form_config(self, config: dict):
+        if "preferred_units" in self.fields:
+            config.update(
+                preferred_units=[
+                    {"id": obj.id, "label": obj.name} for obj in self._preferred_units_qs
+                ],
+                preferred_units_initial=self.fields["preferred_units"].initial,
+            )
 
 
 class SmartTagForm(forms.Form):

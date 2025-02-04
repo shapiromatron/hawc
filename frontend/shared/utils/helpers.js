@@ -398,6 +398,21 @@ const helpers = {
         const maybeNumber = parseFloat(text);
         return isNaN(maybeNumber) ? text : maybeNumber;
     },
+    selectedOptions: el => {
+        const values = [],
+            indexes = [],
+            options = [];
+        let i = 0;
+        for (const option of el.options) {
+            if (option.selected) {
+                options.push(option);
+                indexes.push(i);
+                values.push(parseInt(option.value) || option.value);
+            }
+            i += 1;
+        }
+        return {options, indexes, values};
+    },
     moveArrayElementUp: (arr, index) => {
         if (index === 0) {
             return;
