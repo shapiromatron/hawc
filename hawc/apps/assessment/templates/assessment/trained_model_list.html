@@ -1,0 +1,21 @@
+{% extends 'crumbless.html' %}
+
+{% block content %}
+
+
+<div class="d-flex align-items-start">
+    <h2 class="mt-0 mb-2">Trained Models</h2>
+    <a class="ml-auto btn btn-primary mt-1" href="{% url 'assessment:trained_model_create' %}">Create a model</a>
+  </div>
+  <div class="list-group mb-4">
+    {% for object in object_list %}
+    <a class="list-group-item clickable text-dark d-flex" href="{{object.get_absolute_url}}"> 
+        {{object.name}}: &nbsp; <i>{{object.description}}</i>
+    </a>
+    {% empty %}
+      {% alert type="info" %}No models found.{% endalert %}
+    {% endfor %}
+  </div>
+  {% include "includes/paginator.html" with plural_object_name="forms" %}
+
+{% endblock %}

@@ -29,6 +29,7 @@ from ..common.forms import (
 )
 from ..common.helper import new_window_a
 from ..common.widgets import DateCheckboxInput
+from ..lit.models import PredictionClass, TrainedModel, TrainedModelVersion, TrainedVectorizer
 from ..myuser.autocomplete import UserAutocomplete
 from ..study.autocomplete import StudyAutocomplete
 from ..summary import models as summary_models
@@ -975,3 +976,49 @@ class LabelItemForm(forms.Form):
                 for label_id in creates
             ]
             models.LabeledItem.objects.bulk_create(labels)
+
+
+class TrainedModelForm(forms.ModelForm):
+
+    class Meta:
+        model = TrainedModel
+        fields = ["name", "description"]
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        return helper
+
+
+class TrainedModelVersionForm(forms.ModelForm):
+
+    class Meta:
+        model = TrainedModelVersion
+        fields = ["model", "notes"]
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        return helper
+
+
+class TrainedVectorizerForm(forms.ModelForm):
+
+    class Meta:
+        model = TrainedVectorizer
+        fields = ["name", "description", "vectorizer"]
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        return helper
+
+
+class PredictionClassForm(forms.ModelForm):
+
+    class Meta:
+        model = PredictionClass
+        fields = ["name", "description"]

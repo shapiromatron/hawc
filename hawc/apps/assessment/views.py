@@ -44,6 +44,7 @@ from ..common.views import (
     create_object_log,
     get_referrer,
 )
+from ..lit.models import TrainedModel
 from ..materialized.models import refresh_all_mvs
 from ..mgmt.analytics.overall import compute_object_counts
 from ..summary import models as summary_models
@@ -1154,3 +1155,69 @@ class LabelItem(HtmxView):
             oob=True,
         )
         return render(request, "assessment/fragments/label_indicators.html", context)
+
+
+class TrainedModelCreate(MessageMixin, LoginRequiredMixin, CreateView):
+    template_name = "assessment/trained_model_create.html"
+    success_message = "Trained Model created."
+
+    def get(self, request):
+        context = {
+            "trained_model_form": forms.TrainedModelForm(prefix="trained-model"),
+            "trained_model_version_form": forms.TrainedModelVersionForm(
+                prefix="trained-model-version"
+            ),
+            "trained_vectorizer_form": forms.TrainedVectorizerForm(prefix="trained-vectorizer"),
+        }
+        return self.render_to_response(context)
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+    @transaction.atomic
+    def post(self, request):
+        trained_model_form = forms.TrainedModelForm(request.POST, prefix="trained-model")
+        trained_model_version_form = forms.TrainedModelVersionForm(
+            request.POST, request.FILES, prefix="trained-model-version"
+        )
+        trained_vectorizer_form = forms.TrainedVectorizerForm(
+            request.POST, request.FILES, prefix="trained-vectorizer"
+        )
+
+        if (
+            trained_model_form.is_valid()
+            and trained_model_version_form.is_valid()
+            and trained_vectorizer_form.is_valid()
+        ):
+            # Save vectorizer first
+            vectorizer = trained_vectorizer_form.save()
+
+            # Save trained model
+            trained_model = trained_model_form.save()
+
+            # Save model version with the trained model, vectorizer, and default version 1
+            model_version = trained_model_version_form.save(commit=False)
+            model_version.trained_model = trained_model
+            model_version.vectorizer = vectorizer
+            model_version.version = 1
+            model_version.save()
+
+            return self.form_valid(trained_model_form)
+
+        context = {
+            "trained_model_form": trained_model_form,
+            "trained_model_version_form": trained_model_version_form,
+            "trained_vectorizer_form": trained_vectorizer_form,
+        }
+        return self.render_to_response(context)
+
+
+class TrainedModelDetail(LoginRequiredMixin, DetailView):
+    model = TrainedModel
+    template_name = "assessment/trained_model_detail.html"
+
+
+class TrainedModelList(LoginRequiredMixin, ListView):
+    model = TrainedModel
+    template_name = "assessment/trained_model_list.html"
+    paginate_by = 50

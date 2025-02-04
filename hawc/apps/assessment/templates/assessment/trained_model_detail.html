@@ -1,0 +1,22 @@
+{% extends 'crumbless.html' %}
+
+{% block content %}
+
+
+<div class="d-flex align-items-start">
+    <h2 class="mt-0 mb-2">{{object.name}}</h2>
+    <!-- <a class="ml-auto btn btn-primary mt-1" href="{% url 'assessment:trained_model_create' %}">Create a model</a> -->
+</div>
+  {{object.description}}
+  <h4>Versions</h4>
+  <div class="list-group mb-4">
+    {% for object in object.versions.all %}
+    <div class="list-group-item text-dark d-flex"> 
+       <i>Version {{object.version}}</i>: {{object.notes}} &nbsp;<b>Vectorizer</b>: {{object.vectorizer}}
+    </div>
+    {% empty %}
+      {% alert type="info" %}No versions found.{% endalert %}
+    {% endfor %}
+  </div>
+
+{% endblock %}

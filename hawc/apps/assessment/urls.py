@@ -160,6 +160,21 @@ urlpatterns = [
         views.LabelItem.as_view(),
         name="label-item",
     ),
+    path(
+        "trained-model/create/",
+        views.TrainedModelCreate.as_view(),
+        name="trained_model_create",
+    ),
+    path(
+        "trained-model/<int:pk>/",
+        views.TrainedModelDetail.as_view(),
+        name="trained_model_detail",
+    ),
+    path(
+        "trained-models/",
+        views.TrainedModelList.as_view(),
+        name="trained_model_list",
+    ),
     # api views
     path("api/", include((router.urls, "api"))),
 ]

@@ -1487,6 +1487,9 @@ class TrainedModel(models.Model):
     class Meta:
         ordering = ["-updated_at"]
 
+    def get_absolute_url(self):
+        return reverse("assessment:trained_model_detail", args=(self.id,))
+
 
 class TrainedModelVersion(models.Model):
     trained_model = models.ForeignKey(
