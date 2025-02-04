@@ -1458,6 +1458,72 @@ class Workflow(models.Model):
         )
 
 
+# add parameters/select on literatureassessment model
+class DedupeSettings(models.Model):
+    # deduper for use in an assessment
+    # for first pass maybe we just have a global deduper, or static choices, so that we don't have to build this
+    assessment:"Assessment"
+    parameters:dict # list of parameters for deduplication? ie schema of dedupe modules to use?
+
+    def build_deduper(self):
+        # return deduper instance using self.parameters
+        return
+
+
+# SOFT DELETES
+
+class SortedArrayField(ArrayField):
+    pass
+
+class DuplicateCandidates(models.Model):
+    assessment = models.ForeignKey(
+        "assessment.Assessment", on_delete=models.CASCADE, related_name="duplicates"
+    )
+    resolution = models.PositiveSmallIntegerField(
+        choices=constants.DuplicateResolution,
+        default=constants.DuplicateResolution.UNRESOLVED
+    )
+    resolving_user = models.ForeignKey(HAWCUser, null=True, on_delete=models.SET_NULL, related_name="resolved_duplicates")
+    candidates = ArrayField(models.IntegerField(),unique=True)
+    primary = models.IntegerField(null=True)
+    notes = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def generate_unique_identifier(self):
+        return sorted(self.candidates)
+
+
+    def resolve(self,primaries:dict|list[dict]):
+        if primaries is None:
+            self.resolution = "False positive"
+        else:
+            self.resolution = "Duplicates detected"
+            # remove reference instances pointed to in self.data that are not primaries
+            # update reference instances in primaries with data?
+            self.result = primaries
+
+# where to put execute method? literatureassessment, manager for dupes model
+
+"""
+WORKFLOW
+
+User defines deduper for use in assessment
+User executes a session that uses a defined deduper
+Session stores list of identified candidate duplicate groups
+User resolves duplicates in a session; if group status != unresolved, it shows up on this page
+Perhaps a seperate session page of resolved groups? ie an "in progress" list view and a "done" list view
+Multiple resolutions at once? Or more like screen page in LLR where its do one, click for next (look at conflict resolution)
+Should this workflow do anything proactive? ie lets say a candidate group is identified false positive, is it a big deal if it shows up again if a user executes another session w/ same settings? (yes)
+Single user right? Not like conflict resolution? THIS IS CORRECT
+Do we want this workflow to also happen on import? That would look slightly different
+    Though maybe we could just have it happen automatically AFTER import, that way it would use the same workflow
+    If used on import, do we add "choose a deduper" option to created search? or maybe "default" attribute to deduper, whichever one is "default" is used?
+    Each assessment has undeletable "default" deduper, maybe add noop setting choice for deduper for people who don't want it running on imports?
+"""
+
+
+
 reversion.register(LiteratureAssessment)
 reversion.register(Search)
 reversion.register(ReferenceFilterTag)

@@ -1250,3 +1250,20 @@ class AssessmentInteractive(HtmxView):
             "qs": models.Reference.objects.assessment_qs(self.assessment.id).filter(id__in=ids)
         }
         return render(request, "lit/components/venn_reference_list.html", context=context)
+
+
+
+class DuplicateCandidatesList(BaseList):
+    parent_model = Assessment
+    model = models.DuplicateCandidates
+    template_name = "lit/duplicate_candidates.html"
+    breadcrumb_active_name = "Duplicate candidates"
+
+    def get_queryset(self):
+        return (
+            super().get_queryset().filter(assessment=self.assessment).filter(resolution=constants.DuplicateResolution.UNRESOLVED)
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+

@@ -163,4 +163,9 @@ urlpatterns = [
         name="workflow-htmx",
     ),
     path("api/", include((router.urls, "api"))),
+    path(
+        "assessment/<int:pk>/duplicate-candidates/",
+        views.DuplicateCandidatesList.as_view(),
+        name="duplicate-candidates",
+    ),
 ]
