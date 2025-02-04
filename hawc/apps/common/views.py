@@ -466,22 +466,22 @@ class BaseCreate(
         self.parent = self.get_object(object=parent)  # call for assessment permissions check
         return super().dispatch(*args, **kwargs)
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-
-        # all inputs require a parent field
-        kwargs["parent"] = self.parent
-
-        # check if we have an object-template to be used
+    def _get_initial(self, filters: dict | None = None):
+        filters = filters or {}
         pk = tryParseInt(self.request.GET.get("initial"), -1)
-
         if pk > 0:
-            initial = self.model.objects.filter(pk=pk).first()
+            filters.update(pk=pk)
+            initial = self.model.objects.filter(**filters).first()
             if initial and initial.get_assessment() in Assessment.objects.all().user_can_view(
                 self.request.user
             ):
-                kwargs["initial"] = model_to_dict(initial)
+                return model_to_dict(initial)
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["parent"] = self.parent
+        if initial := self._get_initial():
+            kwargs["initial"] = initial
         return kwargs
 
     def get_context_data(self, **kwargs):

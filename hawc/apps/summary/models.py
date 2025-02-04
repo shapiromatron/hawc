@@ -6,7 +6,6 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
-from django.utils import timezone
 from docx import Document as create_document
 from plotly.graph_objs._figure import Figure
 from plotly.io import from_json
@@ -21,7 +20,7 @@ from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.constants import EpiVersion, RobName
 from ..assessment.models import Assessment, BaseEndpoint, DoseUnits, LabeledItem
-from ..common.helper import FlatExport, PydanticToDjangoError, ReportExport, SerializerHelper
+from ..common.helper import FlatExport, PydanticToDjangoError, ReportExport
 from ..common.validators import validate_html_tags, validate_hyperlinks
 from ..eco.exports import EcoFlatComplete
 from ..epi.exports import OutcomeDataPivot
@@ -30,7 +29,6 @@ from ..epiv2.exports import EpiFlatComplete
 from ..invitro import exports as ivexports
 from ..lit.models import Reference, ReferenceFilterTag, Search
 from ..riskofbias.models import RiskOfBiasScore
-from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
 from . import constants, managers, prefilters
 from .actions.rob import get_rob_visual_form_data
@@ -506,40 +504,6 @@ class Visual(models.Model):
             qs = fs.qs
 
         return qs
-
-    def get_editing_dataset(self, request):
-        # Generate a pseudo-return when editing or creating a dataset.
-        # Do not include the settings field; this will be set from the
-        # input-form. Should approximately mirror the Visual API from rest-framework.
-
-        dose_units = None
-        try:
-            dose_units = int(request.POST.get("dose_units"))
-        except (TypeError, ValueError):
-            # TypeError if dose_units is None; ValueError if dose_units is ""
-            pass
-
-        return {
-            "assessment": self.assessment_id,
-            "assessment_rob_name": self.assessment.get_rob_name_display(),
-            "title": request.POST.get("title"),
-            "slug": request.POST.get("slug"),
-            "caption": request.POST.get("caption"),
-            "dose_units": dose_units,
-            "created": timezone.now().isoformat(),
-            "last_updated": timezone.now().isoformat(),
-            "rob_settings": AssessmentRiskOfBiasSerializer(self.assessment).data,
-            "endpoints": [
-                SerializerHelper.get_serialized(e, json=False) for e in self.get_endpoints(request)
-            ],
-            "studies": [
-                SerializerHelper.get_serialized(s, json=False) for s in self.get_studies(request)
-            ],
-        }
-
-    def get_rob_visual_type_display(self, value):
-        rob_name = self.assessment.get_rob_name_display().lower()
-        return value.replace("risk of bias", rob_name)
 
     def get_plotly_from_json(self) -> Figure:
         if self.visual_type != constants.VisualType.PLOTLY:

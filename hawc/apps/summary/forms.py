@@ -171,14 +171,6 @@ class VisualForm(forms.ModelForm):
         validators.validate_hyperlinks(caption)
         return sanitize_html.clean_html(caption)
 
-    def clean_evidence_type(self):
-        visual_type = self.cleaned_data["visual_type"]
-        evidence_type = self.cleaned_data["evidence_type"]
-        if evidence_type not in constants.VISUAL_EVIDENCE_CHOICES[visual_type]:
-            raise forms.ValidationError(
-                f"Invalid evidence type {evidence_type} for visual {visual_type}."
-            )
-
     def update_form_config(self, config: dict):
         # Add any additional html view context required for the form
         pass
@@ -656,30 +648,27 @@ class ImageVisualForm(VisualForm):
         widgets = {"image": forms.FileInput}
 
 
-def get_visual_form(visual_type):
-    try:
-        return {
-            constants.VisualType.BIOASSAY_AGGREGATION: EndpointAggregationForm,
-            constants.VisualType.BIOASSAY_CROSSVIEW: CrossviewForm,
-            constants.VisualType.ROB_HEATMAP: RoBForm,
-            constants.VisualType.ROB_BARCHART: RoBForm,
-            constants.VisualType.LITERATURE_TAGTREE: TagtreeForm,
-            constants.VisualType.EXTERNAL_SITE: ExternalSiteForm,
-            constants.VisualType.EXPLORE_HEATMAP: ExploreHeatmapForm,
-            constants.VisualType.PLOTLY: PlotlyVisualForm,
-            constants.VisualType.IMAGE: ImageVisualForm,
-            constants.VisualType.PRISMA: PrismaVisualForm,
-            constants.VisualType.DATA_PIVOT_QUERY: DataPivotQueryForm,
-            constants.VisualType.DATA_PIVOT_FILE: DataPivotDatasetForm,
-        }[visual_type]
-    except Exception as exc:
-        raise ValueError() from exc
-
-
 class VisualSettingsForm(forms.ModelForm):
     class Meta:
         model = models.Visual
         fields = ("settings",)
+
+
+def get_visual_form(visual_type: constants.VisualType) -> VisualSettingsForm:
+    return {
+        constants.VisualType.BIOASSAY_AGGREGATION: EndpointAggregationForm,
+        constants.VisualType.BIOASSAY_CROSSVIEW: CrossviewForm,
+        constants.VisualType.ROB_HEATMAP: RoBForm,
+        constants.VisualType.ROB_BARCHART: RoBForm,
+        constants.VisualType.LITERATURE_TAGTREE: TagtreeForm,
+        constants.VisualType.EXTERNAL_SITE: ExternalSiteForm,
+        constants.VisualType.EXPLORE_HEATMAP: ExploreHeatmapForm,
+        constants.VisualType.PLOTLY: PlotlyVisualForm,
+        constants.VisualType.IMAGE: ImageVisualForm,
+        constants.VisualType.PRISMA: PrismaVisualForm,
+        constants.VisualType.DATA_PIVOT_QUERY: DataPivotQueryForm,
+        constants.VisualType.DATA_PIVOT_FILE: DataPivotDatasetForm,
+    }[visual_type]
 
 
 class DataPivotDatasetForm(VisualForm):

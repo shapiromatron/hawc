@@ -1,9 +1,10 @@
 import pytest
 from django.urls import reverse
 
-from hawc.apps.summary import constants, models
+from hawc.apps.summary import models
+from hawc.apps.summary.constants import VisualType
 
-from ..test_utils import check_200, get_client
+from ..test_utils import check_200, check_404, get_client
 
 
 @pytest.mark.django_db
@@ -58,18 +59,65 @@ def test_get_200():
 
 
 @pytest.mark.django_db
+class TestVisualVisualizationCreate:
+    def test_visual_type_200(self):
+        # check that each (visual_type, evidence_type) renders successfully
+        client = get_client("admin")
+        for args in [
+            (1, 0),
+            (1, 1),
+            (1, 2, 0),
+            (1, 3, 0),
+            (1, 4),
+            (1, 5),
+            (1, 6),
+            (1, 7),
+            (1, 8),
+            (1, 9),
+            (1, 10, 0),
+            (1, 10, 1),
+            (1, 10, 2),
+            (1, 10, 4),
+            (1, 10, 5),
+            (1, 11),
+        ]:
+            url = reverse("summary:visualization_create", args=args)
+            check_200(client, url)
+
+    # def test_initial(self):
+    #     # TODO fix initial stuff
+    #     client = get_client("admin")
+    #     instance = models.Visual.objects.filter(visual_type=VisualType.BIOASSAY_CROSSVIEW).first()
+    #     url = (
+    #         reverse(
+    #             "summary:visualization_create", args=(instance.assessment_id, instance.visual_type)
+    #         )
+    #         + f"?initial={instance.id}"
+    #     )
+    #     resp = check_200(client, url)
+    #     assert resp.context["form"]["fields"]["title"] == instance.title
+
+    def test_bad_requests(self):
+        client = get_client("admin")
+        for args in [
+            (1, 2, 300),  # bad evidence type
+            (1, 2, 3),  # bad evidence type for this visual type
+        ]:
+            url = reverse("summary:visualization_create", args=args)
+            check_404(client, url)
+
+
+@pytest.mark.django_db
 class TestVisualizationUpdateSettings:
     def test_test_404(self):
         client = get_client("admin")
 
         # works for a datapivot
-        obj = models.Visual.objects.filter(
-            visual_type=constants.VisualType.DATA_PIVOT_QUERY
-        ).first()
+        obj = models.Visual.objects.filter(visual_type=VisualType.DATA_PIVOT_QUERY).first()
         url = obj.get_dp_update_settings()
         assert client.get(url).status_code == 200
 
         # but returns 404 for non-data pivot
-        obj = models.Visual.objects.filter(visual_type=constants.VisualType.PLOTLY).first()
+        obj = models.Visual.objects.filter(visual_type=VisualType.PLOTLY).first()
         url = obj.get_dp_update_settings()
         assert client.get(url).status_code == 404

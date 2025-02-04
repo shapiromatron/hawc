@@ -320,38 +320,34 @@ class VisualizationCreate(BaseCreate):
 
     def get_form_class(self):
         try:
-            return forms.get_visual_form(int(self.kwargs.get("visual_type")))
+            self.visual_type = constants.VisualType(self.kwargs.get("visual_type"))
         except ValueError as err:
-            raise Http404 from err
+            raise Http404() from err
+
+        return forms.get_visual_form(self.visual_type)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
-        visual_type = tryParseInt(self.kwargs.get("visual_type"))
         evidence_type = tryParseInt(self.kwargs.get("study_type"))
         initial = tryParseInt(self.request.GET.get("initial"))
-        instance = None
-        try:
-            visual_type = constants.VisualType(visual_type)
-        except ValueError as err:
-            raise Http404() from err
 
         if evidence_type is None:
-            evidence_type = constants.get_default_evidence_type(visual_type)
+            evidence_type = constants.get_default_evidence_type(self.visual_type)
         else:
             try:
                 evidence_type = constants.StudyType(evidence_type)
             except ValueError as err:
                 raise Http404() from err
 
+        initial = self._get_initial(filters=dict(visual_type=self.visual_type))
         if initial:
-            if instance := self.model.objects.filter(pk=initial).first():
-                instance.pk = None
-                evidence_type = instance.evidence_type
-        if evidence_type not in constants.VISUAL_EVIDENCE_CHOICES[visual_type]:
+            evidence_type = initial.evidence_type
+
+        if evidence_type not in constants.VISUAL_EVIDENCE_CHOICES[self.visual_type]:
             raise Http404()
 
-        kwargs.update(visual_type=visual_type, evidence_type=evidence_type, initial=instance)
+        kwargs.update(visual_type=self.visual_type, evidence_type=evidence_type, initial=initial)
         return kwargs
 
     def get_template_names(self):
