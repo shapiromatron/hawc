@@ -364,13 +364,10 @@ class VisualizationCreate(BaseCreate):
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
-        }:
-            return ["summary/visual_form_django.html"]
-        elif visual_type in (
             constants.VisualType.DATA_PIVOT_QUERY,
             constants.VisualType.DATA_PIVOT_FILE,
-        ):
-            return ["summary/visual_form_dp.html"]
+        }:
+            return ["summary/visual_form_django.html"]
         return super().get_template_names()
 
     def get_context_data(self, **kwargs):
@@ -450,17 +447,14 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         visual_type = self.object.visual_type
         if visual_type in [] and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
             raise PermissionDenied()
-        if visual_type in (
-            constants.VisualType.DATA_PIVOT_QUERY,
-            constants.VisualType.DATA_PIVOT_FILE,
-        ):
-            return ["summary/visual_form_dp.html"]
-        elif visual_type in {
+        if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
+            constants.VisualType.DATA_PIVOT_QUERY,
+            constants.VisualType.DATA_PIVOT_FILE,
         }:
             return ["summary/visual_form_django.html"]
         return super().get_template_names()
