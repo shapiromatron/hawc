@@ -340,10 +340,10 @@ class LabeledItemQuerySet(QuerySet):
 
     def filter_title(self, query: str):
         filter = (
-            Q(summary_table__title__icontains=query)
-            | Q(visual__title__icontains=query)
-            | Q(datapivot_query__title__icontains=query)
-            | Q(datapivot_upload__title__icontains=query)
+            Q(summary_tables__title__icontains=query)
+            | Q(visuals__title__icontains=query)
+            | Q(datapivot_queries__title__icontains=query)
+            | Q(datapivot_uploads__title__icontains=query)
         )
         return self.filter(filter)
 
