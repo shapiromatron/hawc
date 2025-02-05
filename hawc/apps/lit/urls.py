@@ -163,9 +163,14 @@ urlpatterns = [
         name="workflow-htmx",
     ),
     path(
-        "assessment/<int:pk>/run-model-prediction/",
+        "assessment/<int:pk>/model-prediction-run/",
         views.ModelPredictionRunCreate.as_view(),
         name="model_prediction_run_create",
+    ),
+    path(
+        "model-prediction-run/<int:pk>/",
+        views.ModelPredictionRunDetail.as_view(),
+        name="model_prediction_run_detail",
     ),
     path("api/", include((router.urls, "api"))),
 ]

@@ -3,34 +3,43 @@
 {% block content %}
 
 
-<div class="d-flex align-items-start">
+  <div class="d-flex align-items-start">
     <h2 class="mt-0 mb-2">{{object.name}}</h2>
     <!-- <a class="ml-auto btn btn-primary mt-1" href="{% url 'assessment:trained_model_create' %}">Create a model</a> -->
     {% actions %}
-    <a class="dropdown-item" href="#">Upload new model version</a>
-    <a class="dropdown-item" href="{% url 'assessment:prediction_class_create' object.pk %}">Add model prediction class</a>
-  {% endactions %}
-</div>
+      <a class="dropdown-item" href="{{object.get_update_url}}">Upload new model version</a>
+      <a class="dropdown-item" href="{% url 'assessment:prediction_class_create' object.pk %}">Add model prediction class</a>
+    {% endactions %}
+  </div>
   {{object.description}}
   <h4>Versions</h4>
   <div class="list-group mb-4">
     {% for object in object.versions.all %}
-    <div class="list-group-item text-dark d-flex"> 
-       <i>Version {{object.version}}</i>: {{object.notes}} &nbsp;<b>Vectorizer</b>: {{object.vectorizer}}
-    </div>
+      <div class="list-group-item text-dark d-flex">
+        <i>Version {{object.version}}</i>: {{object.notes}} &nbsp;<b>Vectorizer</b>: {{object.vectorizer}}
+      </div>
+      {% if object.prediction_runs.exists %}
+        <div class="list-group mb-4 ml-4">
+          {% for object in object.prediction_runs.all %}
+            <a class="list-group-item list-group-item-action text-dark d-flex" href="{{object.get_absolute_url}}">
+              Model ran in {{object.workflow.assessment}} on {{object.workflow}}
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
     {% empty %}
       {% alert type="info" %}No versions found.{% endalert %}
     {% endfor %}
 
     <h4>Prediction Class(es)</h4>
     <div class="list-group mb-4">
-    {% for object in object.prediction_classes.all %}
-    <div class="list-group-item text-dark d-flex"> 
-       <b>{{object.name}}</b>: {{object.description}}
+      {% for object in object.prediction_classes.all %}
+        <div class="list-group-item text-dark d-flex">
+          <b>{{object.name}}</b>: {{object.description}}
+        </div>
+      {% empty %}
+        {% alert type="info" %}No prediction classes found.{% endalert %}
+      {% endfor %}
     </div>
-    {% empty %}
-      {% alert type="info" %}No prediction classes found.{% endalert %}
-    {% endfor %}
-  </div>
 
 {% endblock %}

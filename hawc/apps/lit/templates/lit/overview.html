@@ -196,6 +196,17 @@
               {% endif %}
             {% endwith %}
           {% endfor %}
+          {% for object in model_prediction_runs %}
+            <a class="lit-review-box box-shadow with-icon clickable w-30" href="{{object.get_absolute_url}}">
+              <div>
+                <p class="h3 m-0 mt-1">{{object.model_predictions.count}}</p>
+                <p class="small m-0">predictions from model <i>{{object.model_version}}</i></p>
+              </div>
+              <div class="lit-icon">
+                <i class="fa fa-signal icon-bg" style="background-color: #9d9d9d;"></i>
+              </div>
+            </a>
+          {% endfor %}
         {% endif %}
       </div>
     </div>

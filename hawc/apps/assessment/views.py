@@ -23,7 +23,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 
 from ...services.utils.rasterize import get_styles_svg_definition
 from ..common.crumbs import Breadcrumb
@@ -1157,13 +1157,16 @@ class LabelItem(HtmxView):
         return render(request, "assessment/fragments/label_indicators.html", context)
 
 
-class TrainedModelCreate(MessageMixin, LoginRequiredMixin, CreateView):
+class TrainedModelFormMixin:
     template_name = "assessment/trained_model_create.html"
     success_message = "Trained Model created."
 
-    def get(self, request):
+    def get(self, request, **kwargs):
+        self.object = self.get_object() if "pk" in kwargs else None
         context = {
-            "trained_model_form": forms.TrainedModelForm(prefix="trained-model"),
+            "trained_model_form": forms.TrainedModelForm(
+                prefix="trained-model", instance=self.object
+            ),
             "trained_model_version_form": forms.TrainedModelVersionForm(
                 prefix="trained-model-version"
             ),
@@ -1175,7 +1178,8 @@ class TrainedModelCreate(MessageMixin, LoginRequiredMixin, CreateView):
         return self.object.get_absolute_url()
 
     @transaction.atomic
-    def post(self, request):
+    def post(self, request, **kwargs):
+        self.object = self.get_object() if "pk" in kwargs else None
         trained_model_form = forms.TrainedModelForm(request.POST, prefix="trained-model")
         trained_model_version_form = forms.TrainedModelVersionForm(
             request.POST, request.FILES, prefix="trained-model-version"
@@ -1199,9 +1203,11 @@ class TrainedModelCreate(MessageMixin, LoginRequiredMixin, CreateView):
             model_version = trained_model_version_form.save(commit=False)
             model_version.trained_model = trained_model
             model_version.vectorizer = vectorizer
-            model_version.version = 1
+            model_version.version = trained_model.versions.count() + 1
             model_version.save()
 
+            return self.form_valid(trained_model_form)
+        elif trained_model_form.is_valid() and self.object:
             return self.form_valid(trained_model_form)
 
         context = {
@@ -1210,6 +1216,17 @@ class TrainedModelCreate(MessageMixin, LoginRequiredMixin, CreateView):
             "trained_vectorizer_form": trained_vectorizer_form,
         }
         return self.render_to_response(context)
+
+
+class TrainedModelCreate(MessageMixin, LoginRequiredMixin, TrainedModelFormMixin, CreateView):
+    template_name = "assessment/trained_model_create.html"
+    success_message = "Trained Model created."
+
+
+class TrainedModelUpdate(MessageMixin, LoginRequiredMixin, TrainedModelFormMixin, UpdateView):
+    template_name = "assessment/trained_model_create.html"
+    success_message = "Trained Model update."
+    model = TrainedModel
 
 
 class TrainedModelDetail(LoginRequiredMixin, DetailView):

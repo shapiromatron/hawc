@@ -1,0 +1,19 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+
+  <h3>{{object.model_version}} ran on <i>{{object.workflow}}</i></h3>
+
+  <p>{{object.notes}}</p>
+
+  <div class="list-group mb-4">
+    {% for object in object.model_predictions.all %}
+      <div class="list-group-item text-dark d-flex py-2">
+        <i>{{object.reference}}:</i>&nbsp;<span class="badge badge-secondary align-self-center">{{object.prediction_class}}: <b>{{object.score|floatformat:2}}</b></span>
+      </div>
+    {% empty %}
+      {% alert type="info" %}No predictions found.{% endalert %}
+    {% endfor %}
+  </div>
+
+{% endblock %}

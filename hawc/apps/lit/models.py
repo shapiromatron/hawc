@@ -1491,6 +1491,9 @@ class TrainedModel(models.Model):
     def get_absolute_url(self):
         return reverse("assessment:trained_model_detail", args=(self.id,))
 
+    def get_update_url(self) -> str:
+        return reverse("assessment:trained_model_update", args=(self.id,))
+
 
 class TrainedModelVersion(models.Model):
     trained_model = models.ForeignKey(
@@ -1539,8 +1542,16 @@ class ModelPredictionRun(models.Model):
     run_date = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True)
 
+    BREADCRUMB_PARENT = None
+
     def __str__(self):
         return f"Run of {self.model_version} on {self.workflow}"
+
+    def get_assessment(self):
+        return self.workflow.assessment
+
+    def get_absolute_url(self):
+        return reverse("lit:model_prediction_run_detail", args=(self.pk,))
 
     def run_prediction(self):
         references = Reference.objects.filter(assessment=self.workflow.assessment).in_workflow(

@@ -11,7 +11,6 @@ from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
-from django.views.generic.edit import CreateView
 
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
@@ -26,8 +25,6 @@ from ..common.views import (
     BaseFilterList,
     BaseList,
     BaseUpdate,
-    LoginRequiredMixin,
-    MessageMixin,
     create_object_log,
     htmx_required,
 )
@@ -60,6 +57,9 @@ class LitOverview(BaseList):
         context = super().get_context_data(**kwargs)
         context["overview"], context["workflows"] = models.Reference.objects.get_overview_details(
             self.assessment
+        )
+        context["model_prediction_runs"] = models.ModelPredictionRun.objects.filter(
+            workflow__assessment=self.assessment
         )
         context["overview"]["my_reviews"] = (
             models.Reference.objects.filter(assessment=self.assessment)
@@ -1255,17 +1255,14 @@ class AssessmentInteractive(HtmxView):
         return render(request, "lit/components/venn_reference_list.html", context=context)
 
 
-class ModelPredictionRunCreate(MessageMixin, LoginRequiredMixin, CreateView):
+class ModelPredictionRunCreate(BaseCreate):
     success_message = "Prediction model running.."
     form_class = forms.ModelPredictionRunForm
     template_name = "lit/model_prediction_run_create.html"
+    parent_template_name = "assessment"
     success_message = "Running predictions..."
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        self.assessment = get_object_or_404(Assessment, pk=self.kwargs["pk"])
-        kwargs["assessment"] = self.assessment
-        return kwargs
+    parent_model = Assessment
+    model = models.ModelPredictionRun
 
     def form_valid(self, form):
         response = super().form_valid(form)
@@ -1274,3 +1271,15 @@ class ModelPredictionRunCreate(MessageMixin, LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         return reverse("lit:overview", args=(self.assessment.pk,))
+
+
+class ModelPredictionRunDetail(BaseDetail):
+    model = models.ModelPredictionRun
+    template_name = "lit/model_prediction_run.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, f"{self.object.model_version} Run"
+        )
+        return context

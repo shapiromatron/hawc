@@ -2,36 +2,36 @@
 
 {% block content %}
 
-<form method="post" enctype="multipart/form-data">
+  <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-        
-        <div class="card mb-3">
-            <div class="card-header">
-                <h3 class="card-title">Trained Model Details</h3>
-            </div>
-            <div class="card-body">
-                {% crispy trained_model_form %}
-            </div>
-        </div>
-        
-        <div class="card mb-3">
-            <div class="card-header">
-                <h3 class="card-title">Trained Model Version</h3>
-            </div>
-            <div class="card-body">
-                {% crispy trained_model_version_form %}
-            </div>
-        </div>
-        
-        <div class="card mb-3">
-            <div class="card-header">
-                <h3 class="card-title">Vectorizer</h3>
-            </div>
-            <div class="card-body">
-                {% crispy trained_vectorizer_form %}
-            </div>
-        </div>
-        
-        <button type="submit" class="btn btn-primary">Create Trained Model</button>
+
+    <div class="card mb-3">
+      <div class="card-header">
+        Trained Model Details
+      </div>
+      <div class="card-body">
+        {% crispy trained_model_form %}
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header">
+        Trained Model Version
+      </div>
+      <div class="card-body">
+        {% crispy trained_model_version_form %}
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <div class="card-header">
+        Vectorizer
+      </div>
+      <div class="card-body">
+        {% crispy trained_vectorizer_form %}
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mb-3">{% if trained_model_form.instance.id %} Update {% else %} Create {% endif %} Trained Model</button>
   </form>
 {% endblock %}

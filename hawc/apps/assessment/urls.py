@@ -166,6 +166,11 @@ urlpatterns = [
         name="trained_model_create",
     ),
     path(
+        "trained-model/update/<int:pk>",
+        views.TrainedModelUpdate.as_view(),
+        name="trained_model_update",
+    ),
+    path(
         "trained-model/<int:pk>/",
         views.TrainedModelDetail.as_view(),
         name="trained_model_detail",

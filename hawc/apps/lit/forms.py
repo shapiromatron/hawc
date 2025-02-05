@@ -831,7 +831,7 @@ class ModelPredictionRunForm(forms.ModelForm):
         fields = ["workflow", "model_version"]
 
     def __init__(self, *args, **kwargs):
-        assessment = kwargs.pop("assessment", None)
+        assessment = kwargs.pop("parent", None)
         super().__init__(*args, **kwargs)
         workflows = models.Workflow.objects.filter(assessment=assessment)
         self.fields["workflow"].queryset = workflows
