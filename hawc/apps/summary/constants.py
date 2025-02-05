@@ -18,10 +18,7 @@ class StudyType(models.IntegerChoices):
             2: "in_vitro",
             5: "eco",
         }
-        try:
-            return mapping[self]
-        except KeyError:
-            raise ValueError(f"No study_filter_prefix for {self}") from None
+        return mapping[self]
 
     def rob_prefix(self):
         mapping = {
@@ -29,10 +26,7 @@ class StudyType(models.IntegerChoices):
             1: "required_epi",
             2: "required_invitro",
         }
-        try:
-            return mapping[self]
-        except KeyError:
-            raise ValueError(f"No rob_prefix for {self}") from None
+        return mapping[self]
 
 
 class TableType(models.IntegerChoices):

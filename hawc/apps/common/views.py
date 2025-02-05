@@ -466,15 +466,21 @@ class BaseCreate(
         self.parent = self.get_object(object=parent)  # call for assessment permissions check
         return super().dispatch(*args, **kwargs)
 
-    def _get_initial(self, filters: dict | None = None):
+    def _get_initial(self, filters: dict | None = None) -> dict | None:
         filters = filters or {}
-        pk = tryParseInt(self.request.GET.get("initial"), -1)
+        pk = tryParseInt(self.request.GET.get("initial"), default=-1)
         if pk > 0:
             filters.update(pk=pk)
             initial = self.model.objects.filter(**filters).first()
-            if initial and initial.get_assessment() in Assessment.objects.all().user_can_view(
-                self.request.user
-            ):
+            if initial is None:
+                return None
+            visible_assessment = (
+                Assessment.objects.all()
+                .user_can_view(self.request.user)
+                .filter(id=initial.get_assessment().id)
+                .exists()
+            )
+            if initial and visible_assessment:
                 return model_to_dict(initial)
 
     def get_form_kwargs(self):

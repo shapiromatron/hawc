@@ -1,5 +1,6 @@
 from uuid import uuid4
 
+from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -69,7 +70,7 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
 
         if visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
             data = request.data.copy()
-            uuid = str(uuid4())
+            uuid = "zzz-zzz" if settings.IS_TESTING else str(uuid4())
             evidence_type = constants.StudyType.BIOASSAY
             data.update(title=uuid, slug=uuid, evidence_type=evidence_type)
             form = forms.CrossviewForm(
@@ -87,7 +88,7 @@ class SummaryAssessmentViewSet(BaseAssessmentViewSet):
             evidence_type = get_enum_or_400(
                 tryParseInt(request.data.get("evidence_type", -1)), constants.StudyType
             )
-            uuid = str(uuid4())
+            uuid = "zzz-zzz" if settings.IS_TESTING else str(uuid4())
             data.update(title=uuid, slug=uuid, evidence_type=evidence_type)
             form = forms.RoBForm(
                 data, evidence_type=evidence_type, visual_type=visual_type, parent=assessment

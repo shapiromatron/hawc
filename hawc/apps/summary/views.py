@@ -330,7 +330,9 @@ class VisualizationCreate(BaseCreate):
         kwargs = super().get_form_kwargs()
 
         evidence_type = tryParseInt(self.kwargs.get("study_type"))
-        initial = tryParseInt(self.request.GET.get("initial"))
+        initial = self._get_initial(filters=dict(visual_type=self.visual_type))
+        if initial:
+            evidence_type = initial["evidence_type"]
 
         if evidence_type is None:
             evidence_type = constants.get_default_evidence_type(self.visual_type)
@@ -339,10 +341,6 @@ class VisualizationCreate(BaseCreate):
                 evidence_type = constants.StudyType(evidence_type)
             except ValueError as err:
                 raise Http404() from err
-
-        initial = self._get_initial(filters=dict(visual_type=self.visual_type))
-        if initial:
-            evidence_type = initial.evidence_type
 
         if evidence_type not in constants.VISUAL_EVIDENCE_CHOICES[self.visual_type]:
             raise Http404()
@@ -434,10 +432,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
     model = models.Visual
 
     def get_form_class(self):
-        try:
-            return forms.get_visual_form(self.object.visual_type)
-        except ValueError as err:
-            raise Http404() from err
+        return forms.get_visual_form(self.object.visual_type)
 
     def get_template_names(self):
         visual_type = self.object.visual_type

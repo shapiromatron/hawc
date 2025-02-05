@@ -67,7 +67,11 @@ class TestVisualVisualizationCreate:
             (1, 0),
             (1, 1),
             (1, 2, 0),
+            (1, 2, 1),
+            (1, 2, 2),
             (1, 3, 0),
+            (1, 3, 1),
+            (1, 3, 2),
             (1, 4),
             (1, 5),
             (1, 6),
@@ -84,23 +88,24 @@ class TestVisualVisualizationCreate:
             url = reverse("summary:visualization_create", args=args)
             check_200(client, url)
 
-    # def test_initial(self):
-    #     # TODO fix initial stuff
-    #     client = get_client("admin")
-    #     instance = models.Visual.objects.filter(visual_type=VisualType.BIOASSAY_CROSSVIEW).first()
-    #     url = (
-    #         reverse(
-    #             "summary:visualization_create", args=(instance.assessment_id, instance.visual_type)
-    #         )
-    #         + f"?initial={instance.id}"
-    #     )
-    #     resp = check_200(client, url)
-    #     assert resp.context["form"]["fields"]["title"] == instance.title
+    def test_initial(self):
+        client = get_client("pm")
+        instance = models.Visual.objects.filter(id=1).first()
+        url = (
+            reverse(
+                "summary:visualization_create", args=(instance.assessment_id, instance.visual_type)
+            )
+            + f"?initial={instance.id}"
+        )
+        resp = check_200(client, url)
+        assert len(instance.title) > 0
+        assert resp.context["form"].initial["title"] == instance.title
 
     def test_bad_requests(self):
         client = get_client("admin")
         for args in [
-            (1, 2, 300),  # bad evidence type
+            (1, 999),  # bad visual type
+            (1, 2, 999),  # bad evidence type
             (1, 2, 3),  # bad evidence type for this visual type
         ]:
             url = reverse("summary:visualization_create", args=args)

@@ -176,6 +176,23 @@ class VisualForm(forms.ModelForm):
         pass
 
 
+def get_visual_form(visual_type: constants.VisualType) -> VisualForm:
+    return {
+        constants.VisualType.BIOASSAY_AGGREGATION: EndpointAggregationForm,
+        constants.VisualType.BIOASSAY_CROSSVIEW: CrossviewForm,
+        constants.VisualType.ROB_HEATMAP: RoBForm,
+        constants.VisualType.ROB_BARCHART: RoBForm,
+        constants.VisualType.LITERATURE_TAGTREE: TagtreeForm,
+        constants.VisualType.EXTERNAL_SITE: ExternalSiteForm,
+        constants.VisualType.EXPLORE_HEATMAP: ExploreHeatmapForm,
+        constants.VisualType.PLOTLY: PlotlyVisualForm,
+        constants.VisualType.IMAGE: ImageVisualForm,
+        constants.VisualType.PRISMA: PrismaVisualForm,
+        constants.VisualType.DATA_PIVOT_QUERY: DataPivotQueryForm,
+        constants.VisualType.DATA_PIVOT_FILE: DataPivotDatasetForm,
+    }[visual_type]
+
+
 class VisualModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         return f"{obj.assessment}: [{obj.get_visual_type_display()}] {obj}"
@@ -652,23 +669,6 @@ class VisualSettingsForm(forms.ModelForm):
     class Meta:
         model = models.Visual
         fields = ("settings",)
-
-
-def get_visual_form(visual_type: constants.VisualType) -> VisualSettingsForm:
-    return {
-        constants.VisualType.BIOASSAY_AGGREGATION: EndpointAggregationForm,
-        constants.VisualType.BIOASSAY_CROSSVIEW: CrossviewForm,
-        constants.VisualType.ROB_HEATMAP: RoBForm,
-        constants.VisualType.ROB_BARCHART: RoBForm,
-        constants.VisualType.LITERATURE_TAGTREE: TagtreeForm,
-        constants.VisualType.EXTERNAL_SITE: ExternalSiteForm,
-        constants.VisualType.EXPLORE_HEATMAP: ExploreHeatmapForm,
-        constants.VisualType.PLOTLY: PlotlyVisualForm,
-        constants.VisualType.IMAGE: ImageVisualForm,
-        constants.VisualType.PRISMA: PrismaVisualForm,
-        constants.VisualType.DATA_PIVOT_QUERY: DataPivotQueryForm,
-        constants.VisualType.DATA_PIVOT_FILE: DataPivotDatasetForm,
-    }[visual_type]
 
 
 class DataPivotDatasetForm(VisualForm):

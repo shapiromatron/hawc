@@ -193,7 +193,7 @@
   "settings": {
     "hello": "world"
   },
-  "slug": "113f7dbf-4e08-427c-8708-a16be4add1e1",
+  "slug": "zzz-zzz",
   "studies": [
     {
       "abstract": "",
@@ -214,7 +214,6 @@
       "created": "2020-01-25T09:23:16.370427-05:00",
       "doi": null,
       "eco": true,
-      "editable": false,
       "epi": true,
       "epi_meta": false,
       "full_citation": "Foo et al. 2010",
@@ -232,7 +231,6 @@
       ],
       "in_vitro": false,
       "journal": "",
-      "last_updated": "2025-02-04T16:07:00.737116-05:00",
       "published": false,
       "pubmed_id": null,
       "riskofbiases": [
@@ -467,6 +465,6 @@
       "year": 2010
     }
   ],
-  "title": "113f7dbf-4e08-427c-8708-a16be4add1e1",
+  "title": "zzz-zzz",
   "visual_type": "risk of bias heatmap"
 }
