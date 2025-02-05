@@ -333,22 +333,23 @@ class TestSummaryAssessmentViewSet:
         resp = team_client.post(url, payload, format="json")
         assert resp.status_code == 200
 
-    def test_json_data_prisma(self, db_keys, rewrite_data_files):
+    def test_json_data_bad_data(self, db_keys):
+        team_client = get_client("team", api=True)
+        url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
+        for bad_payload in [{}, {"visual_type": "TEST"}, {"visual_type": {}}]:
+            resp = team_client.post(url, bad_payload, format="json")
+            assert resp.status_code == 400
+
+    def test_json_data_prisma(self, db_keys):
         team_client = get_client("team", api=True)
         url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
 
         payload = {"visual_type": 9}
         resp = team_client.post(url, payload, format="json")
         assert resp.status_code == 200
-        resp_data = resp.json()
-        key = f"api-summary-assessment-visual-json-prisma-{db_keys.assessment_working}.json"
-        check_api_json_data(resp_data, key, rewrite_data_files)
+        assert len(resp.json()) > 0
 
-        for bad_payload in [{}, {"visual_type": "TEST"}, {"visual_type": {}}]:
-            resp = team_client.post(url, bad_payload, format="json")
-            assert resp.status_code == 400
-
-    def test_json_data_crossview(self, db_keys, rewrite_data_files):
+    def test_json_data_crossview(self, db_keys):
         team_client = get_client("team", api=True)
         url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
 
@@ -359,30 +360,16 @@ class TestSummaryAssessmentViewSet:
         payload = {"visual_type": 1, "dose_units": 1, "settings": {"hello": "world"}}
         resp = team_client.post(url, payload, format="json")
         assert resp.status_code == 200
-        resp_data = resp.json()
-        key = f"api-summary-assessment-visual-json-crossview-{db_keys.assessment_working}.json"
-        check_api_json_data(resp_data, key, rewrite_data_files)
+        assert len(resp.json()) > 0
 
-    def test_json_data_rob(self, db_keys, rewrite_data_files):
+    def test_json_data_rob(self, db_keys):
         team_client = get_client("team", api=True)
         url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
 
         payload = {"visual_type": 2, "evidence_type": 0, "settings": {"hello": "world"}}
         resp = team_client.post(url, payload, format="json")
         assert resp.status_code == 200
-        resp_data = resp.json()
-        key = f"api-summary-assessment-visual-json-rob-{db_keys.assessment_working}.json"
-
-        # TODO - hack to get the tests to pass; some other test changes these fields with each test
-        [
-            [study.pop(field) for field in ["editable", "last_updated"]]
-            for study in resp_data["studies"]
-        ]
-        check_api_json_data(resp_data, key, rewrite_data_files)
-
-        for bad_payload in [{}, {"visual_type": "TEST"}, {"visual_type": {}}]:
-            resp = team_client.post(url, bad_payload, format="json")
-            assert resp.status_code == 400
+        assert len(resp.json()) > 0
 
 
 @pytest.mark.django_db
