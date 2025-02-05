@@ -11,6 +11,7 @@ from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
+from django.views.generic.edit import CreateView
 
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
@@ -25,6 +26,8 @@ from ..common.views import (
     BaseFilterList,
     BaseList,
     BaseUpdate,
+    LoginRequiredMixin,
+    MessageMixin,
     create_object_log,
     htmx_required,
 )
@@ -1250,3 +1253,24 @@ class AssessmentInteractive(HtmxView):
             "qs": models.Reference.objects.assessment_qs(self.assessment.id).filter(id__in=ids)
         }
         return render(request, "lit/components/venn_reference_list.html", context=context)
+
+
+class ModelPredictionRunCreate(MessageMixin, LoginRequiredMixin, CreateView):
+    success_message = "Prediction model running.."
+    form_class = forms.ModelPredictionRunForm
+    template_name = "lit/model_prediction_run_create.html"
+    success_message = "Running predictions..."
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        self.assessment = get_object_or_404(Assessment, pk=self.kwargs["pk"])
+        kwargs["assessment"] = self.assessment
+        return kwargs
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        self.object.run_prediction()
+        return response
+
+    def get_success_url(self):
+        return reverse("lit:overview", args=(self.assessment.pk,))

@@ -175,6 +175,11 @@ urlpatterns = [
         views.TrainedModelList.as_view(),
         name="trained_model_list",
     ),
+    path(
+        "trained-models/<int:pk>/prediction-class/create/",
+        views.PredictionClassCreate.as_view(),
+        name="prediction_class_create",
+    ),
     # api views
     path("api/", include((router.urls, "api"))),
 ]

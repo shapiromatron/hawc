@@ -979,7 +979,6 @@ class LabelItemForm(forms.Form):
 
 
 class TrainedModelForm(forms.ModelForm):
-
     class Meta:
         model = TrainedModel
         fields = ["name", "description"]
@@ -992,7 +991,6 @@ class TrainedModelForm(forms.ModelForm):
 
 
 class TrainedModelVersionForm(forms.ModelForm):
-
     class Meta:
         model = TrainedModelVersion
         fields = ["model", "notes"]
@@ -1005,7 +1003,6 @@ class TrainedModelVersionForm(forms.ModelForm):
 
 
 class TrainedVectorizerForm(forms.ModelForm):
-
     class Meta:
         model = TrainedVectorizer
         fields = ["name", "description", "vectorizer"]
@@ -1018,7 +1015,16 @@ class TrainedVectorizerForm(forms.ModelForm):
 
 
 class PredictionClassForm(forms.ModelForm):
-
     class Meta:
         model = PredictionClass
         fields = ["name", "description"]
+
+    def __init__(self, *args, **kwargs):
+        trained_model = kwargs.pop("trained_model", None)
+        super().__init__(*args, **kwargs)
+        self.instance.trained_model = trained_model
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self, cancel_url=self.instance.trained_model.get_absolute_url())
+        return helper

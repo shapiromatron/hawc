@@ -7,6 +7,7 @@ from math import ceil
 from typing import Self
 from urllib import parse
 
+import numpy as np
 from celery import chain
 from celery.result import ResultBase
 from django.apps import apps
@@ -1540,6 +1541,33 @@ class ModelPredictionRun(models.Model):
 
     def __str__(self):
         return f"Run of {self.model_version} on {self.workflow}"
+
+    def run_prediction(self):
+        references = Reference.objects.filter(assessment=self.workflow.assessment).in_workflow(
+            self.workflow
+        )
+        prediction_classes = self.model_version.trained_model.prediction_classes.all()
+
+        predictions = []
+        for reference in references:
+            for pred_class in prediction_classes:
+                # Generate random score between 0 and 1
+                score = np.random.random()
+
+                predictions.append(
+                    ModelPrediction(
+                        prediction_run=self,
+                        reference=reference,
+                        prediction_class=pred_class,
+                        score=score,
+                        notes=f"Test prediction generated for {pred_class.name}",
+                    )
+                )
+
+        with transaction.atomic():
+            ModelPrediction.objects.bulk_create(predictions)
+
+        return len(predictions)
 
 
 class ModelPrediction(models.Model):

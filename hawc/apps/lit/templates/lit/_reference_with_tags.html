@@ -30,6 +30,9 @@
         {% endif %}
       </div>
     </div>
+    {% for prediction in ref.model_predictions.all %}
+    <span class="badge badge-secondary">{{prediction.prediction_class.name}}: {{prediction.score}}</span>
+    {% endfor %}
     {% if ref.abstract and not hide_abstract %}
       <p class="abstracts abstract-collapsed  mb-1" title="Click to expand/collapse">{{ref.abstract|safe}}</p>
     {% endif %}

@@ -823,3 +823,23 @@ class VennForm(forms.Form):
                     )
                 )
         return sets
+
+
+class ModelPredictionRunForm(forms.ModelForm):
+    class Meta:
+        model = models.ModelPredictionRun
+        fields = ["workflow", "model_version"]
+
+    def __init__(self, *args, **kwargs):
+        assessment = kwargs.pop("assessment", None)
+        super().__init__(*args, **kwargs)
+        workflows = models.Workflow.objects.filter(assessment=assessment)
+        self.fields["workflow"].queryset = workflows
+        self.assessment = assessment
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self, cancel_url=reverse("lit:overview", args=(self.assessment.pk,))
+        )
+        return helper

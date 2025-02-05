@@ -44,7 +44,7 @@ from ..common.views import (
     create_object_log,
     get_referrer,
 )
-from ..lit.models import TrainedModel
+from ..lit.models import PredictionClass, TrainedModel
 from ..materialized.models import refresh_all_mvs
 from ..mgmt.analytics.overall import compute_object_counts
 from ..summary import models as summary_models
@@ -1221,3 +1221,19 @@ class TrainedModelList(LoginRequiredMixin, ListView):
     model = TrainedModel
     template_name = "assessment/trained_model_list.html"
     paginate_by = 50
+
+
+class PredictionClassCreate(MessageMixin, LoginRequiredMixin, CreateView):
+    model = PredictionClass
+    form_class = forms.PredictionClassForm
+    template_name = "assessment/prediction_class_create.html"
+    success_message = "Prediction class created."
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        trained_model = get_object_or_404(TrainedModel, pk=self.kwargs["pk"])
+        kwargs["trained_model"] = trained_model
+        return kwargs
+
+    def get_success_url(self):
+        return self.object.trained_model.get_absolute_url()
