@@ -1180,7 +1180,7 @@ class TrainedModelFormMixin:
     @transaction.atomic
     def post(self, request, **kwargs):
         self.object = self.get_object() if "pk" in kwargs else None
-        trained_model_form = forms.TrainedModelForm(request.POST, prefix="trained-model")
+        trained_model_form = forms.TrainedModelForm(request.POST, instance=self.object, prefix="trained-model")
         trained_model_version_form = forms.TrainedModelVersionForm(
             request.POST, request.FILES, prefix="trained-model-version"
         )
