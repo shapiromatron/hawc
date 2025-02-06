@@ -747,6 +747,7 @@ class FilterRow extends Component {
             item = settings[arrayName][index];
         return (
             <tr>
+                <td>{index + 1}</td>
                 <td>
                     <SelectInput
                         choices={fieldChoices}
@@ -792,12 +793,12 @@ FilterRow.propTypes = {
 class FiltersTab extends Component {
     render() {
         const {store} = this.props,
-            {changeSetting, settings} = store.subclass;
+            {changeSetting, settings, filtersQueryReadable} = store.subclass;
         return (
             <>
                 <ArrayTableRow
-                    widths={[25, 25, 38, 12]}
-                    names={["Field Name", "Filter Type", "Value"]}
+                    widths={[10, 35, 15, 25, 10]}
+                    names={["Row #", "Data Column", "Filter Type", "Value"]}
                     helpText="Filters used to determine which dose-response datasets should be included; by default all plottable datasets are included."
                     arrayName="endpointFilters"
                     Row={FilterRow}
@@ -807,7 +808,7 @@ class FiltersTab extends Component {
                         <FilterLogic
                             filtersLogic={settings.endpointFilterLogic}
                             filtersQuery={settings.filtersQuery}
-                            filtersQueryReadable={"TODO"}
+                            filtersQueryReadable={filtersQueryReadable}
                             onLogicChange={v => changeSetting("endpointFilterLogic", v)}
                             onQueryChange={e => changeSetting("filtersQuery", e.target.value)}
                         />

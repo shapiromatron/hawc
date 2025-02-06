@@ -10,7 +10,11 @@ import h from "shared/utils/helpers";
 
 import CrossviewPlot from "../../summary/CrossviewPlot";
 import D3Visualization from "../../summary/D3Visualization";
-import {DATA_FILTER_CONTAINS} from "../../summary/filters";
+import {
+    DATA_FILTER_CONTAINS,
+    DATA_FILTER_OPTIONS,
+    readableCustomQueryFilters,
+} from "../../summary/filters";
 
 const _getDefaultSettings = function() {
         return {
@@ -246,6 +250,17 @@ class CrossviewStore {
     @computed get textStyleChoices() {
         return D3Visualization.styles.texts.map(d => {
             return {id: d.name, label: d.name};
+        });
+    }
+    @computed get filtersQueryReadable() {
+        const filters = this.settings.endpointFilters,
+            optMap = _.keyBy(DATA_FILTER_OPTIONS, "id");
+        return readableCustomQueryFilters(this.settings.filtersQuery, i => {
+            const filter = filters[i - 1], // convert 1 to 0 indexing
+                valStr = _.isNaN(_.toNumber(filter.value))
+                    ? `"${filter.value}"`
+                    : `${filter.value}`;
+            return `"${filter.field}" ${optMap[filter.filterType].label} ${valStr} {${i}}`;
         });
     }
 

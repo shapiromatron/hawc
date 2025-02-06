@@ -5,7 +5,7 @@ import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 
-import {DATA_FILTER_OPTIONS, readableCustomQueryFilters} from "../../summary/filters";
+import {DATA_FILTER_OPTIONS} from "../../summary/filters";
 import FilterLogic from "../shared/FilterLogic";
 
 const dataKey = "filters",
@@ -57,8 +57,8 @@ FilterRow.propTypes = {
 class FilterTable extends Component {
     render() {
         const store = this.props.store.subclass,
-            {filters, filtersLogic, filtersQuery} = store.settings,
-            filtersQueryReadable = readableCustomQueryFilters(filters, filtersQuery);
+            {filtersQueryReadable} = store,
+            {filters, filtersLogic, filtersQuery} = store.settings;
         return (
             <>
                 <table className="table table-sm table-striped">
@@ -72,8 +72,8 @@ class FilterTable extends Component {
                     <thead>
                         <tr>
                             <th>Row #</th>
-                            <th>Data column</th>
-                            <th>Filter type</th>
+                            <th>Data Column</th>
+                            <th>Filter Type</th>
                             <th>Value</th>
                             <ActionsTh onClickNew={store.createNewFilter} />
                         </tr>
