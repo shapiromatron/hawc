@@ -146,9 +146,10 @@ class AnimalClient(BaseClient):
             data = self._invert_endpoints(data)
         return data
 
-    def bmds_endpoints(self, assessment_id: int) -> pd.DataFrame:
+    def bmds_endpoints(self, assessment_id: int, unpublished: bool = False) -> pd.DataFrame:
         url = f"{self.session.root_url}/ani/api/assessment/{assessment_id}/bmds-export/"
-        response_json = self.session.get(url).json()
+        params = {"unpublished": unpublished}
+        response_json = self.session.get(url, params=params).json()
         return pd.DataFrame(response_json)
 
     def metadata(self) -> dict:
