@@ -1,8 +1,8 @@
 import pandas as pd
 import pytest
-from django.test.client import RequestFactory
 
 from hawc.apps.summary import constants, models
+from hawc.apps.summary.constants import StudyType, VisualType
 
 
 @pytest.mark.django_db
@@ -24,73 +24,88 @@ class TestSummaryTable:
 
 @pytest.mark.django_db
 class TestVisual:
-    def test_get_editing_dataset(self):
-        obj = models.Visual.objects.filter(visual_type=constants.VisualType.ROB_HEATMAP).first()
-        rf = RequestFactory()
-        request = rf.get("/")
-        obj.get_editing_dataset(request)
-
     def test_get_plotly_from_json(self):
         # fails with non plotly visual
-        obj = models.Visual.objects.filter(
-            visual_type=constants.VisualType.BIOASSAY_CROSSVIEW
-        ).first()
+        obj = models.Visual.objects.filter(visual_type=VisualType.BIOASSAY_CROSSVIEW).first()
         with pytest.raises(ValueError):
             obj.get_plotly_from_json()
 
         # works with plotly visual
-        obj = models.Visual.objects.filter(visual_type=constants.VisualType.PLOTLY).first()
+        obj = models.Visual.objects.filter(visual_type=VisualType.PLOTLY).first()
         obj.get_plotly_from_json()
+
+    def test_get_data(self, db_keys):
+        visual = models.Visual.objects.filter(visual_type=VisualType.PRISMA).first()
+        assert len(visual.get_data()) > 0
+
+        visual = models.Visual.objects.filter(visual_type=VisualType.LITERATURE_TAGTREE).first()
+        assert len(visual.get_data()) == 0
+
+    def test_read_config(self, db_keys):
+        visual = models.Visual.objects.filter(visual_type=VisualType.PRISMA).first()
+        assert len(visual.read_config()) == 2
+
+        visual = models.Visual.objects.filter(visual_type=VisualType.LITERATURE_TAGTREE).first()
+        assert len(visual.read_config()) == 0
 
     def test_data_df(self):
         # fails with some visuals
-        obj = models.Visual.objects.filter(
-            visual_type=constants.VisualType.BIOASSAY_CROSSVIEW
-        ).first()
+        obj = models.Visual.objects.filter(visual_type=VisualType.BIOASSAY_CROSSVIEW).first()
         with pytest.raises(ValueError):
-            obj.get_plotly_from_json()
+            obj.data_df()
 
+        # works with correct types
+        for obj in [
+            models.Visual.objects.filter(visual_type=VisualType.ROB_HEATMAP).first(),
+            models.Visual.objects.filter(visual_type=VisualType.DATA_PIVOT_QUERY).first(),
+            models.Visual.objects.filter(visual_type=VisualType.DATA_PIVOT_FILE).first(),
+        ]:
+            df = obj.data_df(use_settings=True)
+            assert isinstance(df, pd.DataFrame)
+            assert not df.empty
+
+    def test_data_df_dpf(self):
         # works with correct type
-        obj = models.Visual.objects.filter(visual_type=constants.VisualType.ROB_HEATMAP).first()
+        obj = models.Visual.objects.filter(visual_type=VisualType.DATA_PIVOT_FILE).first()
         df = obj.data_df(use_settings=True)
         assert isinstance(df, pd.DataFrame)
         assert not df.empty
 
     def test_data_df_dpq(self):
         obj = models.Visual.objects.filter(
-            visual_type=constants.VisualType.DATA_PIVOT_QUERY,
-            evidence_type=constants.StudyType.BIOASSAY,
+            visual_type=VisualType.DATA_PIVOT_QUERY,
+            evidence_type=StudyType.BIOASSAY,
             prefilters__export_style=constants.ExportStyle.EXPORT_ENDPOINT,
         ).first()
         export = obj._data_df_dpq()
         assert export.df.shape[0] > 0
 
         obj = models.Visual.objects.filter(
-            visual_type=constants.VisualType.DATA_PIVOT_QUERY,
-            evidence_type=constants.StudyType.BIOASSAY,
+            visual_type=VisualType.DATA_PIVOT_QUERY,
+            evidence_type=StudyType.BIOASSAY,
             prefilters__export_style=constants.ExportStyle.EXPORT_GROUP,
         ).first()
         export = obj._data_df_dpq()
         assert export.df.shape[0] > 0
 
         obj = models.Visual.objects.filter(
-            visual_type=constants.VisualType.DATA_PIVOT_QUERY,
-            evidence_type=constants.StudyType.EPI,
+            visual_type=VisualType.DATA_PIVOT_QUERY,
+            evidence_type=StudyType.EPI,
         ).first()
         export = obj._data_df_dpq()
         assert export.df.shape[0] > 0
 
         obj = models.Visual.objects.filter(
-            visual_type=constants.VisualType.DATA_PIVOT_QUERY,
-            evidence_type=constants.StudyType.IN_VITRO,
+            visual_type=VisualType.DATA_PIVOT_QUERY,
+            evidence_type=StudyType.IN_VITRO,
             prefilters__export_style=constants.ExportStyle.EXPORT_ENDPOINT,
         ).first()
         export = obj._data_df_dpq()
         assert export.df.shape[0] > 0
 
         obj = models.Visual.objects.filter(
-            visual_type=constants.VisualType.DATA_PIVOT_QUERY,
-            evidence_type=constants.StudyType.IN_VITRO,
+            visual_type=VisualType.DATA_PIVOT_QUERY,
+            evidence_type=StudyType.IN_VITRO,
             prefilters__export_style=constants.ExportStyle.EXPORT_GROUP,
         ).first()
         export = obj._data_df_dpq()

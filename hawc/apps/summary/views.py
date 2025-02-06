@@ -1,8 +1,6 @@
-import json
-
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
-from django.http import Http404, HttpResponseRedirect, JsonResponse
+from django.http import Http404, HttpResponseRedirect
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -12,7 +10,7 @@ from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..assessment.views import check_published_status
 from ..common.crumbs import Breadcrumb
-from ..common.helper import WebappConfig
+from ..common.helper import WebappConfig, tryParseInt
 from ..common.views import (
     BaseCopyForm,
     BaseCreate,
@@ -299,6 +297,21 @@ class VisualizationCreateSelector(BaseDetail):
         return context
 
 
+def get_visual_form_config(form: forms.VisualForm, crud: str, csrf: str, cancel_url: str):
+    config = dict(
+        assessment=form.instance.assessment.id,
+        crud=crud,
+        isCreate=crud == "Create",
+        visual_type=form.instance.visual_type,
+        evidence_type=form.instance.evidence_type,
+        data_url=reverse("summary:api:visual-list"),
+        csrf=csrf,
+        cancel_url=cancel_url,
+    )
+    form.update_form_config(config)
+    return config
+
+
 class VisualizationCreate(BaseCreate):
     success_message = "Visualization created."
     parent_model = Assessment
@@ -306,44 +319,38 @@ class VisualizationCreate(BaseCreate):
     model = models.Visual
 
     def get_form_class(self):
-        visual_type = int(self.kwargs.get("visual_type"))
-        return forms.get_visual_form(visual_type)
+        try:
+            self.visual_type = constants.VisualType(self.kwargs.get("visual_type"))
+        except ValueError as err:
+            raise Http404() from err
+
+        return forms.get_visual_form(self.visual_type)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
-        kwargs["visual_type"] = self.kwargs.get("visual_type")
-        try:
-            constants.VisualType(kwargs["visual_type"])
-        except ValueError as err:
-            raise Http404 from err
+        evidence_type = tryParseInt(self.kwargs.get("study_type"))
+        initial = self._get_initial(filters=dict(visual_type=self.visual_type))
+        if initial:
+            evidence_type = initial["evidence_type"]
 
-        if kwargs["initial"]:
-            kwargs["instance"] = self.model.objects.filter(pk=self.request.GET["initial"]).first()
-            kwargs["instance"].pk = None
-            self.instance = kwargs["instance"]
-            kwargs["evidence_type"] = kwargs["instance"].evidence_type
-
+        if evidence_type is None:
+            evidence_type = constants.get_default_evidence_type(self.visual_type)
         else:
-            kwargs["evidence_type"] = self.kwargs.get("study_type")
-            if kwargs["evidence_type"] is None:
-                try:
-                    kwargs["evidence_type"] = constants.get_default_evidence_type(
-                        kwargs["visual_type"]
-                    )
-                except ValueError as err:
-                    raise Http404 from err
-            if (
-                kwargs["evidence_type"]
-                not in constants.VISUAL_EVIDENCE_CHOICES[kwargs["visual_type"]]
-            ):
-                raise Http404
-        self.evidence_type = kwargs["evidence_type"]
+            try:
+                evidence_type = constants.StudyType(evidence_type)
+            except ValueError as err:
+                raise Http404() from err
+
+        if evidence_type not in constants.VISUAL_EVIDENCE_CHOICES[self.visual_type]:
+            raise Http404()
+
+        kwargs.update(visual_type=self.visual_type, evidence_type=evidence_type, initial=initial)
         return kwargs
 
     def get_template_names(self):
         visual_type = int(self.kwargs.get("visual_type"))
-        if visual_type in [] and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
+        if visual_type in constants.WIP_VISUALS and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
             raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
@@ -351,56 +358,33 @@ class VisualizationCreate(BaseCreate):
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
-        }:
-            return ["summary/visual_form_django.html"]
-        elif visual_type in (
             constants.VisualType.DATA_PIVOT_QUERY,
             constants.VisualType.DATA_PIVOT_FILE,
-        ):
-            return ["summary/visual_form_dp.html"]
+        }:
+            return ["summary/visual_form_django.html"]
         return super().get_template_names()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        visual = self.get_initial_visual(context)
         context.update(
-            instance={},
-            visual_type=visual.visual_type,
-            evidence_type=visual.evidence_type,
-            initial_data=json.dumps(serializers.VisualSerializer().to_representation(visual)),
             smart_tag_form=forms.SmartTagForm(assessment_id=self.assessment.id),
-            **visual.update_config(),
+            config=get_visual_form_config(
+                form=context["form"],
+                crud=context["crud"],
+                csrf=get_token(self.request),
+                cancel_url=reverse("summary:visualization_list", args=(self.assessment.id,)),
+            ),
         )
-        context["form"].update_context(context)
         context["breadcrumbs"].insert(
-            len(context["breadcrumbs"]) - 1, get_visual_list_crumb(self.assessment)
+            len(context["breadcrumbs"]) - 1,
+            get_visual_list_crumb(self.assessment),
         )
         return context
-
-    def get_initial_visual(self, context) -> models.Visual:
-        instance = context["form"].instance
-        instance.id = instance.FAKE_INITIAL_ID
-        instance.assessment = self.assessment
-        instance.visual_type = int(self.kwargs.get("visual_type"))
-        instance.evidence_type = self.evidence_type
-        return instance
 
     def get_success_url(self):
         if self.object.is_data_pivot:
             return self.object.get_dp_update_settings()
         return super().get_success_url()
-
-
-class VisualizationCreateTester(VisualizationCreate):
-    parent_model = Assessment
-    http_method_names = ["post"]
-
-    def post(self, request, *args, **kwargs):
-        self.object = None
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        response = form.instance.get_editing_dataset(request)
-        return JsonResponse(response)
 
 
 class VisualizationCopySelector(BaseDetail):
@@ -448,42 +432,35 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
     model = models.Visual
 
     def get_form_class(self):
-        try:
-            return forms.get_visual_form(self.object.visual_type)
-        except ValueError as err:
-            raise Http404 from err
+        return forms.get_visual_form(self.object.visual_type)
 
     def get_template_names(self):
         visual_type = self.object.visual_type
         if visual_type in [] and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
             raise PermissionDenied()
-        if visual_type in (
-            constants.VisualType.DATA_PIVOT_QUERY,
-            constants.VisualType.DATA_PIVOT_FILE,
-        ):
-            return ["summary/visual_form_dp.html"]
-        elif visual_type in {
+        if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
             constants.VisualType.PLOTLY,
             constants.VisualType.IMAGE,
+            constants.VisualType.DATA_PIVOT_QUERY,
+            constants.VisualType.DATA_PIVOT_FILE,
         }:
             return ["summary/visual_form_django.html"]
         return super().get_template_names()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        visual = self.object
         context.update(
-            instance=visual.get_json(),
-            visual_type=visual.visual_type,
-            evidence_type=visual.evidence_type,
-            initial_data=json.dumps(serializers.VisualSerializer().to_representation(visual)),
             smart_tag_form=forms.SmartTagForm(assessment_id=self.assessment.id),
-            **visual.update_config(),
+            config=get_visual_form_config(
+                form=context["form"],
+                crud=context["crud"],
+                csrf=get_token(self.request),
+                cancel_url=reverse("summary:visualization_list", args=(self.assessment.id,)),
+            ),
         )
-        context["form"].update_context(context)
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )

@@ -95,24 +95,10 @@ export const DATA_FILTER_CONTAINS = "contains",
             return [];
         }
     },
-    readableCustomQueryFilters = function(filters, filter_query) {
-        let optMap = _.keyBy(DATA_FILTER_OPTIONS, "id"),
-            getValue = i => {
-                const filter = filters[i - 1], // convert 1 to 0 indexing
-                    valStr = _.isNaN(_.toNumber(filter.value))
-                        ? `"${filter.value}"`
-                        : `${filter.value}`;
-                return `"${filter.column}" ${optMap[filter.type].label} ${valStr} {${i}}`;
-            },
-            negateValue = v => {
-                return ["NOT", v];
-            },
-            andValues = (l, r) => {
-                return [l, "AND", r];
-            },
-            orValues = (l, r) => {
-                return [l, "OR", r];
-            },
+    readableCustomQueryFilters = function(filter_query, getValue) {
+        let negateValue = v => ["NOT", v],
+            andValues = (l, r) => [l, "AND", r],
+            orValues = (l, r) => [l, "OR", r],
             stringify = (arr, depth) => {
                 if (!Array.isArray(arr)) {
                     return `${"  ".repeat(depth)}${arr}`;

@@ -2,18 +2,11 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
-import RadioInput from "shared/components/RadioInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 
-import {
-    DATA_FILTER_LOGIC_CUSTOM,
-    DATA_FILTER_LOGIC_OPTIONS,
-    DATA_FILTER_OPTIONS,
-    filterLogicHelpText,
-    filterQueryHelpText,
-    readableCustomQueryFilters,
-} from "../../summary/filters";
+import {DATA_FILTER_OPTIONS} from "../../summary/filters";
+import FilterLogic from "../shared/FilterLogic";
 
 const dataKey = "filters",
     FilterRow = observer(props => {
@@ -64,8 +57,8 @@ FilterRow.propTypes = {
 class FilterTable extends Component {
     render() {
         const store = this.props.store.subclass,
-            {filters, filtersLogic, filtersQuery} = store.settings,
-            filtersQueryReadable = readableCustomQueryFilters(filters, filtersQuery);
+            {filtersQueryReadable} = store,
+            {filters, filtersLogic, filtersQuery} = store.settings;
         return (
             <>
                 <table className="table table-sm table-striped">
@@ -79,8 +72,8 @@ class FilterTable extends Component {
                     <thead>
                         <tr>
                             <th>Row #</th>
-                            <th>Data column</th>
-                            <th>Filter type</th>
+                            <th>Data Column</th>
+                            <th>Filter Type</th>
                             <th>Value</th>
                             <ActionsTh onClickNew={store.createNewFilter} />
                         </tr>
@@ -91,29 +84,13 @@ class FilterTable extends Component {
                         ))}
                     </tbody>
                 </table>
-                <div className="col-md-12">
-                    <RadioInput
-                        label="Filter logic:"
-                        name="filtersLogic"
-                        helpText={filterLogicHelpText}
-                        onChange={value => store.changeSettings("filtersLogic", value)}
-                        value={filtersLogic}
-                        horizontal={true}
-                        choices={DATA_FILTER_LOGIC_OPTIONS}
-                    />
-                    {filtersLogic === DATA_FILTER_LOGIC_CUSTOM ? (
-                        <>
-                            <TextInput
-                                value={filtersQuery}
-                                helpText={filterQueryHelpText}
-                                onChange={e => store.changeSettings("filtersQuery", e.target.value)}
-                            />
-                            <pre>
-                                <code>{filtersQueryReadable}</code>
-                            </pre>
-                        </>
-                    ) : null}
-                </div>
+                <FilterLogic
+                    filtersLogic={filtersLogic}
+                    filtersQuery={filtersQuery}
+                    filtersQueryReadable={filtersQueryReadable}
+                    onLogicChange={value => store.changeSettings("filtersLogic", value)}
+                    onQueryChange={e => store.changeSettings("filtersQuery", e.target.value)}
+                />
             </>
         );
     }
