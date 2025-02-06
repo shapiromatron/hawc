@@ -8,6 +8,7 @@ router.register(r"assessment", api.LiteratureAssessmentViewSet, basename="assess
 router.register(r"reference", api.ReferenceViewSet, basename="reference")
 router.register(r"search", api.SearchViewSet, basename="search")
 router.register(r"tags", api.ReferenceFilterTagViewSet, basename="tags")
+router.register(r"duplicate", api.DuplicateViewSet, basename="duplicate")
 
 app_name = "lit"
 urlpatterns = [
@@ -167,5 +168,15 @@ urlpatterns = [
         "assessment/<int:pk>/duplicate-candidates/",
         views.DuplicateCandidatesList.as_view(),
         name="duplicate-candidates",
+    ),
+    path(
+        "assessment/<int:pk>/duplicate-candidates2/",
+        views.DuplicateCandidatesList2.as_view(),
+        name="duplicate-candidates2",
+    ),
+    path(
+        "assessment/<int:pk>/duplicate-task/",
+        views.DuplicateTask.as_view(),
+        name="duplicate-task",
     ),
 ]

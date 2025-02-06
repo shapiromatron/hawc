@@ -1,0 +1,18 @@
+<div hx-target="this" hx-swap="delete swap:1s">
+    <form hx-post="{% url 'lit:api:duplicate-resolve-duplicate' object.pk %}">
+        <div>
+        <label>
+            <input type="radio" id="none-{{object.pk}}" name="resolution" value="none" />
+            No duplicates
+        </label>
+        </div>
+        {% for candidate in object.candidates %}
+        <div>
+            <input type="radio" id="primary-{{object.pk}}-{{candidate}}" name="resolution" value="{{candidate}}" />
+            <div style="display:inline-block;">{{candidate}}</div>
+        </div>
+        {% endfor %}
+        <textarea name="notes" placeholder="Notes"></textarea>
+        <button type="submit">Resolve</button>
+    </form>
+</div>

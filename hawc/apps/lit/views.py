@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404, render
 from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, View
 
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
@@ -27,6 +27,7 @@ from ..common.views import (
     BaseUpdate,
     create_object_log,
     htmx_required,
+    MessageMixin
 )
 from ..udf.cache import TagCache
 from . import constants, filterset, forms, models
@@ -1266,4 +1267,28 @@ class DuplicateCandidatesList(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        return context
 
+class DuplicateCandidatesList2(BaseList):
+    parent_model = Assessment
+    model = models.DuplicateCandidates
+    template_name = "lit/duplicate_candidates_2.html"
+    breadcrumb_active_name = "Resolved duplicates"
+
+    def get_queryset(self):
+        return (
+            super().get_queryset().filter(assessment=self.assessment).exclude(resolution=constants.DuplicateResolution.UNRESOLVED)
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+class DuplicateTask(MessageMixin, View):
+    success_message = "Deduplication requested."
+
+    def get(self, request, *args, **kwargs):
+        assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
+        models.DuplicateCandidates.foobar(assessment)
+        self.send_message()
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

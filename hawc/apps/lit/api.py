@@ -18,7 +18,7 @@ from ..assessment.api import (
 from ..assessment.constants import AssessmentViewSetPermissions
 from ..assessment.models import Assessment
 from ..common.api import OncePerMinuteThrottle, PaginationWithCount
-from ..common.helper import FlatExport, cacheable
+from ..common.helper import FlatExport, cacheable, tryParseInt
 from ..common.renderers import PandasRenderers
 from ..common.serializers import UnusedSerializer
 from ..common.views import create_object_log
@@ -426,3 +426,28 @@ class ReferenceViewSet(
             df=qs.global_df(),
             filename=f"global-reference-data-{id}",
         )
+
+
+
+
+class DuplicateViewSet(
+    BaseAssessmentViewSet,
+):
+    model = models.DuplicateCandidates
+    http_method_names = ["post"]
+
+    @action(
+        detail=True, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
+    )
+    def resolve_duplicate(self, request, pk):
+        instance = self.get_object()
+        assessment = instance.assessment
+        if not assessment.user_can_edit_object(self.request.user):
+            raise PermissionDenied()
+        resolution = request.POST.get("resolution")
+        notes = request.POST.get("notes","")
+        if resolution == "none":
+            instance.resolve(resolution=constants.DuplicateResolution.FALSE_POSITIVE,notes=notes)
+        if (resolution:=tryParseInt(resolution)) is not None:
+            instance.resolve(resolution=constants.DuplicateResolution.RESOLVED,primary=resolution,notes=notes)
+        return Response({"status": "ok"})

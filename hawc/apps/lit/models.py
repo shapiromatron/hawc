@@ -6,6 +6,7 @@ from copy import copy
 from math import ceil
 from typing import Self
 from urllib import parse
+import random
 
 from celery import chain
 from celery.result import ResultBase
@@ -849,6 +850,7 @@ class Reference(models.Model):
         null=True,
         help_text="Used internally for determining when reference was " "originally added",
     )
+    hidden = models.BooleanField(default=False)
 
     BREADCRUMB_PARENT = "assessment"
 
@@ -1490,20 +1492,49 @@ class DuplicateCandidates(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    def get_assessment(self):
+        return self.assessment
+
+    @classmethod
+    def foobar(cls,assessment):
+        references = assessment.references.values("pk","title")
+        candidate_groups = cls.random_execute(references)
+        cls.objects.bulk_create([cls(assessment=assessment,candidates=[ref["pk"] for ref in group]) for group in candidate_groups])
+
+    @classmethod
+    def random_execute(cls,references)->list[list[dict]]:
+        num_candidates = 2
+        if len(references)<num_candidates:
+            return []
+        num_groups = min(3,len(references)/num_candidates)
+        return [random.choices(references,k=num_candidates) for i in range(num_groups)]
+
     def generate_unique_identifier(self):
         return sorted(self.candidates)
+    
+    def _update_references(self):
+        # TODO also make primary not hidden? may be unnecessary
+        duplicate_ids = set(self.candidates)-{self.primary}
+        self.assessment.references.filter(pk__in=duplicate_ids).update(hidden=True)
 
-
-    def resolve(self,primaries:dict|list[dict]):
-        if primaries is None:
-            self.resolution = "False positive"
-        else:
-            self.resolution = "Duplicates detected"
-            # remove reference instances pointed to in self.data that are not primaries
-            # update reference instances in primaries with data?
-            self.result = primaries
+    def resolve(self,resolution:constants.DuplicateResolution,primary:int=None,notes:str=""):
+        if resolution == constants.DuplicateResolution.UNRESOLVED:
+            raise ValueError("Resolution must not be unresolved.")
+        if resolution == constants.DuplicateResolution.RESOLVED:
+            if primary is None:
+                raise ValueError("Primary must not be None if duplicate identified.")
+            if primary not in self.candidates:
+                raise ValueError("Primary must be a candidate.")
+            self.primary = primary
+            #self._update_references()
+        self.resolution = resolution
+        self.notes = notes
+        self.save()
 
 # where to put execute method? literatureassessment, manager for dupes model
+
+
+# DuplicateCandidateGroup
 
 """
 WORKFLOW
