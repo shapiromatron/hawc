@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
@@ -1255,6 +1256,7 @@ class AssessmentInteractive(HtmxView):
         return render(request, "lit/components/venn_reference_list.html", context=context)
 
 
+@method_decorator(staff_member_required, name="dispatch")
 class ModelPredictionRunCreate(BaseCreate):
     success_message = "Prediction model running.."
     form_class = forms.ModelPredictionRunForm
@@ -1273,6 +1275,7 @@ class ModelPredictionRunCreate(BaseCreate):
         return reverse("lit:overview", args=(self.assessment.pk,))
 
 
+@method_decorator(staff_member_required, name="dispatch")
 class ModelPredictionRunDetail(BaseDetail):
     model = models.ModelPredictionRun
     template_name = "lit/model_prediction_run.html"

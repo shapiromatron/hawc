@@ -27,7 +27,9 @@
         <a class="dropdown-item" href="{% url 'lit:tag' assessment.pk %}?search={{manual_import.pk}}">Tag manually added references</a>
         <a class="dropdown-item" href="{% url 'lit:tag' assessment.pk %}?untagged=on">Tag untagged references</a>
         <a class="dropdown-item" href="{% url 'lit:ref_upload' assessment.pk %}">Upload full text URLs</a>
-        <a class="dropdown-item" href="{% url 'lit:model_prediction_run_create' assessment.pk %}">Run a model prediction</a>
+        {% if user.is_staff %}
+          <a class="dropdown-item" href="{% url 'lit:model_prediction_run_create' assessment.pk %}">Run a model prediction</a>
+        {% endif %}
         <div class="dropdown-divider"></div>
         <span class="dropdown-header">Exports</span>
         <a class="dropdown-item" href="{% url 'lit:api:assessment-reference-export' assessment.pk %}?format=xlsx">Download all references</a>

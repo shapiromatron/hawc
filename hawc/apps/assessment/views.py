@@ -1180,7 +1180,9 @@ class TrainedModelFormMixin:
     @transaction.atomic
     def post(self, request, **kwargs):
         self.object = self.get_object() if "pk" in kwargs else None
-        trained_model_form = forms.TrainedModelForm(request.POST, instance=self.object, prefix="trained-model")
+        trained_model_form = forms.TrainedModelForm(
+            request.POST, instance=self.object, prefix="trained-model"
+        )
         trained_model_version_form = forms.TrainedModelVersionForm(
             request.POST, request.FILES, prefix="trained-model-version"
         )
@@ -1218,28 +1220,33 @@ class TrainedModelFormMixin:
         return self.render_to_response(context)
 
 
+@method_decorator(staff_member_required, name="dispatch")
 class TrainedModelCreate(MessageMixin, LoginRequiredMixin, TrainedModelFormMixin, CreateView):
     template_name = "assessment/trained_model_create.html"
     success_message = "Trained Model created."
 
 
+@method_decorator(staff_member_required, name="dispatch")
 class TrainedModelUpdate(MessageMixin, LoginRequiredMixin, TrainedModelFormMixin, UpdateView):
     template_name = "assessment/trained_model_create.html"
     success_message = "Trained Model update."
     model = TrainedModel
 
 
+@method_decorator(staff_member_required, name="dispatch")
 class TrainedModelDetail(LoginRequiredMixin, DetailView):
     model = TrainedModel
     template_name = "assessment/trained_model_detail.html"
 
 
+@method_decorator(staff_member_required, name="dispatch")
 class TrainedModelList(LoginRequiredMixin, ListView):
     model = TrainedModel
     template_name = "assessment/trained_model_list.html"
     paginate_by = 50
 
 
+@method_decorator(staff_member_required, name="dispatch")
 class PredictionClassCreate(MessageMixin, LoginRequiredMixin, CreateView):
     model = PredictionClass
     form_class = forms.PredictionClassForm
