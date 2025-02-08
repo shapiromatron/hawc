@@ -7,17 +7,20 @@
 {% block content %}
   <div class='d-flex'>
     <h2>{{object.title}}</h2>
+    {% include "assessment/fragments/label_indicators.html" %}
     {% include "common/unpublished_badge.html" %}
     {% if obj_perms.edit %}
       {% actions %}
         <span class="dropdown-header">Visualization editing</span>
         <a class="dropdown-item" href="{% url 'summary:visualization_update' assessment.pk object.slug %}">Update</a>
         <a class="dropdown-item" href="{% url 'summary:visualization_delete' assessment.pk object.slug %}">Delete</a>
+        {% include "assessment/components/label_modal_button.html" with icon=False %}
       {% endactions %}
     {% endif %}
   </div>
   <div id='visualization'></div>
   <p>{{object.caption|safe}}</p>
+  {% include "assessment/components/label_modal.html" with modal_id="label-modal" %}
 {% endblock %}
 
 {% block extrajs %}
@@ -27,7 +30,7 @@
       window.isEditable = {{obj_perms.edit|lower}};
       const config = JSON.parse(document.getElementById('config').textContent),
             el = document.getElementById('visualization');
-      summary.startupPrismaAppRender(el, config.settings, config.data, {csrf: "{{ csrf_token }}"});
+      summary.startupPrismaAppRender(el, config.settings, config.data, config);
     });
   </script>
 {% endblock %}

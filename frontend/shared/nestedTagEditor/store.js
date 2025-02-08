@@ -8,9 +8,16 @@ class TagEditorStore {
     @observable tagsLoaded = false;
     @observable tags = [];
     @observable parentOptions = [];
+    @observable tagCounts = false;
 
     constructor(config) {
         this.config = config;
+        this.tagReferences =
+            "references" in config
+                ? _.mapValues(_.groupBy(config.references, "tag_id"), refs =>
+                      refs.map(ref => ref.reference_id)
+                  )
+                : false;
     }
 
     @action.bound fetchTags() {
@@ -30,21 +37,35 @@ class TagEditorStore {
                 opts.unshift([NO_PARENT, "---"]);
                 return opts;
             },
-            addDepth = function(node, depth) {
+            addNodeDepth = function(node, depth) {
                 // add depth to each node, and recursively to child nodes
                 node.data.depth = depth;
-
                 if (node.children) {
-                    node.children.forEach(d => addDepth(d, depth + 1));
+                    node.children.forEach(d => addNodeDepth(d, depth + 1));
                 }
+            },
+            addNodeReferenceCount = function(node, tagReferences) {
+                // add references to each node, and recursively to child nodes
+                node.data.references = new Set(tagReferences[node.id]);
+                if (node.children) {
+                    node.children.forEach(
+                        d =>
+                            (node.data.references = node.data.references.union(
+                                addNodeReferenceCount(d, tagReferences)
+                            ))
+                    );
+                }
+                node.data.tagCount = node.data.references.size;
+                return node.data.references;
             };
-
         fetch(url, h.fetchGet)
             .then(response => response.json())
             .then(allTags => {
                 let tags = allTags[0].children || [];
-                tags.forEach(d => addDepth(d, 0));
-
+                tags.forEach(d => addNodeDepth(d, 0));
+                if (this.tagReferences) {
+                    tags.forEach(d => addNodeReferenceCount(d, this.tagReferences));
+                }
                 this.tags = tags;
                 this.parentOptions = getOptions(tags);
                 this.tagsLoaded = true;

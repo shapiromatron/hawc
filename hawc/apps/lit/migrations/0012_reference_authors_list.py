@@ -86,7 +86,7 @@ def update_reference_authors(apps, schema_editor):
     qs = Reference.objects.all().prefetch_related("identifiers")
     n_total = Reference.objects.all().count()
     updates = []
-    for idx, reference in enumerate(qs.iterator()):
+    for idx, reference in enumerate(qs.iterator(chunk_size=5000)):
         if idx % 5000 == 0:
             print(f"Updating reference authors {idx:,} of {n_total:,}")
 

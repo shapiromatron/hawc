@@ -18,7 +18,7 @@ def test_growth_matrix():
 class TestAssessmentGrowthSettings:
     def test_time_series(self):
         form = assessment.AssessmentGrowthSettings(
-            data={"assessment_id": 1, "grouper": "A", "log": True}
+            data={"assessment_id": 1, "grouper": "YE", "log": True}
         )
         assert form.is_valid()
         assess, fig = form.time_series()

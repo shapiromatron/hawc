@@ -9,16 +9,15 @@ import startupPrismaAppRender from "../../summary/Prisma";
 @observer
 class PreviewPanel extends Component {
     render() {
-        const settings = toJS(this.props.store.subclass.settings),
-            data = this.props.store.subclass.data;
+        const {store} = this.props,
+            settings = toJS(store.subclass.settings),
+            data = store.subclass.data,
+            config = store.base.config;
         return (
             <div>
                 <legend>Preview</legend>
                 <p className="form-text text-muted">Preview the settings for this visualization.</p>
-                {startupPrismaAppRender(null, settings, data, {
-                    asComponent: true,
-                    csrf: this.props.store.base.config.csrf,
-                })}
+                {startupPrismaAppRender(null, settings, data, config, true)}
             </div>
         );
     }

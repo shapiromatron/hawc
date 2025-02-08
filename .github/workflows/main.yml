@@ -36,31 +36,22 @@ jobs:
       with:
         python-version: '3.12'
         architecture: 'x64'
-        cache: 'pip'
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+        cache-dependency-glob: "**/pyproject.toml"
     - name: install
       run: |
         mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
-        python -m pip install -U pip wheel
-        python -m pip install -e ".[dev,docs]"
-        python -m pip install -e client
+        uv pip install --system -e ".[dev,docs]"
+        uv pip install --system -e client
     - name: lint-py
       run: |
         make lint-py
     - name: lint-html
       run: |
         make lint-html
-    - name: Setup linux environment
-      if: startsWith(runner.os, 'Linux')
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install -y make libgslcblas0 libgsl-dev
-        export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib"
-        sudo cp vendor/libnlopt.so /usr/local/lib/libnlopt.so.0
-        sudo ln -s /lib/x86_64-linux-gnu/libgsl.so /usr/local/lib/libgsl.so.25
-        export SITE_PKG=`python -c "import sysconfig; print(sysconfig.get_path('purelib'))"`
-        export "BMD_DLL=$SITE_PKG/bmds/bin/BMDS330/libDRBMD.so"
-        echo $BMD_DLL
-        ldd $BMD_DLL
     - name: test
       env:
         DJANGO_DB_NAME: hawc
@@ -75,7 +66,7 @@ jobs:
         fi
         coverage run -m pytest --record-mode=none
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
-        coverage report --format=markdown >> $GITHUB_STEP_SUMMARY
+        coverage report --format=markdown -i >> $GITHUB_STEP_SUMMARY || true
         coverage html -d coverage -i
     - name: loc
       run: |
@@ -96,7 +87,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: 22
         cache: 'yarn'
         cache-dependency-path: 'frontend/yarn.lock'
     - name: install
@@ -152,7 +143,11 @@ jobs:
       with:
         python-version: '3.12'
         architecture: 'x64'
-        cache: 'pip'
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+        cache-dependency-glob: "**/pyproject.toml"
     - name: Download webpack build
       uses: actions/download-artifact@v4
       with:
@@ -160,22 +155,20 @@ jobs:
         path: hawc
     - name: install hawc
       run: |
-        python -m pip install -U pip wheel
-        python -m pip install -e ".[dev,docs]"
-        python -m pip install -e client
-        playwright install --with-deps chromium
+        uv sync --all-extras --python-preference=only-system
+        uv run playwright install --with-deps chromium
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run integration tests
       id: test
       continue-on-error: true
       run: |
-        py.test -sv tests/integration/
+        uv run py.test -sv tests/integration/
     - name: run integration tests (retry)
       if: steps.test.outcome=='failure'
       id: retry
       continue-on-error: true
       run: |
-        py.test -sv --lf tests/integration/
+        uv run py.test -sv --lf tests/integration/
     - name: set status
       if: always()
       run: |
@@ -184,17 +177,3 @@ jobs:
         else
           exit 1
         fi
-    - name: build wheels
-      if: startsWith(github.event.ref, 'refs/tags/') || endsWith(github.event.ref, 'refs/heads/main')
-      run: |
-        python manage.py set_git_commit
-        flit build --format wheel
-        cd client && flit build --format wheel && cd ..
-        cp client/dist/*.whl dist
-    - name: Upload wheels
-      uses: actions/upload-artifact@v4
-      with:
-        name: wheel
-        path: dist/*.whl
-        if-no-files-found: ignore
-        retention-days: 7

@@ -9,6 +9,8 @@ from django.contrib.admin.widgets import AutocompleteSelectMultiple
 from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
 from django.db import transaction
+from django.db.models import QuerySet
+from django.db.models.base import ModelBase
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
@@ -29,8 +31,10 @@ from ..common.helper import new_window_a
 from ..common.widgets import DateCheckboxInput
 from ..myuser.autocomplete import UserAutocomplete
 from ..study.autocomplete import StudyAutocomplete
+from ..summary import models as summary_models
 from ..vocab.constants import VocabularyNamespace
 from . import autocomplete, constants, models
+from .actions import search
 
 
 class AssessmentForm(forms.ModelForm):
@@ -559,6 +563,146 @@ class ContactForm(forms.Form):
         return self.cleaned_data
 
 
+class SearchForm(forms.Form):
+    all_public = forms.BooleanField(required=False, initial=True, label="All public assessments")
+    public = forms.ModelMultipleChoiceField(
+        queryset=models.Assessment.objects.all(),
+        required=False,
+        label="Public Assessments",
+    )
+    all_internal = forms.BooleanField(
+        required=False, initial=True, label="All internal assessments"
+    )
+    internal = forms.ModelMultipleChoiceField(
+        queryset=models.Assessment.objects.all(), required=False, label="Internal assessments"
+    )
+    type = forms.ChoiceField(
+        required=True,
+        label="Search for",
+        choices=(
+            ("study", "Studies"),
+            ("visual", "Visuals"),
+            ("data-pivot", "Data Pivots"),
+        ),
+    )
+    order_by = forms.ChoiceField(
+        required=True,
+        initial="-last_updated",
+        choices=(
+            ("name", "↑ Title"),
+            ("-name", "↓ Title"),
+            ("last_updated", "↑ Last Updated"),
+            ("-last_updated", "↓ Last Updated"),
+        ),
+    )
+    query = forms.CharField(max_length=128, required=False)
+
+    order_by_override = {
+        ("visual", "name"): "title",
+        ("visual", "-name"): "-title",
+        ("data-pivot", "name"): "title",
+        ("data-pivot", "-name"): "-title",
+        ("study", "name"): "short_citation",
+        ("study", "-name"): "-short_citation",
+    }
+    model_class: dict[str, ModelBase] = {
+        "visual": summary_models.Visual,
+        "data-pivot": summary_models.DataPivotQuery,
+    }
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+        self.fields["public"].queryset = self.fields["public"].queryset.public().order_by("name")
+        if self.user.is_anonymous:
+            self.fields.pop("all_internal")
+            self.fields.pop("internal")
+        else:
+            self.fields["internal"].queryset = (
+                self.fields["internal"].queryset.user_can_view(self.user).order_by("name")
+            )
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_method = "GET"
+        helper.form_class = "p-3"
+
+        internal_fields = tuple() if self.user.is_anonymous else ("all_internal", "internal")
+
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("query", css_class="col-6"),
+                cfl.Column("type", css_class="col-3"),
+                cfl.Column("order_by", css_class="col-3"),
+            ),
+            cfl.Fieldset(
+                "Assessment Search Options",
+                cfl.Row(
+                    cfl.Column("all_public", "public"),
+                    cfl.Column(*internal_fields),
+                ),
+            ),
+            cfl.Row(
+                cfl.Column(
+                    cfl.Submit("search", "Search", css_class="btn-block"),
+                    cfl.HTML(
+                        """<i class="fa fa-spinner fa-spin htmx-indicator align-items-center d-flex ml-2" id="spinner" aria-hidden="true"></i>"""
+                    ),
+                    css_class="col-md-5 offset-md-4",
+                ),
+            ),
+        )
+        helper.attrs.update(
+            **{
+                "hx-get": ".",
+                "hx-target": "#results",
+                "hx-swap": "outerHTML",
+                "hx-select": "#results",
+                "hx-trigger": "submit",
+                "hx-push-url": "true",
+                "hx-indicator": "#spinner",
+            }
+        )
+        return helper
+
+    def search(self):
+        data = self.cleaned_data
+        order_by = self.order_by_override.get((data["type"], data["order_by"]), data["order_by"])
+        match data["type"]:
+            case "study":
+                return (
+                    search.search_studies(
+                        query=data["query"],
+                        all_public=data["all_public"],
+                        public=data["public"],
+                        all_internal=data.get("all_internal", False),
+                        internal=data.get("internal", None),
+                        user=self.user if self.user.is_authenticated else None,
+                    )
+                    .select_related("assessment")
+                    .prefetch_related("identifiers")
+                    .order_by(order_by)
+                )
+            case "visual" | "data-pivot":
+                return (
+                    search.search_visuals(
+                        model_cls=self.model_class[data["type"]],
+                        query=data["query"],
+                        all_public=data["all_public"],
+                        public=data["public"],
+                        all_internal=data.get("all_internal", False),
+                        internal=data.get("internal", None),
+                        user=self.user if self.user.is_authenticated else None,
+                    )
+                    .select_related("assessment")
+                    .prefetch_related("labels__label")
+                    .order_by(order_by)
+                )
+            case _:
+                raise ValueError("Unknown Type")
+
+
 class DatasetForm(forms.ModelForm):
     revision_version = forms.IntegerField(
         disabled=True,
@@ -689,6 +833,14 @@ class DatasetForm(forms.ModelForm):
 class LabelForm(forms.ModelForm):
     parent = forms.ModelChoiceField(None, empty_label=None)
 
+    after = forms.ModelChoiceField(
+        None,
+        required=False,
+        empty_label="--- last ---",
+        initial=None,
+        help_text="Move label after a sibling label.",
+    )
+
     class Meta:
         model = models.Label
         fields = ["name", "description", "parent", "color", "published"]
@@ -701,8 +853,12 @@ class LabelForm(forms.ModelForm):
             self.instance.assessment = assessment
         if self.instance.pk is not None:
             self.fields["parent"].initial = self.instance.get_parent()
-        self.fields["parent"].queryset = self.get_parent_queryset()
+        tree_queryset, root = self.get_tree_queryset()
+        self.fields["parent"].queryset = tree_queryset
+        self.fields["after"].queryset = tree_queryset.exclude(id=root.pk)
         self.fields["parent"].label_from_instance = lambda label: label.get_nested_name()
+        self.fields["after"].label_from_instance = lambda label: label.get_nested_name()
+        self.fields["after"].hover_help = True
         self.fields["description"].widget.attrs["rows"] = 2
 
     @property
@@ -711,27 +867,33 @@ class LabelForm(forms.ModelForm):
         helper.form_tag = False
         helper.layout = cfl.Layout(
             cfl.Row(
-                cfl.Column("name", "published", css_class="col-md-3"),
+                cfl.Column("name", "published", css_class="col-md-2"),
                 cfl.Column("color", css_class="col-md-1"),
                 cfl.Column("description", css_class="col"),
                 cfl.Column("parent", css_class="col-md-2"),
+                cfl.Column("after", css_class="col-md-2"),
             ),
         )
         return helper
 
-    def get_parent_queryset(self):
+    def get_tree_queryset(self) -> tuple[QuerySet[models.Label], models.Label]:
         root = models.Label.get_assessment_root(self.instance.assessment.pk)
         queryset = models.Label.get_tree(root)
         if self.instance.pk is not None:
             queryset = queryset.exclude(
                 path__startswith=self.instance.path, depth__gte=self.instance.depth
             )
-        return queryset
+        return queryset, root
 
     def clean(self):
         cleaned_data = super().clean()
         parent_conflict_msg = "Cannot be published: parent label is unpublished."
         descendant_conflict_msg = "Cannot be unpublished: child label is published."
+        after_conflict_msg = "Must be a child of the 'parent' label."
+        #  check that 'after' and parent align
+        if "after" in self.changed_data:
+            if not self.cleaned_data["after"].is_child_of(self.cleaned_data["parent"]):
+                self.add_error("after", after_conflict_msg)
         # if published changed, check parent and subtree published status
         if "published" in self.changed_data:
             if cleaned_data["published"] and not cleaned_data["parent"].published:
@@ -750,15 +912,20 @@ class LabelForm(forms.ModelForm):
         instance = super().save(commit=False)
         if commit:
             parent = self.cleaned_data["parent"]
+            after = self.cleaned_data["after"]
             # handle new instance
             if instance.pk is None:
                 instance = models.Label.create_tag(
                     assessment_id=instance.assessment.pk, parent_id=parent.pk, instance=instance
                 )
+                if "after" in self.changed_data:
+                    instance.move(after, pos="right")
             # handle existing instance
             else:
                 instance.save()
-                if "parent" in self.changed_data:
+                if "after" in self.changed_data:
+                    instance.move(after, pos="right")
+                elif "parent" in self.changed_data:
                     instance.move(parent, pos="last-child")
             self.save_m2m()
         return instance

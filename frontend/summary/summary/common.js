@@ -141,7 +141,7 @@ const Patterns = {
             }
         }
         if (!msg) {
-            msg = "Error: An error has ocurred; please check visualization settings.";
+            msg = "Error: An error has occurred; please check visualization settings.";
         }
         if ($div) {
             HAWCUtils.addAlert(msg, $div);
