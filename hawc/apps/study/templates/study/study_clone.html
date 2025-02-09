@@ -9,8 +9,9 @@
        hx-indicator="#spinner-{{object.pk}}"
        hx-target="#src-assessment-details"
        hx-encoding="multipart/form-data">
-      Fetch studies
+      Clone
     </a>
+    <a class="btn btn-light" href="{% url 'study:list' assessment.pk %}">Cancel</a>
     <i class="fa fa-spinner fa-spin htmx-indicator ml-3" id="spinner-{{object.pk}}" aria-hidden="true"></i>
     <br><br>
     <div id="src-assessment-details">

@@ -134,7 +134,7 @@ class StudyClone(BaseUpdate):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["breadcrumbs"][-1].name = "Deep Clone"
+        context["breadcrumbs"][-1].name = "Clone Studies"
         return context
 
     def get_form_kwargs(self):
