@@ -31,6 +31,7 @@ class Experiment(models.Model):
         blank=True,
         help_text="""Description of any compliance methods used (i.e. use of EPA OECD, NTP, or other guidelines; conducted under GLP guideline conditions, non-GLP but consistent with guideline study, etc.). This field response should match any description used in study evaluation in the reporting quality domain, e.g., GLP study (OECD guidelines 414 and 412, 1981 versions). If not reported, then use state \"not reported.\"""",
     )
+    guideline_profile = models.CharField(max_length=128, blank=True, null=True)
     comments = models.TextField(
         blank=True,
         help_text="Additional comments (eg., description, animal husbandry, etc.)",
