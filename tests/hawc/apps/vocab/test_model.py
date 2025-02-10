@@ -1,7 +1,7 @@
 import pytest
 
 from hawc.apps.vocab.constants import VocabularyNamespace
-from hawc.apps.vocab.models import Entity, Term
+from hawc.apps.vocab.models import Entity, GuidelineProfile, Observation, Term
 
 
 @pytest.mark.django_db
@@ -39,3 +39,18 @@ class TestEntity:
             entity.get_external_url()
             == "https://ncim.nci.nih.gov/ncimbrowser/pages/concept_details.jsf?dictionary=NCI%20Metathesaurus&code=C0015684"
         )
+
+
+@pytest.mark.django_db
+class TestGuidelineProfile:
+    def test_attributes(self):
+        profile = GuidelineProfile.objects.get(id=1)
+        assert str(profile) == "90-day Oral Toxicity in Rodents:not required"
+        assert profile.get_admin_edit_url() == "/admin/vocab/guidelineprofile/1/change/"
+
+
+@pytest.mark.django_db
+class TestObservation:
+    def test_attributes(self):
+        observation = Observation.objects.get(id=1)
+        assert str(observation) == "Test Experiment:ToxRefDB::effect_subtype::eye"

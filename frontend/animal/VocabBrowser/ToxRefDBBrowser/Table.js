@@ -44,28 +44,28 @@ class Table extends Component {
                         <thead>
                             <tr>
                                 <th>
-                                    Endpoint Category
+                                    System
                                     <HelpTextPopup
                                         title="Endpoint Category"
                                         content={helpText.system_popup}
                                     />
                                 </th>
                                 <th>
-                                    Endpoint Type
+                                    Effect
                                     <HelpTextPopup
                                         title="Endpoint Type"
                                         content={helpText.effect_popup}
                                     />
                                 </th>
                                 <th>
-                                    Endpoint Target
+                                    Effect Subtype
                                     <HelpTextPopup
                                         title="Endpoint Target"
                                         content={helpText.effect_subtype_popup}
                                     />
                                 </th>
                                 <th>
-                                    Effect Description
+                                    Endpoint/Outcome
                                     <HelpTextPopup
                                         title="Effect Description"
                                         content={helpText.endpoint_name_popup}

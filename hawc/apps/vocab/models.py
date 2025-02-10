@@ -202,6 +202,51 @@ class EntityTermRelation(models.Model):
         return f"{self.term} -> {self.entity}"
 
 
+class GuidelineProfile(models.Model):
+    objects = managers.GuidelineProfileManager()
+
+    guideline_id = models.PositiveIntegerField()
+    endpoint = models.ForeignKey("Term", on_delete=models.CASCADE, blank=True, null=True)
+    obs_status = models.CharField(choices=constants.ObservationStatus, null=True)
+    description = models.TextField(blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
+
+    def __str__(self) -> str:
+        guideline_name = GuidelineProfile.objects.get_guideline_name(self.guideline_id)
+        return f"{guideline_name}:{self.obs_status}"
+
+    def get_admin_edit_url(self) -> str:
+        return reverse("admin:vocab_guidelineprofile_change", args=(self.id,))
+
+
+class Observation(models.Model):
+    objects = managers.ObservationManager()
+
+    experiment = models.ForeignKey(
+        "animalv2.Experiment", on_delete=models.CASCADE, blank=True, null=True
+    )
+    endpoint = models.ForeignKey("Term", on_delete=models.CASCADE, blank=True, null=True)
+    tested_status = models.BooleanField(default=False)
+    reported_status = models.BooleanField(default=False)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
+
+    def __str__(self) -> str:
+        return f"{self.experiment}:{self.endpoint}"
+
+    def get_assessment(self):
+        return self.experiment.get_assessment()
+
+
 reversion.register(Term)
 reversion.register(Entity)
 reversion.register(EntityTermRelation)
+reversion.register(GuidelineProfile)
+reversion.register(Observation)
