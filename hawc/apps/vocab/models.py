@@ -203,6 +203,8 @@ class EntityTermRelation(models.Model):
 
 
 class GuidelineProfile(models.Model):
+    objects = managers.GuidelineProfileManager()
+
     guideline_id = models.PositiveIntegerField()
     endpoint = models.ForeignKey("Term", on_delete=models.CASCADE, blank=True, null=True)
     obs_status = models.CharField(choices=constants.ObservationStatus, null=True)
@@ -222,8 +224,10 @@ class GuidelineProfile(models.Model):
 
 
 class Observation(models.Model):
+    objects = managers.ObservationManager()
+
     experiment = models.ForeignKey(
-        "animal.Experiment", on_delete=models.CASCADE, blank=True, null=True
+        "animalv2.Experiment", on_delete=models.CASCADE, blank=True, null=True
     )
     endpoint = models.ForeignKey("Term", on_delete=models.CASCADE, blank=True, null=True)
     tested_status = models.BooleanField(default=False)

@@ -142,3 +142,23 @@ class TermViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     def uids(self, request: Request) -> Response:
         qs = self.get_queryset().exclude(uid=None)
         return Response(qs.values_list("id", "uid"))
+
+
+class GuidelineProfileViewSet(viewsets.GenericViewSet):
+    serializer_class = serializers.GuidelineProfileSerializer
+    filename = "guideline_profiles"
+
+    def get_queryset(self, guideline=None) -> QuerySet:
+        guideline_id = models.GuidelineProfile.objects.get_guideline_id(guideline)
+        qs = models.GuidelineProfile.objects.all()
+        if guideline_id:
+            qs = qs.filter(guideline_id=guideline_id)
+        return qs
+
+    def get_df(self, guideline) -> pd.DataFrame:
+        qs = self.get_queryset(guideline).values()
+        return pd.DataFrame(list(qs))
+
+    @action(detail=True, renderer_classes=PandasRenderers, permission_classes=(AllowAny,))
+    def export(self, request: Request, pk: str):
+        return FlatExport.api_response(df=self.get_df(pk), filename=self.filename)
