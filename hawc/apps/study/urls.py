@@ -20,14 +20,9 @@ urlpatterns = [
         name="create_from_identifier",
     ),
     path(
-        "assessment/<int:pk>/deep-clone/",
-        views.StudyClone.as_view(),
+        "assessment/<int:pk>/clone/",
+        views.CloneStudies.as_view(),
         name="clone_from_assessment",
-    ),
-    path(
-        "<int:pk>/deep-clone/<slug:action>/",
-        views.StudyCloneViewSet.as_view(),
-        name="clone_from_assessment-htmx",
     ),
     path("<int:pk>/", views.StudyDetail.as_view(), name="detail"),
     path("<int:pk>/toggle-lock/", views.StudyToggleLock.as_view(), name="toggle-lock"),

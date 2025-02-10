@@ -23,6 +23,7 @@ from ..models import Study
 
 
 def clone_study(src_study_id, dst_assessment_id):
+    # pass in study object instead of id? and assessment object?
     src_study = Study.objects.get(id=src_study_id)
     dst_study = Study.objects.get(id=src_study_id)
 
@@ -32,6 +33,7 @@ def clone_study(src_study_id, dst_assessment_id):
     dst_study.assessment_id = dst_assessment_id
     dst_study.save()
 
+    # TODO - save a copy of the attachment? check if a user deletes an attachemnt db oject, if it's deleted from disk
     for attachment in src_study.attachments.all():
         attachment.id = None
         attachment.pk = None
@@ -47,6 +49,7 @@ def clone_study(src_study_id, dst_assessment_id):
 
 
 def clone_animal_bioassay(src_study_id, dst_study_id):
+    # pass in objects, not ids?
     animal_map = {
         "experiment": {},
         "animalgroup": {},

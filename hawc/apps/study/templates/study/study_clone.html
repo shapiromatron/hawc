@@ -1,56 +1,40 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
+  <h2>Clone studies from another assessment</h2>
   <form method="post">
     {% crispy form %}
-    <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto"
-       hx-post="{% url 'study:clone_from_assessment-htmx' assessment.pk 'update' %}"
-       hx-trigger="click"
-       hx-indicator="#spinner-{{object.pk}}"
-       hx-target="#src-assessment-details"
-       hx-encoding="multipart/form-data">
-      Clone
-    </a>
-    <a class="btn btn-light" href="{% url 'study:list' assessment.pk %}">Cancel</a>
-    <i class="fa fa-spinner fa-spin htmx-indicator ml-3" id="spinner-{{object.pk}}" aria-hidden="true"></i>
-    <br><br>
-    <div id="src-assessment-details">
-      {% include "study/fragments/src_clone_details.html" %}
+    <div class="form-group form-actions">
+      <button
+          name='action'
+          value="fetch"
+          type="submit"
+          class="btn btn-primary"
+          hx-post="."
+          hx-trigger="click"
+          hx-indicator="#spinner-fetch"
+          hx-target="#src-assessment-details"
+      >Fetch Studies</button>
+      <a class="btn btn-light" href="{% url 'study:list' assessment.pk %}">Cancel</a>
+      <i class="fa fa-spinner fa-spin htmx-indicator ml-3" id="spinner-fetch" aria-hidden="true"></i>
     </div>
   </form>
+  <div id="src-assessment-details" class="mt-3"></div>
 {% endblock %}
 
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function(){
-      const hideTable = function(e){
-        $("#src-assessment-details-fragment").hide();
-      };
-      $('#id_src_assessment').on('change', hideTable).trigger('change');
-    });
-    const submitSrcDetails = function(e){
-      // wrap up src clone selection
-      let clone_details = {};
-      $("#src-studies-table tbody > tr > td").each(function() {
-        let src_id = $(this).closest("tr").attr('id'),
-            cell_name = $(this).find("input").attr('name'),
-            cell_value = $(this).find("input").is(':checked');
-        if (!(src_id in clone_details))
-          clone_details[src_id] = {};
-        clone_details[src_id][cell_name] = cell_value;
+      // check/uncheck nested data types with deep clone.
+      $('#src-assessment-details').on('click', '.study-selector', e => {
+        const row = $(e.target).closest('tr'),
+          checked =  e.target.checked;
+        row.find('input[type="checkbox"]').each((i,el)=>{
+          if(!el.disabled){
+            el.checked = checked;
+          }
+        })
       });
-      $("#src-studies-clone").val(JSON.stringify(clone_details));
-
-      // wrap up metric map selection
-      let metric_map = {};
-      $("#metric-map-table tr").each(function() {
-        let src_metric = $(this).find("p").attr("value"),
-            dst_metric = $(this).find("select :selected").val();
-        if (dst_metric)
-          metric_map[src_metric] = dst_metric;
-      })
-      $("#metric-map-clone").val(JSON.stringify(metric_map));
-      $("#id_src_assessment").val("").trigger('change');
-    };
+    });
   </script>
 {% endblock extrajs %}

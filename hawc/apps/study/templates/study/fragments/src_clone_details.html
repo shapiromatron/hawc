@@ -1,115 +1,81 @@
-<div id="src-assessment-details-fragment">
-  {% if success_msg %}
-    <div class="col alert alert-success success">
-      <button type="button" class="close" data-dismiss="alert">×</button>
-      {{ success_msg }}
-    </div>
-  {% endif %}
-  {% if src_studies %}
-    <h4>Select studies</h4>
-    <table id="src-studies-table" class='table table-sm table-striped'>
-      {% bs4_colgroup '40,20,20,20' %}
-      {% bs4_thead 'Short citation,Bioassay,Epi*,Risk of Bias' %}
-      <tbody>
-        {% for study in src_studies %}
-          <tr id="{{study.id}}">
-            <td>
-              <input type="checkbox" id="study_{{study.id}}" name="study">
-              <label style="font-weight: normal;" for="study_{{study.id}}">&nbsp;{{study}}</label>
-            </td>
-            <td>
-              <input
-                {% if not study.bioassay %}
-                  disabled
-                {% endif %}
-                type="checkbox" name="bioassay">
-            </td>
-            <td>
-              <input
-                {% if not study.epi %}
-                  disabled
-                {% elif not assessment.epi_version == 2 or not study.assessment.epi_version == 2 %}
-                  disabled
-                {% endif %}
-                type="checkbox" name="epi">
-            </td>
-            <td>
-              <input
-                {% if not study.rob %}
-                  disabled
-                {% endif %}
-                type="checkbox" name="rob">
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="100%" class="text-muted">
-            * Only assessments using epidemiology schema version 2 are eligible to be cloned.
+<form>
+  <h3>Source assessment: <a href="{{src_assessment.get_absolute_url}}" {% anchor_new_tab %}>{{src_assessment}}</a></h3>
+  <p class="text-muted">Select which studies from the selected assessment to copy into this assessment.</p>
+  <table id="src-studies-table" class='table table-sm table-striped'>
+    {% bs4_colgroup '40,20,20,20' %}
+    <thead>
+      <tr>
+        <th>Short Citation</th>
+        <th>Bioassay</th>
+        <th>Epidemiology*</th>
+        <th>{{assessment.get_rob_name_display|title}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for study in studies %}
+        <tr id="{{study.id}}">
+          <td>
+            <input type="checkbox" name="study-{{study.id}}" id="study-{{study.id}}" class="study-selector">
+            <label class="ml-1" for="study-{{study.id}}">{{study}}</label>
+            <a class="ml-1 btn btn-light" href="{{study.get_absolute_url}}" {% anchor_new_tab %}>View</a>
+          </td>
+          <td>
+            <input
+              name="study-{{study.id}}-bioassay"
+              {% if not study.has_bioassay %}disabled{% endif %}
+              type="checkbox">
+          </td>
+          <td>
+            <input
+              name="study-{{study.id}}-epi"
+              {% if not study.has_epi %}disabled{% endif %}
+              type="checkbox">
+          </td>
+          <td>
+            <input
+              name="study-{{study.id}}-rob"
+              {% if not study.has_rob %}disabled{% endif %}
+              type="checkbox">
           </td>
         </tr>
-      </tfoot>
-    </table>
-    {% if src_metrics %}
-      <div id="metrics" class="hidden">
-        <br>
-        <h4>Map metrics</h4>
-        {% if dst_metrics %}
-          <table id="metric-map-table" class='table table-sm table-striped'>
-            {% bs4_colgroup '50,50' %}
-            {% bs4_thead 'Source Metric,Destination Metric' %}
-            <tbody>
-              {% for metric in src_metrics %}
-                <tr>
-                  <td>
-                    <p value="{{ metric.id }}">{{ metric.name }}</p>
-                  </td>
-                  <td>
-                    <select class="custom-select">
-                      <option selected hidden value=""></option>
-                      <option value="">N/A</option>
-                      {% for dst_metric in dst_metrics %}
-                        <option value="{{ dst_metric.id }}">{{ dst_metric.name }}</option>
-                      {% endfor %}
-                    </select>
-                  </td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        {% else %}
-          {% include 'riskofbias/_arob_none_alert.html' %}
-        {% endif %}
-      </div>
-    {% endif %}
-    <input hidden type="text" id="src-studies-clone" name="src-studies" value="">
-    <input hidden type="text" id="metric-map-clone" name="metric-map" value="">
-    <a class="btn mt-1 btn-primary flex-shrink-0 align-self-start ml-auto"
-       hx-post="{% url 'study:clone_from_assessment-htmx' assessment.pk 'clone' %}"
-       hx-trigger="click"
-       hx-indicator="#spinner-{{object.pk}}"
-       hx-target="#src-assessment-details"
-       hx-encoding="multipart/form-data"
-       onclick="submitSrcDetails()">
-      Clone
-    </a>
-
-    <script type="text/javascript">
-      $('#src-studies-table input').on('change', (e) => {
-        let study_input = $(e.target).closest("tr").find('input[name="study"]');
-        let row_inputs = $(e.target).closest("tr").find('input');
-        if ($(e.target).is(":checked"))
-          study_input.prop('checked', true);
-        else if (!study_input.is(":checked"))
-        row_inputs.prop('checked', false);
-
-        if ($('input[name="rob"]').is(":checked"))
-          $("#metrics").show();
-        else
-          $("#metrics").hide();
-      });
-    </script>
-  {% endif %}
-</div>
-
+      {% empty %}
+      <tr>
+        <td colspan="100%" class="text-muted">
+          No studies available.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="100%" class="text-muted">
+          * Only epidemiology extractions using schema version 2 are eligible to be cloned.
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+  <h3>{{assessment.get_rob_name_display|title}} Mapping</h3>
+  <p class="text-muted">Optional; if any selected studies have been selected with {{assessment.get_rob_name_display|lower}}, you must also map metrics from the source assessment to the destination assessment. Skip this section if no evaluations were selected.</p>
+  <pre>ADD</pre>
+  {% csrf_token %}
+  <input name="src_assessment" value="{{src_assessment.id}}" disabled class='hidden' />
+  <div class="form-group form-actions">
+    <button
+        name='action'
+        value="clone"
+        type="submit"
+        class="btn btn-primary"
+        hx-post="."
+        hx-trigger="click"
+        hx-indicator="#spinner-clone"
+        hx-target="#src-assessment-details"
+    >Clone Selected Studies</button>
+    <a class="btn btn-light" href="{% url 'study:list' assessment.pk %}">Cancel</a>
+  </div>
+  <div id="spinner-clone" class="htmx-indicator">
+    {% alert type="info" %}
+      <i class="fa fa-spinner fa-spin ml-3" aria-hidden="true"></i>
+      Cloning, please wait ... this may take a few minutes ...
+    {% endalert %}
+  </div>
+</form>
