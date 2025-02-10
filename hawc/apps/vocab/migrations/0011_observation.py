@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         null=True,
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="animal.experiment",
+                        to="animalv2.experiment",
                     ),
                 ),
             ],
