@@ -4,12 +4,14 @@ from django.forms import BaseForm, modelformset_factory
 from django.http import HttpRequest
 from django.shortcuts import render
 
+from ..assessment.models import Assessment
 from ..common.forms import FormsetGenericFormHelper
 from ..common.htmx import HtmxViewSet, Item, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
     BaseDelete,
     BaseDetail,
+    BaseFilterList,
     BaseList,
     BaseUpdate,
     FormsetConfiguration,
@@ -17,7 +19,7 @@ from ..common.views import (
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
-from . import forms, models
+from . import filterset, forms, models
 
 # TODO - make sure HTML views efficiently query database, HTMX views lower priority
 
@@ -256,6 +258,17 @@ class ExperimentChildViewSet(HtmxViewSet):
         context["formsets"] = formsets
 
         return context
+
+
+class ExperimentFilterList(BaseFilterList):
+    template_name = "animalv2/experiment_list.html"
+    parent_model = Assessment
+    model = models.Experiment
+    filterset_class = filterset.ExperimentFilterSet
+    paginate_by = 50
+
+    def get_queryset(self):
+        return super().get_queryset()
 
 
 class ChemicalViewSet(ExperimentChildViewSet):

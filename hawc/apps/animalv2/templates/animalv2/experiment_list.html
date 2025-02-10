@@ -1,0 +1,39 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+  <div class="d-flex">
+    <h2>Available bioassay experiments ({{page_obj.paginator.count}} found)</h2>
+  </div>
+
+  {% include 'common/inline_filter_form.html' %}
+
+  <table id="mainTbl" class="table table-sm table-striped">
+    {% bs4_colgroup '25,25,50' %}
+    {% bs4_thead 'Short citation,Experiment name,Experiment design' %}
+    <tbody>
+      {% for object in object_list %}
+        <tr>
+          <td>
+            <a href="{% url 'vocab:observation-list' object.pk %}?order_by=system">{{ object.study.short_citation }}</a>
+            {% debug_badge object.id %}
+          </td>
+          <td>
+            <a href="{% url 'study:detail' object.pk %}">{{ object.name }}</a>
+          </td>
+          <td>
+            <a href="{% url 'study:detail' object.pk %}">{{ object.design }}</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="7">
+            No experiments available
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% include 'includes/paginator.html' with plural_object_name='experiments' %}
+
+{% endblock %}
