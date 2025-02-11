@@ -13,7 +13,30 @@
     {% for object in object_list %}
       <li class="list-group-item conflict-reference-li {% if forloop.first %} pb-4 {% else %} py-4 {% endif %}"
           hx-target="this" hx-swap="delete swap:1s">
-        {% include 'lit/_duplicate_candidates.html' %}
+        <div class="card">
+          <div class="card-body">
+            <form hx-post="{% url 'lit:api:duplicate-resolve-duplicate' object.pk %}">
+              <div class="form-group">
+                <input type="radio" id="none-{{object.pk}}" name="resolution" value="none" />
+                <label id="none-{{object.pk}}">
+                  No duplicates
+                </label>
+              </div>
+              {% for candidate in object.candidates.all %}
+                <div class="form-group">
+                  <input type="radio" id="primary-{{object.pk}}-{{candidate.pk}}" name="resolution" value="{{candidate.pk}}" />
+                  <div class="d-inline-block align-top">
+                    {% include 'lit/_reference_with_tags.html' with ref=candidate %}
+                  </div>
+                </div>
+              {% endfor %}
+              <div class="form-group">
+                <textarea class="form-control" name="notes" placeholder="Notes"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Resolve</button>
+            </form>
+          </div>
+        </div>
       </li>
     {% endfor %}
   </ul>

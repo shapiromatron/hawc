@@ -1517,6 +1517,7 @@ class DuplicateCandidateGroup(models.Model):
     def resolve(
         self,
         resolution: constants.DuplicateResolution,
+        resolving_user: HAWCUser,
         primary_id: int | None = None,
         notes: str = "",
     ):
@@ -1530,6 +1531,7 @@ class DuplicateCandidateGroup(models.Model):
             self.primary_id = primary_id
             self._update_references()
         self.resolution = resolution
+        self.resolving_user = resolving_user
         self.notes = notes
         self.save()
 

@@ -1258,6 +1258,7 @@ class DuplicateResolution(BaseList):
     model = models.DuplicateCandidateGroup
     template_name = "lit/duplicate_resolution.html"
     breadcrumb_active_name = "Duplicate resolution"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
 
     paginate_by = 5
 
@@ -1283,6 +1284,7 @@ class ResolvedDuplicates(BaseList):
     model = models.DuplicateCandidateGroup
     template_name = "lit/resolved_duplicates.html"
     breadcrumb_active_name = "Resolved duplicates"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     def get_queryset(self):
         return (
@@ -1305,7 +1307,7 @@ class IdentifyDuplicates(MessageMixin, View):
 
     def get(self, request, *args, **kwargs):
         assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
-        if not assessment.user_is_team_member_or_higher(request.user):
+        if not assessment.user_can_edit_object(request.user):
             raise PermissionDenied()
         url = reverse("lit:duplicate-resolution", args=(assessment.pk,))
         models.DuplicateCandidateGroup.create_duplicate_candidate_groups(assessment.pk)

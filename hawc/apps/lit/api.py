@@ -440,15 +440,20 @@ class DuplicateViewSet(
     def resolve_duplicate(self, request, pk):
         instance = self.get_object()
         assessment = instance.assessment
-        if not assessment.user_can_edit_object(self.request.user):
+        if not assessment.user_can_edit_object(request.user):
             raise PermissionDenied()
         resolution = request.POST.get("resolution")
         notes = request.POST.get("notes", "")
         if resolution == "none":
-            instance.resolve(resolution=constants.DuplicateResolution.FALSE_POSITIVE, notes=notes)
+            instance.resolve(
+                resolution=constants.DuplicateResolution.FALSE_POSITIVE,
+                resolving_user=request.user,
+                notes=notes,
+            )
         if (resolution := tryParseInt(resolution)) is not None:
             instance.resolve(
                 resolution=constants.DuplicateResolution.RESOLVED,
+                resolving_user=request.user,
                 primary_id=resolution,
                 notes=notes,
             )
