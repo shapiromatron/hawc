@@ -161,17 +161,17 @@ urlpatterns = [
         name="label-item",
     ),
     path(
-        "trained-model/create/",
+        "trained-models/create/",
         views.TrainedModelCreate.as_view(),
         name="trained_model_create",
     ),
     path(
-        "trained-model/update/<int:pk>",
+        "trained-models/update/<int:pk>",
         views.TrainedModelUpdate.as_view(),
         name="trained_model_update",
     ),
     path(
-        "trained-model/<int:pk>/",
+        "trained-models/<int:pk>/",
         views.TrainedModelDetail.as_view(),
         name="trained_model_detail",
     ),

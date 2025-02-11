@@ -1469,8 +1469,7 @@ class TrainedVectorizer(models.Model):
     vectorizer = models.FileField(
         upload_to="trained-vectorizers/", storage=get_private_data_storage()
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -1483,14 +1482,14 @@ class TrainedModel(models.Model):
         default=False,
         help_text="Publish this model for all users to see and use across assessments.",
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
 
     class Meta:
-        ordering = ["-updated_at"]
+        ordering = ["-created"]
 
     def get_absolute_url(self):
         return reverse("assessment:trained_model_detail", args=(self.id,))
@@ -1513,8 +1512,8 @@ class TrainedModelVersion(models.Model):
         on_delete=models.PROTECT,
         related_name="trained_models",
     )
-    notes = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    description = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.trained_model.name} v{self.version}"

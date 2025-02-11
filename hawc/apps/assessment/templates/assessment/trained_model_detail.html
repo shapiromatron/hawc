@@ -3,22 +3,36 @@
 {% block content %}
 
 
-  <div class="d-flex align-items-start">
+  <div class="d-flex align-items-start mt-2">
     <h2 class="mt-0 mb-2">{{object.name}}</h2>
-    <!-- <a class="ml-auto btn btn-primary mt-1" href="{% url 'assessment:trained_model_create' %}">Create a model</a> -->
+    <span class="unpublishedBadge align-self-start flex-shrink-0 badge badge-pill ml-auto mt-1 border {{ object.published|yesno:'border-success text-success,border-secondary text-muted' }}" style="font-size: 0.75rem; vertical-align: top;" title="{{object.published|yesno:'Published,Unpublished'}}"><i class="fa fa-{{ object.published|yesno:'eye,eye-slash' }}" aria-hidden="true"></i> <i>{{object.published|yesno:'Published,Unpublished'}}</i></span>
     {% actions %}
-      <a class="dropdown-item" href="{{object.get_update_url}}">Upload new model version</a>
+      <a class="dropdown-item" href="{{object.get_update_url}}">Edit model details or upload new version</a>
     {% endactions %}
   </div>
-  {{object.description}}
-  <h4>Versions</h4>
-  <div class="list-group mb-4">
-    {% for object in object.versions.all %}
-      <div class="list-group-item text-dark d-flex">
-        <i>Version {{object.version}}</i>: {{object.notes}} &nbsp;<b>Vectorizer</b>: {{object.vectorizer}}
+  <div>{{object.description}}</div>
+  {% for object in object.versions.all %}
+    <div class="my-3 pb-3">
+      <h4 class="m-0">{{object}}</h4>
+      <div class="d-flex mt-2">
+        {% if object.description %}
+          <div class="box-shadow-minor rounded p-3 mr-3" style="min-height: 3rem;">
+            <div class="font-weight-bold" style="font-size: 1.1rem;">Description:</div>
+            <div title="{{object.description}}">{{object.description|truncatechars:75}}</div>
+          </div>
+        {% endif %}
+        <div class="box-shadow-minor rounded p-3 mr-3" style="min-height: 3rem;">
+          <div class="font-weight-bold" style="font-size: 1.1rem;">Vectorizer: {{object.vectorizer}}</div>
+          <div class="text-muted text-overflow" title="{{object.vectorizer.description}}"><i>{{object.vectorizer.description|truncatechars:75}}</i></div>
+        </div>
+        <div class="box-shadow-minor rounded p-3 flex-shrink-0" style="min-height: 3rem;">
+          <div class="font-weight-bold" style="font-size: 1.1rem;">Created</div>
+          <div>{{object.created|date:"DATE_FORMAT"}}</div>
+        </div>
       </div>
+
       {% if object.prediction_runs.exists %}
-        <div class="list-group mb-4 ml-4">
+        <div class="list-group my-3">
           {% for object in object.prediction_runs.all %}
             <a class="list-group-item list-group-item-action text-dark d-flex" href="{{object.get_absolute_url}}">
               Model ran in {{object.workflow.assessment}} on {{object.workflow}}
@@ -26,8 +40,9 @@
           {% endfor %}
         </div>
       {% endif %}
-    {% empty %}
-      {% alert type="info" %}No versions found.{% endalert %}
-    {% endfor %}
+    </div>
+  {% empty %}
+    {% alert type="info" %}No versions found.{% endalert %}
+  {% endfor %}
 
 {% endblock %}

@@ -1009,11 +1009,11 @@ class TrainedModelVersionForm(forms.ModelForm):
 
     class Meta:
         model = TrainedModelVersion
-        fields = ["model", "notes", "vectorizer", "new_vectorizer"]
+        fields = ["model", "description", "vectorizer", "new_vectorizer"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["notes"].widget.attrs["rows"] = 1
+        self.fields["description"].widget.attrs["rows"] = 1
 
     @property
     def helper(self):
@@ -1022,7 +1022,7 @@ class TrainedModelVersionForm(forms.ModelForm):
         helper.layout = cfl.Layout(
             cfl.Row(
                 cfl.Column("model"),
-                cfl.Column("notes"),
+                cfl.Column("description"),
                 cfl.Column("vectorizer"),
                 cfl.Column("new_vectorizer"),
             )
