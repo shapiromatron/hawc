@@ -6,6 +6,7 @@ from ...animal.models import (
     EndpointGroup,
     Experiment,
 )
+from ...assessment.models import Assessment
 from ...epiv2.models import (
     AdjustmentFactor,
     Chemical,
@@ -22,30 +23,23 @@ from ...riskofbias.models import (
 from ..models import Study
 
 
-def clone_study(src_study_id, dst_assessment_id):
-    # pass in study object instead of id? and assessment object?
-    src_study = Study.objects.get(id=src_study_id)
-    dst_study = Study.objects.get(id=src_study_id)
-
-    # does not check for dupes
-    dst_study.id = None
+def clone_study(src_study: Study, dst_assessment: Assessment) -> tuple[Study, Study]:
+    dst_study = Study.objects.get(id=src_study.id)
     dst_study.pk = None
-    dst_study.assessment_id = dst_assessment_id
+    dst_study.id = None
+    dst_study.assessment = dst_assessment
     dst_study.save()
 
-    # TODO - save a copy of the attachment? check if a user deletes an attachemnt db oject, if it's deleted from disk
-    for attachment in src_study.attachments.all():
-        attachment.id = None
-        attachment.pk = None
-        attachment.study_id = dst_study.id
-        attachment.save()
+    # # TODO - save a copy of the attachment? check if a user deletes an attachemnt db oject, if it's deleted from disk
+    # for attachment in src_study.attachments.all():
+    #     attachment.id = None
+    #     attachment.study_id = dst_study.id
+    #     attachment.save()
 
-    # copy list of identifiers (pubmed etc)
-    src_identifiers = src_study.identifiers.all()
-    dst_study.identifiers.add(*src_identifiers)
-    dst_study.save()
+    # copy identifiers
+    dst_study.identifiers.set(list(src_study.identifiers.all()))
 
-    return {"study": {src_study_id: dst_study.id}}
+    return src_study, dst_study
 
 
 def clone_animal_bioassay(src_study_id, dst_study_id):

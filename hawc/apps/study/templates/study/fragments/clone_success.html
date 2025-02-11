@@ -1,0 +1,8 @@
+{% alert type="success" %}
+  <p><b>{{now}}: Clone complete!</b> The following studies were cloned; please save for your records:</p>
+  <ul>
+    {% for src, dst in studies_map.items %}
+      <li><a href="{{src.get_absolute_url}}">{{src}}</a>&nbsp;→&nbsp;<a href="{{dst.get_absolute_url}}">{{dst}}</a></li>
+    {% endfor %}
+  </ul>
+{% endalert %}
