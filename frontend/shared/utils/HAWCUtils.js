@@ -236,14 +236,6 @@ class HAWCUtils {
         return null;
     }
 
-    static printf(str) {
-        // https://stackoverflow.com/a/4673436/906385
-        const args = Array.prototype.slice.call(arguments, 1);
-        return str.replace(/{(\d+)}/g, (match, number) =>
-            typeof args[number] !== "undefined" ? args[number] : match
-        );
-    }
-
     static symbolStringToType(str) {
         switch (str) {
             case "circle":
