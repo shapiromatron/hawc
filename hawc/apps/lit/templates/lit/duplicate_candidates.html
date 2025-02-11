@@ -10,7 +10,7 @@
   </div>
   <ul class="list-group list-group-flush my-3">
     {% for object in object_list %}
-        {% include 'lit/_duplicate_candidates.html' %}
+      {% include 'lit/_duplicate_candidates.html' %}
     {% endfor %}
   </ul>
   {% include "includes/paginator.html" with plural_object_name="duplicate groups" %}

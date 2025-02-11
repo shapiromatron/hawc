@@ -1,12 +1,12 @@
 import html
 import json
 import logging
+import random
 import re
 from copy import copy
 from math import ceil
 from typing import Self
 from urllib import parse
-import random
 
 from celery import chain
 from celery.result import ResultBase
@@ -1460,99 +1460,92 @@ class Workflow(models.Model):
         )
 
 
-# add parameters/select on literatureassessment model
-class DedupeSettings(models.Model):
-    # deduper for use in an assessment
-    # for first pass maybe we just have a global deduper, or static choices, so that we don't have to build this
-    assessment:"Assessment"
-    parameters:dict # list of parameters for deduplication? ie schema of dedupe modules to use?
-
-    def build_deduper(self):
-        # return deduper instance using self.parameters
-        return
-
-
-# SOFT DELETES
-
-class SortedArrayField(ArrayField):
-    pass
-
-class DuplicateCandidates(models.Model):
+class DuplicateCandidateGroup(models.Model):
     assessment = models.ForeignKey(
         "assessment.Assessment", on_delete=models.CASCADE, related_name="duplicates"
     )
     resolution = models.PositiveSmallIntegerField(
-        choices=constants.DuplicateResolution,
-        default=constants.DuplicateResolution.UNRESOLVED
+        choices=constants.DuplicateResolution, default=constants.DuplicateResolution.UNRESOLVED
     )
-    resolving_user = models.ForeignKey(HAWCUser, null=True, on_delete=models.SET_NULL, related_name="resolved_duplicates")
-    candidates = ArrayField(models.IntegerField(),unique=True)
-    primary = models.IntegerField(null=True)
+    resolving_user = models.ForeignKey(
+        HAWCUser, null=True, on_delete=models.SET_NULL, related_name="resolved_duplicates"
+    )
+    candidates = models.ManyToManyField(Reference, related_name="duplicate_candidates")
+    primary = models.ForeignKey(
+        Reference, null=True, on_delete=models.SET_NULL, related_name="duplicate_primaries"
+    )
     notes = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    @property
+    def secondaries(self):
+        return self.candidates.exclude(pk=self.primary_id)
 
     def get_assessment(self):
         return self.assessment
 
     @classmethod
-    def foobar(cls,assessment):
-        references = assessment.references.values("pk","title")
-        candidate_groups = cls.random_execute(references)
-        cls.objects.bulk_create([cls(assessment=assessment,candidates=[ref["pk"] for ref in group]) for group in candidate_groups])
+    def validate_candidates(cls, candidates: list[int]):
+        qs = cls.objects.annotate(candidates_count=models.Count("candidates")).filter(
+            candidates_count=len(candidates)
+        )
+        for candidate in candidates:
+            qs = qs.filter(candidates=candidate)
+        return not qs.exists()
 
     @classmethod
-    def random_execute(cls,references)->list[list[dict]]:
+    def find_duplicate_candidate_groups(cls, references) -> list[list[dict]]:
         num_candidates = 2
-        if len(references)<num_candidates:
+        if len(references) < num_candidates:
             return []
-        num_groups = min(3,len(references)/num_candidates)
-        return [random.choices(references,k=num_candidates) for i in range(num_groups)]
+        num_groups = min(3, len(references) / num_candidates)
+        return [random.choices(references, k=num_candidates) for i in range(num_groups)]
 
-    def generate_unique_identifier(self):
-        return sorted(self.candidates)
-    
+    @classmethod
+    def create_duplicate_candidate_groups(cls, assessment) -> list["DuplicateCandidateGroup"]:
+        references = assessment.references.values("pk", "title")
+        candidate_groups = cls.find_duplicate_candidate_groups(references)
+        candidate_groups = [
+            group
+            for group in candidate_groups
+            if cls.validate_candidates([ref["pk"] for ref in group])
+        ]
+        objs = cls.objects.bulk_create([cls(assessment=assessment) for group in candidate_groups])
+        m2m_objs = cls.candidates.through.objects.bulk_create(
+            [
+                cls.candidates.through(duplicatecandidategroup_id=obj.pk, reference_id=ref["pk"])
+                for obj, group in zip(objs, candidate_groups, strict=False)
+                for ref in group
+            ]
+        )
+
     def _update_references(self):
-        # TODO also make primary not hidden? may be unnecessary
-        duplicate_ids = set(self.candidates)-{self.primary}
+        duplicate_ids = self.secondaries.values_list("pk", flat=True)
         self.assessment.references.filter(pk__in=duplicate_ids).update(hidden=True)
+        # if a "hidden" reference was selected as primary, unhide it
+        if self.primary.hidden:
+            self.primary.hidden = False
+            self.primary.save()
 
-    def resolve(self,resolution:constants.DuplicateResolution,primary:int=None,notes:str=""):
+    def resolve(
+        self,
+        resolution: constants.DuplicateResolution,
+        primary_id: int | None = None,
+        notes: str = "",
+    ):
         if resolution == constants.DuplicateResolution.UNRESOLVED:
             raise ValueError("Resolution must not be unresolved.")
         if resolution == constants.DuplicateResolution.RESOLVED:
-            if primary is None:
+            if primary_id is None:
                 raise ValueError("Primary must not be None if duplicate identified.")
-            if primary not in self.candidates:
+            if primary_id not in self.candidates.values_list("pk", flat=True):
                 raise ValueError("Primary must be a candidate.")
-            self.primary = primary
-            #self._update_references()
+            self.primary_id = primary_id
+            self._update_references()
         self.resolution = resolution
         self.notes = notes
         self.save()
-
-# where to put execute method? literatureassessment, manager for dupes model
-
-
-# DuplicateCandidateGroup
-
-"""
-WORKFLOW
-
-User defines deduper for use in assessment
-User executes a session that uses a defined deduper
-Session stores list of identified candidate duplicate groups
-User resolves duplicates in a session; if group status != unresolved, it shows up on this page
-Perhaps a seperate session page of resolved groups? ie an "in progress" list view and a "done" list view
-Multiple resolutions at once? Or more like screen page in LLR where its do one, click for next (look at conflict resolution)
-Should this workflow do anything proactive? ie lets say a candidate group is identified false positive, is it a big deal if it shows up again if a user executes another session w/ same settings? (yes)
-Single user right? Not like conflict resolution? THIS IS CORRECT
-Do we want this workflow to also happen on import? That would look slightly different
-    Though maybe we could just have it happen automatically AFTER import, that way it would use the same workflow
-    If used on import, do we add "choose a deduper" option to created search? or maybe "default" attribute to deduper, whichever one is "default" is used?
-    Each assessment has undeletable "default" deduper, maybe add noop setting choice for deduper for people who don't want it running on imports?
-"""
-
 
 
 reversion.register(LiteratureAssessment)

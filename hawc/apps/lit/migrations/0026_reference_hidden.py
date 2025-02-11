@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("lit", "0025_dedupesettings_duplicatecandidates"),
     ]

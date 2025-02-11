@@ -7,21 +7,21 @@
   </div>
   <ul class="list-group list-group-flush my-3">
     {% for object in object_list %}
-        <div>
-          Group {{object.pk}}
-        </div>
-        <div>
-          {{object.resolution}}
-        </div>
-        <div>
-          {{object.candidates}}
-        </div>
-        <div>
-          {{object.primary}}
-        </div>
-        <div>
-          {{object.notes}}
-        </div>
+      <div>
+        Group {{object.pk}}
+      </div>
+      <div>
+        {{object.resolution}}
+      </div>
+      <div>
+        {{object.candidates}}
+      </div>
+      <div>
+        {{object.primary}}
+      </div>
+      <div>
+        {{object.notes}}
+      </div>
     {% endfor %}
   </ul>
   {% include "includes/paginator.html" with plural_object_name="duplicate groups" %}

@@ -428,12 +428,10 @@ class ReferenceViewSet(
         )
 
 
-
-
 class DuplicateViewSet(
     BaseAssessmentViewSet,
 ):
-    model = models.DuplicateCandidates
+    model = models.DuplicateCandidateGroup
     http_method_names = ["post"]
 
     @action(
@@ -445,9 +443,13 @@ class DuplicateViewSet(
         if not assessment.user_can_edit_object(self.request.user):
             raise PermissionDenied()
         resolution = request.POST.get("resolution")
-        notes = request.POST.get("notes","")
+        notes = request.POST.get("notes", "")
         if resolution == "none":
-            instance.resolve(resolution=constants.DuplicateResolution.FALSE_POSITIVE,notes=notes)
-        if (resolution:=tryParseInt(resolution)) is not None:
-            instance.resolve(resolution=constants.DuplicateResolution.RESOLVED,primary=resolution,notes=notes)
+            instance.resolve(resolution=constants.DuplicateResolution.FALSE_POSITIVE, notes=notes)
+        if (resolution := tryParseInt(resolution)) is not None:
+            instance.resolve(
+                resolution=constants.DuplicateResolution.RESOLVED,
+                primary_id=resolution,
+                notes=notes,
+            )
         return Response({"status": "ok"})

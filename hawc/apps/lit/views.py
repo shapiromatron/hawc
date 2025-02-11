@@ -25,9 +25,9 @@ from ..common.views import (
     BaseFilterList,
     BaseList,
     BaseUpdate,
+    MessageMixin,
     create_object_log,
     htmx_required,
-    MessageMixin
 )
 from ..udf.cache import TagCache
 from . import constants, filterset, forms, models
@@ -1253,42 +1253,50 @@ class AssessmentInteractive(HtmxView):
         return render(request, "lit/components/venn_reference_list.html", context=context)
 
 
-
 class DuplicateCandidatesList(BaseList):
     parent_model = Assessment
-    model = models.DuplicateCandidates
+    model = models.DuplicateCandidateGroup
     template_name = "lit/duplicate_candidates.html"
     breadcrumb_active_name = "Duplicate candidates"
 
     def get_queryset(self):
         return (
-            super().get_queryset().filter(assessment=self.assessment).filter(resolution=constants.DuplicateResolution.UNRESOLVED)
+            super()
+            .get_queryset()
+            .filter(assessment=self.assessment)
+            .filter(resolution=constants.DuplicateResolution.UNRESOLVED)
+            .prefetch_related("candidates", "candidates__identifiers", "candidates__tags")
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
 
+
 class DuplicateCandidatesList2(BaseList):
     parent_model = Assessment
-    model = models.DuplicateCandidates
+    model = models.DuplicateCandidateGroup
     template_name = "lit/duplicate_candidates_2.html"
     breadcrumb_active_name = "Resolved duplicates"
 
     def get_queryset(self):
         return (
-            super().get_queryset().filter(assessment=self.assessment).exclude(resolution=constants.DuplicateResolution.UNRESOLVED)
+            super()
+            .get_queryset()
+            .filter(assessment=self.assessment)
+            .exclude(resolution=constants.DuplicateResolution.UNRESOLVED)
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
 
 class DuplicateTask(MessageMixin, View):
     success_message = "Deduplication requested."
 
     def get(self, request, *args, **kwargs):
         assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
-        models.DuplicateCandidates.foobar(assessment)
+        models.DuplicateCandidateGroup.create_duplicate_candidate_groups(assessment)
         self.send_message()
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
