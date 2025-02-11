@@ -981,7 +981,7 @@ class LabelItemForm(forms.Form):
 class TrainedModelForm(forms.ModelForm):
     class Meta:
         model = TrainedModel
-        fields = ["name", "description"]
+        fields = ["name", "description", "published"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -995,6 +995,7 @@ class TrainedModelForm(forms.ModelForm):
             cfl.Row(
                 cfl.Column("name"),
                 cfl.Column("description"),
+                cfl.Column("published"),
             )
         )
         return helper

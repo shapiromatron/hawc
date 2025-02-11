@@ -1479,6 +1479,10 @@ class TrainedVectorizer(models.Model):
 class TrainedModel(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
+    published = models.BooleanField(
+        default=False,
+        help_text="Publish this model for all users to see and use across assessments.",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
