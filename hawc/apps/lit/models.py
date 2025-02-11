@@ -1500,25 +1500,11 @@ class DuplicateCandidateGroup(models.Model):
         if len(references) < num_candidates:
             return []
         num_groups = min(3, len(references) / num_candidates)
-        return [random.choices(references, k=num_candidates) for i in range(num_groups)]
+        return [random.choices(references, k=num_candidates) for i in range(num_groups)]  # noqa: S311
 
     @classmethod
-    def create_duplicate_candidate_groups(cls, assessment) -> list["DuplicateCandidateGroup"]:
-        references = assessment.references.values("pk", "title")
-        candidate_groups = cls.find_duplicate_candidate_groups(references)
-        candidate_groups = [
-            group
-            for group in candidate_groups
-            if cls.validate_candidates([ref["pk"] for ref in group])
-        ]
-        objs = cls.objects.bulk_create([cls(assessment=assessment) for group in candidate_groups])
-        m2m_objs = cls.candidates.through.objects.bulk_create(
-            [
-                cls.candidates.through(duplicatecandidategroup_id=obj.pk, reference_id=ref["pk"])
-                for obj, group in zip(objs, candidate_groups, strict=False)
-                for ref in group
-            ]
-        )
+    def create_duplicate_candidate_groups(cls, assessment_id: int):
+        tasks.create_duplicate_candidate_groups.delay(assessment_id)
 
     def _update_references(self):
         duplicate_ids = self.secondaries.values_list("pk", flat=True)

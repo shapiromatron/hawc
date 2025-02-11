@@ -1253,11 +1253,13 @@ class AssessmentInteractive(HtmxView):
         return render(request, "lit/components/venn_reference_list.html", context=context)
 
 
-class DuplicateCandidatesList(BaseList):
+class DuplicateResolution(BaseList):
     parent_model = Assessment
     model = models.DuplicateCandidateGroup
-    template_name = "lit/duplicate_candidates.html"
-    breadcrumb_active_name = "Duplicate candidates"
+    template_name = "lit/duplicate_resolution.html"
+    breadcrumb_active_name = "Duplicate resolution"
+
+    paginate_by = 5
 
     def get_queryset(self):
         return (
@@ -1270,13 +1272,16 @@ class DuplicateCandidatesList(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Duplicate resolution"
+        )
         return context
 
 
-class DuplicateCandidatesList2(BaseList):
+class ResolvedDuplicates(BaseList):
     parent_model = Assessment
     model = models.DuplicateCandidateGroup
-    template_name = "lit/duplicate_candidates_2.html"
+    template_name = "lit/resolved_duplicates.html"
     breadcrumb_active_name = "Resolved duplicates"
 
     def get_queryset(self):
@@ -1289,14 +1294,20 @@ class DuplicateCandidatesList2(BaseList):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Resolved duplicates"
+        )
         return context
 
 
-class DuplicateTask(MessageMixin, View):
-    success_message = "Deduplication requested."
+class IdentifyDuplicates(MessageMixin, View):
+    success_message = "Duplicate identification requested."
 
     def get(self, request, *args, **kwargs):
         assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
-        models.DuplicateCandidateGroup.create_duplicate_candidate_groups(assessment)
+        if not assessment.user_is_team_member_or_higher(request.user):
+            raise PermissionDenied()
+        url = reverse("lit:duplicate-resolution", args=(assessment.pk,))
+        models.DuplicateCandidateGroup.create_duplicate_candidate_groups(assessment.pk)
         self.send_message()
-        return HttpResponseRedirect(request.META.get("HTTP_REFERER", "/"))
+        return HttpResponseRedirect(url)

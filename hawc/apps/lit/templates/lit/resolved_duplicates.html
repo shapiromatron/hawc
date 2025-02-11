@@ -4,6 +4,9 @@
 {% block content %}
   <div class="d-flex">
     <h2>Resolved duplicates</h2>
+    {% actions %}
+      <a class="dropdown-item" href="{% url 'lit:duplicate-resolution' assessment.pk %}">Duplicate resolution</a>
+    {% endactions %}
   </div>
   <ul class="list-group list-group-flush my-3">
     {% for object in object_list %}

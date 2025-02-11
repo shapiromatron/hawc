@@ -1,20 +1,26 @@
 <div hx-target="this" hx-swap="delete swap:1s">
-  <form hx-post="{% url 'lit:api:duplicate-resolve-duplicate' object.pk %}">
-    <div>
-      <label>
-        <input type="radio" id="none-{{object.pk}}" name="resolution" value="none" />
-        No duplicates
-      </label>
-    </div>
-    {% for candidate in object.candidates.all %}
-      <div>
-        <input type="radio" id="primary-{{object.pk}}-{{candidate.pk}}" name="resolution" value="{{candidate.pk}}" />
-        <div style="display:inline-block; vertical-align: top;">
-          {% include 'lit/_reference_with_tags.html' with ref=candidate %}
+  <div class="carddd">
+    <div class="card-bodydd">
+      <form hx-post="{% url 'lit:api:duplicate-resolve-duplicate' object.pk %}">
+        <div class="form-group">
+          <input type="radio" id="none-{{object.pk}}" name="resolution" value="none" />
+          <label id="none-{{object.pk}}">
+            No duplicates
+          </label>
         </div>
-      </div>
-    {% endfor %}
-    <textarea name="notes" placeholder="Notes"></textarea>
-    <button type="submit">Resolve</button>
-  </form>
+        {% for candidate in object.candidates.all %}
+          <div class="form-group">
+            <input type="radio" id="primary-{{object.pk}}-{{candidate.pk}}" name="resolution" value="{{candidate.pk}}" />
+            <div class="d-inline-block align-top">
+              {% include 'lit/_reference_with_tags.html' with ref=candidate %}
+            </div>
+          </div>
+        {% endfor %}
+        <div class="form-group">
+          <textarea class="form-control" name="notes" placeholder="Notes"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Resolve</button>
+      </form>
+    </div>
+  </div>
 </div>

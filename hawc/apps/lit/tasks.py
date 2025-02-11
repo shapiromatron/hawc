@@ -142,3 +142,29 @@ def fix_pubmed_without_content():
     logger.info(f"Attempting to update pubmed content for {num_ids} identifiers")
     if num_ids > 0:
         Identifiers.update_pubmed_content(ids)
+
+
+@shared_task
+def create_duplicate_candidate_groups(assessment_id: int):
+    DuplicateCandidateGroup = apps.get_model("lit", "DuplicateCandidateGroup")
+    assessment = apps.get_model("assessment", "Assessment").objects.get(pk=assessment_id)
+    references = assessment.references.values("pk", "title")
+    candidate_groups = DuplicateCandidateGroup.find_duplicate_candidate_groups(references)
+    candidate_groups = [
+        group
+        for group in candidate_groups
+        if DuplicateCandidateGroup.validate_candidates([ref["pk"] for ref in group])
+    ]
+    with transaction.atomic():
+        objs = DuplicateCandidateGroup.objects.bulk_create(
+            [DuplicateCandidateGroup(assessment=assessment) for group in candidate_groups]
+        )
+        DuplicateCandidateGroup.candidates.through.objects.bulk_create(
+            [
+                DuplicateCandidateGroup.candidates.through(
+                    duplicatecandidategroup_id=obj.pk, reference_id=ref["pk"]
+                )
+                for obj, group in zip(objs, candidate_groups, strict=False)
+                for ref in group
+            ]
+        )

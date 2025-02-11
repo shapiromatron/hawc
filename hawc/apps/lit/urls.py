@@ -165,18 +165,18 @@ urlpatterns = [
     ),
     path("api/", include((router.urls, "api"))),
     path(
-        "assessment/<int:pk>/duplicate-candidates/",
-        views.DuplicateCandidatesList.as_view(),
-        name="duplicate-candidates",
+        "assessment/<int:pk>/duplicate-resolution/",
+        views.DuplicateResolution.as_view(),
+        name="duplicate-resolution",
     ),
     path(
-        "assessment/<int:pk>/duplicate-candidates2/",
-        views.DuplicateCandidatesList2.as_view(),
-        name="duplicate-candidates2",
+        "assessment/<int:pk>/resolved-duplicates/",
+        views.ResolvedDuplicates.as_view(),
+        name="resolved-duplicates",
     ),
     path(
-        "assessment/<int:pk>/duplicate-task/",
-        views.DuplicateTask.as_view(),
-        name="duplicate-task",
+        "assessment/<int:pk>/identify-duplicates/",
+        views.IdentifyDuplicates.as_view(),
+        name="identify-duplicates",
     ),
 ]

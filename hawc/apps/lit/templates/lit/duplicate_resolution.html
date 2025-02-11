@@ -1,0 +1,21 @@
+{% extends 'assessment-rooted.html' %}
+
+{% load bs4 %}
+{% block content %}
+  <div class="d-flex">
+    <h2>Duplicate candidates</h2>
+    {% actions %}
+      <a class="dropdown-item" href="{% url 'lit:resolved-duplicates' assessment.pk %}">Resolved duplicates</a>
+      <a class="dropdown-item" href="{% url 'lit:identify-duplicates' assessment.pk %}">Identify duplicates</a>
+    {% endactions %}
+  </div>
+  <ul class="list-group list-group-flush my-3">
+    {% for object in object_list %}
+      <li class="list-group-item conflict-reference-li {% if forloop.first %} pb-4 {% else %} py-4 {% endif %}"
+          hx-target="this" hx-swap="delete swap:1s">
+        {% include 'lit/_duplicate_candidates.html' %}
+      </li>
+    {% endfor %}
+  </ul>
+  {% include "includes/paginator.html" with plural_object_name="duplicate groups" %}
+{% endblock content %}
