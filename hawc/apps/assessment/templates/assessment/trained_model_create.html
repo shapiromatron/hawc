@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <div class="card mb-3">
+    <div class="card mb-3 hidden" id="trained-vectorizer">
       <div class="card-header">
         Vectorizer
       </div>
@@ -34,4 +34,23 @@
 
     <button type="submit" class="btn btn-primary mb-3">{% if trained_model_form.instance.id %} Update {% else %} Create {% endif %} Trained Model</button>
   </form>
+{% endblock %}
+
+{% block extrajs %}
+  <script>
+    $(document).ready(function() {
+      function toggleElementsBasedOnCheckbox() {
+        var isChecked = $('input[name="trained-model-version-new_vectorizer"]').is(':checked');
+        $('#id_trained-model-version-vectorizer').prop('disabled', isChecked);
+        $('#trained-vectorizer').toggleClass('hidden', !isChecked);
+        $('[id^="id_trained-vectorizer-"]').prop('disabled', !isChecked);
+      }
+
+      toggleElementsBasedOnCheckbox();
+
+      $('input[name="trained-model-version-new_vectorizer"]').change(function() {
+        toggleElementsBasedOnCheckbox();
+      });
+    });
+  </script>
 {% endblock %}

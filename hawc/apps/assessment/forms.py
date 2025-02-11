@@ -29,7 +29,7 @@ from ..common.forms import (
 )
 from ..common.helper import new_window_a
 from ..common.widgets import DateCheckboxInput
-from ..lit.models import PredictionClass, TrainedModel, TrainedModelVersion, TrainedVectorizer
+from ..lit.models import TrainedModel, TrainedModelVersion, TrainedVectorizer
 from ..myuser.autocomplete import UserAutocomplete
 from ..study.autocomplete import StudyAutocomplete
 from ..summary import models as summary_models
@@ -983,22 +983,49 @@ class TrainedModelForm(forms.ModelForm):
         model = TrainedModel
         fields = ["name", "description"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["description"].widget.attrs["rows"] = 1
+
     @property
     def helper(self):
         helper = BaseFormHelper(self)
         helper.form_tag = False
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("name"),
+                cfl.Column("description"),
+            )
+        )
         return helper
 
 
 class TrainedModelVersionForm(forms.ModelForm):
+    new_vectorizer = forms.BooleanField(
+        required=False,
+        label="New Vectorizer",
+    )
+
     class Meta:
         model = TrainedModelVersion
-        fields = ["model", "notes"]
+        fields = ["model", "notes", "vectorizer", "new_vectorizer"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["notes"].widget.attrs["rows"] = 1
 
     @property
     def helper(self):
         helper = BaseFormHelper(self)
         helper.form_tag = False
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("model"),
+                cfl.Column("notes"),
+                cfl.Column("vectorizer"),
+                cfl.Column("new_vectorizer"),
+            )
+        )
         return helper
 
 
@@ -1007,24 +1034,19 @@ class TrainedVectorizerForm(forms.ModelForm):
         model = TrainedVectorizer
         fields = ["name", "description", "vectorizer"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["description"].widget.attrs["rows"] = 1
+
     @property
     def helper(self):
         helper = BaseFormHelper(self)
         helper.form_tag = False
-        return helper
-
-
-class PredictionClassForm(forms.ModelForm):
-    class Meta:
-        model = PredictionClass
-        fields = ["name", "description"]
-
-    def __init__(self, *args, **kwargs):
-        trained_model = kwargs.pop("trained_model", None)
-        super().__init__(*args, **kwargs)
-        self.instance.trained_model = trained_model
-
-    @property
-    def helper(self):
-        helper = BaseFormHelper(self, cancel_url=self.instance.trained_model.get_absolute_url())
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("name"),
+                cfl.Column("description"),
+                cfl.Column("vectorizer"),
+            )
+        )
         return helper

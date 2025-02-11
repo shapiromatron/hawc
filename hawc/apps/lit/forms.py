@@ -828,7 +828,7 @@ class VennForm(forms.Form):
 class ModelPredictionRunForm(forms.ModelForm):
     class Meta:
         model = models.ModelPredictionRun
-        fields = ["workflow", "model_version"]
+        fields = ["workflow", "model_version", "prediction_class"]
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)

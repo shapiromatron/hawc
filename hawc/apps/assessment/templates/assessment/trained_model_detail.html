@@ -8,7 +8,6 @@
     <!-- <a class="ml-auto btn btn-primary mt-1" href="{% url 'assessment:trained_model_create' %}">Create a model</a> -->
     {% actions %}
       <a class="dropdown-item" href="{{object.get_update_url}}">Upload new model version</a>
-      <a class="dropdown-item" href="{% url 'assessment:prediction_class_create' object.pk %}">Add model prediction class</a>
     {% endactions %}
   </div>
   {{object.description}}
@@ -30,16 +29,5 @@
     {% empty %}
       {% alert type="info" %}No versions found.{% endalert %}
     {% endfor %}
-
-    <h4>Prediction Class(es)</h4>
-    <div class="list-group mb-4">
-      {% for object in object.prediction_classes.all %}
-        <div class="list-group-item text-dark d-flex">
-          <b>{{object.name}}</b>: {{object.description}}
-        </div>
-      {% empty %}
-        {% alert type="info" %}No prediction classes found.{% endalert %}
-      {% endfor %}
-    </div>
 
 {% endblock %}

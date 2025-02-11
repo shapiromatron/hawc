@@ -44,7 +44,7 @@ from ..common.views import (
     create_object_log,
     get_referrer,
 )
-from ..lit.models import PredictionClass, TrainedModel
+from ..lit.models import TrainedModel
 from ..materialized.models import refresh_all_mvs
 from ..mgmt.analytics.overall import compute_object_counts
 from ..summary import models as summary_models
@@ -1190,24 +1190,29 @@ class TrainedModelFormMixin:
             request.POST, request.FILES, prefix="trained-vectorizer"
         )
 
-        if (
-            trained_model_form.is_valid()
-            and trained_model_version_form.is_valid()
-            and trained_vectorizer_form.is_valid()
-        ):
-            # Save vectorizer first
+        if trained_model_form.is_valid() and trained_vectorizer_form.is_valid():
             vectorizer = trained_vectorizer_form.save()
-
-            # Save trained model
             trained_model = trained_model_form.save()
 
-            # Save model version with the trained model, vectorizer, and default version 1
-            model_version = trained_model_version_form.save(commit=False)
+            data = request.POST.copy()
+            data["trained-model-version-vectorizer"] = vectorizer
+
+            trained_model_version_form = forms.TrainedModelVersionForm(
+                data, request.FILES, prefix="trained-model-version"
+            )
+            if trained_model_version_form.is_valid():
+                model_version = trained_model_version_form.save(commit=False)
             model_version.trained_model = trained_model
             model_version.vectorizer = vectorizer
             model_version.version = trained_model.versions.count() + 1
             model_version.save()
-
+            return self.form_valid(trained_model_form)
+        elif trained_model_form.is_valid() and trained_model_version_form.is_valid():
+            trained_model = trained_model_form.save()
+            model_version = trained_model_version_form.save(commit=False)
+            model_version.trained_model = trained_model
+            model_version.version = trained_model.versions.count() + 1
+            model_version.save()
             return self.form_valid(trained_model_form)
         elif trained_model_form.is_valid() and self.object:
             return self.form_valid(trained_model_form)
@@ -1244,20 +1249,3 @@ class TrainedModelList(LoginRequiredMixin, ListView):
     model = TrainedModel
     template_name = "assessment/trained_model_list.html"
     paginate_by = 50
-
-
-@method_decorator(staff_member_required, name="dispatch")
-class PredictionClassCreate(MessageMixin, LoginRequiredMixin, CreateView):
-    model = PredictionClass
-    form_class = forms.PredictionClassForm
-    template_name = "assessment/prediction_class_create.html"
-    success_message = "Prediction class created."
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        trained_model = get_object_or_404(TrainedModel, pk=self.kwargs["pk"])
-        kwargs["trained_model"] = trained_model
-        return kwargs
-
-    def get_success_url(self):
-        return self.object.trained_model.get_absolute_url()

@@ -1520,24 +1520,11 @@ class TrainedModelVersion(models.Model):
         unique_together = ["trained_model", "version"]
 
 
-class PredictionClass(models.Model):
-    trained_model = models.ForeignKey(
-        TrainedModel, on_delete=models.CASCADE, related_name="prediction_classes"
-    )
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        unique_together = ["trained_model", "name"]
-
-
 class ModelPredictionRun(models.Model):
     model_version = models.ForeignKey(
         TrainedModelVersion, on_delete=models.CASCADE, related_name="prediction_runs"
     )
+    prediction_class = models.CharField(max_length=100)
     workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE, related_name="trained_models")
     run_date = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True)
@@ -1557,23 +1544,20 @@ class ModelPredictionRun(models.Model):
         references = Reference.objects.filter(assessment=self.workflow.assessment).in_workflow(
             self.workflow
         )
-        prediction_classes = self.model_version.trained_model.prediction_classes.all()
 
         predictions = []
         for reference in references:
-            for pred_class in prediction_classes:
-                # Generate random score between 0 and 1
-                score = np.random.random()
+            # Generate random score between 0 and 1
+            score = np.random.random()
 
-                predictions.append(
-                    ModelPrediction(
-                        prediction_run=self,
-                        reference=reference,
-                        prediction_class=pred_class,
-                        score=score,
-                        notes=f"Test prediction generated for {pred_class.name}",
-                    )
+            predictions.append(
+                ModelPrediction(
+                    prediction_run=self,
+                    reference=reference,
+                    score=score,
+                    notes=f"Test prediction generated for {self.model_version}",
                 )
+            )
 
         with transaction.atomic():
             ModelPrediction.objects.bulk_create(predictions)
@@ -1588,9 +1572,6 @@ class ModelPrediction(models.Model):
     reference = models.ForeignKey(
         Reference, on_delete=models.CASCADE, related_name="model_predictions"
     )
-    prediction_class = models.ForeignKey(
-        PredictionClass, on_delete=models.CASCADE, related_name="model_predictions"
-    )
     score = models.FloatField(
         validators=[MinValueValidator(0)],
         default=0,
@@ -1603,7 +1584,7 @@ class ModelPrediction(models.Model):
     notes = models.TextField(blank=True)
 
     class Meta:
-        unique_together = ["prediction_run", "reference", "prediction_class"]
+        unique_together = ["prediction_run", "reference"]
 
 
 reversion.register(LiteratureAssessment)
