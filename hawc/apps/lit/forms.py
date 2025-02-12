@@ -828,7 +828,7 @@ class VennForm(forms.Form):
 class ModelPredictionRunForm(forms.ModelForm):
     class Meta:
         model = models.ModelPredictionRun
-        fields = ["workflow", "model_version", "prediction_class"]
+        fields = ["workflow", "model_version", "prediction_class", "notes"]
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("parent", None)
@@ -836,10 +836,12 @@ class ModelPredictionRunForm(forms.ModelForm):
         workflows = models.Workflow.objects.filter(assessment=assessment)
         self.fields["workflow"].queryset = workflows
         self.assessment = assessment
+        self.fields["notes"].widget.attrs["rows"] = 2
 
     @property
     def helper(self):
         helper = BaseFormHelper(
             self, cancel_url=reverse("lit:overview", args=(self.assessment.pk,))
         )
+        helper.add_row("workflow", 3, classes="col-md-4")
         return helper

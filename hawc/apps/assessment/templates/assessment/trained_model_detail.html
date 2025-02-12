@@ -34,8 +34,8 @@
       {% if object.prediction_runs.exists %}
         <div class="list-group my-3">
           {% for object in object.prediction_runs.all %}
-            <a class="list-group-item list-group-item-action text-dark d-flex" href="{{object.get_absolute_url}}">
-              Model ran in {{object.workflow.assessment}} on {{object.workflow}}
+            <a class="list-group-item list-group-item-action text-dark d-flex text-nowrap" href="{{object.get_absolute_url}}">
+              Model ran in &nbsp;<b>{{object.workflow.assessment}}</b>&nbsp; on {{object.workflow}} &nbsp;<i class="text-muted text-nowrap text-truncate">{{object.notes}}</i>
             </a>
           {% endfor %}
         </div>
