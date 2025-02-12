@@ -8,6 +8,8 @@ from math import ceil
 from typing import Self
 from urllib import parse
 
+import pandas as pd
+import plotly.express as px
 from celery import chain
 from celery.result import ResultBase
 from django.apps import apps
@@ -1575,6 +1577,46 @@ class ModelPredictionRun(models.Model):
             return ModelPrediction.objects.bulk_create(predictions)
 
         return predictions
+
+    def create_score_distribution_plot(self):
+        scores = self.model_predictions.values_list("score", flat=True)
+        df = pd.DataFrame({"score": scores})
+
+        stats = {
+            "mean": df["score"].mean(),
+            "median": df["score"].median(),
+            "std": df["score"].std(),
+        }
+
+        fig = px.histogram(
+            df,
+            x="score",
+            nbins=50,
+            histnorm="probability density",
+            title=None,
+            labels={"score": "Score", "count": "Density"},
+            marginal="violin",
+            template="plotly_white",
+            width=600,
+            height=400,
+        )
+
+        stats_text = (
+            f'Mean: {stats["mean"]:.3f}<br>Median: {stats["median"]:.3f}<br>Std: {stats["std"]:.3f}'
+        )
+        fig.add_annotation(
+            x=0.95,
+            y=0.95,
+            xref="paper",
+            yref="paper",
+            text=stats_text,
+            showarrow=False,
+            bgcolor="white",
+            bordercolor="black",
+            borderwidth=1,
+        )
+
+        return fig
 
 
 class ModelPrediction(models.Model):

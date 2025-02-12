@@ -148,6 +148,9 @@ tfoot > tr > td {
 .box-shadow-minor {
     box-shadow: #0000003d 0px 1px 6px -1px;
 }
+.box-shadow-inset {
+    box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px 0 inset;
+}
 .text-black {
     color: black !important;
 }

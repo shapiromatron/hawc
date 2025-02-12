@@ -10,7 +10,7 @@
   <div class="list-group mb-4">
     {% for object in object_list %}
       <a class="list-group-item clickable text-dark d-flex" href="{{object.get_absolute_url}}">
-        {{object.name}}: &nbsp; <i>{{object.description}}</i>
+        {{object.name}}: &nbsp; <i>{{object.description}}</i> <span class="unpublishedBadge align-self-start flex-shrink-0 badge badge-pill ml-auto mt-1 border {{ object.published|yesno:'border-success text-success,border-secondary text-muted' }}" style="font-size: 0.75rem; vertical-align: top;" title="{{object.published|yesno:'Published,Unpublished'}}"><i class="fa fa-{{ object.published|yesno:'eye,eye-slash' }}" aria-hidden="true"></i> <i>{{object.published|yesno:'Published,Unpublished'}}</i></span>
       </a>
     {% empty %}
       {% alert type="info" %}No models found.{% endalert %}

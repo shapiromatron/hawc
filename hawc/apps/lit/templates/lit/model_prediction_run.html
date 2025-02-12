@@ -2,18 +2,34 @@
 
 {% block content %}
 
-  <h3 class="mt-2 mb-0">{{object.model_version}} ran on <i>{{object.workflow}}</i></h3>
+  <h3 class="mt-2 mb-0">{{model_prediction_run.model_version}} ran on <i>{{model_prediction_run.workflow}}</i></h3>
 
-  <p class="my-2">{{object.notes}}</p>
-
+  <p class="mt-2 mb-3">{{model_prediction_run.notes}}</p>
+  <div class="d-flex">
+    <div class="mb-4 box-shadow-minor rounded mr-4">
+      <h4 class="mx-4 mt-4 mb-0">Distribution of Prediction Scores</h4>
+      <p class="text-muted my-2 mx-4">Includes all {{paginator.count}} predictions in this model prediction run</p>
+      {% plotly plot %}
+    </div>
+    <div class="mb-4 p-4 border rounded">
+      <h4 class="m-0">Tag References</h4>
+      <p class="text-muted my-2">Apply tag(s) to all references that meet a certain score.</p>
+      {% crispy form %}
+    </div>
+  </div>
   <div class="list-group mb-4">
-    {% for object in object.model_predictions.all %}
-      <a class="list-group-item list-group-item-action text-dark d-flex py-2" href="{{object.reference.get_absolute_url}}">
+    {% for object in object_list %}
+      <btn type="button" class="list-group-item clickable text-dark text-decoration-none" data-toggle="collapse" data-target="#collapse{{object.id}}" role="button" aria-expanded="false" aria-controls="collapse{{object.id}}">
         <i>{{object.reference}}:</i>&nbsp;<span class="badge badge-secondary align-self-center">{{object.prediction_run.prediction_class}}: <b>{{object.score|floatformat:2}}</b></span>
-      </a>
+      </btn>
+      <div class="collapse bg-light" id="collapse{{object.id}}">
+        <div class="py-3 px-4 border box-shadow-inset">
+          {% include 'lit/_reference_with_tags.html' with ref=object.reference show_user_tags=False %}
+        </div>
+      </div>
     {% empty %}
       {% alert type="info" %}No predictions found.{% endalert %}
     {% endfor %}
   </div>
-
+  {% include "includes/paginator.html" with plural_object_name="Predictions" %}
 {% endblock %}

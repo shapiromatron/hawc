@@ -10,23 +10,35 @@
       <a class="dropdown-item" href="{{object.get_update_url}}">Edit model details or upload new version</a>
     {% endactions %}
   </div>
-  <div>{{object.description}}</div>
+  <div class="d-flex mb-2">
+    {% if object.description %}
+      <div class="box-shadow-minor rounded p-3 mr-3 text-nowrap text-truncate flex-sm-shrink-1" style="min-height: 3rem; min-width: 15rem;">
+        <div class="small">Description</div>
+        <div style="font-size: 1.15rem;" class="text-truncate" title="{{object.description}}">{{object.description}}</div>
+      </div>
+    {% endif %}
+    <div class="box-shadow-minor rounded p-3 flex-shrink-0" style="min-height: 3rem;">
+      <div class="small">Created</div>
+      <div style="font-size: 1.15rem;">{{object.created|date:"DATE_FORMAT"}}</div>
+    </div>
+  </div>
+
   {% for object in object.versions.all %}
     <div class="my-3 pb-3">
-      <h4 class="m-0">{{object}}</h4>
+      <h3 class="m-0 font-weight-lighter">{{object}}</h3>
       <div class="d-flex mt-2">
         {% if object.description %}
-          <div class="box-shadow-minor rounded p-3 mr-3" style="min-height: 3rem;">
-            <div class="font-weight-bold" style="font-size: 1.1rem;">Description:</div>
-            <div title="{{object.description}}">{{object.description|truncatechars:75}}</div>
+          <div class="box-shadow-minor rounded p-3 mr-3 text-nowrap text-truncate flex-sm-shrink-1" style="min-height: 3rem; min-width: 15rem;">
+            <div class="small">Description</div>
+            <div class="text-truncate" title="{{object.description}}">{{object.description}}</div>
           </div>
         {% endif %}
-        <div class="box-shadow-minor rounded p-3 mr-3" style="min-height: 3rem;">
-          <div class="font-weight-bold" style="font-size: 1.1rem;">Vectorizer: {{object.vectorizer}}</div>
-          <div class="text-muted text-overflow" title="{{object.vectorizer.description}}"><i>{{object.vectorizer.description|truncatechars:75}}</i></div>
+        <div class="box-shadow-minor rounded p-3 mr-3 text-nowrap text-truncate d-block" style="min-height: 3rem;">
+          <div><span class="small">Vectorizer:</span> &nbsp;<b>{{object.vectorizer}}</b></div>
+          <div class="text-muted text-truncate" title="{{object.vectorizer.description}}"><i>{{object.vectorizer.description}}</i></div>
         </div>
         <div class="box-shadow-minor rounded p-3 flex-shrink-0" style="min-height: 3rem;">
-          <div class="font-weight-bold" style="font-size: 1.1rem;">Created</div>
+          <div class="small">Created</div>
           <div>{{object.created|date:"DATE_FORMAT"}}</div>
         </div>
       </div>
@@ -35,7 +47,7 @@
         <div class="list-group my-3">
           {% for object in object.prediction_runs.all %}
             <a class="list-group-item list-group-item-action text-dark d-flex text-nowrap" href="{{object.get_absolute_url}}">
-              Model ran in &nbsp;<b>{{object.workflow.assessment}}</b>&nbsp; on {{object.workflow}} &nbsp;<i class="text-muted text-nowrap text-truncate">{{object.notes}}</i>
+              Model ran in&nbsp;<b>{{object.workflow.assessment}}</b>&nbsp;on {{object.workflow}} &nbsp;<i class="text-muted text-nowrap text-truncate">{{object.notes}}</i>
             </a>
           {% endfor %}
         </div>
