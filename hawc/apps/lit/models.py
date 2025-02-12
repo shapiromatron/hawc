@@ -1,14 +1,13 @@
 import html
-import pickle
 import json
 import logging
+import pickle
 import re
 from copy import copy
 from math import ceil
 from typing import Self
 from urllib import parse
 
-import numpy as np
 from celery import chain
 from celery.result import ResultBase
 from django.apps import apps
@@ -1524,10 +1523,10 @@ class TrainedModelVersion(models.Model):
         unique_together = ["trained_model", "version"]
 
     def get_model(self):
-        return pickle.load(self.model)
+        return pickle.load(self.model)  # noqa: S301
 
     def get_vectorizer(self):
-        return pickle.load(self.vectorizer.vectorizer)
+        return pickle.load(self.vectorizer.vectorizer)  # noqa: S301
 
 
 class ModelPredictionRun(models.Model):
@@ -1551,10 +1550,10 @@ class ModelPredictionRun(models.Model):
         return reverse("lit:model_prediction_run_detail", args=(self.pk,))
 
     def run_prediction(self):
-        references = Reference.objects.filter(assessment=self.workflow.assessment, abstract__isnull=False).in_workflow(
-            self.workflow
-        )
-        ref_data = references.values_list('id', 'abstract')
+        references = Reference.objects.filter(
+            assessment=self.workflow.assessment, abstract__isnull=False
+        ).in_workflow(self.workflow)
+        ref_data = references.values_list("id", "abstract")
         ref_ids, abstracts = zip(*ref_data, strict=True)
 
         vectorizer = self.model_version.get_vectorizer()
