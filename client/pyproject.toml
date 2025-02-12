@@ -29,6 +29,7 @@ dependencies = [
 [project.urls]
 "Bug Tracker" = "https://github.com/shapiromatron/hawc/issues"
 Documentation = "https://hawc.readthedocs.io/client/"
+Changes = "https://hawc.readthedocs.io/latest/client/#changelog"
 "Source Code" = "https://github.com/shapiromatron/hawc"
 
 [build-system]
