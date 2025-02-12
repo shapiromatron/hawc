@@ -60,8 +60,7 @@
 
   {% if src_metrics and dst_metrics %}
     <h3>{{assessment.get_rob_name_display|title}} Mapping</h3>
-    <p class="text-muted">Optional; if any selected studies have been selected with {{assessment.get_rob_name_display|lower}}, you must also map metrics from the source assessment to the destination assessment. Skip this section if no evaluations were selected.</p>
-
+    <p class="text-muted">Optional; if any selected studies have been selected with {{assessment.get_rob_name_display|lower}}, you must also map metrics from the source assessment to the destination assessment. Skip this section if no evaluations were selected. Any evaluations which are cloned will be be authored by you in the cloned assessment.</p>
     <div class="form-row">
       <div class="col-md-6">
         <div class="form-group">

@@ -1,6 +1,5 @@
 import logging
 import re
-from typing import Literal
 
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
@@ -16,7 +15,6 @@ from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.generic import RedirectView
-from pydantic import BaseModel, Field, model_validator
 
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
@@ -36,9 +34,7 @@ from ..mgmt.views import EnsurePreparationStartedMixin
 from ..riskofbias.models import RiskOfBiasMetric
 from ..udf.views import UDFDetailMixin
 from . import filterset, forms, models
-
-# from .actions.clone import clone_animal_bioassay, clone_epiv2, clone_rob, clone_study
-from .actions.clone import clone_study
+from .actions.clone import CloneStudyDataValidation
 
 logger = logging.getLogger(__name__)
 
@@ -232,71 +228,23 @@ class CloneStudies(BaseUpdate):
                     "study_epi": data.getlist("study_epi"),
                     "study_rob": data.getlist("study_rob"),
                     "include_rob": data.get("include_rob", False),
-                    "copy_mode": data.get("copy_mode"),
+                    "copy_mode": data.get("copy_mode", None),
                     "metric_map": data.get("metric_map", {}),
                 }
             )
 
-        diff = set(model.metric_map.keys()) - set(
-            context["dst_metrics"].values_list("id", flat=True)
-        )
+        dst_metric_ids = context["dst_metrics"].values_list("id", flat=True)
+        diff = set(model.metric_map.keys()) - set(dst_metric_ids)
         if diff:
             raise forms.ValidationError(f"Destination key(s) not found: {diff}")
 
-        diff = set(model.metric_map.values()) - set(
-            context["src_metrics"].values_list("id", flat=True)
-        )
+        src_metric_ids = context["src_metrics"].values_list("id", flat=True)
+        diff = set(model.metric_map.values()) - set(src_metric_ids)
         if diff:
             raise forms.ValidationError(f"Source key(s) not found: {diff}")
 
-        studies_map = model.clone(context)
-        return studies_map
-
-
-class CloneStudyDataValidation(BaseModel):
-    study: set[int] = Field(min_length=1)
-    study_bioassay: set[int]
-    study_epi: set[int]
-    study_rob: set[int]
-    include_rob: bool = False
-    copy_mode: Literal["final-to-initial", "final-to-final"] | None
-    metric_map: dict[int, int]
-
-    @model_validator(mode="after")
-    def validate_after(self):
-        if self.include_rob is False and len(self.study_rob) > 0:
-            raise ValueError("Cannot include RoB without a study selected for RoB")
-        elif self.include_rob and (len(self.metric_map) == 0):
-            raise ValueError("Cannot include RoB without a RoB mapping")
-        elif self.include_rob and (self.copy_mode is None):
-            raise ValueError("Cannot include RoB without a copy mode specified")
-        return self
-
-    @transaction.atomic
-    def clone(self, context: dict):
-        studies = context["studies"].filter(id__in=self.study)
-        # if self.metric_map:
-        #     src_metrics = {el.id: el for el in context["src_metrics"]}
-        #     dst_metrics = {el.id: el for el in context["dst_metrics"]}
-        #     mapping = {
-        #         src_metrics[key]: dst_metrics[value] for key, value in self.metric_map.items()
-        #     }
-
-        # src_assessment = context["src_assessment"]
-        dst_assessment = context["assessment"]
-        studies_map = {}
-        for study in studies:
-            src_study, dst_study = clone_study(study, dst_assessment)
-            studies_map[src_study] = dst_study
-            # clones["studies"].append({src_id: dst_id})
-            # if src_id in self.study_bioassay:
-            #     clone_animal_bioassay(src_id, dst_id)
-            # if src_id in self.study_epi:
-            #     clone_epiv2(src_id, dst_id)
-            # if src_id in self.study_rob:
-            #     clone_rob(src_study_id, dst_study_id, metric_map, clone_map)
-            # TODO - add assessment.Log
-            # TODO - return something for view showing mapping
+        with transaction.atomic():
+            studies_map = model.clone(self.request.user, context)
         return studies_map
 
 
