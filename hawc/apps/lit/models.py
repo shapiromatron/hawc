@@ -1,4 +1,5 @@
 import html
+import pickle
 import json
 import logging
 import re
@@ -1522,6 +1523,12 @@ class TrainedModelVersion(models.Model):
         ordering = ["-version"]
         unique_together = ["trained_model", "version"]
 
+    def get_model(self):
+        return pickle.load(self.model)
+
+    def get_vectorizer(self):
+        return pickle.load(self.vectorizer.vectorizer)
+
 
 class ModelPredictionRun(models.Model):
     model_version = models.ForeignKey(
@@ -1544,28 +1551,31 @@ class ModelPredictionRun(models.Model):
         return reverse("lit:model_prediction_run_detail", args=(self.pk,))
 
     def run_prediction(self):
-        references = Reference.objects.filter(assessment=self.workflow.assessment).in_workflow(
+        references = Reference.objects.filter(assessment=self.workflow.assessment, abstract__isnull=False).in_workflow(
             self.workflow
         )
+        ref_data = references.values_list('id', 'abstract')
+        ref_ids, abstracts = zip(*ref_data, strict=True)
 
-        predictions = []
-        for reference in references:
-            # Generate random score between 0 and 1
-            score = np.random.random()
+        vectorizer = self.model_version.get_vectorizer()
+        model = self.model_version.get_model()
+        X = vectorizer.transform(abstracts)
+        scores = model.predict_proba(X)[:, 1]
 
-            predictions.append(
-                ModelPrediction(
-                    prediction_run=self,
-                    reference=reference,
-                    score=score,
-                    notes=f"Test prediction generated for {self.model_version}",
-                )
+        predictions = [
+            ModelPrediction(
+                reference_id=ref_id,
+                score=float(score),
+                prediction_run=self,
+                notes=f"Test prediction generated for {self.model_version}",
             )
+            for ref_id, score in zip(ref_ids, scores, strict=True)
+        ]
 
         with transaction.atomic():
-            ModelPrediction.objects.bulk_create(predictions)
+            return ModelPrediction.objects.bulk_create(predictions)
 
-        return len(predictions)
+        return predictions
 
 
 class ModelPrediction(models.Model):
