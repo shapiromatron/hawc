@@ -104,8 +104,8 @@ def create_object_log(
         log_message (str): override for custom message
     """
     # Log action
-    meta = obj._meta
     if not log_message:
+        meta = obj._meta
         log_message = f'{verb} {meta.app_label}.{meta.model_name} #{obj.id}: "{obj}"'
     log = Log.objects.create(
         assessment_id=assessment_id,

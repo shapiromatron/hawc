@@ -211,7 +211,7 @@ class CloneStudies(BaseUpdate):
             "dst_metrics": dst_metrics,
         }
 
-    def clone(self, context: dict, data: QueryDict):
+    def clone(self, context: dict, data: QueryDict) -> dict[models.Study, models.Study]:
         metric_map = {}
         for key, value in data.items():
             if value.isnumeric():
