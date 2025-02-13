@@ -1260,7 +1260,7 @@ class DuplicateResolution(BaseList):
     breadcrumb_active_name = "Duplicate resolution"
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
-    paginate_by = 5
+    paginate_by = 10
 
     def get_queryset(self):
         return (
@@ -1286,6 +1286,8 @@ class ResolvedDuplicates(BaseFilterList):
     template_name = "lit/resolved_duplicates.html"
     breadcrumb_active_name = "Resolved duplicates"
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+
+    paginate_by = 10
 
     def get_queryset(self):
         return (

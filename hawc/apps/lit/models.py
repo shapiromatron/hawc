@@ -1496,7 +1496,7 @@ class DuplicateCandidateGroup(models.Model):
 
     @classmethod
     def find_duplicate_candidate_groups(cls, references) -> list[list[dict]]:
-        num_candidates = 2
+        num_candidates = 3
         if len(references) < num_candidates:
             return []
         num_groups = min(3, len(references) / num_candidates)

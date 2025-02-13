@@ -8,7 +8,6 @@ from ..common.filterset import (
     ArrowOrderingFilter,
     BaseFilterSet,
     ExpandableFilterForm,
-    InlineFilterForm,
     PaginationFilter,
     filter_noop,
 )
@@ -349,6 +348,19 @@ class ReferenceExportFilterSet(FilterSet):
 
 
 class DuplicateCandidateGroupFilterSet(BaseFilterSet):
+    candidate_id = df.NumberFilter(
+        field_name="candidates__pk",
+        label="HAWC ID",
+        help_text="HAWC reference ID.",
+        distinct=True,
+    )
+    candidate_db_id = df.CharFilter(
+        field_name="candidates__identifiers__unique_id",
+        lookup_expr="icontains",
+        label="External identifier",
+        help_text="Pubmed ID, DOI, HERO ID",
+        distinct=True,
+    )
     candidate_search = df.CharFilter(
         method="filter_search",
         label="Title/Author/Year",
@@ -356,24 +368,38 @@ class DuplicateCandidateGroupFilterSet(BaseFilterSet):
     )
     resolution = df.ChoiceFilter(
         empty_label="- Resolution -",
-        choices=constants.DuplicateResolution.choices,
+        choices=[
+            (r.value, r.label)
+            for r in [
+                constants.DuplicateResolution.RESOLVED,
+                constants.DuplicateResolution.FALSE_POSITIVE,
+            ]
+        ],
     )
 
     class Meta:
         model = models.DuplicateCandidateGroup
-        form = InlineFilterForm
+        form = ExpandableFilterForm
         fields = [
+            "candidate_id",
+            "candidate_db_id",
             "candidate_search",
             "resolution",
         ]
         main_field = "candidate_search"
-        appended_fields = [
-            "resolution",
-        ]
+        appended_fields = ["resolution"]
+        grid_layout = {
+            "rows": [
+                {"columns": [{"width": 12}]},
+                {"columns": [{"width": 6}, {"width": 6}]},
+            ]
+        }
 
     def filter_queryset(self, queryset):
         queryset = super().filter_queryset(queryset)
         return queryset.filter(assessment=self.assessment)
 
     def filter_search(self, queryset, name, value):
-        return queryset.filter(candidates__in=models.Reference.objects.full_text_search(value))
+        return queryset.filter(
+            candidates__in=models.Reference.objects.all().full_text_search(value)
+        )

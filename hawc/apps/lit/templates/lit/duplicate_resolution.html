@@ -9,36 +9,37 @@
       <a class="dropdown-item" href="{% url 'lit:identify-duplicates' assessment.pk %}">Identify duplicates</a>
     {% endactions %}
   </div>
-  <ul class="list-group list-group-flush my-3">
-    {% for object in object_list %}
-      <li class="list-group-item conflict-reference-li {% if forloop.first %} pb-4 {% else %} py-4 {% endif %}"
-          hx-target="this" hx-swap="delete swap:1s">
-        <div class="card">
-          <div class="card-body">
-            <form hx-post="{% url 'lit:api:duplicate-resolve-duplicate' object.pk %}">
-              <div class="form-group">
-                <input type="radio" id="none-{{object.pk}}" name="resolution" value="none" />
-                <label id="none-{{object.pk}}">
-                  No duplicates
-                </label>
-              </div>
-              {% for candidate in object.candidates.all %}
-                <div class="form-group">
-                  <input type="radio" id="primary-{{object.pk}}-{{candidate.pk}}" name="resolution" value="{{candidate.pk}}" />
-                  <div class="d-inline-block align-top">
-                    {% include 'lit/_reference_with_tags.html' with ref=candidate %}
-                  </div>
-                </div>
-              {% endfor %}
-              <div class="form-group">
-                <textarea class="form-control" name="notes" placeholder="Notes"></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary">Resolve</button>
-            </form>
+  {% for object in object_list %}
+    <div class="card {% if forloop.first %} mb-4 {% else %} my-4 {% endif %}" hx-target="this" hx-swap="delete swap:1s">
+      <div class="card-body">
+        <form hx-post="{% url 'lit:api:duplicate-resolve-duplicate' object.pk %}">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" id="none-{{object.pk}}" name="resolution" value="none" required checked/>
+            <label class="form-check-label" for="none-{{object.pk}}">
+              No duplicates
+            </label>
           </div>
-        </div>
-      </li>
-    {% endfor %}
-  </ul>
+          <div class="d-flex flex-row flex-wrap">
+            {% for candidate in object.candidates.all %}
+              <div class="form-check col-sm">
+                <input class="form-check-input" type="radio" id="primary-{{object.pk}}-{{candidate.pk}}" name="resolution" value="{{candidate.pk}}" required/>
+                <label class="form-check-label" for="primary-{{object.pk}}-{{candidate.pk}}">
+                  Select as primary
+                </label>
+                <small class="form-text text-muted">The other candidates will be soft deleted.</small>
+                <div class="form-group border p-1">
+                  {% include 'lit/_reference_with_tags.html' with ref=candidate %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <div class="form-group">
+            <textarea class="form-control" name="notes" placeholder="Notes"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Resolve</button>
+        </form>
+      </div>
+    </div>
+  {% endfor %}
   {% include "includes/paginator.html" with plural_object_name="duplicate groups" %}
 {% endblock content %}
