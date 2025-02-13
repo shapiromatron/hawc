@@ -31,7 +31,7 @@ class SearchType(models.TextChoices):
 
 class DuplicateResolution(models.IntegerChoices):
     UNRESOLVED = 0, "Unresolved"
-    RESOLVED = 1, "Resolved"  # TODO: change to "primary identified"
+    RESOLVED = 1, "Primary identified"  # TODO: change to "primary identified"
     FALSE_POSITIVE = 2, "False positive"
 
 

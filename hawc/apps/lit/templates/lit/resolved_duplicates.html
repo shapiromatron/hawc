@@ -10,23 +10,28 @@
       {% endactions %}
     {% endif %}
   </div>
+  {% include 'common/inline_filter_form.html' %}
   <ul class="list-group list-group-flush my-3">
     {% for object in object_list %}
-      <div>
-        Group {{object.pk}}
-      </div>
-      <div>
-        {{object.resolution}}
-      </div>
-      <div>
-        {{object.candidates}}
-      </div>
-      <div>
-        {{object.primary}}
-      </div>
-      <div>
-        {{object.notes}}
-      </div>
+      <li class="list-group-item conflict-reference-li {% if forloop.first %} pb-4 {% else %} py-4 {% endif %}">
+        <div>
+          <span class="badge {% if object.resolution == resolution_state.RESOLVED %}badge-success{% else %}badge-secondary{% endif %}">{{object.get_resolution_display}}</span> {{object.last_updated}} by {{object.resolving_user}}
+        </div>
+        {% if object.resolution == resolution_state.RESOLVED %}
+          <div>
+            <h3>Primary</h3>
+            {% include 'lit/_reference_with_tags.html' with ref=object.primary %}
+          </div>
+        {% endif %}
+        <div>
+          <h3>Candidates</h3>
+          <div class="d-flex flex-row">
+            {% for candidate in object.candidates.all %}
+              {% include 'lit/_reference_with_tags.html' with ref=candidate %}
+            {% endfor %}
+          </div>
+        </div>
+      </li>
     {% endfor %}
   </ul>
   {% include "includes/paginator.html" with plural_object_name="duplicate groups" %}

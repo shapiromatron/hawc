@@ -1258,7 +1258,7 @@ class DuplicateResolution(BaseList):
     model = models.DuplicateCandidateGroup
     template_name = "lit/duplicate_resolution.html"
     breadcrumb_active_name = "Duplicate resolution"
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
 
     paginate_by = 5
 
@@ -1279,9 +1279,10 @@ class DuplicateResolution(BaseList):
         return context
 
 
-class ResolvedDuplicates(BaseList):
+class ResolvedDuplicates(BaseFilterList):
     parent_model = Assessment
     model = models.DuplicateCandidateGroup
+    filterset_class = filterset.DuplicateCandidateGroupFilterSet
     template_name = "lit/resolved_duplicates.html"
     breadcrumb_active_name = "Resolved duplicates"
     assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
@@ -1299,6 +1300,7 @@ class ResolvedDuplicates(BaseList):
         context["breadcrumbs"] = lit_overview_crumbs(
             self.request.user, self.assessment, "Resolved duplicates"
         )
+        context["resolution_state"] = constants.DuplicateResolution
         return context
 
 

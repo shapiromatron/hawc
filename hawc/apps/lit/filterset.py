@@ -8,10 +8,11 @@ from ..common.filterset import (
     ArrowOrderingFilter,
     BaseFilterSet,
     ExpandableFilterForm,
+    InlineFilterForm,
     PaginationFilter,
     filter_noop,
 )
-from . import models
+from . import constants, models
 
 
 class ReferenceFilterSet(BaseFilterSet):
@@ -345,3 +346,34 @@ class ReferenceExportFilterSet(FilterSet):
     def filter_tag(self, queryset, name, value):
         include_descendants = self.data.get("include_descendants", False)
         return queryset.with_tag(tag=value, descendants=include_descendants)
+
+
+class DuplicateCandidateGroupFilterSet(BaseFilterSet):
+    candidate_search = df.CharFilter(
+        method="filter_search",
+        label="Title/Author/Year",
+        help_text="Filter citations (authors, year, title)",
+    )
+    resolution = df.ChoiceFilter(
+        empty_label="- Resolution -",
+        choices=constants.DuplicateResolution.choices,
+    )
+
+    class Meta:
+        model = models.DuplicateCandidateGroup
+        form = InlineFilterForm
+        fields = [
+            "candidate_search",
+            "resolution",
+        ]
+        main_field = "candidate_search"
+        appended_fields = [
+            "resolution",
+        ]
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+        return queryset.filter(assessment=self.assessment)
+
+    def filter_search(self, queryset, name, value):
+        return queryset.filter(candidates__in=models.Reference.objects.full_text_search(value))
