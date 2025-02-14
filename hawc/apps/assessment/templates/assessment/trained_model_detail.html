@@ -24,7 +24,7 @@
   </div>
 
   {% for object in object.versions.all %}
-    <div class="my-3 pb-3">
+    <div class="my-3">
       <h3 class="m-0 font-weight-lighter">{{object}}</h3>
       <div class="d-flex mt-2">
         {% if object.description %}
@@ -51,8 +51,13 @@
             </a>
           {% endfor %}
         </div>
+      {% else %}
+        <div class="bg-light w-100 rounded p-3 mt-3">
+          <i>No prediction runs available.</i>
+        </div>
       {% endif %}
     </div>
+    <hr class="my-4">
   {% empty %}
     {% alert type="info" %}No versions found.{% endalert %}
   {% endfor %}

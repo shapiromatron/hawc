@@ -17,12 +17,13 @@
       {% crispy form %}
     </div>
   </div>
+  <h6 style="font-size: 1.1rem;" class="mt-1">Model Predictions</h6>
   <div class="list-group mb-4">
     {% for object in object_list %}
       <btn type="button" class="list-group-item clickable text-dark text-decoration-none" data-toggle="collapse" data-target="#collapse{{object.id}}" role="button" aria-expanded="false" aria-controls="collapse{{object.id}}">
         <i>{{object.reference}}:</i>&nbsp;<span class="badge badge-secondary align-self-center">{{object.prediction_run.prediction_class}}: <b>{{object.score|floatformat:2}}</b></span>
       </btn>
-      <div class="collapse bg-light" id="collapse{{object.id}}">
+      <div class="collapse" id="collapse{{object.id}}">
         <div class="py-3 px-4 border box-shadow-inset">
           {% include 'lit/_reference_with_tags.html' with ref=object.reference show_user_tags=False %}
         </div>

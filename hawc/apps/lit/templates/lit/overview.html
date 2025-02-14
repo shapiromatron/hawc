@@ -27,7 +27,7 @@
         <a class="dropdown-item" href="{% url 'lit:tag' assessment.pk %}?search={{manual_import.pk}}">Tag manually added references</a>
         <a class="dropdown-item" href="{% url 'lit:tag' assessment.pk %}?untagged=on">Tag untagged references</a>
         <a class="dropdown-item" href="{% url 'lit:ref_upload' assessment.pk %}">Upload full text URLs</a>
-        {% if user.is_staff %}
+        {% if has_admin %}
           <a class="dropdown-item" href="{% url 'lit:model_prediction_run_create' assessment.pk %}">Run a model prediction</a>
         {% endif %}
         <div class="dropdown-divider"></div>
