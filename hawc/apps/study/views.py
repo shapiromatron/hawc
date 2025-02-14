@@ -327,7 +327,6 @@ class AttachmentDetail(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if self.assessment.user_is_reviewer_or_higher(self.request.user):
-            return HttpResponseRedirect(self.object.attachment.url)
-        else:
-            raise PermissionDenied
+        if not self.assessment.user_is_reviewer_or_higher(self.request.user):
+            raise PermissionDenied()
+        return HttpResponseRedirect(self.object.attachment.url)
