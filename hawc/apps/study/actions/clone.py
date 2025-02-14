@@ -6,10 +6,7 @@ from pydantic import BaseModel, Field, model_validator
 
 from ...assessment.models import Assessment
 from ...common.views import create_object_log
-from ...riskofbias.models import (
-    RiskOfBiasScore,
-    RiskOfBiasScoreOverrideObject,
-)
+from ...riskofbias.models import RiskOfBiasScore
 from ..models import Study
 
 
@@ -45,9 +42,9 @@ class CloneStudyDataValidation(BaseModel):
         src_studies = context["studies"].filter(id__in=self.study)
         studies_map = {}
         for src_study in src_studies:
-            mapping = {}
+            mapping = defaultdict(dict)
             study_map, dst_study = clone_study(src_study, dst_assessment)
-            mapping["studies"][src_study] = dst_study
+            mapping["study"] = study_map
             if src_study.id in self.study_bioassay:
                 mapping["animal"] = clone_animal_bioassay(src_study, dst_study)
             if src_study.id in self.study_epi:
@@ -59,9 +56,10 @@ class CloneStudyDataValidation(BaseModel):
                 dst_study,
                 dst_assessment.id,
                 user.id,
-                f"Cloned from assessment {src_study.assessment_id} study {src_study.id}. Mapping: {json.dumps(study_map)}",
+                f"Cloned from assessment {src_study.assessment_id} study {src_study.id}. Mapping: {json.dumps(mapping)}",
+                use_reversion=False,
             )
-            studies_map[src_study] = dst_study
+            studies_map[src_study] = (dst_study, mapping)
         return studies_map
 
 
@@ -71,12 +69,12 @@ type StudyAppMapping = dict[str, dict[int, int]]
 
 def clone_study(src_study: Study, dst_assessment: Assessment) -> tuple[StudyAppMapping, Study]:
     study_map = defaultdict(dict)
-    src_study_id = src_study.id
+    src_study_id = src_study.pk
     identifiers = list(src_study.identifiers.all())
     attachments = list(src_study.attachments.all())
 
     # both pk and id must be set to None for these inherited models
-    dst_study = src_study
+    dst_study = Study.objects.get(id=src_study_id)  # get a clone to mutate
     dst_study.pk = None
     dst_study.id = None
     dst_study.assessment = dst_assessment
@@ -217,7 +215,7 @@ def clone_epiv2(src_study: Study, dst_study: Study) -> StudyAppMapping:
             src_exposurelevel_id = exposurelevel.id
             exposurelevel.id = None
             exposurelevel.pk = None
-            exposurelevel.design_id = design
+            exposurelevel.design_id = design.id
             exposurelevel.chemical_id = epiv2_map["chemical"][exposurelevel.chemical_id]
             exposurelevel.exposure_measurement_id = epiv2_map["exposure"][
                 exposurelevel.exposure_measurement_id
@@ -229,7 +227,7 @@ def clone_epiv2(src_study: Study, dst_study: Study) -> StudyAppMapping:
             src_outcome_id = outcome.id
             outcome.id = None
             outcome.pk = None
-            outcome.design = design
+            outcome.design_id = design.id
             outcome.save()
             epiv2_map["outcome"][src_outcome_id] = outcome.id
 
@@ -237,7 +235,7 @@ def clone_epiv2(src_study: Study, dst_study: Study) -> StudyAppMapping:
             src_adjustmentfactor_id = adjustmentfactor.id
             adjustmentfactor.id = None
             adjustmentfactor.pk = None
-            adjustmentfactor.design = design
+            adjustmentfactor.design_id = design.id
             adjustmentfactor.save()
             epiv2_map["adjustmentfactor"][src_adjustmentfactor_id] = adjustmentfactor.id
 
@@ -245,7 +243,7 @@ def clone_epiv2(src_study: Study, dst_study: Study) -> StudyAppMapping:
             src_dataextraction_id = dataextraction.id
             dataextraction.id = None
             dataextraction.pk = None
-            dataextraction.design = design
+            dataextraction.design_id = design.id
 
             dataextraction.outcome_id = epiv2_map["outcome"][dataextraction.outcome_id]
             dataextraction.exposure_level_id = epiv2_map["exposurelevel"][
@@ -268,10 +266,9 @@ def clone_rob(
     study_map: StudyMapping,
 ) -> StudyAppMapping:
     rob_map = defaultdict(dict)
-    src_robs = list(src_study.riskofbiases.get(active=True, final=True))
+    rob = src_study.riskofbiases.get(active=True, final=True)
     dst_to_src = {dst_id: src_id for src_id, dst_id in settings.metric_map.items()}
 
-    rob = src_robs[0]
     src_rob_id = rob.id
     src_scores = list(rob.scores.all().prefetch_related("overridden_objects"))
 
@@ -284,7 +281,6 @@ def clone_rob(
     dst_scores = rob.build_scores(dst_study.assessment, dst_study)
 
     rob_map["riskofbias"][src_rob_id] = rob.id
-
     for score in dst_scores:
         # check if there's a metric map in the mapping
         src_metric_id = dst_to_src.get(score.metric_id)
@@ -297,20 +293,20 @@ def clone_rob(
             continue
 
         # copy default score if one exists
-        default = [s for s in src_matched_scores if s.is_default is True]
-        extras = [s for s in src_matched_scores if s.is_default is False]
-        if default:
-            if len(default) > 1:
+        src_defaults = [s for s in src_matched_scores if s.is_default is True]
+        src_extras = [s for s in src_matched_scores if s.is_default is False]
+        if src_defaults:
+            if len(src_defaults) > 1:
                 raise ValueError("Bad state; non unique (study, metric, default score) ")
-            _rob_score_update(rob, default[0], study_map)
+            _rob_score_update(src_defaults[0], score, rob_map, study_map)
 
         # copy extra scores if they exist
-        if extras:
-            for extra in extras:
-                rob.pk = None
-                rob.id = None
-                rob.is_default = False
-                _rob_score_update(rob, extra, study_map)
+        if src_extras:
+            for src_extra in src_extras:
+                score.pk = None
+                score.id = None
+                score.is_default = False
+                _rob_score_update(src_extra, score, rob_map, study_map)
 
     return rob_map
 
@@ -318,26 +314,28 @@ def clone_rob(
 def _rob_score_update(
     src_score: RiskOfBiasScore,
     dst_score: RiskOfBiasScore,
+    rob_map: StudyAppMapping,
     study_map: StudyMapping,
 ):
     # set score attributes
     for field in ["label", "score", "bias_direction", "notes"]:
-        setattr(src_score, field, getattr(dst_score, field))
-    src_score.save()
+        setattr(dst_score, field, getattr(src_score, field))
+    dst_score.save()
+    rob_map["riskofbiasscore"][src_score.id] = dst_score.id
 
     # set override attributes
-    src_overrides = []
-    for override in dst_score.overridden_objects.all():
+    src_overrides = list(src_score.overridden_objects.all())
+    for override in src_overrides:
         # try to find object match. Get app, then model, the object ID
         ct = override.content_type
         src_object_id = study_map.get(ct.app_label, {}).get(ct.model, {}).get(override.object_id)
         if src_object_id is None:
             continue
+        src_override_id = override.id
 
         override.pk = None
         override.id = None
         override.score_id = src_score.id
         override.object_id = src_object_id
-        src_overrides.append(override)
-    if src_overrides:
-        RiskOfBiasScoreOverrideObject.objects.bulk_create(src_overrides)
+        override.save()
+        rob_map["riskofbiasscoreoverrideobject"][src_override_id] = override.id

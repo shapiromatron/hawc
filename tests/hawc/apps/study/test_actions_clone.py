@@ -1,60 +1,120 @@
 import pytest
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.urls import reverse
+from django.core.files.base import ContentFile
 
-from hawc.apps.animal.models import Experiment
-from hawc.apps.epiv2.models import Design
+from hawc.apps.animal.models import EndpointGroup, Experiment
+from hawc.apps.assessment.models import Assessment
+from hawc.apps.epiv2.models import DataExtraction, Design
 from hawc.apps.riskofbias.actions import clone_approach
-from hawc.apps.riskofbias.models import RiskOfBias, RiskOfBiasMetric, RiskOfBiasScoreOverrideObject
-from hawc.apps.study.actions.clone import clone_animal_bioassay, clone_epiv2, clone_rob, clone_study
-from hawc.apps.study.models import Study
+from hawc.apps.riskofbias.models import RiskOfBiasScore, RiskOfBiasScoreOverrideObject
+from hawc.apps.study.actions.clone import (
+    CloneStudyDataValidation,
+    RobCloneCopyMode,
+    clone_animal_bioassay,
+    clone_epiv2,
+    clone_study,
+)
+from hawc.apps.study.models import Attachment, Study
 
-from ..test_utils import get_client
+from ..test_utils import get_user
 
 
 @pytest.mark.django_db
 class TestDeepClone:
     def test_deep_clone(self, db_keys):
-        src_study = db_keys.study_working
-        dst_assessment = db_keys.assessment_conflict_resolution
+        user = get_user("pm")
+        # test study, animal, and epiv2 clone
+        src_study = Study.objects.get(id=db_keys.study_working)
+        Attachment.objects.create(study=src_study, attachment=ContentFile("test", name="z.txt"))
+        assert src_study.attachments.count() == 1
+        assert src_study.experiments.count() == 1
+        assert src_study.designs.count() == 2
 
-        # add attachment
-        client = get_client("pm", htmx=True)
-        url = reverse("study:attachment_create", args=[src_study])
-        resp = client.post(
-            url,
-            {"attachment": SimpleUploadedFile("zzzz.txt", b"test")},
-            follow=True,
-        )
-        assert resp.status_code == 200
+        # create a new destination assessment
+        dst_assessment = Assessment.objects.create(name="z", version="y", year=2000)
+        dst_assessment.project_manager.set([user])
 
-        clone_map = clone_study(src_study, dst_assessment)
-        dst_study = clone_map["study"][src_study]
-        assert len(Study.objects.filter(assessment=dst_assessment)) == 2
+        # check study clone
+        assert Study.objects.filter(assessment=dst_assessment).count() == 0
+        clone_map, dst_study = clone_study(src_study, dst_assessment)
+        assert Study.objects.filter(assessment=dst_assessment).count() == 1
 
-        clone_map = {
-            **clone_map,
-            **clone_animal_bioassay(src_study, dst_study),
-            **clone_epiv2(src_study, dst_study),
-        }
-        assert len(Experiment.objects.filter(study_id=dst_study)) == 1
-        assert len(Design.objects.filter(study_id=dst_study)) == 2
+        # check animal clone
+        assert Experiment.objects.filter(study__assessment=dst_assessment).count() == 0
+        clone_map = clone_animal_bioassay(src_study, dst_study)
+        keys = "experiment animalgroup dosingregime dosegroup endpoint endpointgroup"
+        for key in keys.split(" "):
+            assert key in clone_map and len(clone_map[key]) > 0
+        assert Experiment.objects.filter(study__assessment=dst_assessment).count() == 1
 
-        clone_approach(
-            Study.objects.get(pk=dst_study).assessment,
-            Study.objects.get(pk=src_study).assessment,
-        )
-        src_metrics = RiskOfBiasMetric.objects.filter(
-            domain__assessment=Study.objects.get(pk=src_study).assessment
-        )
-        dst_metrics = RiskOfBiasMetric.objects.filter(
-            domain__assessment=Study.objects.get(pk=dst_study).assessment
-        )
-        metric_map = {str(src.id): dst_metrics[i].id for i, src in enumerate(src_metrics)}
+        # check epiv2 clone
+        assert Design.objects.filter(study__assessment=dst_assessment).count() == 0
+        clone_map = clone_epiv2(src_study, dst_study)
+        for key in [
+            "design",
+            "chemical",
+            "exposure",
+            "exposurelevel",
+            "outcome",
+            "adjustmentfactor",
+            "dataextraction",
+        ]:
+            assert key in clone_map and len(clone_map[key]) > 0
+        assert Design.objects.filter(study__assessment=dst_assessment).count() == 2
 
-        clone_rob(src_study, dst_study, metric_map, clone_map)
-        assert len(RiskOfBias.objects.filter(study_id=dst_study)) == 3
-        assert (
-            len(RiskOfBiasScoreOverrideObject.objects.filter(score__riskofbias__study_id=dst_study))
-            == 1
+        # delete our new assessment, which deletes all our clones
+        dst_assessment.delete()
+
+        # confirm we have all the data on our src assessment
+        assert src_study.attachments.count() == 1
+        assert src_study.experiments.count() == 1
+        assert src_study.designs.count() == 2
+        assert EndpointGroup.objects.filter(
+            endpoint__animal_group__experiment__study=src_study
+        ).exists()
+        assert DataExtraction.objects.filter(design__study=src_study).exists()
+        return
+
+    def test_deep_clone_study_evaluation(self, db_keys):
+        user = get_user("pm")
+        # test study evaluation
+        src_study_id = 7
+        src_study = Study.objects.get(id=src_study_id)
+
+        assert src_study.riskofbiases.filter(active=True, final=True).exists()
+        qs = RiskOfBiasScore.objects.filter(is_default=False, riskofbias__study=src_study)
+        assert qs.exists()
+        qs = RiskOfBiasScoreOverrideObject.objects.filter(score__riskofbias__study=src_study)
+        assert qs.exists()
+
+        # create a new destination assessment
+        dst_assessment = Assessment.objects.create(name="z", version="y", year=2000)
+        dst_assessment.project_manager.set([user])
+        metric_map = clone_approach(dst_assessment, src_study.assessment, user_id=user.id)
+        clone_request = CloneStudyDataValidation(
+            study={src_study_id},
+            study_bioassay={src_study_id},
+            study_rob={src_study_id},
+            study_epi=set(),
+            include_rob=True,
+            copy_mode=RobCloneCopyMode.final_to_final,
+            metric_map=metric_map,
         )
+        study_map = clone_request.clone(
+            user,
+            {"assessment": dst_assessment, "studies": Study.objects.filter(id=src_study_id)},
+        )
+
+        dst_study, dst_mapping = study_map[src_study]
+        assert isinstance(dst_study, Study)
+        for key in ["riskofbias", "riskofbiasscore", "riskofbiasscoreoverrideobject"]:
+            assert key in dst_mapping["riskofbias"] and len(dst_mapping["riskofbias"][key]) > 0
+
+        # delete our new assessment, which deletes all our clones
+        dst_assessment.delete()
+
+        # confirm we have all the data on our src assessment
+        assert src_study.riskofbiases.filter(active=True, final=True).exists()
+        qs = RiskOfBiasScore.objects.filter(is_default=False, riskofbias__study=src_study)
+        assert qs.exists()
+        qs = RiskOfBiasScoreOverrideObject.objects.filter(score__riskofbias__study=src_study)
+        assert qs.exists()

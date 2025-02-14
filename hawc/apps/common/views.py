@@ -89,7 +89,12 @@ def add_csrf(obj: dict, request: HttpRequest) -> dict:
 
 
 def create_object_log(
-    verb: str, obj, assessment_id: int | None, user_id: int, log_message: str = ""
+    verb: str,
+    obj,
+    assessment_id: int | None,
+    user_id: int,
+    log_message: str = "",
+    use_reversion: bool = True,
 ):
     """
     Create an object log for a given object and associate a reversion instance if it exists.
@@ -102,6 +107,7 @@ def create_object_log(
         assessment_id (int|None): the object assessment id
         user_id (int): the user id
         log_message (str): override for custom message
+        use_reversion (bool): user reversion data for object log
     """
     # Log action
     if not log_message:
@@ -114,11 +120,14 @@ def create_object_log(
         content_object=obj,
     )
     # Associate log with reversion
-    comment = (
-        f"{reversion.get_comment()}, Log {log.id}" if reversion.get_comment() else f"Log {log.id}"
-    )
-    audit_logger.info(f"[{log.id}] assessment-{assessment_id} user-{user_id} {log_message}")
-    reversion.set_comment(comment)
+    if use_reversion:
+        comment = (
+            f"{reversion.get_comment()}, Log {log.id}"
+            if reversion.get_comment()
+            else f"Log {log.id}"
+        )
+        audit_logger.info(f"[{log.id}] assessment-{assessment_id} user-{user_id} {log_message}")
+        reversion.set_comment(comment)
 
 
 def bulk_create_object_log(verb: str, obj_list: Iterable[Any], user_id: int):
