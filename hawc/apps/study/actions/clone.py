@@ -297,7 +297,7 @@ def clone_rob(
         src_extras = [s for s in src_matched_scores if s.is_default is False]
         if src_defaults:
             if len(src_defaults) > 1:
-                raise ValueError("Bad state; non unique (study, metric, default score) ")
+                raise ValueError("Bad state; non unique (study, metric, default score)")
             _rob_score_update(src_defaults[0], score, rob_map, study_map)
 
         # copy extra scores if they exist

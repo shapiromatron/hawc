@@ -58,7 +58,7 @@ class StudyQuerySet(QuerySet):
         """If True, return only published studies. If False, all studies"""
         return self.filter(published=True) if published_only else self
 
-    def deep_clone_annotations(self):
+    def clone_annotations(self):
         return self.annotate(
             has_rob=Exists(
                 apps.get_model("riskofbias", "RiskOfBias").objects.filter(study=OuterRef("pk"))

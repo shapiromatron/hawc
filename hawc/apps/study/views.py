@@ -210,7 +210,7 @@ class CloneStudies(BaseUpdate):
         return {
             "assessment": self.object,
             "src_assessment": src_assessment,
-            "studies": study_qs.deep_clone_annotations(),
+            "studies": study_qs.clone_annotations(),
             "src_metrics": src_metrics,
             "dst_metrics": dst_metrics,
         }
