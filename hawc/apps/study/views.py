@@ -181,10 +181,14 @@ class CloneStudies(BaseUpdate):
                 except ValidationError as err:
                     logger.info(err)
                     return HttpResponseBadRequest("Bad clone request")
+
                 return render(
                     request,
                     "study/fragments/clone_success.html",
-                    {"now": timezone.now(), "studies_map": studies_map},
+                    {
+                        "now": timezone.now(),
+                        "studies_map": [(src, dst[0]) for src, dst in studies_map.items()],
+                    },
                 )
             case _:
                 return HttpResponseBadRequest("Bad request")
@@ -211,40 +215,41 @@ class CloneStudies(BaseUpdate):
             "dst_metrics": dst_metrics,
         }
 
-    def clone(self, context: dict, data: QueryDict) -> dict[models.Study, models.Study]:
+    def clone(
+        self, context: dict, data: QueryDict
+    ) -> dict[models.Study, tuple[models.Study, dict]]:
         metric_map = {}
         for key, value in data.items():
             if value.isnumeric():
-                if src_key := re.search(r"^metric-(\d+)$", key):
+                if src_key := re.findall(r"^metric-(\d+)$", key):
                     metric_map[src_key[0]] = value
-        data["metric_map"] = metric_map
 
         # convert lists to into single items in QueryDict as needed
+        payload = {
+            "study": data.getlist("study"),
+            "study_bioassay": data.getlist("study_bioassay"),
+            "study_epi": data.getlist("study_epi"),
+            "study_rob": data.getlist("study_rob"),
+            "include_rob": data.get("include_rob", False),
+            "copy_mode": data.get("copy_mode", None),
+            "metric_map": metric_map,
+        }
         with PydanticToDjangoError():
-            model = CloneStudyDataValidation.model_validate(
-                {
-                    "study": data.getlist("study"),
-                    "study_bioassay": data.getlist("study_bioassay"),
-                    "study_epi": data.getlist("study_epi"),
-                    "study_rob": data.getlist("study_rob"),
-                    "include_rob": data.get("include_rob", False),
-                    "copy_mode": data.get("copy_mode", None),
-                    "metric_map": data.get("metric_map", {}),
-                }
-            )
+            model = CloneStudyDataValidation.model_validate(payload)
 
         dst_metric_ids = context["dst_metrics"].values_list("id", flat=True)
         diff = set(model.metric_map.keys()) - set(dst_metric_ids)
         if diff:
-            raise forms.ValidationError(f"Destination key(s) not found: {diff}")
+            raise ValidationError(f"Destination key(s) not found: {diff}")
 
         src_metric_ids = context["src_metrics"].values_list("id", flat=True)
         diff = set(model.metric_map.values()) - set(src_metric_ids)
         if diff:
-            raise forms.ValidationError(f"Source key(s) not found: {diff}")
+            raise ValidationError(f"Source key(s) not found: {diff}")
 
         with transaction.atomic():
             studies_map = model.clone(self.request.user, context)
+
         return studies_map
 
 

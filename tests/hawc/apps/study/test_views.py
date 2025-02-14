@@ -1,5 +1,3 @@
-import json
-
 import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.client import Client
@@ -30,36 +28,75 @@ class TestStudyCreateFromReference:
 
 
 @pytest.mark.django_db
-class BCloneViewSet:
-    def test_update(self):
-        client = get_client("pm", htmx=True)
+class TestCloneViewSet:
+    def test_get(self):
+        team = get_client("team")
+        dst_assesment = 1
+        url = reverse("study:clone_from_assessment", args=(dst_assesment,))
+        resp = check_200(team, url)
+        assertTemplateUsed(resp, "study/study_clone.html")
 
-        url = reverse("study:clone_from_assessment-htmx", args=[4, "update"])
-        resp = client.post(url)
+    def test_post_fetch(self):
+        team = get_client("team", htmx=True)
+        dst_assesment = 1
+        url = reverse("study:clone_from_assessment", args=(dst_assesment,))
+        resp = team.post(url, {"action": "fetch", "src_assessment": 2})
         assert resp.status_code == 200
-        assertTemplateUsed(resp, "study/fragments/src_clone_details.html")
+        assertTemplateUsed(resp, "study/fragments/clone_fetch.html")
 
-        url = reverse("study:clone_from_assessment-htmx", args=[4, "update"])
-        resp = client.post(url, {"src_assessment": 1})
+    def test_bad_post_actions(self):
+        team = get_client("team", htmx=True)
+        dst_assesment = 1
+        url = reverse("study:clone_from_assessment", args=(dst_assesment,))
+
+        # bad src assessment
+        resp = team.post(url, {"action": "fetch", "src_assessment": 9999})
+        assert resp.status_code == 400
+
+        # bad actions
+        resp = team.post(url, {"src_assessment": 2})
+        assert resp.status_code == 400
+        resp = team.post(url, {"action": "zzz", "src_assessment": 2})
+        assert resp.status_code == 400
+
+    def _valid_clone_payload(self):
+        return {
+            "action": "clone",
+            "src_assessment": 2,
+            "study": [7],
+            "study_bioassay": [7],
+            "study_epi": [],
+            "study_rob": [7],
+            "include_rob": True,
+            "copy_mode": "final-to-final",
+            "metric-1": 14,
+            "metric-2": 15,
+        }
+
+    def test_post_clone(self):
+        team = get_client("team", htmx=True)
+        dst_assesment = 1
+        url = reverse("study:clone_from_assessment", args=(dst_assesment,))
+        resp = team.post(url, self._valid_clone_payload())
         assert resp.status_code == 200
-        assertTemplateUsed(resp, "study/fragments/src_clone_details.html")
+        assertTemplateUsed(resp, "study/fragments/clone_success.html")
 
-    def test_clone(self):
-        client = get_client("pm", htmx=True)
+    def test_post_clone_errors(self):
+        team = get_client("team", htmx=True)
+        dst_assesment = 1
+        url = reverse("study:clone_from_assessment", args=(dst_assesment,))
 
-        url = reverse("study:clone_from_assessment-htmx", args=[4, "clone"])
-        resp = client.post(
-            url,
-            {
-                "src_assessment": "1",
-                "src-studies": json.dumps(
-                    {"1": {"study": True, "bioassay": True, "epi": True, "rob": True}}
-                ),
-                "metric-map": "{}",
-            },
-        )
-        assert resp.status_code == 200
-        assertTemplateUsed(resp, "study/fragments/src_clone_details.html")
+        # bad src ID
+        data = self._valid_clone_payload()
+        data["metric-1"] = 9999
+        resp = team.post(url, data)
+        assert resp.status_code == 400
+
+        # bad destination ID
+        data = self._valid_clone_payload()
+        data["metric-9999"] = data["metric-1"]
+        resp = team.post(url, data)
+        assert resp.status_code == 400
 
 
 @pytest.mark.django_db
@@ -218,7 +255,6 @@ def test_get_200():
     urls = [
         reverse("study:new_ref", args=(main,)),
         reverse("study:create_from_identifier", args=(main,)),
-        reverse("study:clone_from_assessment", args=(main,)),
         reverse("study:attachment_create", args=(main,)),
         reverse("study:list", args=(main,)),
         reverse("study:detail", args=(main,)),

@@ -37,7 +37,7 @@ class CloneStudyDataValidation(BaseModel):
             raise ValueError("Cannot include RoB without a copy mode specified")
         return self
 
-    def clone(self, user, context: dict) -> dict[Study, Study]:
+    def clone(self, user, context: dict) -> dict[Study, tuple[Study, dict]]:
         dst_assessment = context["assessment"]
         src_studies = context["studies"].filter(id__in=self.study)
         studies_map = {}

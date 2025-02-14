@@ -89,7 +89,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for metric in src_metrics %}
+        {% for metric in dst_metrics %}
           <tr>
             <td>
               <p class="font-weight-bold">{{metric.domain.name}}: {{ metric.name }}</p>
@@ -98,8 +98,8 @@
             <td>
               <select class="custom-select" name="metric-{{metric.id}}">
                 <option value="" selected >N/A (do not clone)</option>
-                {% for dst_metric in dst_metrics %}
-                  <option value="{{ dst_metric.id }}">{{dst_metric.domain.name}}: {{ dst_metric.name }}</option>
+                {% for src_metric in src_metrics %}
+                  <option value="{{ src_metric.id }}">{{src_metric.domain.name}}: {{ src_metric.name }}</option>
                 {% endfor %}
               </select>
             </td>
