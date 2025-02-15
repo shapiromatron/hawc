@@ -5,9 +5,6 @@
   <li class="{{li_class}}">
     <a class="{{a_class}}" href="{% url 'assessment:public_list' %}">Assessments</a>
   </li>
-  <li class="{{li_class}}">
-    <a class="{{a_class}}" href="{% url 'search' %}">Global Search</a>
-  </li>
   {% if assessment %}
     <li class="{{li_class}}">
       <a class="{{a_class}}" href="{{ assessment.get_absolute_url }}">{{ assessment }}</a>
@@ -60,7 +57,9 @@
       </ul>
     </li>
   {% endif %}
-
+  <li class="{{li_class}}">
+    <a class="{{a_class}}" href="{% url 'search' %}">Search</a>
+  </li>
   {% if feature_flags.ENABLE_DOCS_LINK and user.is_authenticated %}
     {% if expand_docs %}
       {% include 'docs/components/sidebar_docs_tree.html' %}
