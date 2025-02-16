@@ -221,8 +221,8 @@ class CloneStudies(BaseUpdate):
         metric_map = {}
         for key, value in data.items():
             if value.isnumeric():
-                if src_key := re.findall(r"^metric-(\d+)$", key):
-                    metric_map[src_key[0]] = value
+                if dst_key := re.findall(r"^metric-(\d+)$", key):
+                    metric_map[dst_key[0]] = value
 
         # convert lists to into single items in QueryDict as needed
         payload = {

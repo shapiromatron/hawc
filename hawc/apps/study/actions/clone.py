@@ -15,7 +15,7 @@ class RobCloneCopyMode(StrEnum):
     final_to_final = "final-to-final"
 
     def final_flag(self):
-        return True if self.final_flag else False
+        return True if self == self.final_to_final else False
 
 
 class CloneStudyDataValidation(BaseModel):
@@ -25,7 +25,7 @@ class CloneStudyDataValidation(BaseModel):
     study_rob: set[int]
     include_rob: bool = False
     copy_mode: RobCloneCopyMode | None
-    metric_map: dict[int, int]
+    metric_map: dict[int, int]  # dst: src
 
     @model_validator(mode="after")
     def validate_after(self):
@@ -273,7 +273,6 @@ def clone_rob(
 ) -> StudyAppMapping:
     rob_map = defaultdict(dict)
     rob = src_study.riskofbiases.get(active=True, final=True)
-    dst_to_src = {dst_id: src_id for src_id, dst_id in settings.metric_map.items()}
 
     src_rob_id = rob.id
     src_scores = list(rob.scores.all().prefetch_related("overridden_objects"))
@@ -289,7 +288,7 @@ def clone_rob(
     rob_map["riskofbias"][src_rob_id] = rob.id
     for score in dst_scores:
         # check if there's a metric map in the mapping
-        src_metric_id = dst_to_src.get(score.metric_id)
+        src_metric_id = settings.metric_map.get(score.metric_id)
         if src_metric_id is None:
             continue
 
@@ -334,14 +333,14 @@ def _rob_score_update(
     for override in src_overrides:
         # try to find object match. Get app, then model, the object ID
         ct = override.content_type
-        src_object_id = study_map.get(ct.app_label, {}).get(ct.model, {}).get(override.object_id)
-        if src_object_id is None:
+        dst_object_id = study_map.get(ct.app_label, {}).get(ct.model, {}).get(override.object_id)
+        if dst_object_id is None:
             continue
         src_override_id = override.id
 
         override.pk = None
         override.id = None
-        override.score_id = src_score.id
-        override.object_id = src_object_id
+        override.score_id = dst_score.id
+        override.object_id = dst_object_id
         override.save()
         rob_map["riskofbiasscoreoverrideobject"][src_override_id] = override.id

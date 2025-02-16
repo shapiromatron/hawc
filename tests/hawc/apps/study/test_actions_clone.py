@@ -89,7 +89,8 @@ class TestDeepClone:
         # create a new destination assessment
         dst_assessment = Assessment.objects.create(name="z", version="y", year=2000)
         dst_assessment.project_manager.set([user])
-        metric_map = clone_approach(dst_assessment, src_study.assessment, user_id=user.id)
+        src_dst = clone_approach(dst_assessment, src_study.assessment, user_id=user.id)
+        metric_map = {v: k for k, v in src_dst.items()}
         clone_request = CloneStudyDataValidation(
             study={src_study_id},
             study_bioassay={src_study_id},
