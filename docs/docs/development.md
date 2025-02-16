@@ -5,7 +5,7 @@ Assessment Workspace Collaborative project.  To begin you should have the
 following applications installed on your local development system:
 
 - [Git](https://git-scm.com/)
-- [Python](https://www.python.org/) == 3.12
+- [uv](https://docs.astral.sh/uv/)
 - [Node.js](https://nodejs.org) LTS v22
 - [Yarn](https://yarnpkg.com/) < 2
 - [PostgreSQL](https://www.postgresql.org/) >= 16
@@ -14,13 +14,15 @@ When writing code for HAWC, there are a few requirements for code acceptance. We
 
 - Python code must comply with code formatters and linters: ruff
 - Javascript code must comply with eslint formatters
-- All unit-test (currently in python-only) must pass; please write test when contributing new code
+- All unit-test must pass; please write test when contributing new code
 
-See the `Useful utilities` below for more details on how to automatically lint/format your code.
+See below for more details on how to automatically lint/format your code.
 
 ## Environment setup
 
-HAWC can be developed both on Windows and and Linux/Mac. Development on Mac/Linux is preferred as it is more similar to the deployment environments, and things are a little more out of the box. Instructions are provided below for both environments.
+Install [uv](https://docs.astral.sh/uv/); either via pip install or following the installation guide on teh website. That's the primary way we'll install python and related packages.
+
+HAWC can be developed both on Windows and and Linux/Mac. Development on Mac/Linux is preferred as it is more similar to deployment.
 
 ```bash title="Mac/Linux"
 # clone repository; we'll put in ~/dev but you can put anywhere
@@ -30,13 +32,12 @@ git clone https://github.com/shapiromatron/hawc.git
 
 # create virtual environment
 cd ~/dev/hawc
-python -m venv venv
+uv venv --python=3.12
 
 # activate the environment
-source ./venv/bin/activate
+source ./.venv/bin/activate
 
 # install requirements
-python -m pip install -U pip uv
 uv pip install -e ".[dev,docs]"
 uv pip install -e client
 
@@ -60,9 +61,11 @@ mkdir %HOMEPATH%\dev
 cd %HOMEPATH%\dev
 git clone https://github.com/shapiromatron/hawc.git
 
+:: (optional) if uv is not already installed
+python -m pip install -U uv
+
 :: install python requirements
 cd %HOMEPATH%\dev\hawc
-python -m pip install -U pip uv
 uv pip install -e ".[dev,docs]"
 uv pip install -e client
 
@@ -90,14 +93,13 @@ In the first terminal, let's create our database and then run the python webserv
 ```bash title="Terminal #1"
 # active python virtual environment
 cd ~/dev/hawc
-source ./venv/bin/activate
+source ./.venv/bin/activate
 
 # update python/js packages; sync app state with database
 poe sync-dev
 
 # run development webserver  (use one of these commands)
-python manage.py runserver
-manage runserver
+uv run poe run-py
 ```
 
 In a second terminal, run the node development webserver for javascript:
@@ -110,7 +112,7 @@ cd ~/dev/hawc/frontend
 yarn install
 
 # start node hot-reloading server
-npm start
+uv run poe run-py
 ```
 
 If you navigate to [localhost](http://127.0.0.1:8000/) and see a website, you're ready to begin coding!
@@ -179,13 +181,6 @@ poe lint-py
 poe format
 poe format-js
 poe format-py
-```
-
-On Mac/Linux; if you have [tmux](https://github.com/tmux/tmux/wiki) installed, there's a one-line command to start the environment
-
-```bash
-# use the bundled dev `tmux` dev environment
-poe dev
 ```
 
 On Windows; if you created the pgdata folder in %HOMEPATH%\dev, there's a short command to start the database
