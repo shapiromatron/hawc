@@ -132,8 +132,7 @@ pg_ctl -D %HOMEPATH%\dev\pgdata -l %HOMEPATH%\dev\pgdata\logs\logfile start
 poe sync-dev
 
 :: run development webserver  (use one of these commands)
-python manage.py runserver
-manage runserver
+poe run-py
 ```
 
 In a second terminal, run the node development webserver for javascript:
@@ -149,7 +148,7 @@ cd %HOMEPATH%\dev\hawc\frontend
 yarn install
 
 :: start node hot-reloading server
-npm start
+poe run-js
 ```
 
 If you navigate to [localhost](http://127.0.0.1:8000/) and see a website, you're ready to begin coding!
