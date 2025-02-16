@@ -126,29 +126,35 @@ def clone_animal_bioassay(src_study: Study, dst_study: Study) -> StudyAppMapping
             animal_group.experiment_id = experiment.id
             animal_group.save()
             if parents:
-                animal_group.set(parents)
+                animal_group.parents.set(parents)
             animal_map["animalgroup"][src_animal_group_id] = animal_group.id
             animal_groups_object_map[src_animal_group_id] = animal_group
 
-            dosing_regime.id = None
-            dosing_regime.pk = None
-            if dosing_regime.dosed_animals_id:
-                dosing_regime.dosed_animals_id = animal_group.id
-            dosing_regime.save()
-            animal_map["dosingregime"][src_dosing_regime_id] = dosing_regime.id
+            cloned_dr = animal_map.get("dosingregime", {}).get(src_dosing_regime_id)
+            if cloned_dr is not None:
+                dst_dosing_regime_id = cloned_dr
+            else:
+                dosing_regime.id = None
+                dosing_regime.pk = None
+                if dosing_regime.dosed_animals_id:
+                    dosing_regime.dosed_animals_id = animal_group.id
+                dosing_regime.save()
 
-            if animal_group.dosing_regime_id:
-                animal_group.dosing_regime_id = dosing_regime.id
-            animal_group.save()
+                animal_map["dosingregime"][src_dosing_regime_id] = dosing_regime.id
+                dst_dosing_regime_id = dosing_regime.id
 
-            for dose_group in dose_groups:
-                src_dose_group_id = dose_group.id
+                for dose_group in dose_groups:
+                    src_dose_group_id = dose_group.id
 
-                dose_group.id = None
-                dose_group.pk = None
-                dose_group.dose_regime_id = dosing_regime.id
-                dose_group.save()
-                animal_map["dosegroup"][src_dose_group_id] = dose_group.id
+                    dose_group.id = None
+                    dose_group.pk = None
+                    dose_group.dose_regime_id = dst_dosing_regime_id
+                    dose_group.save()
+                    animal_map["dosegroup"][src_dose_group_id] = dose_group.id
+
+            if src_dosing_regime_id:
+                animal_group.dosing_regime_id = dst_dosing_regime_id
+                animal_group.save()
 
             for endpoint in endpoints:
                 src_endpoint_id = endpoint.id
