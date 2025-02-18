@@ -1,0 +1,102 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://hero.epa.gov/hero/ws/index.cfm/api/1.0/search/criteria/5490558/recordsperpage/100.json
+  response:
+    body:
+      string: "{\"results\":[{\"REFERENCE_ID\":5490558,\"ABSTRACT\":\"Butylbenzylphthalate
+        (BBP) has been assessed as a Priority Substance under the Canadian Environmental
+        Protection Act. Effects that occur at lowest concentrations in rats are increases
+        in organ to body weight ratios, primarily for the liver and kidney, and histological
+        effects on the pancreas and kidney. In studies with protocols specific for
+        investigating reproductive toxicity, adverse effects on testes have been reported,
+        although at dose levels higher than those that had effects on other organs,
+        such as liver and kidney. Although results of available studies do not support
+        the conclusion that BBP is estrogenic, the potential for other endocrine-mediated
+        effects cannot be precluded at this time. A tolerable daily intake of 1300
+        \u03BCg/kg body weight per day has been derived, based upon the lower 95%
+        confidence limit for the benchmark dose associated with a 5% increase in the
+        incidence of pancreatic lesions in male rats in an oral subchronic assay.\",\"url\":\"https://hero.epa.gov/hero/index.cfm/reference/details/reference_id/5490558\",\"hasPDF\":true,\"YEAR\":2001,\"allAuthors\":[\"Long,
+        G; Meek, ME\"],\"HEROID\":5490558,\"id\":\"5490558\",\"project_key\":[2207,2245,2757,2842,2843],\"referencetype\":[\"journal
+        article\"],\"type\":\"reference\",\"pdfURL\":\"https://search.proquest.com/docview/14582298?accountid=171501\",\"doi\":\"10.1081/gnc-100103582\",\"sortYear\":2001,\"tag_path_text\":[\"IRIS|BBP
+        (Butyl benzyl phthalate)|Literature Search|LitSearch Dec 2012|WOS\",\"IRIS|BBP
+        (Butyl benzyl phthalate)|Secondary Literature|Risk assessments \",\"IRIS|Phthalates
+        \u2013 Targeted Search for Epidemiological Studies|Excluded\",\"IRIS|Phthalates
+        \u2013 Targeted Search for Epidemiological Studies|Source - August 2017 Update
+        (Private)|WOS - Forward Search Results\",\"OPPT REs|OPPT Evidence Map: Butyl
+        benzyl phthalate (BBP)|Peer-Reviewed Literature|Literature Search September
+        2019 (Date Unlimited)|Current Contents\",\"OPPT REs|OPPT Evidence Map: Butyl
+        benzyl phthalate (BBP)|Peer-Reviewed Literature|Literature Search September
+        2019 (Date Unlimited)|ProQuest\",\"OPPT REs|OPPT Evidence Map: Butyl benzyl
+        phthalate (BBP)|Peer-Reviewed Literature|Literature Search September 2019
+        (Date Unlimited)|WOS\",\"OPPT REs|OPPT Evidence Map: Butyl benzyl phthalate
+        (BBP)|Systematic Review|Hazard\",\"OPPT REs|OPPT Evidence Map: Di-ethylhexyl
+        phthalate (DEHP)|Peer-Reviewed Literature|Literature Search September 2019
+        (Date Unlimited)|Current Contents\",\"OPPT REs|OPPT Evidence Map: Di-ethylhexyl
+        phthalate (DEHP)|Peer-Reviewed Literature|Literature Search September 2019
+        (Date Unlimited)|ProQuest\",\"OPPT REs|OPPT Evidence Map: Di-ethylhexyl phthalate
+        (DEHP)|Peer-Reviewed Literature|Literature Search September 2019 (Date Unlimited)|WOS\",\"OPPT
+        REs|OPPT Evidence Map: Di-ethylhexyl phthalate (DEHP)|Systematic Review|Hazard\",\"Other|EBTC
+        Zebrafish|Litsearch 2018|WOS_Core Collection\"],\"category_key\":[2,18,32],\"PROJECTS\":[{\"PROJECT\":\"BBP
+        (Butyl benzyl phthalate)\",\"PROJECT_ID\":2207,\"USAGES\":[{\"USAGE_ID\":\"5550\",\"USAGE\":\"Secondary
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"4477\",\"USAGE\":\"Risk assessments
+        \",\"USAGES\":[]}]},{\"USAGE_ID\":\"5881\",\"USAGE\":\"Literature Search\",\"USAGES\":[{\"USAGE_ID\":\"3822\",\"USAGE\":\"LitSearch
+        Dec 2012\",\"USAGES\":[{\"USAGE_ID\":\"2284\",\"USAGE\":\"WOS\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"EBTC
+        Zebrafish\",\"PROJECT_ID\":2757,\"USAGES\":[{\"USAGE_ID\":\"17338\",\"USAGE\":\"Litsearch
+        2018\",\"USAGES\":[{\"USAGE_ID\":\"17341\",\"USAGE\":\"WOS_Core Collection\",\"USAGES\":[]}]}]},{\"PROJECT\":\"OPPT
+        Evidence Map: Diethylhexyl phthalate (DEHP)\",\"PROJECT_ID\":2843,\"USAGES\":[{\"USAGE_ID\":\"31101\",\"USAGE\":\"Systematic
+        Review\",\"USAGES\":[{\"USAGE_ID\":\"31230\",\"USAGE\":\"Hazard\",\"USAGES\":[]}]},{\"USAGE_ID\":\"31065\",\"USAGE\":\"Peer-Reviewed
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"20037\",\"USAGE\":\"Initial Search:
+        September 2019 (Date Unlimited)\",\"USAGES\":[{\"USAGE_ID\":\"20210\",\"USAGE\":\"ProQuest\",\"USAGES\":[]},{\"USAGE_ID\":\"20209\",\"USAGE\":\"Current
+        Contents\",\"USAGES\":[]},{\"USAGE_ID\":\"20039\",\"USAGE\":\"WOS\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"OPPT
+        Evidence Map: Butyl benzyl phthalate (BBP)\",\"PROJECT_ID\":2842,\"USAGES\":[{\"USAGE_ID\":\"30944\",\"USAGE\":\"Systematic
+        Review\",\"USAGES\":[{\"USAGE_ID\":\"30948\",\"USAGE\":\"Hazard\",\"USAGES\":[]}]},{\"USAGE_ID\":\"30833\",\"USAGE\":\"Peer-Reviewed
+        Literature\",\"USAGES\":[{\"USAGE_ID\":\"20032\",\"USAGE\":\"Initial Search:
+        September 2019 (Date Unlimited)\",\"USAGES\":[{\"USAGE_ID\":\"20034\",\"USAGE\":\"WoS\",\"USAGES\":[]},{\"USAGE_ID\":\"20240\",\"USAGE\":\"ProQuest\",\"USAGES\":[]},{\"USAGE_ID\":\"20239\",\"USAGE\":\"Current
+        Contents\",\"USAGES\":[]}]}]}]},{\"PROJECT\":\"Phthalates \u2013 Targeted
+        Search for Epidemiological Studies\",\"PROJECT_ID\":2245,\"USAGES\":[{\"USAGE_ID\":\"12073\",\"USAGE\":\"Source
+        - August 2017 Update (Private)\",\"USAGES\":[{\"USAGE_ID\":\"15272\",\"USAGE\":\"WOS
+        - Forward Search Results\",\"USAGES\":[]}]},{\"USAGE_ID\":\"4544\",\"USAGE\":\"Excluded\",\"USAGES\":[]}]}],\"tag_path_key\":[\"2|2207|5881|3822|2284\",\"2|2207|5550|4477\",\"2|2245|4544\",\"2|2245|12073|15272\",\"32|2842|30833|20032|20239\",\"32|2842|30833|20032|20240\",\"32|2842|30833|20032|20034\",\"32|2842|30944|30948\",\"32|2843|31065|20037|20209\",\"32|2843|31065|20037|20210\",\"32|2843|31065|20037|20039\",\"32|2843|31101|31230\",\"18|2757|17338|17341\"],\"firstAuthor\":\"Long\",\"AUTHORS\":\"Long,
+        G; Meek, ME\",\"noPDFAvailable\":false,\"tag_path_type\":[\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage|usage\",\"category|project|usage|usage\",\"category|project|usage|usage\"],\"isPeerReviewed\":true,\"code\":\"pd\",\"isDeleted\":false,\"REDIRECT_DATA\":{},\"isPublic\":true,\"hasPublicDoc\":false,\"SOURCE\":\"Journal
+        of Environmental Science and Health, Part C: Environmental Carcinogenesis
+        & Ecotoxicology Reviews C19:105.\",\"wosid\":\"WOS:000174781300006\",\"TITLE\":\"Butylbenzylphthalate:
+        Hazard characterization and exposure-response analysis\",\"modified\":\"2022-06-10T09:01:38Z\",\"PMID\":\"\",\"keywords\":[\"Environment
+        Abstracts; RISK ASSESSMENT; DATA, CHEMICAL; DOSE RESPONSE PROFILES; TOXICOLOGY;
+        ENA 07:General\"],\"journalTitle\":\"Journal of Environmental Science and
+        Health, Part C: Environmental Carcinogenesis & Ecotoxicology Reviews\",\"_version_\":1735237775271133184}],\"isValid\":true,\"message\":\"Success\",\"error\":\"\"} "
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - application/json;charset=utf-8
+      Date:
+      - Mon, 26 Aug 2024 15:50:24 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      Server:
+      - Apache/2.4.62 (Win64) OpenSSL/3.1.6 mod_jk/1.2.46
+      Set-Cookie:
+      - CFID=34428707; Expires=Tue, 27 Aug 2024 15:50:24 GMT; Path=/; HttpOnly
+      - CFTOKEN=45634381; Expires=Tue, 27 Aug 2024 15:50:24 GMT; Path=/; HttpOnly
+      - JSESSIONID=A1ACF1A71C6D57A724AD94753594C2F3.cfusion; Path=/; Secure; HttpOnly
+      - LASTACCESSTIME=2024%2F08%2F26%2011%3A50%3A24; Path=/
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Transfer-Encoding:
+      - chunked
+      X-Frame-Options:
+      - SAMEORIGIN
+    status:
+      code: 200
+      message: OK
+version: 1

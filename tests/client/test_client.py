@@ -1197,6 +1197,22 @@ class TestClient(LiveServerTestCase, TestCase):
         qs = tags.get(name="Exclusion").get_descendants().values_list("name", flat=True)
         assert list(qs) == ["Tier II", "Tier III", "Tier I"]
 
+    ##############
+    # Mgmt tests #
+    ##############
+
+    def test_mgmt_tasks(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        response = client.mgmt.tasks(self.db_keys.assessment_final)
+        assert isinstance(response, pd.DataFrame)
+
+    def test_mgmt_time_spent(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("pm@hawcproject.org", "pw")
+        response = client.mgmt.tasks(self.db_keys.assessment_final)
+        assert isinstance(response, pd.DataFrame)
+
     ##########################
     # RiskOfBiasClient tests #
     ##########################
