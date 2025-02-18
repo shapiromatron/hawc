@@ -109,10 +109,12 @@ def try_parse_list_ints(val: str | None = None) -> list[int]:
     Try to parse a list of integers and return a list of integers, eg., `1,2,3` -> [1,2,3].
     If this fails for any reason, an empty list is returned
     """
-    if val is None:
+    if not val:
         return []
+    val = re.sub(r"\s+", ",", val)
+    val = re.sub(r",+", ",", val)
     try:
-        return [int(item) for item in val.split(",")]
+        return [int(item) for item in val.split(",") if item]
     except ValueError:
         return []
 
