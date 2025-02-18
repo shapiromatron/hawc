@@ -1,0 +1,65 @@
+{% extends 'crumbless.html' %}
+
+{% block content %}
+
+
+  <div class="d-flex align-items-start mt-2">
+    <h2 class="mt-0 mb-2">{{object.name}}</h2>
+    <span class="unpublishedBadge align-self-start flex-shrink-0 badge badge-pill ml-auto mt-1 border {{ object.published|yesno:'border-success text-success,border-secondary text-muted' }}" style="font-size: 0.75rem; vertical-align: top;" title="{{object.published|yesno:'Published,Unpublished'}}"><i class="fa fa-{{ object.published|yesno:'eye,eye-slash' }}" aria-hidden="true"></i> <i>{{object.published|yesno:'Published,Unpublished'}}</i></span>
+    {% actions %}
+      <a class="dropdown-item" href="{{object.get_update_url}}">Edit model details or upload new version</a>
+    {% endactions %}
+  </div>
+  <div class="d-flex mb-2">
+    {% if object.description %}
+      <div class="box-shadow-minor rounded p-3 mr-3 text-nowrap text-truncate flex-sm-shrink-1" style="min-height: 3rem; min-width: 15rem;">
+        <div class="small">Description</div>
+        <div style="font-size: 1.15rem;" class="text-truncate" title="{{object.description}}">{{object.description}}</div>
+      </div>
+    {% endif %}
+    <div class="box-shadow-minor rounded p-3 flex-shrink-0" style="min-height: 3rem;">
+      <div class="small">Created</div>
+      <div style="font-size: 1.15rem;">{{object.created|date:"DATE_FORMAT"}}</div>
+    </div>
+  </div>
+
+  {% for object in object.versions.all %}
+    <div class="my-3">
+      <h3 class="m-0 font-weight-lighter">{{object}}</h3>
+      <div class="d-flex mt-2">
+        {% if object.description %}
+          <div class="box-shadow-minor rounded p-3 mr-3 text-nowrap text-truncate flex-sm-shrink-1" style="min-height: 3rem; min-width: 15rem;">
+            <div class="small">Description</div>
+            <div class="text-truncate" title="{{object.description}}">{{object.description}}</div>
+          </div>
+        {% endif %}
+        <div class="box-shadow-minor rounded p-3 mr-3 text-nowrap text-truncate d-block" style="min-height: 3rem;">
+          <div><span class="small">Vectorizer:</span> &nbsp;<b>{{object.vectorizer}}</b></div>
+          <div class="text-muted text-truncate" title="{{object.vectorizer.description}}"><i>{{object.vectorizer.description}}</i></div>
+        </div>
+        <div class="box-shadow-minor rounded p-3 flex-shrink-0" style="min-height: 3rem;">
+          <div class="small">Created</div>
+          <div>{{object.created|date:"DATE_FORMAT"}}</div>
+        </div>
+      </div>
+
+      {% if object.prediction_runs.exists %}
+        <div class="list-group my-3">
+          {% for object in object.prediction_runs.all %}
+            <a class="list-group-item list-group-item-action text-dark d-flex text-nowrap" href="{{object.get_absolute_url}}">
+              Model ran in&nbsp;<b>{{object.workflow.assessment}}</b>&nbsp;on {{object.workflow}} &nbsp;<i class="text-muted text-nowrap text-truncate">{{object.notes}}</i>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="bg-light w-100 rounded p-3 mt-3">
+          <i>No prediction runs available.</i>
+        </div>
+      {% endif %}
+    </div>
+    <hr class="my-4">
+  {% empty %}
+    {% alert type="info" %}No versions found.{% endalert %}
+  {% endfor %}
+
+{% endblock %}

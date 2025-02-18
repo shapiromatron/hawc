@@ -1,12 +1,15 @@
 import html
 import json
 import logging
+import pickle
 import re
 from copy import copy
 from math import ceil
 from typing import Self
 from urllib import parse
 
+import pandas as pd
+import plotly.express as px
 from celery import chain
 from celery.result import ResultBase
 from django.apps import apps
@@ -14,6 +17,7 @@ from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.forms import MultipleChoiceField
 from django.urls import reverse
@@ -33,6 +37,7 @@ from ..common.models import (
     AssessmentRootMixin,
     CustomURLField,
     NonUniqueTagBase,
+    get_private_data_storage,
 )
 from ..myuser.models import HAWCUser
 from ..udf.models import TagBinding, TagUDFContent
@@ -1456,6 +1461,184 @@ class Workflow(models.Model):
             self.description
             or "Go to 'View Workflows' under the actions button for more information."
         )
+
+
+class TrainedVectorizer(models.Model):
+    """Stores a trained vectorizer that can be shared across models"""
+
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    vectorizer = models.FileField(
+        upload_to="trained-vectorizers/", storage=get_private_data_storage()
+    )
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
+class TrainedModel(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    published = models.BooleanField(
+        default=False,
+        help_text="Publish this model for all users to see and use across assessments.",
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ["-created"]
+
+    def get_absolute_url(self):
+        return reverse("assessment:trained_model_detail", args=(self.id,))
+
+    def get_update_url(self) -> str:
+        return reverse("assessment:trained_model_update", args=(self.id,))
+
+
+class TrainedModelVersion(models.Model):
+    trained_model = models.ForeignKey(
+        TrainedModel, on_delete=models.CASCADE, related_name="versions"
+    )
+    version = models.PositiveSmallIntegerField(validators=[MinValueValidator(1)])
+    model = models.FileField(
+        upload_to="trained-models/",
+        storage=get_private_data_storage(),
+    )
+    vectorizer = models.ForeignKey(
+        TrainedVectorizer,
+        on_delete=models.PROTECT,
+        related_name="trained_models",
+    )
+    description = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.trained_model.name} v{self.version}"
+
+    class Meta:
+        ordering = ["-version"]
+        unique_together = ["trained_model", "version"]
+
+    def get_model(self):
+        return pickle.load(self.model)  # noqa: S301
+
+    def get_vectorizer(self):
+        return pickle.load(self.vectorizer.vectorizer)  # noqa: S301
+
+
+class ModelPredictionRun(models.Model):
+    model_version = models.ForeignKey(
+        TrainedModelVersion, on_delete=models.CASCADE, related_name="prediction_runs"
+    )
+    prediction_class = models.CharField(max_length=100)
+    workflow = models.ForeignKey(Workflow, on_delete=models.CASCADE, related_name="trained_models")
+    run_date = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True)
+
+    BREADCRUMB_PARENT = None
+
+    def __str__(self):
+        return f"Run of {self.model_version} on {self.workflow}"
+
+    def get_assessment(self):
+        return self.workflow.assessment
+
+    def get_absolute_url(self):
+        return reverse("lit:model_prediction_run_detail", args=(self.pk,))
+
+    def run_prediction(self):
+        references = Reference.objects.filter(
+            assessment=self.workflow.assessment, abstract__isnull=False
+        ).in_workflow(self.workflow)
+        ref_data = references.values_list("id", "abstract")
+        ref_ids, abstracts = zip(*ref_data, strict=True)
+
+        vectorizer = self.model_version.get_vectorizer()
+        model = self.model_version.get_model()
+        X = vectorizer.transform(abstracts)
+        scores = model.predict_proba(X)[:, 1]
+
+        predictions = [
+            ModelPrediction(
+                reference_id=ref_id,
+                score=float(score),
+                prediction_run=self,
+                notes=f"Test prediction generated for {self.model_version}",
+            )
+            for ref_id, score in zip(ref_ids, scores, strict=True)
+        ]
+
+        with transaction.atomic():
+            return ModelPrediction.objects.bulk_create(predictions)
+
+        return predictions
+
+    def create_score_distribution_plot(self):
+        scores = self.model_predictions.values_list("score", flat=True)
+        df = pd.DataFrame({"score": scores})
+
+        stats = {
+            "mean": df["score"].mean(),
+            "median": df["score"].median(),
+            "std": df["score"].std(),
+        }
+
+        fig = px.histogram(
+            df,
+            x="score",
+            nbins=50,
+            histnorm="probability density",
+            title=None,
+            labels={"score": "Score", "count": "Density"},
+            marginal="violin",
+            template="plotly_white",
+            width=600,
+            height=400,
+        )
+
+        stats_text = (
+            f'Mean: {stats["mean"]:.3f}<br>Median: {stats["median"]:.3f}<br>Std: {stats["std"]:.3f}'
+        )
+        fig.add_annotation(
+            x=0.95,
+            y=0.95,
+            xref="paper",
+            yref="paper",
+            text=stats_text,
+            showarrow=False,
+            bgcolor="white",
+            bordercolor="black",
+            borderwidth=1,
+        )
+
+        return fig
+
+
+class ModelPrediction(models.Model):
+    prediction_run = models.ForeignKey(
+        ModelPredictionRun, on_delete=models.CASCADE, related_name="model_predictions"
+    )
+    reference = models.ForeignKey(
+        Reference, on_delete=models.CASCADE, related_name="model_predictions"
+    )
+    score = models.FloatField(
+        validators=[MinValueValidator(0)],
+        default=0,
+    )
+    is_approved = models.BooleanField(
+        blank=True,
+        null=True,
+        help_text="Manually approve this prediction",
+    )
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        unique_together = ["prediction_run", "reference"]
 
 
 reversion.register(LiteratureAssessment)

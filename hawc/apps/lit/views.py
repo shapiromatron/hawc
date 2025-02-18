@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
@@ -11,6 +12,7 @@ from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView
+from django.views.generic.edit import BaseFormView
 
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
@@ -25,11 +27,12 @@ from ..common.views import (
     BaseFilterList,
     BaseList,
     BaseUpdate,
+    MessageMixin,
     create_object_log,
     htmx_required,
 )
 from ..udf.cache import TagCache
-from . import constants, filterset, forms, models
+from . import constants, filterset, forms, models, serializers
 
 
 def lit_overview_breadcrumb(assessment) -> Breadcrumb:
@@ -57,6 +60,9 @@ class LitOverview(BaseList):
         context = super().get_context_data(**kwargs)
         context["overview"], context["workflows"] = models.Reference.objects.get_overview_details(
             self.assessment
+        )
+        context["model_prediction_runs"] = models.ModelPredictionRun.objects.filter(
+            workflow__assessment=self.assessment
         )
         context["overview"]["my_reviews"] = (
             models.Reference.objects.filter(assessment=self.assessment)
@@ -1251,3 +1257,81 @@ class AssessmentInteractive(HtmxView):
             "qs": models.Reference.objects.assessment_qs(self.assessment.id).filter(id__in=ids)
         }
         return render(request, "lit/components/venn_reference_list.html", context=context)
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class ModelPredictionRunCreate(BaseCreate):
+    success_message = "Prediction model running.."
+    form_class = forms.ModelPredictionRunForm
+    template_name = "lit/model_prediction_run_create.html"
+    parent_template_name = "assessment"
+    success_message = "Running predictions..."
+    parent_model = Assessment
+    model = models.ModelPredictionRun
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        self.object.run_prediction()
+        return response
+
+    def get_success_url(self):
+        return reverse("lit:overview", args=(self.assessment.pk,))
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class ModelPredictionRunDetail(MessageMixin, BaseFormView, BaseList):
+    model = models.ModelPrediction
+    parent_model = models.ModelPredictionRun
+    template_name = "lit/model_prediction_run.html"
+    paginate_by = 25
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+    parent_template_name = "model_prediction_run"
+    form_class = forms.ModelPredictionTaggingForm
+    success_message = "Tags added."
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["assessment"] = self.assessment
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        reference_ids = (
+            self.get_queryset()
+            .filter(score__gte=form.cleaned_data["threshold"])
+            .values_list("reference__id", flat=True)
+        )
+        if reference_ids:
+            csv = "reference_id,tag_id"
+            for reference_id in reference_ids:
+                for tag in form.cleaned_data["tags"]:
+                    csv += f"\n{reference_id},{tag.id}"
+            serializer = serializers.BulkReferenceTagSerializer(
+                data={"operation": "append", "csv": csv}, context={"assessment": self.assessment}
+            )
+            if serializer.is_valid():
+                serializer.bulk_create_tags()
+                return super().form_valid(form)
+            else:
+                form.add_error(None, "Experiencing errors. Try again later.")
+                return self.form_valid(form)
+        else:
+            form.add_error("threshold", "No predictions found at this threshold.")
+            return self.form_invalid(form)
+
+    def get_success_url(self):
+        return self.parent.get_absolute_url()
+
+    def get_queryset(self):
+        return self.parent.model_predictions.all().order_by("-score")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, f"{self.parent.model_version} Run"
+        )
+        context["plot"] = self.parent.create_score_distribution_plot()
+        return context
