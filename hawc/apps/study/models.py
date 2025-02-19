@@ -1,7 +1,6 @@
 import logging
 import os
 
-import pandas as pd
 from django.apps import apps
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import MultipleObjectsReturned, ObjectDoesNotExist
@@ -179,45 +178,12 @@ class Study(Reference):
     def get_attachments_dict(self) -> list[dict]:
         return [attachment.get_dict() for attachment in self.attachments.all()]
 
-    def get_bioassay_endpoints(self):
-        """
-        Return a queryset of related bioassay endpoints for selected study
-        """
-        Endpoint = apps.get_model("animal", "Endpoint")
-        Experiment = apps.get_model("animal", "Experiment")
-        AnimalGroup = apps.get_model("animal", "AnimalGroup")
-
-        if not self.bioassay:
-            return Endpoint.objects.none()
-
-        return Endpoint.objects.filter(
-            animal_group__in=AnimalGroup.objects.filter(
-                experiment__in=Experiment.objects.filter(study=self)
-            )
-        )
-
     def get_study_types(self) -> list[str]:
         types = []
         for field in self.STUDY_TYPE_FIELDS:
             if getattr(self, field):
                 types.append(field)
         return types
-
-    @classmethod
-    def identifiers_df(cls, qs: models.QuerySet, relation: str) -> pd.DataFrame:
-        """Returns a data frame with reference identifiers for each study in the QuerySet
-
-        Args:
-            qs (models.QuerySet): A QuerySet of an model with a relation to the study
-            relation (str): The relation string to the `Study.study_id` for this QuerySet
-
-        Returns:
-            pd.DataFrame: A data frame an index of study/reference id, and columns for identifiers
-        """
-        study_ids = qs.values_list(relation, flat=True)
-        studies = cls.objects.filter(id__in=study_ids)
-        identifiers_df = Reference.objects.identifiers_dataframe(studies)
-        return identifiers_df.set_index("reference_id")
 
     @classmethod
     def delete_caches(cls, ids):
@@ -258,20 +224,6 @@ class Study(Reference):
                 .order_by("last_updated")
                 .prefetch_related("author", "scores__overridden_objects__content_object")
             )
-
-    def get_overall_confidence(self):
-        # returns the overall RoB confidence score for a study, or -1 if none exists
-        final_confidence_set = self.riskofbiases.prefetch_related("scores__metric__domain").filter(
-            active=True, final=True, scores__metric__domain__is_overall_confidence=True
-        )
-
-        if final_confidence_set.exists():
-            if final_confidence_set.count() != 1:
-                return -1
-            else:
-                return final_confidence_set.values_list("scores__score", flat=True)[0]
-        else:
-            return -1
 
     def optimized_for_serialization(self):
         return (
