@@ -90,13 +90,15 @@ class TestCloneViewSet:
         data = self._valid_clone_payload()
         data["metric-1"] = 9999
         resp = team.post(url, data)
-        assert resp.status_code == 400
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "study/fragments/clone_failure.html")
 
         # bad destination ID
         data = self._valid_clone_payload()
         data["metric-9999"] = data["metric-1"]
         resp = team.post(url, data)
-        assert resp.status_code == 400
+        assert resp.status_code == 200
+        assertTemplateUsed(resp, "study/fragments/clone_failure.html")
 
 
 @pytest.mark.django_db
