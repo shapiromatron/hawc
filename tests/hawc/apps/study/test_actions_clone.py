@@ -7,8 +7,8 @@ from hawc.apps.epiv2.models import DataExtraction, Design
 from hawc.apps.riskofbias.actions import clone_approach
 from hawc.apps.riskofbias.models import RiskOfBiasScore, RiskOfBiasScoreOverrideObject
 from hawc.apps.study.actions.clone import (
-    CloneStudyDataValidation,
-    RobCloneCopyMode,
+    CloneRobCopyMode,
+    CloneStudySettings,
     clone_animal_bioassay,
     clone_epiv2,
     clone_study,
@@ -91,13 +91,13 @@ class TestDeepClone:
         dst_assessment.project_manager.set([user])
         src_dst = clone_approach(dst_assessment, src_study.assessment, user_id=user.id)
         metric_map = {v: k for k, v in src_dst.items()}
-        clone_request = CloneStudyDataValidation(
+        clone_request = CloneStudySettings(
             study={src_study_id},
             study_bioassay={src_study_id},
             study_rob={src_study_id},
             study_epi=set(),
             include_rob=True,
-            copy_mode=RobCloneCopyMode.final_to_final,
+            copy_mode=CloneRobCopyMode.final_to_final,
             metric_map=metric_map,
         )
         study_map = clone_request.clone(

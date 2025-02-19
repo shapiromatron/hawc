@@ -10,7 +10,7 @@ from ...riskofbias.models import RiskOfBiasScore
 from ..models import Study
 
 
-class RobCloneCopyMode(StrEnum):
+class CloneRobCopyMode(StrEnum):
     final_to_initial = "final-to-initial"
     final_to_final = "final-to-final"
 
@@ -18,13 +18,13 @@ class RobCloneCopyMode(StrEnum):
         return True if self == self.final_to_final else False
 
 
-class CloneStudyDataValidation(BaseModel):
+class CloneStudySettings(BaseModel):
     study: set[int] = Field(min_length=1)
     study_bioassay: set[int]
     study_epi: set[int]
     study_rob: set[int]
     include_rob: bool = False
-    copy_mode: RobCloneCopyMode | None
+    copy_mode: CloneRobCopyMode | None
     metric_map: dict[int, int]  # dst: src
 
     @model_validator(mode="after")
@@ -267,12 +267,15 @@ def clone_epiv2(src_study: Study, dst_study: Study) -> StudyAppMapping:
 def clone_rob(
     src_study: Study,
     dst_study: Study,
-    settings: CloneStudyDataValidation,
+    settings: CloneStudySettings,
     user,
     study_map: StudyMapping,
 ) -> StudyAppMapping:
     rob_map = defaultdict(dict)
-    rob = src_study.riskofbiases.get(active=True, final=True)
+    try:
+        rob = src_study.riskofbiases.get(active=True, final=True)
+    except src_study.riskofbiases.model.DoesNotExist:
+        raise ValueError(f"No active final evaluation available for {src_study}") from None
 
     src_rob_id = rob.id
     src_scores = list(rob.scores.all().prefetch_related("overridden_objects"))

@@ -34,7 +34,7 @@ from ..mgmt.views import EnsurePreparationStartedMixin
 from ..riskofbias.models import RiskOfBiasMetric
 from ..udf.views import UDFDetailMixin
 from . import filterset, forms, models
-from .actions.clone import CloneStudyDataValidation
+from .actions.clone import CloneStudySettings
 
 logger = logging.getLogger(__name__)
 
@@ -178,9 +178,16 @@ class CloneStudies(BaseUpdate):
                 # check cloned data
                 try:
                     studies_map = self.clone(context, request.POST.copy())
-                except ValidationError as err:
+                except (ValidationError, ValueError) as err:
                     logger.info(err)
-                    return HttpResponseBadRequest("Bad clone request")
+                    return render(
+                        request,
+                        "study/fragments/clone_failure.html",
+                        {
+                            "now": timezone.now(),
+                            "err": err,
+                        },
+                    )
 
                 return render(
                     request,
@@ -235,7 +242,7 @@ class CloneStudies(BaseUpdate):
             "metric_map": metric_map,
         }
         with PydanticToDjangoError():
-            model = CloneStudyDataValidation.model_validate(payload)
+            model = CloneStudySettings.model_validate(payload)
 
         dst_metric_ids = context["dst_metrics"].values_list("id", flat=True)
         diff = set(model.metric_map.keys()) - set(dst_metric_ids)
