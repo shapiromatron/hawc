@@ -19,8 +19,8 @@
               <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Latest session</a>
               <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">All sessions</a>
             {% endif %}
-            {% if user.is_beta_tester and obj_perms.edit %}
-              <a class="betatester dropdown-item" href="{% url 'bmd:session_create' object.pk %}">Create</a>
+            {% if obj_perms.edit %}
+              <a class="dropdown-item" href="{% url 'bmd:session_create' object.pk %}">Create</a>
             {% endif %}
           {% endif %}
         {% endactions %}
