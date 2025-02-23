@@ -26,6 +26,7 @@ class Session(models.Model):
     outputs = models.JSONField(default=dict)
     errors = models.JSONField(default=dict)
     selected = models.JSONField(default=dict)
+    option_index = models.PositiveSmallIntegerField(default=0)
     active = models.BooleanField(default=False)
     date_executed = models.DateTimeField(null=True)
     created = models.DateTimeField(auto_now_add=True)
