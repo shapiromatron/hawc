@@ -1364,7 +1364,7 @@ class TestClient(LiveServerTestCase, TestCase):
     def test_study_list(self):
         client = HawcClient(self.live_server_url)
         df = client.study.studies(self.db_keys.assessment_client)
-        assert isinstance(df, pd.DataFrame) and df.shape == (1, 29)
+        assert isinstance(df, pd.DataFrame) and df.shape == (1, 30)
         assert df.short_citation.values == ["Yoshida R and Ogawa Y 2000"]
 
     def test_study_create_from_identifier(self):
