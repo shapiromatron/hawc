@@ -40,6 +40,9 @@ class Experiment(models.Model):
 
     BREADCRUMB_PARENT = "study"
 
+    class Meta:
+        ordering = ("id",)
+
     def __str__(self):
         return self.name
 
@@ -105,6 +108,9 @@ class Chemical(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def __str__(self):
         return self.name
@@ -173,6 +179,9 @@ class AnimalGroup(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("id",)
+
     def __str__(self):
         return self.name
 
@@ -228,6 +237,9 @@ class Treatment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("id",)
+
     def __str__(self):
         return self.name
 
@@ -273,6 +285,9 @@ class DoseGroup(models.Model):
 
     def get_study(self):
         return self.treatment.get_study()
+
+    class Meta:
+        ordering = ("id",)
 
 
 class Endpoint(models.Model):
@@ -342,6 +357,9 @@ class Endpoint(models.Model):
     additional_tags = models.ManyToManyField(EffectTag, blank=True)
     comments = models.TextField(blank=True, help_text="TODO")
 
+    class Meta:
+        ordering = ("id",)
+
     def __str__(self):
         return self.name
 
@@ -386,6 +404,9 @@ class ObservationTime(models.Model):
 
     def get_study(self):
         return self.endpoint.get_study()
+
+    class Meta:
+        ordering = ("id",)
 
     def __str__(self):
         return (
@@ -446,6 +467,9 @@ class DataExtraction(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def get_assessment(self):
         return self.experiment.get_assessment()
@@ -533,6 +557,9 @@ class StudyLevelValue(models.Model):
     )  # TODO - review schema, add new comment types?
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def get_assessment(self):
         return self.study.get_assessment()
