@@ -72,6 +72,7 @@ class TestStudyViewSet:
             "summary": "",
             "editable": True,
             "url": "/study/1/",
+            "hidden": False,
         }
 
     def test_riskofbias_detail(self, db_keys):

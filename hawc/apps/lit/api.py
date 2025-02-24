@@ -432,7 +432,7 @@ class DuplicateViewSet(
     BaseAssessmentViewSet,
 ):
     model = models.DuplicateCandidateGroup
-    http_method_names = ["post"]
+    serializer_class = UnusedSerializer
 
     @action(
         detail=True, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
