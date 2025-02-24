@@ -1074,6 +1074,7 @@ class TagsUpdate(BaseDetail):
             app="nestedTagEditorStartup",
             data=dict(
                 assessment_id=self.assessment.id,
+                references=models.Reference.objects.tag_pairs(self.assessment.references.all()),
                 base_url=api_root,
                 list_url=f"{api_root}?assessment_id={self.assessment.id}",
                 csrf=get_token(self.request),
