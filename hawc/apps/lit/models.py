@@ -1,6 +1,7 @@
 import html
 import json
 import logging
+import random
 import re
 from copy import copy
 from math import ceil
@@ -849,6 +850,7 @@ class Reference(models.Model):
         null=True,
         help_text="Used internally for determining when reference was " "originally added",
     )
+    hidden = models.BooleanField(default=False)
 
     BREADCRUMB_PARENT = "assessment"
 
@@ -1456,6 +1458,82 @@ class Workflow(models.Model):
             self.description
             or "Go to 'View Workflows' under the actions button for more information."
         )
+
+
+class DuplicateCandidateGroup(models.Model):
+    assessment = models.ForeignKey(
+        "assessment.Assessment", on_delete=models.CASCADE, related_name="duplicates"
+    )
+    resolution = models.PositiveSmallIntegerField(
+        choices=constants.DuplicateResolution, default=constants.DuplicateResolution.UNRESOLVED
+    )
+    resolving_user = models.ForeignKey(
+        HAWCUser, null=True, on_delete=models.SET_NULL, related_name="resolved_duplicates"
+    )
+    candidates = models.ManyToManyField(Reference, related_name="duplicate_candidates")
+    primary = models.ForeignKey(
+        Reference, null=True, on_delete=models.SET_NULL, related_name="duplicate_primaries"
+    )
+    notes = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    @property
+    def secondaries(self):
+        return self.candidates.exclude(pk=self.primary_id)
+
+    def get_assessment(self):
+        return self.assessment
+
+    @classmethod
+    def validate_candidates(cls, candidates: list[int]):
+        qs = cls.objects.annotate(candidates_count=models.Count("candidates")).filter(
+            candidates_count=len(candidates)
+        )
+        for candidate in candidates:
+            qs = qs.filter(candidates=candidate)
+        return not qs.exists()
+
+    @classmethod
+    def find_duplicate_candidate_groups(cls, references) -> list[list[dict]]:
+        num_candidates = 3
+        if len(references) < num_candidates:
+            return []
+        num_groups = min(3, len(references) / num_candidates)
+        return [random.choices(references, k=num_candidates) for i in range(num_groups)]  # noqa: S311
+
+    @classmethod
+    def create_duplicate_candidate_groups(cls, assessment_id: int):
+        tasks.create_duplicate_candidate_groups.delay(assessment_id)
+
+    def _update_references(self):
+        duplicate_ids = self.secondaries.values_list("pk", flat=True)
+        self.assessment.references.filter(pk__in=duplicate_ids).update(hidden=True)
+        # if a "hidden" reference was selected as primary, unhide it
+        if self.primary.hidden:
+            self.primary.hidden = False
+            self.primary.save()
+
+    def resolve(
+        self,
+        resolution: constants.DuplicateResolution,
+        resolving_user: HAWCUser,
+        primary_id: int | None = None,
+        notes: str = "",
+    ):
+        if resolution == constants.DuplicateResolution.UNRESOLVED:
+            raise ValueError("Resolution must not be unresolved.")
+        if resolution == constants.DuplicateResolution.RESOLVED:
+            if primary_id is None:
+                raise ValueError("Primary must not be None if duplicate identified.")
+            if primary_id not in self.candidates.values_list("pk", flat=True):
+                raise ValueError("Primary must be a candidate.")
+            self.primary_id = primary_id
+            self._update_references()
+        self.resolution = resolution
+        self.resolving_user = resolving_user
+        self.notes = notes
+        self.save()
 
 
 reversion.register(LiteratureAssessment)
