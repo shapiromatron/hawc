@@ -435,7 +435,9 @@ class DuplicateViewSet(
     serializer_class = UnusedSerializer
 
     @action(
-        detail=True, methods=("post",), action_perms=AssessmentViewSetPermissions.CAN_EDIT_OBJECT
+        detail=True,
+        methods=("post",),
+        permission_classes=(permissions.IsAdminUser,),
     )
     def resolve_duplicate(self, request, pk):
         instance = self.get_object()

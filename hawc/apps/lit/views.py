@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
@@ -1254,6 +1255,7 @@ class AssessmentInteractive(HtmxView):
         return render(request, "lit/components/venn_reference_list.html", context=context)
 
 
+@method_decorator(staff_member_required, name="dispatch")
 class DuplicateResolution(BaseList):
     parent_model = Assessment
     model = models.DuplicateCandidateGroup
@@ -1280,6 +1282,7 @@ class DuplicateResolution(BaseList):
         return context
 
 
+@method_decorator(staff_member_required, name="dispatch")
 class ResolvedDuplicates(BaseFilterList):
     parent_model = Assessment
     model = models.DuplicateCandidateGroup
@@ -1307,6 +1310,7 @@ class ResolvedDuplicates(BaseFilterList):
         return context
 
 
+@method_decorator(staff_member_required, name="dispatch")
 class IdentifyDuplicates(MessageMixin, View):
     success_message = "Duplicate identification requested."
 
