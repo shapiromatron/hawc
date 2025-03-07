@@ -10,8 +10,10 @@ from typing import TypeVar
 import pandas as pd
 from django.contrib.auth.models import AnonymousUser
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.handlers.wsgi import WSGIRequest
 from django.db import models
 from django.http import HttpResponse
+from django.test import RequestFactory
 from django.test.client import Client
 from rest_framework.response import Response
 from rest_framework.test import APIClient
@@ -67,6 +69,13 @@ def get_user(role: str = "") -> AnonymousUser | HAWCUser:
     if not role:
         return AnonymousUser()
     return HAWCUser.objects.get(email=f"{role}@hawcproject.org")
+
+
+def mock_request(verb: str = "get", role: str = "", path: str = "/") -> WSGIRequest:
+    factory = RequestFactory()
+    request = getattr(factory, verb)(path)
+    request.user = get_user(role)
+    return request
 
 
 def check_403(

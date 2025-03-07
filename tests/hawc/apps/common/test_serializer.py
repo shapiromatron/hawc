@@ -1,10 +1,12 @@
 import pytest
+from pydantic import model_validator
 from rest_framework.exceptions import ValidationError
 
 from hawc.apps.common.serializers import (
     FlexibleChoiceArrayField,
     FlexibleChoiceField,
     FlexibleDBLinkedChoiceField,
+    PydanticDrfSerializer,
     check_ids,
     get_matching_instance,
     get_matching_instances,
@@ -211,3 +213,33 @@ def test_check_ids():
     ]:
         with pytest.raises(ValidationError):
             check_ids(case)
+
+
+class TestPydanticDrfSerializer:
+    def test_error_parsing(self):
+        class Demo(PydanticDrfSerializer):
+            a: int
+            b: str
+
+            @model_validator(mode="after")
+            def check(self):
+                if self.b != "hi":
+                    raise ValueError("b must be hi")
+                return self
+
+        # works correctly
+        assert isinstance(Demo.from_drf({"a": 123, "b": "hi"}), Demo)
+
+        # field validation
+        with pytest.raises(ValidationError) as err:
+            Demo.from_drf({"b": "hi"})
+        assert str(err.value.detail["a"][0]) == "Field required"
+
+        with pytest.raises(ValidationError) as err:
+            Demo.from_drf({"a": "not-number", "b": "hi"})
+        assert "Input should be a valid integer" in str(err.value.detail["a"][0])
+
+        # model validation
+        with pytest.raises(ValidationError) as err:
+            Demo.from_drf({"a": 123, "b": "not-hi"})
+        assert "b must be hi" in str(err.value.detail["non_field_errors"][0])
