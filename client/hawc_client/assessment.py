@@ -66,9 +66,22 @@ class AssessmentClient(BaseClient):
         url = f"{self.session.root_url}/admin/api/reports/values/"
         return self.session.get(url).json()
 
+    def get(self, id: int) -> dict:
+        """
+        Get assessment information.
+
+        Args:
+            id (int): Assessment id
+
+        Returns:
+            dict: The resulting object.
+        """
+        url = f"{self.session.root_url}/assessment/api/assessment/{id}/"
+        return self.session.get(url).json()
+
     def create(self, data: dict) -> dict:
         """
-        Create an assessment.
+        Create an assessment (HAWC admin only).
 
         Args:
             data (dict): required metadata for creation
@@ -81,7 +94,7 @@ class AssessmentClient(BaseClient):
 
     def update(self, assessment_id: int, data: dict) -> dict:
         """
-        Update an existing assessment
+        Update an existing assessment (HAWC admin only).
 
         Args:
             assessment_id (int): assessment ID
@@ -96,7 +109,7 @@ class AssessmentClient(BaseClient):
 
     def delete(self, assessment_id: int) -> Response:
         """
-        Delete a assessment
+        Delete a assessment (HAWC admin only).
 
         Args:
             assessment_id (int): assessment ID

@@ -9,7 +9,7 @@ import hawc.apps.epiv2.constants as epiv2constants
 import hawc.apps.epiv2.models as epiv2models
 from hawc.apps.animal.models import Experiment
 from hawc.apps.assessment import constants
-from hawc.apps.assessment.models import DoseUnits, Strain
+from hawc.apps.assessment.models import Assessment, DoseUnits, Strain
 from hawc.apps.epi.models import ResultMetric
 from hawc.apps.lit.models import Reference, ReferenceFilterTag
 from hawc.apps.myuser.models import HAWCUser
@@ -334,6 +334,37 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.assessment.effect_tag_list(name="foo")
         assert response["count"] == 1
         assert response["results"] == [{"name": "foo", "slug": "foo"}]
+
+    def test_assessment_crud(self):
+        client = HawcClient(self.live_server_url)
+        client.authenticate("admin@hawcproject.org", "pw")
+        admin_pk = HAWCUser.objects.get(email="admin@hawcproject.org").id
+
+        # CREATE
+        resp = client.assessment.create(
+            dict(
+                name="zzz",
+                year=2025,
+                version="draft",
+                assessment_objective="test",
+                authors="test",
+                project_manager=[admin_pk],
+            )
+        )
+        assert resp["name"] == "zzz"
+        assess_id = resp["id"]
+
+        # READ
+        assert client.assessment.get(assess_id) == resp
+
+        # UPDATE
+        resp = client.assessment.update(assess_id, {"name": "zzz++"})
+        assert resp["name"] == "zzz++"
+
+        # DELETE
+        resp = client.assessment.delete(assess_id)
+        assert resp.status_code == 204
+        assert Assessment.objects.filter(id=assess_id).count() == 0
 
     ###################
     # EpiClient tests #

@@ -60,6 +60,7 @@ Client tutorials for common operations are below:
 
 #### [2025-1](https://pypi.org/project/hawc-client/2025.1/) (TBD)
 
+* Add API to get assessment details by assessment id
 * Add `unpublished` parameter to bmd dataset download
 
 #### [2024-4](https://pypi.org/project/hawc-client/2024.4/) (January 2025)
