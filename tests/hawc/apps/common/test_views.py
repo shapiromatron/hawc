@@ -11,7 +11,7 @@ def test_get_referrer():
 
     request = factory.get("/")
     current_site = "testserver"
-    default_url = f'https://{current_site}{reverse("portal")}'
+    default_url = f"https://{current_site}{reverse('portal')}"
 
     # url should resolve and will pass-through
     for good_url in [

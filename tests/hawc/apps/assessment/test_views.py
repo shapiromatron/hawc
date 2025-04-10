@@ -43,7 +43,7 @@ class TestAssessmentClearCache:
     @pytest.mark.django_db
     def test_functionality(self, db_keys):
         key1 = f"assessment-{db_keys.assessment_working}-test"
-        key2 = f"assessment-{db_keys.assessment_working+1}-test"
+        key2 = f"assessment-{db_keys.assessment_working + 1}-test"
         cache.set(key1, "exists")
         cache.set(key2, "exists")
         assert cache.get(key1) == "exists"

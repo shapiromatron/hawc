@@ -28,8 +28,7 @@ class Command(BaseCommand):
         if interactive:
             message = (
                 "This will rewrite all users in the database with anonymous data.\n",
-                "Are you sure you want to do this?\n\n"
-                "Type 'yes' to continue, or 'no' to cancel: ",
+                "Are you sure you want to do this?\n\nType 'yes' to continue, or 'no' to cancel: ",
             )
             if input("".join(message)) != "yes":
                 raise CommandError("Scrubbing user data cancelled.")
@@ -54,7 +53,7 @@ class Command(BaseCommand):
             user.email = f"{user.first_name.lower()}.{user.last_name.lower()}@{fake.domain_name()}"
             if user.external_id:
                 user.external_id = (
-                    f"{user.first_name[0].lower()}{user.last_name.lower()}{randint(1,256)}"  # noqa: S311
+                    f"{user.first_name[0].lower()}{user.last_name.lower()}{randint(1, 256)}"  # noqa: S311
                 )
             user.password = hash_password
             user.save()

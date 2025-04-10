@@ -446,7 +446,7 @@ class BulkMerge(HtmxView):
             .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
         )
         key = (
-            f'{self.assessment.pk}-bulk-merge-tags-{"-".join(sorted(request.POST.getlist("tags")))}'
+            f"{self.assessment.pk}-bulk-merge-tags-{'-'.join(sorted(request.POST.getlist('tags')))}"
         )
         form = forms.BulkMergeConflictsForm(
             assessment=self.assessment, initial={**request.POST, "cache_key": key}
