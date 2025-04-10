@@ -1,14 +1,6 @@
 import random
 from typing import NamedTuple
 
-
-class UserData(NamedTuple):
-    first_name: str
-    last_name: str
-    username: str
-    email: str
-
-
 # fmt: off
 FIRST_NAMES: list[str] = [
     "Alex", "Amelia", "Andrew", "Ava", "Benjamin", "Charlotte", "Chloe", "Chris", "Daniel", "David", "Emily",
@@ -28,6 +20,13 @@ EMAIL_DOMAINS: list[str] = [
     "virtualmail.com", "webmail.co", "yetanothermail.net"
 ]
 # fmt: on
+
+
+class UserData(NamedTuple):
+    first_name: str
+    last_name: str
+    username: str
+    email: str
 
 
 def _generate_email(first_name: str, last_name: str) -> tuple[str, str]:
