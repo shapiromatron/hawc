@@ -54,8 +54,8 @@ dependencies = [
   "pandas==2.2.3",
   "openpyxl==3.1.5",
   "jinja2==3.1.5",
-  "plotly==5.24.1",
   "scipy==1.15.0",
+  "plotly==6.0.1",
   "pybmds==24.1",
   # exports
   "rispy==0.9.0",
