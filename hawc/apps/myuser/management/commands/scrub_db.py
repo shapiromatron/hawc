@@ -1,4 +1,3 @@
-from random import randint
 from textwrap import dedent
 
 from django.contrib.auth import get_user_model
@@ -6,7 +5,8 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.sites.models import Site
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
-from faker import Faker
+
+from hawc.apps.myuser.synthetic import generate
 
 
 class Command(BaseCommand):
@@ -41,21 +41,17 @@ class Command(BaseCommand):
         Site.objects.update(domain="127.0.0.1:8000", name="localhost")
 
     def update_users(self):
-        fake = Faker()
-        Faker.seed(555)
-
         # slow; but since we're using the same password for everyone... generate once
         hash_password = make_password("pw")
 
         # generate
         for user in get_user_model().objects.all():
-            user.first_name = fake.first_name()
-            user.last_name = fake.last_name()
-            user.email = f"{user.first_name.lower()}.{user.last_name.lower()}@{fake.domain_name()}"
+            data = generate()
+            user.first_name = data.first_name
+            user.last_name = data.last_name
+            user.email = data.email
             if user.external_id:
-                user.external_id = (
-                    f"{user.first_name[0].lower()}{user.last_name.lower()}{randint(1,256)}"  # noqa: S311
-                )
+                user.external_id = data.username
             user.password = hash_password
             user.save()
 
