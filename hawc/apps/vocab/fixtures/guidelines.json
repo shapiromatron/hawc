@@ -1,0 +1,128 @@
+[
+    {
+        "guideline_id": "1",
+        "guideline_number": "870.31",
+        "guideline_name": "90-day Oral Toxicity in Rodents",
+        "profile_name": "SUB_oral_rode",
+        "description": ""
+    },
+    {
+        "guideline_id": "2",
+        "guideline_number": "870.315",
+        "guideline_name": "90-day Oral Toxicity in Nonrodents",
+        "profile_name": "SUB_oral_nonr",
+        "description": ""
+    },
+    {
+        "guideline_id": "3",
+        "guideline_number": "870.325",
+        "guideline_name": "90-day Dermal Toxicity",
+        "profile_name": "SUB_sub_derm",
+        "description": ""
+    },
+    {
+        "guideline_id": "4",
+        "guideline_number": "870.3465",
+        "guideline_name": "90-Day Inhalation Toxicity",
+        "profile_name": "SUB_sub_inha",
+        "description": ""
+    },
+    {
+        "guideline_id": "5",
+        "guideline_number": "870.355",
+        "guideline_name": "Reproduction/Development Toxicity Screening Test",
+        "profile_name": "REP_rep_dev",
+        "description": ""
+    },
+    {
+        "guideline_id": "6",
+        "guideline_number": "870.37",
+        "guideline_name": "Prenatal Developmental Toxicity Study",
+        "profile_name": "DEV_pren_dev",
+        "description": ""
+    },
+    {
+        "guideline_id": "7",
+        "guideline_number": "870.38",
+        "guideline_name": "Reproduction and Fertility Effects post 1998",
+        "profile_name": "MGR_rep_fert",
+        "description": "MGR studies post 1998 (study_year 1996)"
+    },
+    {
+        "guideline_id": "8",
+        "guideline_number": "870.41",
+        "guideline_name": "Chronic Toxicity",
+        "profile_name": "CHR_chr_tox",
+        "description": ""
+    },
+    {
+        "guideline_id": "9",
+        "guideline_number": "870.42",
+        "guideline_name": "Carcinogenicty",
+        "profile_name": "CHR_carc",
+        "description": ""
+    },
+    {
+        "guideline_id": "10",
+        "guideline_number": "870.43",
+        "guideline_name": "Combined Chronic Toxicity/Carcinogenicity",
+        "profile_name": "CHR_chr_canc",
+        "description": ""
+    },
+    {
+        "guideline_id": "11",
+        "guideline_number": "870.62",
+        "guideline_name": "Neurotoxicity Screening Battery",
+        "profile_name": "NEU_neur_bat",
+        "description": ""
+    },
+    {
+        "guideline_id": "12",
+        "guideline_number": "870.63",
+        "guideline_name": "Developmental Neurotoxicity Study",
+        "profile_name": "DNT_dev_neur",
+        "description": ""
+    },
+    {
+        "guideline_id": "13",
+        "guideline_number": "870.38",
+        "guideline_name": "Reproduction and Fertility Effects pre 1998",
+        "profile_name": "MGR_rep_fert_pre98",
+        "description": "MGR studies pre 1998 (study year 1996)"
+    },
+    {
+        "guideline_id": "14",
+        "guideline_number": "870.305",
+        "guideline_name": "28-day Oral Toxicity in Rodents",
+        "profile_name": "SAC_oral_rode_28",
+        "description": ""
+    },
+    {
+        "guideline_id": "15",
+        "guideline_number": "NULL",
+        "guideline_name": "14-day Toxicity in Rodents",
+        "profile_name": "SAC_ntp",
+        "description": ""
+    },
+    {
+        "guideline_id": "16",
+        "guideline_number": "NULL",
+        "guideline_name": "13-Week Toxicity in Rodents",
+        "profile_name": "SUB_ntp",
+        "description": ""
+    },
+    {
+        "guideline_id": "17",
+        "guideline_number": "NULL",
+        "guideline_name": "2 - Year Toxicity",
+        "profile_name": "CHR_ntp",
+        "description": ""
+    },
+    {
+        "guideline_id": "18",
+        "guideline_number": "NULL",
+        "guideline_name": "Non-guideline",
+        "profile_name": "NON-GUIDE",
+        "description": ""
+    }
+]

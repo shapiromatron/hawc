@@ -6,6 +6,7 @@ from django.urls import reverse
 from ..assessment.autocomplete import DSSToxAutocomplete
 from ..common.autocomplete import AutocompleteSelectWidget, AutocompleteTextWidget
 from ..common.forms import BaseFormHelper
+from ..vocab.models import GuidelineProfile
 from . import autocomplete, constants, models
 
 
@@ -65,6 +66,9 @@ class ExperimentForm(ModelForm):
         # change checkbox to select box
         self.fields["has_multiple_generations"].widget = forms.Select(
             choices=((True, "Yes"), (False, "No"))
+        )
+        self.fields["guideline"].widget = forms.Select(
+            choices=GuidelineProfile.objects.get_guideline_choices()
         )
 
     @property
