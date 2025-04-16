@@ -502,7 +502,7 @@ class EndpointForm(UDFModelFormMixin, ModelForm):
     LIT_EFF_NOTES_NOT_REQ = "Litter effect notes should be blank if effects are not-applicable"
     OBS_TIME_UNITS_REQ = "If reporting an endpoint-observation time, time-units must be specified."
     OBS_TIME_VALUE_REQ = "An observation-time must be reported if time-units are specified"
-    CONF_INT_REQ = "Confidence-interval is required forpercent-difference data"
+    CONF_INT_REQ = "Confidence-interval is required for percent-difference data"
     VAR_TYPE_REQ = "If entering continuous data, the variance type must be SD (standard-deviation) or SE (standard error)"
     RESP_UNITS_REQ = "If data is extracted, response-units are required"
     NAME_REQ = "Endpoint/Adverse outcome is required"
