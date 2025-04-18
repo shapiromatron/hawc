@@ -654,6 +654,10 @@
   fields:
     app_label: assessment
     model: labeleditem
+- model: contenttypes.contenttype
+  fields:
+    app_label: animalv2
+    model: studylevelvalue
 - model: auth.permission
   fields:
     name: Can access Wagtail admin
@@ -3426,47 +3430,47 @@
 - model: lit.workflowadmissiontags
   pk: 2
   fields:
-    tag: 23
+    tag: 32
     content_object: 1
 - model: lit.workflowremovaltags
   pk: 4
   fields:
-    tag: 24
+    tag: 33
     content_object: 1
 - model: lit.workflowremovaltags
   pk: 5
   fields:
-    tag: 25
+    tag: 34
     content_object: 1
 - model: lit.workflowremovaltags
   pk: 6
   fields:
-    tag: 26
+    tag: 35
     content_object: 1
 - model: lit.workflowremovaltags
   pk: 7
   fields:
-    tag: 27
+    tag: 36
     content_object: 1
 - model: lit.workflowremovaltags
   pk: 8
   fields:
-    tag: 28
+    tag: 37
     content_object: 1
 - model: lit.workflowremovaltags
   pk: 9
   fields:
-    tag: 29
+    tag: 38
     content_object: 1
 - model: lit.workflowremovaltags
   pk: 10
   fields:
-    tag: 30
+    tag: 39
     content_object: 1
 - model: lit.workflow
   pk: 1
   fields:
-    assessment: 2
+    assessment: 4
     title: Test Workflow
     description: References that have been tagged for inclusion and are ready for
       more specific tagging.
@@ -20154,6 +20158,17 @@
     comments: <p>test comments</p>
     created: 2024-01-20 21:12:17.714337+00:00
     last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.experiment
+  pk: 2
+  fields:
+    study: 1
+    name: Test Experiment Two
+    design: AA
+    has_multiple_generations: false
+    guideline_compliance: test compliance
+    comments: <p>test comments</p>
+    created: 2024-01-22 21:12:17.714337+00:00
+    last_updated: 2024-01-23 20:38:10.024296+00:00
 - model: animalv2.chemical
   pk: 1
   fields:
