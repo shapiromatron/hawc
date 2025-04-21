@@ -60,7 +60,7 @@ class NestedTerm(MP_Node):
 
         df = pd.DataFrame(
             data=rows,
-            columns=["ID", "Depth", *[f"Level {i+1}" for i in range(len(nesting))]],
+            columns=["ID", "Depth", *[f"Level {i + 1}" for i in range(len(nesting))]],
         ).fillna("-")
 
         return df

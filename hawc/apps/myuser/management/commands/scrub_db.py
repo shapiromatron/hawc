@@ -28,8 +28,7 @@ class Command(BaseCommand):
         if interactive:
             message = (
                 "This will rewrite all users in the database with anonymous data.\n",
-                "Are you sure you want to do this?\n\n"
-                "Type 'yes' to continue, or 'no' to cancel: ",
+                "Are you sure you want to do this?\n\nType 'yes' to continue, or 'no' to cancel: ",
             )
             if input("".join(message)) != "yes":
                 raise CommandError("Scrubbing user data cancelled.")

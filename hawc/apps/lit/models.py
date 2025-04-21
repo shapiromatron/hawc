@@ -571,7 +571,7 @@ class PubMedQuery(models.Model):
 
         block_size = 1000.0
         logger.debug(f"{ids_to_add_len} IDs to be added")
-        for i in range(int(ceil(ids_to_add_len / block_size))):
+        for i in range(ceil(ids_to_add_len / block_size)):
             start_index = int(i * block_size)
             end_index = min(int(i * block_size + block_size), ids_to_add_len)
             logger.debug(f"Building from {start_index} to {end_index}")
@@ -750,7 +750,7 @@ class ReferenceFilterTag(NonUniqueTagBase, AssessmentRootMixin, MP_Node):
         names = []
 
         def recurse(obj, parents):
-            txt = f'{parents}{"|" if parents else ""}{obj["data"]["name"]}'
+            txt = f"{parents}{'|' if parents else ''}{obj['data']['name']}"
             names.append(txt)
             for child in obj.get("children", []):
                 recurse(child, txt)
@@ -847,7 +847,7 @@ class Reference(models.Model):
     block_id = models.DateTimeField(
         blank=True,
         null=True,
-        help_text="Used internally for determining when reference was " "originally added",
+        help_text="Used internally for determining when reference was originally added",
     )
 
     BREADCRUMB_PARENT = "assessment"
@@ -1232,12 +1232,12 @@ class Reference(models.Model):
 
         if logger:
             n_doi = qs_dois.count()
-            logger.write(f"{n:8} references reviewed ({n_doi_initial/n:.0%} have DOI)")
+            logger.write(f"{n:8} references reviewed ({n_doi_initial / n:.0%} have DOI)")
             logger.write(
-                f"{n_doi_initial:8} -> {n_doi:8} references with a DOI (+{n_doi-n_doi_initial}; {n_doi/n:.0%} have DOI)"
+                f"{n_doi_initial:8} -> {n_doi:8} references with a DOI (+{n_doi - n_doi_initial}; {n_doi / n:.0%} have DOI)"
             )
             logger.write(
-                f"{n-n_doi:8} references remaining without a DOI ({(n-n_doi)/n:.0%} missing DOI)"
+                f"{n - n_doi:8} references remaining without a DOI ({(n - n_doi) / n:.0%} missing DOI)"
             )
 
     @classmethod

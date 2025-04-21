@@ -52,7 +52,7 @@ def term_check(assessment_id: int) -> pd.DataFrame:
                 data.append(row2)
 
             if idx > 0:
-                parent_term = getattr(endpoint, f"{fields[idx-1]}_term")
+                parent_term = getattr(endpoint, f"{fields[idx - 1]}_term")
 
                 # check if a child term exists, but a parent does not
                 if parent_term is None:
@@ -64,7 +64,7 @@ def term_check(assessment_id: int) -> pd.DataFrame:
                             term.name,
                             term.id,
                             "Parent term not specified",
-                            f'"{field}" term exists but "{fields[idx-1]}" term not set - use {term.parent.name} ({term.parent.id})?',
+                            f'"{field}" term exists but "{fields[idx - 1]}" term not set - use {term.parent.name} ({term.parent.id})?',
                         ]
                     )
                     data.append(row2)

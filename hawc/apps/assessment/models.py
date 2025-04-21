@@ -936,7 +936,7 @@ class TimeSpentEditing(models.Model):
         verbose_name_plural = "Time spent editing models"
 
     def __str__(self):
-        return f"{self.content_type.model} {self.object_id}: {self.seconds/60:.1f} min"
+        return f"{self.content_type.model} {self.object_id}: {self.seconds / 60:.1f} min"
 
     @classmethod
     def get_cache_name(cls, url, session_key):
