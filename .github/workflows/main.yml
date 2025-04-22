@@ -77,7 +77,7 @@ jobs:
       with:
         name: coverage
         path: coverage
-        retention-days: 90
+        retention-days: 7
 
   frontend:
     name: frontend
@@ -176,10 +176,13 @@ jobs:
           exit 1
         fi
     - name: Build wheels
-      # if: startsWith(github.event.ref, 'refs/tags/') || endsWith(github.event.ref, 'refs/heads/main')
       run: |
-        uv run python manage.py set_git_commit
-        uv run flit build --format wheel
+        # activate environment so we can build the client package too using flit
+        source .venv/bin/activate
+        python manage.py set_git_commit
+        flit build --format wheel
+        cd client && flit build --format wheel && cd ..
+        cp client/dist/*.whl dist
     - name: Upload wheels
       uses: actions/upload-artifact@v4
       with:
