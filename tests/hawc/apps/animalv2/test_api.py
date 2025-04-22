@@ -37,7 +37,7 @@ class TestExperimentViewSet:
         data = {
             "study_id": db_keys.study_working,
             "name": "Test Experiment",
-            "design": "AA",
+            "design": "Ac",
             "has_multiple_generations": False,
             "guideline_compliance": "test gl comp",
             "comments": "test comments",
@@ -52,7 +52,7 @@ class TestExperimentViewSet:
         data = {
             "study_id": db_keys.study_working,
             "name": "Test Experiment",
-            "design": "AA",
+            "design": "Ac",
             "has_multiple_generations": False,
             "guideline_compliance": "test gl comp",
             "comments": "test comments",
@@ -1575,7 +1575,7 @@ class TestDataExtractionViewSet:
                 "data": {
                     "study_id": db_keys.study_final_bioassay,
                     "name": "Dummy Experiment",
-                    "design": "AA",
+                    "design": "Ac",
                     "has_multiple_generations": False,
                     "guideline_compliance": "test gl comp",
                     "comments": "test comments",
