@@ -331,16 +331,7 @@ class IdentifiersManager(BaseManager):
             dict: {"success": list[dict], "failures": list[int]}
         """
         # cast all ids to int
-        invalid_ids = []
-        _ids = []
-        for id in ids:
-            try:
-                _ids.append(int(id))
-            except ValueError:
-                invalid_ids.append(id)
-        if invalid_ids:
-            invalid_join = ", ".join(str(id) for id in invalid_ids)
-            raise ValidationError(f"The following HERO ID(s) are not integers: {invalid_join}")
+        _ids = [int(id) for id in ids]
 
         # determine which ids do not already exist
         qs = self.hero(_ids, allow_missing=True).values_list("unique_id", flat=True)
@@ -425,16 +416,7 @@ class IdentifiersManager(BaseManager):
             list[dict]: A list of imported pubmed content
         """
         # cast all ids to int
-        invalid_ids = []
-        _ids = []
-        for id in ids:
-            try:
-                _ids.append(int(id))
-            except ValueError:
-                invalid_ids.append(id)
-        if invalid_ids:
-            invalid_join = ", ".join(str(id) for id in invalid_ids)
-            raise ValidationError(f"The following PubMed ID(s) are not integers: {invalid_join}")
+        _ids = [int(id) for id in ids]
 
         # determine which ids do not already exist
         qs = self.pubmed(_ids, allow_missing=True).values_list("unique_id", flat=True)
@@ -812,13 +794,6 @@ class ReferenceManager(BaseManager):
 
     def get_queryset(self):
         return ReferenceQuerySet(self.model, using=self._db)
-
-    def build_ref_ident_m2m(self, objs):
-        # Bulk-create reference-search relationships
-        logger.debug("Starting bulk creation of reference-identifier values")
-        m2m = self.model.identifiers.through
-        objects = [m2m(reference_id=ref_id, identifiers_id=ident_id) for ref_id, ident_id in objs]
-        m2m.objects.bulk_create(objects)
 
     def build_ref_search_m2m(self, refs, search):
         # Bulk-create reference-search relationships

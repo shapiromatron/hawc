@@ -395,18 +395,12 @@ class TestSearchViewSet:
             "just a long string of text",
             "not-numeric,but a csv",
             "1a,2b",
-            "1,,2",
-            "1,2, ,3",
         ]
         for bad_search_string in bad_search_strings:
             new_payload = {**payload, **{"search_string": bad_search_string}}
             resp = c.post(url, new_payload, format="json")
             assert resp.status_code == 400
-            assert resp.data == {
-                "non_field_errors": [
-                    "Must be a comma-separated list of positive integer identifiers"
-                ]
-            }
+            assert resp.data == {"non_field_errors": ["Must have one or more positive integer IDs"]}
 
         # check bad id lists
         bad_search_strings = ["-1"]
@@ -414,9 +408,7 @@ class TestSearchViewSet:
             new_payload = {**payload, **{"search_string": bad_search_string}}
             resp = c.post(url, new_payload, format="json")
             assert resp.status_code == 400
-            assert resp.data == {
-                "non_field_errors": ["At least one positive identifier must exist"]
-            }
+            assert resp.data == {"non_field_errors": ["Must have one or more positive integer IDs"]}
 
     def test_missing_id_in_hero(self, db_keys):
         """

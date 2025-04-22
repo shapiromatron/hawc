@@ -19,6 +19,7 @@ from ..common.forms import (
     addPopupLink,
     check_unique_for_assessment,
 )
+from ..common.helper import try_parse_list_ints
 from ..study.constants import StudyTypeChoices
 from ..study.models import Study
 from . import constants, models
@@ -142,9 +143,8 @@ class ImportForm(SearchForm):
         self.fields["source"].choices = [(1, "PubMed"), (2, "HERO")]
         self.instance.search_type = "i"
         if self.instance.id is None:
-            self.fields[
-                "search_string"
-            ].help_text = "Enter a comma-separated list of database IDs for import."
+            help_text = "Requires a comma, tab, or newline separated list of IDs"
+            self.fields["search_string"].help_text = help_text
             self.fields["search_string"].label = "ID List"
         else:
             self.fields.pop("search_string")
@@ -177,17 +177,9 @@ class ImportForm(SearchForm):
 
     @classmethod
     def validate_import_search_string(cls, search_string) -> list[int]:
-        try:
-            # convert to a set, then a list to remove duplicate ids
-            ids = list(set(int(el) for el in search_string.split(",")))
-        except ValueError as err:
-            raise forms.ValidationError(
-                "Must be a comma-separated list of positive integer identifiers"
-            ) from err
-
-        if len(ids) == 0 or any([el < 0 for el in ids]):
-            raise forms.ValidationError("At least one positive identifier must exist")
-
+        ids = sorted(list(set(try_parse_list_ints(search_string))))
+        if len(ids) == 0 or min(ids) < 0:
+            raise forms.ValidationError("Must have one or more positive integer IDs")
         return ids
 
     def clean_search_string(self):

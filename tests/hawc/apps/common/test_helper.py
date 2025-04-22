@@ -94,7 +94,16 @@ def test_try_parse_list_ints():
     assert helper.try_parse_list_ints("") == []
     assert helper.try_parse_list_ints("1,2,3") == [1, 2, 3]
     assert helper.try_parse_list_ints("123") == [123]
-    assert helper.try_parse_list_ints("1, 2 , 3 ") == [1, 2, 3]
+
+    # whitespace tests
+    assert helper.try_parse_list_ints(", 1,2, 3, ") == [1, 2, 3]
+    assert helper.try_parse_list_ints("1\t2") == [1, 2]
+    assert helper.try_parse_list_ints("1\t2,     3    4") == [1, 2, 3, 4]
+    assert helper.try_parse_list_ints("""1,
+    2
+    3""") == [1, 2, 3]
+    assert helper.try_parse_list_ints("\n 2, \n") == [2]
+    assert helper.try_parse_list_ints("1,,,,2") == [1, 2]
 
     # edge cases
     assert helper.try_parse_list_ints("a") == []

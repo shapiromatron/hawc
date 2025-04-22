@@ -137,9 +137,37 @@
         {% bs4_colgroup '25,25,25,25' %}
         <tbody>
           <tr>
-            <th>Assessment team</th>
+            <th>Assessment ID</th>
+            <td colspan="3">{{object.id}}</td>
+          </tr>
+
+          <tr>
+            <th>Public</th>
+            <td colspan="3">
+              {% if object.public_on %}
+                Yes; published on {{object.public_on|date:"DATE_FORMAT"}}
+              {% else %}
+                No; this assessment is currently private
+              {% endif %}
+            </td>
+          </tr>
+
+          {% if object.public_on %}
+            <tr>
+              <th>Public; Listed on Assessments Page</th>
+              <td colspan="3">{{object.hide_from_public_page|yesno:"No; unlisted and only available if you have the link,Yes; listed and available via searching or browsing"|safe}}</td>
+            </tr>
+          {% endif %}
+
+          <tr>
+            <th>Locked to Prevent Further Edits</th>
+            <td colspan="3">{{object.editable|yesno:"No; assessment is editable,Yes; assessment is not editable"}}</td>
+          </tr>
+
+          <tr>
+            <th>Assessment Team</th>
             <td>
-              <p><strong>Project manager{{ object.project_manager.all|pluralize }}</strong></p>
+              <p><strong>Project Manager{{ object.project_manager.all|pluralize }}</strong></p>
               <ul class="mb-0">
                 {% for m in object.project_manager.active %}
                   <li title="{{m.email}}">{{ m.get_full_name }}</li>
@@ -147,7 +175,7 @@
               </ul>
             </td>
             <td>
-              <p><strong>Team member{{ object.team_members.all|pluralize }}</strong></p>
+              <p><strong>Team Member{{ object.team_members.all|pluralize }}</strong></p>
               <ul class="mb-0">
                 {% for m in object.team_members.active %}
                   <li title="{{m.email}}">{{ m.get_full_name }}</li>
@@ -169,35 +197,7 @@
           </tr>
 
           <tr>
-            <th>Assessment ID</th>
-            <td colspan="3">{{object.id}}</td>
-          </tr>
-
-          <tr>
-            <th>Editable</th>
-            <td colspan="3">{{object.editable|yesno:"Yes,No"}}</td>
-          </tr>
-
-          <tr>
-            <th>Public</th>
-            <td colspan="3">
-              {% if object.public_on %}
-                Yes; published on {{object.public_on|date:"DATE_FORMAT"}}
-              {% else %}
-                No; this assessment is currently private
-              {% endif %}
-            </td>
-          </tr>
-
-          {% if object.public_on %}
-            <tr>
-              <th>Hidden from public assessments page?</th>
-              <td colspan="3">{{object.hide_from_public_page|yesno:"Yes; available if you have the link but hidden from the list page,No; it's available via searching or browsing"|safe}}</td>
-            </tr>
-          {% endif %}
-
-          <tr>
-            <th>Date created</th>
+            <th>Date Created</th>
             <td colspan="3">Created by {{object.creator}} on {{object.created|date:"DATE_FORMAT"}}</td>
           </tr>
 
@@ -211,7 +211,7 @@
 
           {% if internal_communications|hastext %}
             <tr>
-              <th>Internal communications</th>
+              <th>Internal Communications</th>
               <td colspan="3">{{ internal_communications|safe }}</td>
             </tr>
           {% endif %}

@@ -66,6 +66,7 @@ dependencies = [
 dev = [
   # build
   "flit==3.10.1",
+  "poethepoet~=0.32.1",
   # lint and formatting tools
   "ruff==0.8.6",  # make sure to sync w/ pre-commit
   "djhtml==3.0.7",  # make sure to sync w/ pre-commit
@@ -100,25 +101,10 @@ manage = "hawc:manage"
 Documentation = "https://hawc.readthedocs.io/"
 Source = "https://github.com/shapiromatron/hawc"
 
+# --- --- --- --- --- --- --- --- --- --- BUILD --- --- --- --- --- --- --- --- --- ---
 [build-system]
 requires = ["flit_core ~=3.9"]
 build-backend = "flit_core.buildapi"
-
-[tool.coverage.run]
-omit = [
-  "*migrations*",
-  "./build/",
-  "./client/hawc_client/interactive.py",
-  "./hawc/apps/*/management/*",
-  "./hawc/main/*",
-  "./scripts/private/*",
-  "./tests/*",
-  "./venv/*",
-]
-
-[tool.coverage.report]
-fail_under=90.0  # TODO - lower until bioassay-v2 complete
-precision=1
 
 [tool.flit.sdist]
 include = [
@@ -138,6 +124,7 @@ exclude = [
   "vendor",
 ]
 
+# --- --- --- --- --- --- --- --- --- --- FORMAT --- --- --- --- --- --- --- --- --- ---
 [tool.ruff]
 line-length = 100
 target-version = "py311"
@@ -155,6 +142,7 @@ known-first-party = ["hawc", "hawc_client"]
 "**/management/**.py" = ["T201"]
 "**/migrations/**.py" = ["T201"]
 
+# --- --- --- --- --- --- --- --- --- --- TEST --- --- --- --- --- --- --- --- --- ---
 [tool.pytest.ini_options]
 addopts = "--ds=hawc.main.settings.unittest --record-mode=once --reuse-db --nomigrations"
 testpaths = [
@@ -162,3 +150,134 @@ testpaths = [
   "tests/integration",
   "tests/client",
 ]
+
+[tool.coverage.run]
+omit = [
+  "*migrations*",
+  "./build/",
+  "./client/hawc_client/interactive.py",
+  "./hawc/apps/*/management/*",
+  "./hawc/main/*",
+  "./scripts/private/*",
+  "./tests/*",
+  "./venv/*",
+]
+
+[tool.coverage.report]
+fail_under=92.0
+precision=1
+
+# --- --- --- --- --- --- --- --- --- --- TASKS --- --- --- --- --- --- --- --- --- ---
+[tool.poe.tasks.sync-dev]
+help = "Sync dev environment after code checkout"
+sequence = [
+  {cmd = 'uv pip install -e ".[dev,docs]"'},
+  {cmd = "uv pip install -e client"},
+  {cmd = "yarn --cwd frontend"},
+  {cmd = "python manage.py migrate"},
+  {cmd = "python manage.py recreate_views"},
+]
+
+[tool.poe.tasks.run-py]
+help = "Run python developer environment"
+cmd = "python manage.py runserver"
+
+[tool.poe.tasks.run-js]
+help = "Run javascript developer environment"
+cmd = "npm --prefix ./frontend run start"
+
+[tool.poe.tasks.test]
+help = "Run python tests"
+cmd = "py.test"
+
+[tool.poe.tasks.test-integration]
+help = "Run integration tests (requires `npm run start`)"
+sequence = [
+  {cmd = "playwright install --with-deps chromium"},
+  {shell = "INTEGRATION_TESTS=1 py.test -sv tests/integration/"},
+]
+
+[tool.poe.tasks.test-integration-debug]
+help = "Run integration tests in debug mode (requires `npm run start`)"
+sequence = [
+  {cmd = "playwright install --with-deps chromium"},
+  {shell = "INTEGRATION_TESTS=1 PWDEBUG=1 py.test -sv tests/integration/"},
+]
+
+[tool.poe.tasks.test-js]
+help = "Run javascript tests"
+cmd = "npm --prefix ./frontend run test"
+
+[tool.poe.tasks.format]
+help = "Fix formatting issues where possible"
+sequence = ["format-py", "format-js", "format-html"]
+
+[tool.poe.tasks.format-py]
+help = "Fix python formatting issues where possible"
+sequence = [
+  {cmd = "ruff format ."},
+  {cmd = "ruff check . --fix --show-fixes"},
+]
+
+[tool.poe.tasks.format-js]
+help = "Fix javascript formatting issues where possible"
+cmd = "npm --prefix ./frontend run format"
+
+[tool.poe.tasks.format-html]
+help = "Fix HTML formatting issues where possible"
+cmd = "djhtml --tabwidth 2 hawc/"
+
+[tool.poe.tasks.lint]
+help = "Check formatting issues"
+sequence = ["lint-py", "lint-js", "lint-html"]
+
+[tool.poe.tasks.lint-py]
+help = "Check python formatting issues"
+sequence = [
+  {cmd = "ruff format . --check"},
+  {cmd = "ruff check ."},
+]
+
+[tool.poe.tasks.lint-js]
+help = "Check javascript formatting issues"
+cmd = "npm --prefix ./frontend run lint"
+
+[tool.poe.tasks.lint-html]
+help = "Check HTML formatting issues where possible"
+cmd = "djhtml --tabwidth 2 --check hawc/"
+
+[tool.poe.tasks.build]
+help = "Build package"
+sequence = [
+  {cmd = "npm --prefix ./frontend run build"},
+  {cmd = "python manage.py set_git_commit"},
+  {cmd = "uv build"},
+]
+
+[tool.poe.tasks.coverage]
+help = "Run python coverage and create HTML report"
+sequence = [
+  {cmd = "coverage run -m pytest"},
+  {cmd = "coverage html -d coverage_html -i"},
+]
+
+[tool.poe.tasks.loc]
+help = "Generate lines of code report"
+cmd = """cloc \
+		--exclude-dir=migrations,node_modules,public,private,vendor,venv \
+		--exclude-ext=json,yaml,svg,toml,ini \
+		--vcs=git \
+		--counted loc-files.txt \
+		--md \
+		.
+"""
+
+[tool.poe.tasks.docs]
+help = "Build documentation"
+cwd = "docs"
+cmd = "mkdocs build --strict"
+
+[tool.poe.tasks.docs-serve]
+help = "Run documentation server"
+cwd = "docs"
+cmd = "mkdocs serve -a localhost:8010"
