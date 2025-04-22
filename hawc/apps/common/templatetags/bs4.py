@@ -154,8 +154,8 @@ def analytics_card(value, label):
         f"""
         <div class="card box-shadow">
             <div class="card-body">
-                <h2 class="m-0 mt-1">{ value }</h2>
-                <p class="small">{ label }</p>
+                <h2 class="m-0 mt-1">{value}</h2>
+                <p class="small">{label}</p>
             </div>
         </div>
         """

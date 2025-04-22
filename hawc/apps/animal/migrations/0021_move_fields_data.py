@@ -10,7 +10,7 @@ def migrate_to_animal_group(apps, schema_editor):
 
         if len(animal_groups) == 0 and experiment.diet:
             print(
-                f"Assessment {experiment.study.assessment_id}, Experiment: [{experiment.id}]/[{ experiment.name}] has no animal groups; diet [{experiment.diet}] will be lost."
+                f"Assessment {experiment.study.assessment_id}, Experiment: [{experiment.id}]/[{experiment.name}] has no animal groups; diet [{experiment.diet}] will be lost."
             )
 
         for animal_group in animal_groups:
