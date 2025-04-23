@@ -136,3 +136,8 @@ def e_notation(value: str) -> str:
 def label_htmx_url(item) -> str:
     ct = ContentType.objects.get_for_model(item)
     return reverse("assessment:label-item", args=(ct.id, item.id))
+
+
+@register.simple_tag
+def anchor_new_tab() -> str:
+    return 'rel="noopener noreferrer" target="_blank"'
