@@ -781,7 +781,7 @@ div.input-group-append select, div.input-group-append span.select2 {
     height: 100%;
 }
 
-div.input-group-append input.select2-search__field {
+div.input-group-append input.select2-search__field, div.input-group-append span.autocompletefilter {
     font-size: 1rem;
     height: 38px !important;
 }

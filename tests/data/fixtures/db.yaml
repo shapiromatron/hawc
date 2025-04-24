@@ -1521,6 +1521,42 @@
     deprecated_on: null
     created_on: 2020-08-12 14:11:50.023861+00:00
     last_updated: 2020-08-12 14:11:50.023879+00:00
+- model: vocab.guidelineprofile
+  pk: 1
+  fields:
+    guideline_id: 1
+    obs_status: not required
+    description: ''
+    endpoint_id: 7002
+    created_on: 2020-08-12 14:11:50.023861+00:00
+    last_updated: 2020-08-12 14:11:50.023879+00:00
+- model: vocab.guidelineprofile
+  pk: 2
+  fields:
+    guideline_id: 2
+    obs_status: required
+    description: ''
+    endpoint_id: 7002
+    created_on: 2020-08-12 14:11:50.023861+00:00
+    last_updated: 2020-08-12 14:11:50.023879+00:00
+- model: vocab.guidelineprofile
+  pk: 3
+  fields:
+    guideline_id: 2
+    obs_status: recommended
+    description: ''
+    endpoint_id: 7002
+    created_on: 2020-08-12 14:11:50.023861+00:00
+    last_updated: 2020-08-12 14:11:50.023879+00:00
+- model: vocab.observation
+  pk: 1
+  fields:
+    tested_status: true
+    reported_status: true
+    endpoint_id: 7002
+    experiment_id: 1
+    created_on: 2020-08-12 14:11:50.023861+00:00
+    last_updated: 2020-08-12 14:11:50.023879+00:00
 - model: assessment.dsstox
   pk: DTXSID6026296
   fields:
@@ -1574,6 +1610,7 @@
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
+    enable_observations: true
     enable_risk_of_bias: true
     enable_bmd: true
     enable_summary_tables: true
@@ -1616,6 +1653,7 @@
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
+    enable_observations: true
     enable_risk_of_bias: true
     enable_bmd: true
     enable_summary_tables: true
@@ -1656,6 +1694,7 @@
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
+    enable_observations: true
     enable_risk_of_bias: true
     enable_bmd: true
     enable_summary_tables: true
@@ -1696,6 +1735,7 @@
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
+    enable_observations: true
     enable_risk_of_bias: true
     enable_bmd: true
     enable_summary_tables: true
@@ -1735,6 +1775,7 @@
     enable_literature_review: false
     enable_project_management: false
     enable_data_extraction: true
+    enable_observations: true
     enable_risk_of_bias: false
     enable_bmd: true
     enable_summary_tables: false
@@ -20109,6 +20150,7 @@
     design: AA
     has_multiple_generations: false
     guideline_compliance: test compliance
+    guideline: 90-day Oral Toxicity in Rodents
     comments: <p>test comments</p>
     created: 2024-01-20 21:12:17.714337+00:00
     last_updated: 2024-01-21 20:38:10.024296+00:00

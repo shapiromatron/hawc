@@ -1,0 +1,122 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+  <div class="d-flex">
+    <h2>Observations</h2>
+  </div>
+  <div>
+    <p>
+      The Observations module allows for distinction between missing (not tested) and negative (tested with no effect seen)
+      endpoints for studies that adhere to a guideline. A table of observed endpoints is populated with tested statuses
+      based on the “Study Type” selection from <i>{{ guideline }}</i>. The tested status is derived from whether the endpoint
+      is required, recommended, triggered, not required, or mentioned by the study’s most closely related OCSPP Health
+      Effects 870 Series guideline or guideline profile developed for studies from theNational Toxicology Program (NTP).
+      By default, “Tested Status = Yes” indicates observations are required by the guideline, whereas all others will
+      show as “Tested Status = No”, and all observations are initially assumed “Reported Status = No”. When the
+      curator enters the module, endpoints that have extracted effects data within the experiment will automatically get
+      set as ““Reported Status = Yes”. For the remaining observations, curators will manually change these selections
+      according to the details provided in the document. Updating to “Reported Status = Yes” should be done when the
+      document indicates whether the effect was measured or not, regardless of whether the reported results indicated
+      positive effects or not. Typically, only endpoints showing positive effects are reported. Only observations with
+      changes from default statuses will be saved.
+    </p>
+    <a href="#overview" data-toggle="collapse">Expand overview</a>
+    <div id="overview" class="collapse">
+      <br>
+      {% include "vocab/fragments/help_text.html" %}
+    </div>
+  </div>
+
+  {% include 'common/inline_filter_form.html' %}
+
+  <table class="table table-sm table-striped">
+    {% bs4_colgroup "20,20,30,10,10,10" %}
+    <thead>
+      <tr>
+        <th class="popovers" data-title="System Description" data-html="true"
+            data-content="
+                          <p>The health effect category/biological system an endpoint/outcome or group of
+                          related endpoints/outcomes within a health effect category. 'System' maps
+                          to 'endpoint_category' in ToxRefDB as the broadest descriptive term for an endpoint.
+                          Possible endpoint categories include: systemic, developmental, reproductive, and cholinesterase.
+                          </p>">System {% icon "fa-question-circle" %}
+        </th>
+        <th class="popovers" data-title="System Description" data-html="true"
+            data-content="
+                          <p>A group of related outcomes considered as a health effect category and/or unit of analysis
+                          typically considered together during evidence synthesis. 'Effect' maps to 'endpoint_type' in
+                          ToxRefDB as a subcategory for endpoint_category, which is more descriptive for a particular
+                          endpoint (e.g. pathology gross, clinical chemistry, reproductive performance, etc.)
+                          </p>">Effect {% icon "fa-question-circle" %}
+        </th>
+        <th class="popovers" data-title="System Description" data-html="true"
+            data-content="
+                          <p>An outcome or measurement within an effect. 'Effect_subtype' maps to 'Endpoint_target' in
+                          ToxRefDB indicating where or how the sample was collected to supply data for a particular
+                          endpoint. Typically describes an organ/tissue or metabolite/protein measured.
+                          </p>">Effect Subtype {% icon "fa-question-circle" %}
+        </th>
+        <th>Default</th>
+        <th class="popovers" data-title="Tested Status" data-html="true"
+            data-content="
+                          <p>Tested status indicates whether or not the outcome is required by corresponding guideline.
+                          </p>">Tested Status {% icon "fa-question-circle" %}
+        </th>
+      </th>
+      <th class="popovers" data-title="Tested Status" data-html="true"
+          data-content="
+                        <p>Reported status indicates whether or not the observation was reported within the corresponding experiment.
+                        </p>">Reported Status {% icon "fa-question-circle" %}
+      </th>
+    </th>
+  </tr>
+  </thead>
+  {% if assessment.enable_observations and data_extraction.completed %}
+    {% for object in object_list %}
+      {% include "vocab/fragments/observation_detail.html" with experiment=experiment %}
+    {% empty %}
+      <tr>
+        <td colspan="100%">
+          <i>Observations have not been populated for this study yet: no guideline has been selected</i>
+        </td>
+      </tr>
+    {% endfor %}
+  {% else %}
+    <tr>
+      <td colspan="100%">
+        <i>Data extraction for this experiment must be completed to generate observations.
+          User must be authenticated to update observations.</i>
+      </td>
+    </tr>
+  {% endif %}
+  </table>
+
+  {% if data_extraction.completed %}
+    {% include "includes/paginator.html" with plural_object_name="observations" %}
+  {% endif %}
+
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    $(".popovers").popover({"trigger":"hover"});
+    $(document).ready(function() {
+      $('tr[data-href]').click(function() {
+        if ($(event.target).closest('form').length === 0) {
+          window.location = $(this).data('href');
+        }
+      });
+      // Attach change event to update 'default' column
+      $(document).on('change', '.hidden-default', function() {
+        var hiddenInput = $(this);
+        var isDefault = hiddenInput.val();
+        var td = hiddenInput.closest('tr').find('.default-obs');
+        td.text(isDefault);
+      });
+      document.body.addEventListener('htmx:afterSwap', function(evt) {
+        $(evt.target).find('.hidden-default').trigger('change');
+      });
+    });
+  </script>
+  {{ config|json_script:"config" }}
+{% endblock %}

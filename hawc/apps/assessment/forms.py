@@ -319,6 +319,7 @@ class AssessmentModulesForm(forms.ModelForm):
             "enable_summary_tables",
             "enable_visuals",
             "enable_downloads",
+            "enable_observations",
             "noel_name",
             "rob_name",
             "vocabulary",
@@ -354,12 +355,26 @@ class AssessmentModulesForm(forms.ModelForm):
         )
         helper.add_row("enable_literature_review", 3, "col-lg-4")
         helper.add_row("enable_risk_of_bias", 3, "col-lg-4")
-        helper.add_row("enable_visuals", 2, "col-lg-6")
+        helper.add_row("enable_visuals", 3, "col-lg-4")
         helper.add_row("noel_name", 3, "col-lg-4")
         helper.add_row(
             "epi_version", 2 if settings.HAWC_FEATURES.ENABLE_BIOASSAY_V2 else 1, "col-lg-4"
         )
         return helper
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        obs_enabled = cleaned_data.get("enable_observations")
+        vocabulary = cleaned_data.get("vocabulary")
+
+        if obs_enabled and vocabulary != VocabularyNamespace.ToxRefDB:
+            self.add_error(
+                "enable_observations",
+                "Toxicity Reference Database Vocabulary must be selected to enable observations.",
+            )
+
+        return cleaned_data
 
 
 class AttachmentForm(forms.ModelForm):
