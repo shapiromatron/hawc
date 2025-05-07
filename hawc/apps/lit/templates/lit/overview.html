@@ -27,6 +27,9 @@
         <a class="dropdown-item" href="{% url 'lit:tag' assessment.pk %}?search={{manual_import.pk}}">Tag manually added references</a>
         <a class="dropdown-item" href="{% url 'lit:tag' assessment.pk %}?untagged=on">Tag untagged references</a>
         <a class="dropdown-item" href="{% url 'lit:ref_upload' assessment.pk %}">Upload full text URLs</a>
+        {% if has_admin %}
+          <a class="dropdown-item" href="{% url 'lit:model_prediction_run_create' assessment.pk %}">Run a model prediction</a>
+        {% endif %}
         <div class="dropdown-divider"></div>
         <span class="dropdown-header">Exports</span>
         <a class="dropdown-item" href="{% url 'lit:api:assessment-reference-export' assessment.pk %}?format=xlsx">Download all references</a>
@@ -194,6 +197,17 @@
                 </a>
               {% endif %}
             {% endwith %}
+          {% endfor %}
+          {% for object in model_prediction_runs %}
+            <a class="lit-review-box box-shadow with-icon clickable w-30" href="{{object.get_absolute_url}}">
+              <div>
+                <p class="h3 m-0 mt-1">{{object.model_predictions.count}}</p>
+                <p class="small m-0">predictions from model <i>{{object.model_version}}</i></p>
+              </div>
+              <div class="lit-icon">
+                <i class="fa fa-signal icon-bg" style="background-color: #9d9d9d;"></i>
+              </div>
+            </a>
           {% endfor %}
         {% endif %}
       </div>

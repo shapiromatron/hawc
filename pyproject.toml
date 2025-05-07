@@ -57,6 +57,7 @@ dependencies = [
   "plotly==6.0.1",
   "scipy~=1.15.2",
   "pybmds==24.1",
+  "scikit-learn==1.6.1",
   # exports
   "rispy==0.9.0",
   "python-docx==1.1.2",
