@@ -7,7 +7,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import ContentFile
 from django.db import migrations
 
-from hawc.apps.assessment.models import Content
 from hawc.apps.summary.constants import StudyType, VisualType
 
 
