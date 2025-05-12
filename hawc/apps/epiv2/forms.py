@@ -73,7 +73,7 @@ class ChemicalForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        prefix = f"chemical-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        prefix = f"chemical-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
@@ -99,7 +99,7 @@ class ExposureForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        prefix = f"exposure-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        prefix = f"exposure-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
         super().__init__(*args, prefix=prefix, **kwargs)
         self.fields["measurement_type"].widget.attrs["data-name"] = "measurement_type"
         self.fields["biomonitoring_matrix"].widget.attrs["data-name"] = "biomonitoring_matrix"
@@ -129,7 +129,7 @@ class ExposureLevelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        prefix = f"exposurelevel-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        prefix = f"exposurelevel-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
@@ -177,7 +177,7 @@ class AdjustmentFactorForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        prefix = f"adjustmentfactor-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        prefix = f"adjustmentfactor-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
@@ -209,7 +209,7 @@ class OutcomeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        prefix = f"outcome-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        prefix = f"outcome-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design
@@ -241,7 +241,7 @@ class DataExtractionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         design = kwargs.pop("parent", None)
-        prefix = f"dataextraction-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        prefix = f"dataextraction-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if design:
             self.instance.design = design

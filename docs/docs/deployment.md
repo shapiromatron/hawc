@@ -22,7 +22,7 @@ other approaches for sharing with the deployment target:
 ```bash
 # build containers (in the hawc development environment)
 source venv/bin/activate
-make build
+poe build
 docker-compose -f compose/dc-build.yml --project-directory . build
 ```
 

@@ -37,9 +37,8 @@ jobs:
         python-version: '3.12'
         architecture: 'x64'
     - name: Install uv
-      uses: astral-sh/setup-uv@v3
+      uses: astral-sh/setup-uv@v5
       with:
-        enable-cache: true
         cache-dependency-glob: "**/pyproject.toml"
     - name: install
       run: |
@@ -48,10 +47,10 @@ jobs:
         uv pip install --system -e client
     - name: lint-py
       run: |
-        make lint-py
+        poe lint-py
     - name: lint-html
       run: |
-        make lint-html
+        poe lint-html
     - name: test
       env:
         DJANGO_DB_NAME: hawc
@@ -72,13 +71,13 @@ jobs:
       run: |
         sudo apt-get install -y cloc
         echo "# Lines of code report" >> $GITHUB_STEP_SUMMARY
-        make loc >> $GITHUB_STEP_SUMMARY
+        poe loc >> $GITHUB_STEP_SUMMARY
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v4
       with:
         name: coverage
         path: coverage
-        retention-days: 90
+        retention-days: 7
 
   frontend:
     name: frontend
@@ -113,7 +112,7 @@ jobs:
 
   integration:
     name: integration
-    needs: [backend, frontend]
+    needs: [frontend]
     runs-on: ubuntu-22.04
 
     services:
@@ -144,9 +143,8 @@ jobs:
         python-version: '3.12'
         architecture: 'x64'
     - name: Install uv
-      uses: astral-sh/setup-uv@v3
+      uses: astral-sh/setup-uv@v5
       with:
-        enable-cache: true
         cache-dependency-glob: "**/pyproject.toml"
     - name: Download webpack build
       uses: actions/download-artifact@v4
@@ -177,3 +175,18 @@ jobs:
         else
           exit 1
         fi
+    - name: Build wheels
+      run: |
+        # activate environment so we can build the client package too using flit
+        source .venv/bin/activate
+        python manage.py set_git_commit
+        flit build --format wheel
+        cd client && flit build --format wheel && cd ..
+        cp client/dist/*.whl dist
+    - name: Upload wheels
+      uses: actions/upload-artifact@v4
+      with:
+        name: wheel
+        path: dist/*.whl
+        if-no-files-found: ignore
+        retention-days: 7

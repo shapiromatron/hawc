@@ -361,7 +361,7 @@ class AttachmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         obj = kwargs.pop("parent", None)
-        prefix = f"attachment-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        prefix = f"attachment-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if obj:
             self.instance.content_type = ContentType.objects.get_for_model(obj)
@@ -470,7 +470,7 @@ class DSSToxForm(forms.ModelForm):
         helper = BaseFormHelper(
             self,
             legend_text="Import new DSSTox substance",
-            help_text=f"""Import a new DSSTox substance by providing the DSSTox substance identifier (DTXSID). You can only import a new substance if it doesn't already exist in HAWC and it returns a valid object from the {new_window_a('https://comptox.epa.gov/dashboard', 'Chemistry dashboard')}.""",
+            help_text=f"""Import a new DSSTox substance by providing the DSSTox substance identifier (DTXSID). You can only import a new substance if it doesn't already exist in HAWC and it returns a valid object from the {new_window_a("https://comptox.epa.gov/dashboard", "Chemistry dashboard")}.""",
             form_actions=form_actions_create_or_close(),
         )
         helper.add_refresh_page_note()
@@ -836,7 +836,7 @@ class LabelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         assessment = kwargs.pop("assessment", None)
-        prefix = f"label-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        prefix = f"label-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if assessment:
             self.instance.assessment = assessment
