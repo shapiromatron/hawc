@@ -53,9 +53,7 @@ class DataPivot {
         fetch(url, h.fetchGet)
             .then(d => d.json())
             .then(d => {
-                const url = new URL(d.data_url);
-                url.searchParams.append("format", "tsv");
-                fetch(url.toString(), h.fetchGet)
+                fetch(d.data_url + "?format=tsv", h.fetchGet)
                     .then(resp => {
                         if (!resp.ok) {
                             throw Error(`Invalid server response: ${resp.status}`);
