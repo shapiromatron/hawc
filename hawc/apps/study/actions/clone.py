@@ -2,6 +2,7 @@ import json
 from collections import defaultdict
 from enum import StrEnum
 
+from django.db import transaction
 from pydantic import BaseModel, Field, model_validator
 
 from ...assessment.models import Assessment
@@ -37,6 +38,7 @@ class CloneStudySettings(BaseModel):
             raise ValueError("Cannot include RoB without a copy mode specified")
         return self
 
+    @transaction.atomic
     def clone(self, user, context: dict) -> dict[Study, tuple[Study, dict]]:
         dst_assessment = context["assessment"]
         src_studies = context["studies"].filter(id__in=self.study)

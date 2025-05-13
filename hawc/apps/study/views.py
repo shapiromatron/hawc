@@ -254,8 +254,7 @@ class CloneStudies(BaseUpdate):
         if diff:
             raise ValidationError(f"Source key(s) not found: {diff}")
 
-        with transaction.atomic():
-            studies_map = model.clone(self.request.user, context)
+        studies_map = model.clone(self.request.user, context)
 
         return studies_map
 
