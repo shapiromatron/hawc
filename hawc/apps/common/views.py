@@ -107,7 +107,7 @@ def create_object_log(
         assessment_id (int|None): the object assessment id
         user_id (int): the user id
         log_message (str): override for custom message
-        use_reversion (bool): user reversion data for object log
+        use_reversion (bool): use reversion data for object log
     """
     # Log action
     if not log_message:
