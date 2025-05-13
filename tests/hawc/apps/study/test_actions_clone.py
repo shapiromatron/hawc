@@ -9,9 +9,9 @@ from hawc.apps.riskofbias.models import RiskOfBiasScore, RiskOfBiasScoreOverride
 from hawc.apps.study.actions.clone import (
     CloneRobCopyMode,
     CloneStudySettings,
-    clone_animal_bioassay,
-    clone_epiv2,
-    clone_study,
+    _clone_animal_bioassay,
+    _clone_epiv2,
+    _clone_study,
 )
 from hawc.apps.study.models import Attachment, Study
 
@@ -35,12 +35,12 @@ class TestDeepClone:
 
         # check study clone
         assert Study.objects.filter(assessment=dst_assessment).count() == 0
-        clone_map, dst_study = clone_study(src_study, dst_assessment)
+        clone_map, dst_study = _clone_study(src_study, dst_assessment)
         assert Study.objects.filter(assessment=dst_assessment).count() == 1
 
         # check animal clone
         assert Experiment.objects.filter(study__assessment=dst_assessment).count() == 0
-        clone_map = clone_animal_bioassay(src_study, dst_study)
+        clone_map = _clone_animal_bioassay(src_study, dst_study)
         keys = "experiment animalgroup dosingregime dosegroup endpoint endpointgroup"
         for key in keys.split(" "):
             assert key in clone_map and len(clone_map[key]) > 0
@@ -48,7 +48,7 @@ class TestDeepClone:
 
         # check epiv2 clone
         assert Design.objects.filter(study__assessment=dst_assessment).count() == 0
-        clone_map = clone_epiv2(src_study, dst_study)
+        clone_map = _clone_epiv2(src_study, dst_study)
         for key in [
             "design",
             "chemical",

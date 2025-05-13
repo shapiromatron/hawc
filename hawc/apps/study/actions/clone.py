@@ -45,14 +45,14 @@ class CloneStudySettings(BaseModel):
         studies_map = {}
         for src_study in src_studies:
             mapping = defaultdict(dict)
-            study_map, dst_study = clone_study(src_study, dst_assessment)
+            study_map, dst_study = _clone_study(src_study, dst_assessment)
             mapping["study"] = study_map
             if src_study.id in self.study_bioassay:
-                mapping["animal"] = clone_animal_bioassay(src_study, dst_study)
+                mapping["animal"] = _clone_animal_bioassay(src_study, dst_study)
             if src_study.id in self.study_epi:
-                mapping["epiv2"] = clone_epiv2(src_study, dst_study)
+                mapping["epiv2"] = _clone_epiv2(src_study, dst_study)
             if src_study.id in self.study_rob:
-                mapping["riskofbias"] = clone_rob(src_study, dst_study, self, user, mapping)
+                mapping["riskofbias"] = _clone_rob(src_study, dst_study, self, user, mapping)
             create_object_log(
                 "Cloned",
                 dst_study,
@@ -69,7 +69,7 @@ type StudyMapping = dict[str, dict[str, dict[int, int]]]
 type StudyAppMapping = dict[str, dict[int, int]]
 
 
-def clone_study(src_study: Study, dst_assessment: Assessment) -> tuple[StudyAppMapping, Study]:
+def _clone_study(src_study: Study, dst_assessment: Assessment) -> tuple[StudyAppMapping, Study]:
     study_map = defaultdict(dict)
     src_study_id = src_study.pk
     identifiers = list(src_study.identifiers.all())
@@ -96,7 +96,7 @@ def clone_study(src_study: Study, dst_assessment: Assessment) -> tuple[StudyAppM
     return study_map, dst_study
 
 
-def clone_animal_bioassay(src_study: Study, dst_study: Study) -> StudyAppMapping:
+def _clone_animal_bioassay(src_study: Study, dst_study: Study) -> StudyAppMapping:
     animal_map = defaultdict(dict)
     experiments = list(src_study.experiments.all().order_by("id"))
     for experiment in experiments:
@@ -182,7 +182,7 @@ def clone_animal_bioassay(src_study: Study, dst_study: Study) -> StudyAppMapping
     return animal_map
 
 
-def clone_epiv2(src_study: Study, dst_study: Study) -> StudyAppMapping:
+def _clone_epiv2(src_study: Study, dst_study: Study) -> StudyAppMapping:
     epiv2_map = defaultdict(dict)
     src_designs = list(src_study.designs.all().order_by("id"))
 
@@ -266,7 +266,7 @@ def clone_epiv2(src_study: Study, dst_study: Study) -> StudyAppMapping:
     return epiv2_map
 
 
-def clone_rob(
+def _clone_rob(
     src_study: Study,
     dst_study: Study,
     settings: CloneStudySettings,
