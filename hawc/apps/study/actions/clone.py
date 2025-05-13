@@ -29,7 +29,7 @@ class CloneStudySettings(BaseModel):
 
     @model_validator(mode="after")
     def validate_after(self):
-        if self.include_rob is False and len(self.study_rob) > 0:
+        if self.include_rob and len(self.study_rob) == 0:
             raise ValueError("Cannot include RoB without a study selected for RoB")
         elif self.include_rob and (len(self.metric_map) == 0):
             raise ValueError("Cannot include RoB without a RoB mapping")
