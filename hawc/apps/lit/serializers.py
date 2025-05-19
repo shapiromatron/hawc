@@ -189,7 +189,7 @@ class BulkReferenceTagSerializer(serializers.Serializer):
         expected_columns = ["reference_id", "tag_id"]
         if df.columns.tolist() != expected_columns:
             raise serializers.ValidationError(
-                f"Invalid column headers; expecting \"{','.join(expected_columns)}\""
+                f'Invalid column headers; expecting "{",".join(expected_columns)}"'
             )
 
         # ensure we have some data

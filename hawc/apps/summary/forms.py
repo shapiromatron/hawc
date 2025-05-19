@@ -566,7 +566,7 @@ class PlotlyVisualForm(VisualForm):
         self.fields["settings"].label = "JSON configuration"
         self.fields[
             "settings"
-        ].help_text = f"""Create a {new_window_a("https://plotly.com/", "Plotly")} visual using Python or R, and then export the visual and display to JSON ({new_window_a("https://github.com/plotly/plotly.R/issues/590#issuecomment-220864613" ,"R")} or {new_window_a("https://plotly.github.io/plotly.py-docs/generated/plotly.io.to_json.html", "Python")})."""
+        ].help_text = f"""Create a {new_window_a("https://plotly.com/", "Plotly")} visual using Python or R, and then export the visual and display to JSON ({new_window_a("https://github.com/plotly/plotly.R/issues/590#issuecomment-220864613", "R")} or {new_window_a("https://plotly.github.io/plotly.py-docs/generated/plotly.io.to_json.html", "Python")})."""
         self.helper = self.setHelper()
 
     class Meta:

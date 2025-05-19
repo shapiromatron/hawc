@@ -53,6 +53,7 @@ def forward(apps, schema_editor):
     Visual = apps.get_model("summary", "Visual")
     DataPivotQuery = apps.get_model("summary", "DataPivotQuery")
     DataPivotUpload = apps.get_model("summary", "DataPivotUpload")
+    viz_ct = ContentType.objects.get_for_model(Visual).id
     dpq_ct = ContentType.objects.get_for_model(DataPivotQuery).id
     dpu_ct = ContentType.objects.get_for_model(DataPivotUpload).id
 
@@ -94,10 +95,9 @@ def forward(apps, schema_editor):
         dps.append(visualization)
 
         for label in LabeledItem.objects.filter(object_id=dp.id, content_type_id=dpq_ct):
-            new_label = LabeledItem.objects.create(
-                object_id=visualization.id, content_type_id=dpq_ct, label_id=label.label_id
-            )
-            mapping.append(("label", label.id, new_label.id))
+            label.content_type_id = viz_ct
+            label.object_id = visualization.id
+            label.save()
 
     for dp in DataPivotUpload.objects.all():
         new_dp_id = (
@@ -156,10 +156,9 @@ def forward(apps, schema_editor):
         dps.append(visualization)
 
         for label in LabeledItem.objects.filter(object_id=dp.id, content_type_id=dpu_ct):
-            new_label = LabeledItem.objects.create(
-                object_id=visualization.id, content_type_id=dpu_ct, label_id=label.label_id
-            )
-            mapping.append(("label", label.id, new_label.id))
+            label.content_type_id = viz_ct
+            label.object_id = visualization.id
+            label.save()
 
     Visual.objects.bulk_update(dps, fields=("created", "last_updated"))
 
