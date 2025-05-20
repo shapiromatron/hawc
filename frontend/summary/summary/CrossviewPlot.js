@@ -726,15 +726,10 @@ class CrossviewPlot extends D3Visualization {
             settings = this.data.settings.filters[i],
             xOffset = this._filter_left_offset || this.settings.filter_padding,
             nPerCol = Math.ceil(filters.length / settings.columns),
-            cols,
+            cols = _.chunk(filters, nPerCol),
             bb,
             title,
             colg;
-
-        cols = _.chain(filters)
-            .groupBy((el, j) => Math.floor(j / nPerCol))
-            .toArray()
-            .value();
 
         // print header
         title = d3
