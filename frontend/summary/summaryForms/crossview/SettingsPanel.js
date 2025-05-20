@@ -591,7 +591,8 @@ class StyleRow extends Component {
                 fieldChoices,
                 fieldOptionChoices,
             } = store.subclass,
-            item = settings[arrayName][index];
+            item = settings[arrayName][index],
+            itemValues = fieldOptionChoices[item.field];
         return (
             <tr>
                 <td>
@@ -599,22 +600,26 @@ class StyleRow extends Component {
                         choices={fieldChoices}
                         value={item.field}
                         handleSelect={value => {
-                            const firstValue = fieldOptionChoices[value][0].id;
-                            changeSetting(`${arrayName}[${index}].headerName`, firstValue);
-                            changeSetting(`${arrayName}[${index}].value`, firstValue);
+                            if (itemValues.length > 0) {
+                                const firstValue = itemValues[0].id;
+                                changeSetting(`${arrayName}[${index}].headerName`, firstValue);
+                                changeSetting(`${arrayName}[${index}].value`, firstValue);
+                            }
                             changeSetting(`${arrayName}[${index}].field`, value);
                         }}
                     />
                 </td>
                 <td>
-                    <SelectInput
-                        choices={fieldOptionChoices[item.field]}
-                        value={item.value}
-                        handleSelect={value => {
-                            changeSetting(`${arrayName}[${index}].value`, value);
-                            changeSetting(`${arrayName}[${index}].headerName`, value);
-                        }}
-                    />
+                    {itemValues.length > 0 ? (
+                        <SelectInput
+                            choices={itemValues}
+                            value={item.value}
+                            handleSelect={value => {
+                                changeSetting(`${arrayName}[${index}].value`, value);
+                                changeSetting(`${arrayName}[${index}].headerName`, value);
+                            }}
+                        />
+                    ) : null}
                 </td>
                 <td>
                     <TextInput
