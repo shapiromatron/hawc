@@ -61,7 +61,7 @@ const _getDefaultSettings = function() {
             headerName: field.label,
             allValues: true,
             values: [],
-            column: 1,
+            columns: 1,
             x: 0,
             y: 0,
         };

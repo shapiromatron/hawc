@@ -285,8 +285,8 @@ class CrossviewFilterRow extends Component {
                 </td>
                 <td>
                     <IntegerInput
-                        name={`${arrayName}[${index}].column`}
-                        value={item.column}
+                        name={`${arrayName}[${index}].columns`}
+                        value={item.columns}
                         onChange={e => changeSetting(e.target.name, parseInt(e.target.value))}
                     />
                 </td>
