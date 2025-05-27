@@ -251,7 +251,7 @@ class AssessmentPermissionsMixin:
             try:
                 self.assessment = obj.get_assessment()
             except ValueError as err:
-                logger.warning("Cannot fetch assessment", obj, obj.pk)
+                logger.warning(f"Cannot fetch assessment for {obj=}, {obj.pk=}")
                 raise PermissionDenied() from err
 
         permission_checked = False

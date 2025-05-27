@@ -180,7 +180,7 @@ class TestDosingRegimeUpdate:
         assert "Each dose-type must have 3 dose groups" in resp.context["dose_groups_errors"]
 
     def test_no_dosed_animals(self):
-        # with no dosed animal on a dosing regime, forbidden is denied to edit.
+        # with no dosed animal on a dosing regime, assert permission denied to edit
         dr = models.DosingRegime.objects.create()
         client = get_client("pm")
 
