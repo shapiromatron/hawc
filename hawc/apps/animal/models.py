@@ -380,6 +380,10 @@ class DosingRegime(models.Model):
         return self.dosed_animals.get_absolute_url() if self.dosed_animals else None
 
     def get_assessment(self):
+        if self.dosed_animals is None:
+            raise ValueError(
+                f"Dosed animals for dosing regime {self.id} is None; cannot get assessment"
+            )
         return self.dosed_animals.get_assessment()
 
     @classmethod

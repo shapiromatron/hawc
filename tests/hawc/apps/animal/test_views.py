@@ -179,6 +179,17 @@ class TestDosingRegimeUpdate:
         assertTemplateUsed(resp, "animal/dosingregime_form.html")
         assert "Each dose-type must have 3 dose groups" in resp.context["dose_groups_errors"]
 
+    def test_no_dosed_animals(self):
+        # with no dosed animal on a dosing regime, forbidden is denied to edit.
+        dr = models.DosingRegime.objects.create()
+        client = get_client("pm")
+
+        url = reverse("animal:dosing_regime_update", args=(dr.id,))
+        resp = client.get(url, follow=True)
+        assert resp.status_code == 403
+
+        dr.delete()
+
 
 @pytest.mark.django_db
 class TestEndpointCreate:
