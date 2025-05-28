@@ -19,6 +19,11 @@ urlpatterns = [
         views.IdentifierStudyCreate.as_view(),
         name="create_from_identifier",
     ),
+    path(
+        "assessment/<int:pk>/clone/",
+        views.CloneStudies.as_view(),
+        name="clone_from_assessment",
+    ),
     path("<int:pk>/", views.StudyDetail.as_view(), name="detail"),
     path("<int:pk>/toggle-lock/", views.StudyToggleLock.as_view(), name="toggle-lock"),
     path("<int:pk>/update/", views.StudyUpdate.as_view(), name="update"),

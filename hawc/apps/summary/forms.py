@@ -26,6 +26,7 @@ from ..common.forms import (
 from ..common.helper import new_window_a
 from ..common.validators import validate_html_tags, validate_hyperlinks, validate_json_pydantic
 from ..lit.models import ReferenceFilterTag
+from ..riskofbias.models import RiskOfBiasMetric
 from ..study.autocomplete import StudyAutocomplete
 from . import autocomplete, constants, models, prefilters
 
@@ -191,6 +192,10 @@ def get_visual_form(visual_type: constants.VisualType) -> VisualForm:
         constants.VisualType.DATA_PIVOT_QUERY: DataPivotQueryForm,
         constants.VisualType.DATA_PIVOT_FILE: DataPivotDatasetForm,
     }[visual_type]
+
+    def update_context(self, context):
+        # Add any additional html view context required for the form
+        pass
 
 
 class VisualModelChoiceField(forms.ModelChoiceField):
@@ -751,6 +756,12 @@ class DataPivotQueryForm(VisualForm):
         super().__init__(*args, **kwargs)
 
         self.fields["settings"].required = False
+        instance_data = self.instance.prefilters
+        if "export_style" in instance_data:
+            self.fields["export_style"].initial = instance_data["export_style"]
+        if "preferred_units" in instance_data:
+            self.fields["preferred_units"].initial = instance_data["preferred_units"]
+
         instance_data = self.instance.prefilters
         if "export_style" in instance_data:
             self.fields["export_style"].initial = instance_data["export_style"]
