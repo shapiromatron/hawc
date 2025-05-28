@@ -22,7 +22,7 @@ dependencies = [
   "Django~=5.2.1",
   "django-crispy-forms==2.4",
   "crispy-bootstrap4==2024.10",
-  "django-filter==25.1",
+  "django-filter==24.3",
   "django-redis==5.4.0",
   "django-reversion==5.1.0",
   "django-autocomplete-light==3.12.1",
