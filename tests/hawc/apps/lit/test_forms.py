@@ -190,7 +190,7 @@ class TestRisImportForm:
         assert form.errors == {"import_file": [RisImportForm.RIS_EXTENSION]}
 
     def test_unparsable_ris(self, db_keys):
-        form = self._create_form(db_keys, SimpleUploadedFile("test.ris", b"Not valid ris"))
+        form = self._create_form(db_keys, SimpleUploadedFile("test.ris", b"\xff"))
         assert form.is_valid() is False
         assert form.errors == {"import_file": [RisImportForm.UNPARSABLE_RIS]}
 

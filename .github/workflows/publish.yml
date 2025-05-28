@@ -33,9 +33,6 @@ jobs:
       - name: Build client
         run: cd client && poe build
       - name: Publish package to PyPI
-        env:
-          PUBLISH_PYPI: ${{ secrets.PUBLISH_PYPI }}
-        if: env.PUBLISH_PYPI != null
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           verbose: true
