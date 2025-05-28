@@ -375,7 +375,6 @@ class VisualizationCreate(BaseCreate):
                 cancel_url=reverse("summary:visualization_list", args=(self.assessment.id,)),
             ),
         )
-        context["form"].update_context(context)
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 1,
             get_visual_list_crumb(self.assessment),
@@ -439,12 +438,7 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
         visual_type = self.object.visual_type
         if visual_type in [] and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
             raise PermissionDenied()
-        if visual_type in (
-            constants.VisualType.DATA_PIVOT_QUERY,
-            constants.VisualType.DATA_PIVOT_FILE,
-        ):
-            return ["summary/visual_form_dp.html"]
-        elif visual_type in {
+        if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,
             constants.VisualType.EXTERNAL_SITE,
@@ -467,7 +461,6 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
                 cancel_url=reverse("summary:visualization_list", args=(self.assessment.id,)),
             ),
         )
-        context["form"].update_context(context)
         context["breadcrumbs"].insert(
             len(context["breadcrumbs"]) - 2, get_visual_list_crumb(self.assessment)
         )

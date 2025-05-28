@@ -1,42 +1,18 @@
-import logging
-import re
-
 from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.forms import ValidationError
-from django.http import (
-    HttpResponseBadRequest,
-    HttpResponseRedirect,
-    QueryDict,
-)
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse, reverse_lazy
-from django.utils import timezone
-from django.utils.decorators import method_decorator
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views.generic import RedirectView
 
-from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
 from ..assessment.views import check_published_status
-from ..common.helper import PydanticToDjangoError
-from ..common.views import (
-    BaseCreate,
-    BaseDelete,
-    BaseDetail,
-    BaseFilterList,
-    BaseUpdate,
-    Breadcrumb,
-    htmx_required,
-)
+from ..common.views import BaseCreate, BaseDelete, BaseDetail, BaseFilterList, BaseUpdate
 from ..lit.models import Reference
 from ..mgmt.views import EnsurePreparationStartedMixin
-from ..riskofbias.models import RiskOfBiasMetric
 from ..udf.views import UDFDetailMixin
 from . import filterset, forms, models
-from .actions.clone import CloneStudySettings
-
-logger = logging.getLogger(__name__)
 
 
 class StudyFilterList(BaseFilterList):
@@ -140,125 +116,6 @@ class IdentifierStudyCreate(ReferenceStudyCreate):
         return context
 
 
-@method_decorator(htmx_required, name="post")
-class CloneStudies(BaseUpdate):
-    # Show a list of eligible assessments to clone from.
-    template_name = "study/study_clone.html"
-    model = Assessment
-    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
-    form_class = forms.StudyCloneAssessmentSelectorForm
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs.update(user=self.request.user, assessment=self.assessment)
-        return kwargs
-
-    def get_context_data(self, **kw):
-        context = super().get_context_data()
-        context["breadcrumbs"].insert(
-            2, Breadcrumb(name="Studies", url=reverse("study:list", args=(self.assessment.id,)))
-        )
-        context["breadcrumbs"][-1].name = "Clone"
-        return context
-
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        form = self.get_form()
-        if not form.is_valid():
-            return HttpResponseBadRequest("Bad assessment")
-
-        form_action = request.POST.get("action")
-        src_assessment = form.cleaned_data["src_assessment"]
-        context = self.get_clone_context_data(src_assessment)
-        match form_action:
-            case "fetch":
-                # check that assessment selected is a valid selection
-                return render(request, "study/fragments/clone_fetch.html", context)
-            case "clone":
-                # check cloned data
-                try:
-                    studies_map = self.clone(context, request.POST.copy())
-                except (ValidationError, ValueError) as err:
-                    logger.info(err)
-                    return render(
-                        request,
-                        "study/fragments/clone_failure.html",
-                        {
-                            "now": timezone.now(),
-                            "err": err,
-                        },
-                    )
-
-                return render(
-                    request,
-                    "study/fragments/clone_success.html",
-                    {
-                        "now": timezone.now(),
-                        "studies_map": [(src, dst[0]) for src, dst in studies_map.items()],
-                    },
-                )
-            case _:
-                return HttpResponseBadRequest("Bad request")
-
-    def get_clone_context_data(self, src_assessment: Assessment):
-        study_qs = models.Study.objects.filter(assessment=src_assessment)
-        if not src_assessment.user_is_team_member_or_higher(self.request.user):
-            study_qs = study_qs.published_only(True)
-        src_metrics = (
-            RiskOfBiasMetric.objects.assessment_qs(src_assessment)
-            .select_related("domain")
-            .order_by("domain__sort_order", "sort_order")
-        )
-        dst_metrics = (
-            RiskOfBiasMetric.objects.assessment_qs(self.object)
-            .select_related("domain")
-            .order_by("domain__sort_order", "sort_order")
-        )
-        return {
-            "assessment": self.object,
-            "src_assessment": src_assessment,
-            "studies": study_qs.clone_annotations(),
-            "src_metrics": src_metrics,
-            "dst_metrics": dst_metrics,
-        }
-
-    def clone(
-        self, context: dict, data: QueryDict
-    ) -> dict[models.Study, tuple[models.Study, dict]]:
-        metric_map = {}
-        for key, value in data.items():
-            if value.isnumeric():
-                if dst_key := re.findall(r"^metric-(\d+)$", key):
-                    metric_map[dst_key[0]] = value
-
-        # convert lists to into single items in QueryDict as needed
-        payload = {
-            "study": data.getlist("study"),
-            "study_bioassay": data.getlist("study_bioassay"),
-            "study_epi": data.getlist("study_epi"),
-            "study_rob": data.getlist("study_rob"),
-            "include_rob": data.get("include_rob", False),
-            "copy_mode": data.get("copy_mode", None),
-            "metric_map": metric_map,
-        }
-        with PydanticToDjangoError():
-            model = CloneStudySettings.model_validate(payload)
-
-        dst_metric_ids = context["dst_metrics"].values_list("id", flat=True)
-        diff = set(model.metric_map.keys()) - set(dst_metric_ids)
-        if diff:
-            raise ValidationError(f"Destination key(s) not found: {diff}")
-
-        src_metric_ids = context["src_metrics"].values_list("id", flat=True)
-        diff = set(model.metric_map.values()) - set(src_metric_ids)
-        if diff:
-            raise ValidationError(f"Source key(s) not found: {diff}")
-
-        studies_map = model.clone(self.request.user, context)
-
-        return studies_map
-
-
 class StudyDetail(UDFDetailMixin, BaseDetail):
     model = models.Study
 
@@ -338,6 +195,7 @@ class AttachmentDetail(BaseDetail):
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if not self.assessment.user_is_reviewer_or_higher(self.request.user):
-            raise PermissionDenied()
-        return HttpResponseRedirect(self.object.attachment.url)
+        if self.assessment.user_is_reviewer_or_higher(self.request.user):
+            return HttpResponseRedirect(self.object.attachment.url)
+        else:
+            raise PermissionDenied

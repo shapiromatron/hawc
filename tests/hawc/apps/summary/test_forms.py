@@ -108,26 +108,6 @@ class TestEndpointAggregationForm:
 
 
 @pytest.mark.django_db
-class TestEndpointAggregationForm:
-    def test_success(self, db_keys):
-        assessment = Assessment.objects.get(id=db_keys.assessment_working)
-        visual_type = VisualType.BIOASSAY_AGGREGATION
-        # check save works and settings are saved correctly
-        form = forms.EndpointAggregationForm(
-            data={
-                "title": "test",
-                "slug": "test",
-                "dose_units": 1,
-                "endpoints": [1],
-            },
-            parent=assessment,
-            visual_type=visual_type,
-            evidence_type=StudyType.BIOASSAY,
-        )
-        assert form.is_valid()
-
-
-@pytest.mark.django_db
 class TestTagtreeForm:
     def valid_data(self):
         return dict(
