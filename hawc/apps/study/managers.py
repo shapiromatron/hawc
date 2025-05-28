@@ -1,6 +1,7 @@
 import pandas as pd
+from django.apps import apps
 from django.db import models
-from django.db.models import Case, F, Q, QuerySet, Value, When
+from django.db.models import Case, Exists, F, OuterRef, Q, QuerySet, Value, When
 from django.db.models.functions import Concat
 
 from ..common.models import BaseManager, sql_display, str_m2m
@@ -56,6 +57,17 @@ class StudyQuerySet(QuerySet):
     def published_only(self, published_only: bool):
         """If True, return only published studies. If False, all studies"""
         return self.filter(published=True) if published_only else self
+
+    def clone_annotations(self):
+        return self.annotate(
+            has_rob=Exists(
+                apps.get_model("riskofbias", "RiskOfBias").objects.filter(study=OuterRef("pk"))
+            ),
+            has_bioassay=Exists(
+                apps.get_model("animal", "Experiment").objects.filter(study=OuterRef("pk"))
+            ),
+            has_epi=Exists(apps.get_model("epiv2", "Design").objects.filter(study=OuterRef("pk"))),
+        )
 
 
 class StudyManager(BaseManager):
