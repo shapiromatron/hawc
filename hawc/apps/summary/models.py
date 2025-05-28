@@ -1,10 +1,8 @@
 import json
 import logging
-import os
 
 import pandas as pd
 from django.contrib.contenttypes.fields import GenericRelation
-from django.contrib.postgres.fields import ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
@@ -228,6 +226,13 @@ class Visual(models.Model):
         null=True,
         help_text="Upload an image file. Valid formats: png, jpg, jpeg. Must be > 10KB and < 3MB in size.",
     )
+    dp_id = models.BigIntegerField(
+        editable=False, blank=True, null=True, help_text="data pivot migration"
+    )
+    dp_slug = models.SlugField(editable=False, blank=True, help_text="data pivot migration")
+    dataset = models.ForeignKey(
+        "assessment.Dataset", on_delete=models.CASCADE, blank=True, null=True
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
     labels = GenericRelation(LabeledItem, related_query_name="visuals")
@@ -262,6 +267,11 @@ class Visual(models.Model):
     def get_data_url(self):
         return reverse("summary:api:visual-data", args=(self.id,))
 
+    def get_dp_update_settings(self):
+        return reverse(
+            "summary:visualization_update_settings", args=(self.assessment_id, self.slug)
+        )
+
     def get_api_heatmap_datasets(self):
         return reverse("summary:api:assessment-heatmap-datasets", args=(self.assessment_id,))
 
@@ -272,7 +282,25 @@ class Visual(models.Model):
             or self.visual_type == constants.VisualType.ROB_BARCHART
         ) and self.assessment.rob_name == RobName.SE:
             label = label.replace("risk of bias", "study evaluation")
+        elif self.visual_type == constants.VisualType.DATA_PIVOT_QUERY:
+            if self.evidence_type == constants.StudyType.BIOASSAY:
+                label = "Data pivot (animal bioassay)"
+            elif self.evidence_type == constants.StudyType.EPI:
+                label = "Data pivot (epidemiology)"
+            elif self.evidence_type == constants.StudyType.EPI_META:
+                label = "Data pivot (epidemiology meta-analysis/pooled-analysis)"
+            elif self.evidence_type == constants.StudyType.IN_VITRO:
+                label = "Data pivot (in vitro)"
+            elif self.evidence_type == constants.StudyType.ECO:
+                label = "Data pivot (ecology)"
         return label
+
+    @property
+    def is_data_pivot(self) -> bool:
+        return self.visual_type in (
+            constants.VisualType.DATA_PIVOT_QUERY,
+            constants.VisualType.DATA_PIVOT_FILE,
+        )
 
     @classmethod
     def get_heatmap_datasets(cls, assessment: Assessment) -> HeatmapDatasets:
@@ -588,281 +616,106 @@ class Visual(models.Model):
         return qs
 
     def data_df(self, use_settings: bool = True) -> pd.DataFrame:
-        if self.visual_type not in [
-            constants.VisualType.ROB_BARCHART,
-            constants.VisualType.ROB_HEATMAP,
-        ]:
-            raise ValueError("Not supported for this visual type")
-        return self._rob_data_qs(use_settings=use_settings).df()
+        match self.visual_type:
+            case constants.VisualType.ROB_BARCHART | constants.VisualType.ROB_HEATMAP:
+                return self._rob_data_qs(use_settings=use_settings).df()
+            case constants.VisualType.DATA_PIVOT_QUERY:
+                return self._data_df_dpq().df
+            case constants.VisualType.DATA_PIVOT_FILE:
+                return self._data_df_dpf()
+            case _:
+                raise ValueError("Not supported for this visual type")
 
+    def _data_df_dpq(self) -> FlatExport:
+        def get_filterset(data, assessment, **kw):
+            cls = prefilters.get_prefilter_cls(None, self.evidence_type, self.assessment)
+            return cls(data=data, assessment=assessment, **kw)
 
-class DataPivot(models.Model):
-    objects = managers.DataPivotManager()
+        def get_queryset():
+            prefilters = self.prefilters["prefilters"]
+            preferred_units = self.prefilters["preferred_units"]
+            fs = get_filterset(prefilters, self.assessment)
+            form = fs.form
+            fs.set_passthrough_options(form)
+            qs = fs.qs
+            if self.evidence_type == constants.StudyType.BIOASSAY and preferred_units:
+                qs = qs.filter(animal_group__dosing_regime__doses__dose_units__in=preferred_units)
+            return qs.order_by("id")
 
-    assessment = models.ForeignKey(Assessment, on_delete=models.CASCADE)
-    title = models.CharField(
-        max_length=128,
-        help_text="Enter the title of the visualization (spaces and special-characters allowed).",
-    )
-    slug = models.SlugField(
-        verbose_name="URL Name",
-        help_text="The URL (web address) used to describe this object "
-        "(no spaces or special-characters).",
-    )
-    settings = models.JSONField(
-        default=dict,
-        blank=True,
-        help_text="To clone settings from an existing data-pivot, copy them into this field, "
-        "otherwise leave blank.",
-    )
-    caption = models.TextField(blank=True, default="")
-    published = models.BooleanField(
-        default=False,
-        verbose_name="Publish visual for public viewing",
-        help_text="For assessments marked for public viewing, mark visual to be viewable by public",
-    )
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
+        def get_dataset_exporter(qs: models.QuerySet):
+            export_style = self.prefilters["export_style"]
+            preferred_units = self.prefilters["preferred_units"]
+            if self.evidence_type == constants.StudyType.BIOASSAY:
+                # select export class
+                if export_style == constants.ExportStyle.EXPORT_GROUP:
+                    ExportClass = EndpointGroupFlatDataPivot
+                elif export_style == constants.ExportStyle.EXPORT_ENDPOINT:
+                    ExportClass = EndpointFlatDataPivot
+                else:
+                    raise ValueError("Unknown export type")
 
-    BREADCRUMB_PARENT = "assessment"
+                exporter = ExportClass(
+                    qs,
+                    assessment=self.assessment,
+                    filename=f"{self.assessment}-animal-bioassay",
+                    preferred_units=preferred_units,
+                )
 
-    class Meta:
-        unique_together = (("assessment", "slug"),)
-        ordering = ("title",)
+            elif self.evidence_type == constants.StudyType.EPI:
+                if self.assessment.epi_version == EpiVersion.V1:
+                    exporter = OutcomeDataPivot(
+                        qs,
+                        assessment=self.assessment,
+                        filename=f"{self.assessment}-epi",
+                    )
+                else:
+                    exporter = EpiFlatComplete(
+                        qs,
+                        assessment=self.assessment,
+                        filename=f"{self.assessment}-epi",
+                    )
 
-    def __str__(self):
-        return self.title
-
-    def save(self, **kw):
-        if self.settings is None:
-            self.settings = {}
-        return super().save(**kw)
-
-    @staticmethod
-    def get_list_url(assessment_id):
-        return reverse("summary:visualization_list", args=[str(assessment_id)])
-
-    def get_absolute_url(self):
-        return reverse("summary:dp_detail", args=(self.assessment_id, self.slug))
-
-    def get_visualization_update_url(self):
-        return reverse("summary:dp_update", args=(self.assessment_id, self.slug))
-
-    def get_assessment(self):
-        return self.assessment
-
-    def get_api_detail(self):
-        return reverse("summary:api:data_pivot-detail", args=(self.id,))
-
-    def get_download_url(self):
-        return reverse("summary:api:data_pivot-data", args=(self.id,))
-
-    def get_data_url(self):
-        return self.get_download_url() + "?format=tsv"
-
-    def get_dataset(self) -> FlatExport:
-        if hasattr(self, "datapivotupload"):
-            return self.datapivotupload.get_dataset()
-        else:
-            return self.datapivotquery.get_dataset()
-
-    @property
-    def visual_type(self):
-        if hasattr(self, "datapivotupload"):
-            return self.datapivotupload.visual_type
-        else:
-            return self.datapivotquery.visual_type
-
-    @property
-    def visible_labels(self):
-        if hasattr(self, "datapivotupload"):
-            return self.datapivotupload.visible_upload_labels
-        else:
-            return self.datapivotquery.visible_query_labels
-
-    def get_visual_type_display(self):
-        return self.visual_type
-
-    @staticmethod
-    def reset_row_overrides(settings: dict) -> None:
-        # reset row overrides in-place
-        settings["row_overrides"] = []
-
-
-class DataPivotUpload(DataPivot):
-    objects = managers.DataPivotUploadManager()
-
-    excel_file = models.FileField(
-        verbose_name="Excel file",
-        upload_to="data_pivot_excel",
-        max_length=250,
-        help_text="Upload an Excel file in XLSX format.",
-    )
-    worksheet_name = models.CharField(
-        help_text="Worksheet name to use in Excel file. If blank, the first worksheet is used.",
-        max_length=64,
-        blank=True,
-    )
-    labels = GenericRelation(LabeledItem, related_query_name="datapivot_uploads")
-
-    @property
-    def visual_type(self):
-        return "Data pivot (file upload)"
-
-    def get_dataset(self) -> FlatExport:
-        worksheet_name = self.worksheet_name if len(self.worksheet_name) > 0 else 0
-        df = pd.read_excel(self.excel_file.file, sheet_name=worksheet_name)
-        filename = os.path.splitext(os.path.basename(self.excel_file.file.name))[0]
-        return FlatExport(df=df, filename=filename)
-
-
-class DataPivotQuery(DataPivot):
-    objects = managers.DataPivotQueryManager()
-
-    MAXIMUM_QUERYSET_COUNT = 1000
-
-    evidence_type = models.PositiveSmallIntegerField(
-        choices=constants.StudyType, default=constants.StudyType.BIOASSAY
-    )
-    export_style = models.PositiveSmallIntegerField(
-        choices=constants.ExportStyle,
-        default=constants.ExportStyle.EXPORT_GROUP,
-        help_text="The export style changes the level at which the "
-        "data are aggregated, and therefore which columns and types "
-        "of data are presented in the export, for use in the visual.",
-    )
-    # Implementation-note: use ArrayField to save DoseUnits ManyToMany because
-    # order is important and it would be a much larger implementation to allow
-    # copying and saving dose-units- dose-units are rarely deleted and this
-    # implementation shouldn't cause issues with deletions because should be
-    # used primarily with id__in style queries.
-    preferred_units = ArrayField(
-        models.PositiveIntegerField(),
-        default=list,
-        help_text="List of preferred dose-values, in order of preference. "
-        "If empty, dose-units will be random for each endpoint "
-        "presented. This setting may used for comparing "
-        "percent-response, where dose-units are not needed, or for "
-        "creating one plot similar, but not identical, dose-units.",
-    )
-    prefilters = models.JSONField(default=dict)
-    labels = GenericRelation(LabeledItem, related_query_name="datapivot_queries")
-
-    def clean(self):
-        count = self.get_queryset().count()
-
-        if count == 0:
-            err = """
-                Current settings returned 0 results. Please update your settings to make
-                data filters less restrictive.
-            """
-            raise ValidationError(err)
-
-        if count > self.MAXIMUM_QUERYSET_COUNT:
-            err = f"""
-                Current settings returned too many results ({count} returned; a maximum of
-                {self.MAXIMUM_QUERYSET_COUNT} are allowed). Please update your settings to make
-                data filters more restrictive.
-            """
-            raise ValidationError(err)
-
-    def _get_dataset_exporter(self, qs):
-        if self.evidence_type == constants.StudyType.BIOASSAY:
-            # select export class
-            if self.export_style == constants.ExportStyle.EXPORT_GROUP:
-                ExportClass = EndpointGroupFlatDataPivot
-            elif self.export_style == constants.ExportStyle.EXPORT_ENDPOINT:
-                ExportClass = EndpointFlatDataPivot
-
-            exporter = ExportClass(
-                qs,
-                assessment=self.assessment,
-                filename=f"{self.assessment}-animal-bioassay",
-                preferred_units=self.preferred_units,
-            )
-
-        elif self.evidence_type == constants.StudyType.EPI:
-            if self.assessment.epi_version == EpiVersion.V1:
-                exporter = OutcomeDataPivot(
+            elif self.evidence_type == constants.StudyType.EPI_META:
+                exporter = MetaResultFlatDataPivot(
                     qs,
                     assessment=self.assessment,
                     filename=f"{self.assessment}-epi",
+                )
+
+            elif self.evidence_type == constants.StudyType.IN_VITRO:
+                # select export class
+                if export_style == constants.ExportStyle.EXPORT_GROUP:
+                    Exporter = ivexports.DataPivotEndpointGroup
+                elif export_style == constants.ExportStyle.EXPORT_ENDPOINT:
+                    Exporter = ivexports.DataPivotEndpoint
+                else:
+                    raise ValueError("Unknown export type")
+
+                # generate export
+                exporter = Exporter(
+                    qs,
+                    assessment=self.assessment,
+                    filename=f"{self.assessment}-invitro",
+                )
+
+            elif self.evidence_type == constants.StudyType.ECO:
+                exporter = EcoFlatComplete(
+                    qs,
+                    assessment=self.assessment,
+                    filename=f"{self.assessment}-eco",
                 )
             else:
-                exporter = EpiFlatComplete(
-                    qs,
-                    assessment=self.assessment,
-                    filename=f"{self.assessment}-epi",
-                )
+                raise ValueError("Unknown export type")
 
-        elif self.evidence_type == constants.StudyType.EPI_META:
-            exporter = MetaResultFlatDataPivot(
-                qs,
-                assessment=self.assessment,
-                filename=f"{self.assessment}-epi",
-            )
+            return exporter
 
-        elif self.evidence_type == constants.StudyType.IN_VITRO:
-            # select export class
-            if self.export_style == constants.ExportStyle.EXPORT_GROUP:
-                Exporter = ivexports.DataPivotEndpointGroup
-            elif self.export_style == constants.ExportStyle.EXPORT_ENDPOINT:
-                Exporter = ivexports.DataPivotEndpoint
-
-            # generate export
-            exporter = Exporter(
-                qs,
-                assessment=self.assessment,
-                filename=f"{self.assessment}-invitro",
-            )
-
-        elif self.evidence_type == constants.StudyType.ECO:
-            exporter = EcoFlatComplete(
-                qs,
-                assessment=self.assessment,
-                filename=f"{self.assessment}-eco",
-            )
-
-        return exporter
-
-    def get_filterset_class(self):
-        return prefilters.get_prefilter_cls(None, self.evidence_type, self.assessment)
-
-    def get_filterset(self, data, assessment, **kwargs):
-        return self.get_filterset_class()(data=data, assessment=assessment, **kwargs)
-
-    def get_queryset(self):
-        fs = self.get_filterset(self.prefilters, self.assessment)
-        form = fs.form
-        fs.set_passthrough_options(form)
-        qs = fs.qs
-        if self.evidence_type == constants.StudyType.BIOASSAY and self.preferred_units:
-            qs = qs.filter(animal_group__dosing_regime__doses__dose_units__in=self.preferred_units)
-        return qs.order_by("id")
-
-    def get_dataset(self) -> FlatExport:
-        qs = self.get_queryset()
-        exporter = self._get_dataset_exporter(qs)
+        qs = get_queryset()
+        exporter = get_dataset_exporter(qs)
         return exporter.build_export()
 
-    @property
-    def visual_type(self):
-        if self.evidence_type == constants.StudyType.BIOASSAY:
-            return "Data pivot (animal bioassay)"
-        elif self.evidence_type == constants.StudyType.EPI:
-            return "Data pivot (epidemiology)"
-        elif self.evidence_type == constants.StudyType.EPI_META:
-            return "Data pivot (epidemiology meta-analysis/pooled-analysis)"
-        elif self.evidence_type == constants.StudyType.IN_VITRO:
-            return "Data pivot (in vitro)"
-        elif self.evidence_type == constants.StudyType.ECO:
-            return "Data pivot (ecology)"
-        else:
-            raise ValueError("Unknown type")
+    def _data_df_dpf(self) -> pd.DataFrame:
+        return self.dataset.get_latest_df()
 
 
 reversion.register(SummaryTable)
-reversion.register(DataPivot)
-reversion.register(DataPivotUpload)
-reversion.register(DataPivotQuery)
 reversion.register(Visual)

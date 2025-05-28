@@ -178,10 +178,7 @@ class Search(FormView):
         context = super().get_context_data(**kwargs)
         if context["form"].is_valid():
             context.update(paginate(context["form"].search(), self.request))
-            if context["object_list"].model in (
-                summary_models.Visual,
-                summary_models.DataPivotQuery,
-            ):
+            if context["object_list"].model in (summary_models.Visual,):
                 self.set_visible_labels(self.request.user, context["object_list"])
         return context
 
@@ -840,9 +837,6 @@ class AboutContentTypes(TemplateView):
             cts["epimeta.metaresult"],
             cts["summary.summarytable"],
             cts["summary.visual"],
-            cts["summary.datapivot"],
-            cts["summary.datapivotupload"],
-            cts["summary.datapivotquery"],
         ]
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
@@ -858,7 +852,6 @@ class PublishedItemsChecklist(HtmxViewSet):
     model_lookups = {
         "study": apps.get_model("study", "Study"),
         "visual": apps.get_model("summary", "Visual"),
-        "datapivot": apps.get_model("summary", "DataPivot"),
         "dataset": apps.get_model("assessment", "Dataset"),
         "summarytable": apps.get_model("summary", "SummaryTable"),
         "attachment": apps.get_model("assessment", "Attachment"),
@@ -919,11 +912,6 @@ class PublishedItemsChecklist(HtmxViewSet):
             .objects.filter(assessment=assessment)
             .order_by("short_citation".lower())
         )
-        datapivots = (
-            apps.get_model("summary", "DataPivot")
-            .objects.filter(assessment=assessment)
-            .order_by("title".lower())
-        )
         visuals = (
             apps.get_model("summary", "Visual")
             .objects.filter(assessment=assessment)
@@ -947,7 +935,6 @@ class PublishedItemsChecklist(HtmxViewSet):
             "assessment": assessment,
             "breadcrumbs": crumbs,
             "studies": studies,
-            "datapivots": datapivots,
             "visuals": visuals,
             "datasets": datasets,
             "summarytables": summarytables,

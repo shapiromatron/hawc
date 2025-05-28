@@ -28,11 +28,21 @@ class VisualType(models.IntegerChoices):
     PLOTLY = 7, "plotly"
     IMAGE = 8, "static image"
     PRISMA = 9, "PRISMA"
+    DATA_PIVOT_QUERY = 10, "Data Pivot Query"
+    DATA_PIVOT_FILE = 11, "Data Pivot File"
 
 
 VISUAL_EVIDENCE_CHOICES = {
     VisualType.BIOASSAY_AGGREGATION: {StudyType.BIOASSAY},
     VisualType.BIOASSAY_CROSSVIEW: {StudyType.BIOASSAY},
+    VisualType.DATA_PIVOT_QUERY: {
+        StudyType.BIOASSAY,
+        StudyType.EPI,
+        StudyType.EPI_META,
+        StudyType.IN_VITRO,
+        StudyType.ECO,
+    },
+    VisualType.DATA_PIVOT_FILE: {StudyType.OTHER},
     VisualType.ROB_HEATMAP: {StudyType.BIOASSAY, StudyType.EPI, StudyType.IN_VITRO},
     VisualType.ROB_BARCHART: {StudyType.BIOASSAY, StudyType.EPI, StudyType.IN_VITRO},
     VisualType.LITERATURE_TAGTREE: {StudyType.OTHER},
