@@ -1,6 +1,6 @@
-{% extends 'summary/visual_detail.html' %}
+{% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  {{ block.super }}
+  <h2>{{object}}</h2>
   {% include "hawc/_delete_block.html" with name="visualization" notes="This will delete the current visualization, which cannot be recovered." %}
 {% endblock content %}

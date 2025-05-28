@@ -6,7 +6,7 @@
 
 {% block content %}
   <div class='d-flex'>
-    <h2>{{object.title}}</h2>
+    <h2>{% debug_badge object.id %}{{object.title}}</h2>
     {% include "assessment/fragments/label_indicators.html" %}
     {% include "common/unpublished_badge.html" %}
     {% if obj_perms.edit %}

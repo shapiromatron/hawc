@@ -56,9 +56,42 @@ class TestVisual:
         assert isinstance(df, pd.DataFrame)
         assert not df.empty
 
+    def test_data_df_dpq(self):
+        obj = models.Visual.objects.filter(
+            visual_type=constants.VisualType.DATA_PIVOT_QUERY,
+            evidence_type=constants.StudyType.BIOASSAY,
+            prefilters__export_style=constants.ExportStyle.EXPORT_ENDPOINT,
+        ).first()
+        export = obj._data_df_dpq()
+        assert export.df.shape[0] > 0
 
-@pytest.mark.django_db
-class TestDataPivot:
-    def test_clean(self):
-        obj = models.DataPivotQuery.objects.get(id=1)
-        obj.clean()
+        obj = models.Visual.objects.filter(
+            visual_type=constants.VisualType.DATA_PIVOT_QUERY,
+            evidence_type=constants.StudyType.BIOASSAY,
+            prefilters__export_style=constants.ExportStyle.EXPORT_GROUP,
+        ).first()
+        export = obj._data_df_dpq()
+        assert export.df.shape[0] > 0
+
+        obj = models.Visual.objects.filter(
+            visual_type=constants.VisualType.DATA_PIVOT_QUERY,
+            evidence_type=constants.StudyType.EPI,
+        ).first()
+        export = obj._data_df_dpq()
+        assert export.df.shape[0] > 0
+
+        obj = models.Visual.objects.filter(
+            visual_type=constants.VisualType.DATA_PIVOT_QUERY,
+            evidence_type=constants.StudyType.IN_VITRO,
+            prefilters__export_style=constants.ExportStyle.EXPORT_ENDPOINT,
+        ).first()
+        export = obj._data_df_dpq()
+        assert export.df.shape[0] > 0
+
+        obj = models.Visual.objects.filter(
+            visual_type=constants.VisualType.DATA_PIVOT_QUERY,
+            evidence_type=constants.StudyType.IN_VITRO,
+            prefilters__export_style=constants.ExportStyle.EXPORT_GROUP,
+        ).first()
+        export = obj._data_df_dpq()
+        assert export.df.shape[0] > 0

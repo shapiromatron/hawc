@@ -8,16 +8,16 @@
 
 {% block content %}
   <div class="d-flex">
-    <h2>{{object}}</h2>
+    <h2>{% debug_badge object.id %}{{object}}</h2>
     {% include "assessment/fragments/label_indicators.html" %}
     {% include "common/unpublished_badge.html" %}
     {% actions %}
-      <a class="dropdown-item" href="{{object.get_download_url|safe}}?format=xlsx">Download data file</a>
+      <a class="dropdown-item" href="{{object.get_data_url}}?format=xlsx">Download data file</a>
       {% if obj_perms.edit %}
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="{% url 'summary:dp_update' assessment.pk object.slug %}">Edit display settings</a>
-        <a class="dropdown-item" href="{% if object.datapivotquery %}{% url 'summary:dp_query-update' assessment.pk object.slug %}{% else %}{% url 'summary:dp_file-update' assessment.pk object.slug %}{% endif %}">Edit other settings</a>
-        <a class="dropdown-item" href="{% url 'summary:dp_delete' assessment.pk object.slug %}">Delete Pivot</a>
+        <a class="dropdown-item" href="{{ object.get_dp_update_settings }}">Edit display settings</a>
+        <a class="dropdown-item" href="{{ object.get_update_url }}">Edit other settings</a>
+        <a class="dropdown-item" href="{{ object.get_delete_url }}">Delete Pivot</a>
         {% include "assessment/components/label_modal_button.html" %}
       {% endif %}
     {% endactions %}

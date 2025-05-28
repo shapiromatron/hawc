@@ -76,9 +76,9 @@ class BaseVisualForm {
         var self = this,
             form = $("form").serialize();
 
-        if (this.isSynching) return;
+        if (this.isSyncing) return;
         this.dataSynced = false;
-        this.isSynching = true;
+        this.isSyncing = true;
         $.post(this.config.preview_url, form, function(d) {
             self.data = d;
             if (self.afterGetDataHook) self.afterGetDataHook(d);
@@ -89,7 +89,7 @@ class BaseVisualForm {
                 );
             })
             .always(function() {
-                self.isSynching = false;
+                self.isSyncing = false;
                 self.dataSynced = true;
                 $("#preview, #settings").trigger("dataSynced");
             });

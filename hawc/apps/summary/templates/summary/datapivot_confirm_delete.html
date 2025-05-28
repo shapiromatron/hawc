@@ -1,6 +1,0 @@
-{% extends 'summary/datapivot_detail.html' %}
-
-{% block dp_content %}
-  {{ block.super }}
-  {% include "hawc/_delete_block.html" with name="data pivot" notes="All data pivot settings will be removed." %}
-{% endblock dp_content %}

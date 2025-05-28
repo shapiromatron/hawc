@@ -61,6 +61,7 @@ Client tutorials for common operations are below:
 #### [2025-1](https://pypi.org/project/hawc-client/2025.1/) (TBD)
 
 * Add `unpublished` parameter to bmd dataset download
+* Remove data pivot API endpoints; all behaviors can be accomplished using the visual API
 
 #### [2024-4](https://pypi.org/project/hawc-client/2024.4/) (January 2025)
 
