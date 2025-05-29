@@ -10,20 +10,19 @@ Minimum hardware requirements:
 Software requirements:
 
 - docker and docker compose
-- [fabric](http://www.fabfile.org/) is used for (semi) automated deployment; contact if you're interested and we can share ...
+- [fabric](http://www.fabfile.org/) is used for deployment scripts for a docker compose deploy; contact if you're interested and we can share ...
 
-HAWC has been deployed in the past on a bare-VM, using containers with docker-compose (recommended), on AWS with RDS, and in kubernetes. If you're looking for discussion deployment options, contact us!
+HAWC has been deployed in the past on a virtual machine, using containers with docker compose, on AWS with RDS, and in kubernetes. If you're looking for discussion regarding deployment options, please contact us!
 
 ## Build and deploy
 
-Build docker containers which can be deployed. These can be pushed to a container registry or
-other approaches for sharing with the deployment target:
+Build docker containers which can be deployed. These can be pushed to a container registry or other approaches for sharing with the deployment target:
 
 ```bash
 # build containers (in the hawc development environment)
 source venv/bin/activate
 poe build
-docker-compose -f compose/dc-build.yml --project-directory . build
+docker compose -f compose/dc-build.yml --project-directory . build
 ```
 
 To test-deploy the containers on your development computer:
