@@ -6,7 +6,6 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
-from django.utils import timezone
 from docx import Document as create_document
 from plotly.graph_objs._figure import Figure
 from plotly.io import from_json
@@ -21,13 +20,7 @@ from ..animal.exports import EndpointFlatDataPivot, EndpointGroupFlatDataPivot
 from ..animal.models import Endpoint
 from ..assessment.constants import EpiVersion, RobName
 from ..assessment.models import Assessment, BaseEndpoint, DoseUnits, LabeledItem
-from ..common.helper import (
-    FlatExport,
-    PydanticToDjangoError,
-    ReportExport,
-    SerializerHelper,
-    tryParseInt,
-)
+from ..common.helper import FlatExport, PydanticToDjangoError, ReportExport
 from ..common.validators import validate_html_tags, validate_hyperlinks
 from ..eco.exports import EcoFlatComplete
 from ..epi.exports import OutcomeDataPivot
@@ -36,9 +29,9 @@ from ..epiv2.exports import EpiFlatComplete
 from ..invitro import exports as ivexports
 from ..lit.models import Reference, ReferenceFilterTag, Search
 from ..riskofbias.models import RiskOfBiasScore
-from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from ..study.models import Study
 from . import constants, managers, prefilters
+from .actions.rob import get_rob_visual_form_data
 
 logger = logging.getLogger(__name__)
 
@@ -193,8 +186,6 @@ class HeatmapDatasets(PydanticModel):
 
 class Visual(models.Model):
     objects = managers.VisualManager()
-
-    FAKE_INITIAL_ID = -1
 
     title = models.CharField(max_length=128)
     slug = models.SlugField(
@@ -448,28 +439,17 @@ class Visual(models.Model):
             + "?action=venn_reference_list",
         }
 
+    def get_rob_data(self) -> dict:
+        return get_rob_visual_form_data(
+            assessment_id=self.assessment_id,
+            study_type=constants.StudyType(self.evidence_type),
+        )
+
     def get_data(self) -> dict:
         """Get data needed to display Visual."""
         match self.visual_type:
             case constants.VisualType.PRISMA:
                 return self.get_prisma_data()
-            case _:
-                return {}
-
-    def update_config(self) -> dict:
-        """
-        Configuration required to create/update a visual.
-
-        This visual may be a mock instance which has not yet been saved to the database.
-        """
-        match self.visual_type:
-            case constants.VisualType.PRISMA:
-                return dict(
-                    settings=self.settings,
-                    api_data_url=reverse(
-                        "summary:api:assessment-json-data", args=(self.assessment.id,)
-                    ),
-                )
             case _:
                 return {}
 
@@ -484,45 +464,20 @@ class Visual(models.Model):
             case _:
                 return {}
 
-    @staticmethod
-    def get_dose_units():
-        return DoseUnits.objects.json_all()
-
-    def get_json(self, json_encode=True):
-        return SerializerHelper.get_serialized(self, json=json_encode)
-
     def get_filterset_class(self):
         return prefilters.get_prefilter_cls(self.visual_type, self.evidence_type, self.assessment)
 
     def get_filterset(self, data, assessment, **kwargs):
         return self.get_filterset_class()(data=data, assessment=assessment, **kwargs)
 
-    def get_request_prefilters(self, request):
-        # find all keys that start with "prefilters-" prefix
-        prefix = "prefilters-"
-        return {
-            key[len(prefix) :]: value
-            for key, value in request.POST.lists()
-            if key.startswith(prefix)
-        }
-
-    def get_endpoints(self, request=None) -> models.QuerySet[Endpoint]:
+    def get_endpoints(self) -> models.QuerySet[Endpoint]:
         if self.visual_type == constants.VisualType.BIOASSAY_AGGREGATION:
-            ids = (
-                request.POST.getlist("endpoints")
-                if request
-                else self.endpoints.values_list("id", flat=True)
+            return Endpoint.objects.assessment_qs(self.assessment).filter(
+                id__in=self.endpoints.values_list("id", flat=True)
             )
-            return Endpoint.objects.assessment_qs(self.assessment).filter(id__in=ids)
-
         elif self.visual_type == constants.VisualType.BIOASSAY_CROSSVIEW:
-            dose_units_id = (
-                tryParseInt(request.POST.get("dose_units"), -1) if request else self.dose_units_id
-            )
-            filters = {"animal_group__dosing_regime__doses__dose_units_id": dose_units_id}
-
-            prefilters = self.get_request_prefilters(request) if request else self.prefilters
-            fs = self.get_filterset(prefilters, self.assessment)
+            filters = {"animal_group__dosing_regime__doses__dose_units_id": self.dose_units_id}
+            fs = self.get_filterset(self.prefilters, self.assessment)
             form = fs.form
             fs.set_passthrough_options(form)
             fs.form.is_valid()
@@ -530,7 +485,7 @@ class Visual(models.Model):
 
         return Endpoint.objects.none()
 
-    def get_studies(self, request=None) -> list[Study]:
+    def get_studies(self) -> models.QuerySet[Study]:
         """
         If there are endpoint-level prefilters, we get all studies which
         match this criteria. Otherwise, we use the M2M list of studies attached
@@ -542,48 +497,13 @@ class Visual(models.Model):
             constants.VisualType.ROB_HEATMAP,
             constants.VisualType.ROB_BARCHART,
         ]:
-            prefilters = self.get_request_prefilters(request) if request else self.prefilters
-            fs = self.get_filterset(prefilters, self.assessment)
+            fs = self.get_filterset(self.prefilters, self.assessment)
             form = fs.form
             fs.set_passthrough_options(form)
             fs.form.is_valid()
             qs = fs.qs
 
         return qs
-
-    def get_editing_dataset(self, request):
-        # Generate a pseudo-return when editing or creating a dataset.
-        # Do not include the settings field; this will be set from the
-        # input-form. Should approximately mirror the Visual API from rest-framework.
-
-        dose_units = None
-        try:
-            dose_units = int(request.POST.get("dose_units"))
-        except (TypeError, ValueError):
-            # TypeError if dose_units is None; ValueError if dose_units is ""
-            pass
-
-        return {
-            "assessment": self.assessment_id,
-            "assessment_rob_name": self.assessment.get_rob_name_display(),
-            "title": request.POST.get("title"),
-            "slug": request.POST.get("slug"),
-            "caption": request.POST.get("caption"),
-            "dose_units": dose_units,
-            "created": timezone.now().isoformat(),
-            "last_updated": timezone.now().isoformat(),
-            "rob_settings": AssessmentRiskOfBiasSerializer(self.assessment).data,
-            "endpoints": [
-                SerializerHelper.get_serialized(e, json=False) for e in self.get_endpoints(request)
-            ],
-            "studies": [
-                SerializerHelper.get_serialized(s, json=False) for s in self.get_studies(request)
-            ],
-        }
-
-    def get_rob_visual_type_display(self, value):
-        rob_name = self.assessment.get_rob_name_display().lower()
-        return value.replace("risk of bias", rob_name)
 
     def get_plotly_from_json(self) -> Figure:
         if self.visual_type != constants.VisualType.PLOTLY:

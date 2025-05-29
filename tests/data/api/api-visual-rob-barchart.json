@@ -196,6 +196,7 @@
     "row_height": 30,
     "show_legend": true,
     "show_na_legend": true,
+    "show_nr_legend": false,
     "show_values": true,
     "title": "Title",
     "xAxisLabel": "Percent of studies",

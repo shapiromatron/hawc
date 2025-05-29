@@ -18844,7 +18844,7 @@
     prefilters:
       studies:
       - 1
-    settings: {"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":400,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[1,2],"show_legend":true,"show_na_legend":true,"legend_x":640,"legend_y":10}
+    settings: {"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":400,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[1,2],"show_legend":true,"show_na_legend":true,"show_nr_legend":false,"legend_x":640,"legend_y":10}
     caption: ''
     published: false
     created: 2020-02-27 20:34:17.606164+00:00
@@ -18880,7 +18880,7 @@
     prefilters:
       published_only: true
     settings: {"title":"Title","xAxisLabel":"Dose (<add units>)","yAxisLabel":"%
-      change from control (continuous), % incidence (dichotomous)","width":1100,"height":600,"inner_width":940,"inner_height":520,"padding_left":75,"padding_top":45,"dose_isLog":true,"dose_range":"","response_range":"","title_x":0,"title_y":0,"xlabel_x":0,"xlabel_y":0,"ylabel_x":0,"ylabel_y":0,"filters":[{"name":"study","headerName":"Study","allValues":true,"values":null,"columns":1,"x":null,"y":null}],"reflines_dose":[{"value":null,"title":"","style":"base"}],"refranges_dose":[{"lower":null,"upper":null,"title":"","style":"base"}],"reflines_response":[{"value":null,"title":"","style":"base"}],"refranges_response":[{"lower":null,"upper":null,"title":"","style":"base"}],"labels":[{"caption":"","style":"base","max_width":null,"x":null,"y":null}],"colorBase":"#cccccc","colorHover":"#ff4040","colorSelected":"#6495ed","colorFilters":[],"colorFilterLegend":true,"colorFilterLegendLabel":"Color
+      change from control (continuous), % incidence (dichotomous)","width":1100,"height":600,"inner_width":940,"inner_height":520,"padding_left":75,"padding_top":45,"dose_isLog":true,"dose_range":"","response_range":"","title_x":0,"title_y":0,"xlabel_x":0,"xlabel_y":0,"ylabel_x":0,"ylabel_y":0,"filters":[{"name":"study","headerName":"Study","allValues":true,"values":[],"column":1,"x":0,"y":25}],"reflines_dose":[],"refranges_dose":[],"reflines_response":[],"refranges_response":[],"labels":[],"colorBase":"#cccccc","colorHover":"#ff4040","colorSelected":"#6495ed","colorFilters":[],"colorFilterLegend":true,"colorFilterLegendLabel":"Color
       filters","colorFilterLegendX":0,"colorFilterLegendY":0,"endpointFilters":[],"endpointFilterLogic":"and"}
     caption: <p>example</p>
     published: true
@@ -18899,7 +18899,7 @@
     prefilters:
       studies:
       - 7
-    settings: {"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":300,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"legend_x":574,"legend_y":10}
+    settings: {"title":"Title","xAxisLabel":"Percent of studies","yAxisLabel":"","plot_width":400,"row_height":30,"padding_top":40,"padding_right":300,"padding_bottom":40,"padding_left":70,"show_values":true,"included_metrics":[14,15],"show_legend":true,"show_na_legend":true,"show_nr_legend":false,"legend_x":574,"legend_y":10}
     caption: <p>caption</p>
     published: true
     created: 2020-05-08 19:37:44.283008+00:00

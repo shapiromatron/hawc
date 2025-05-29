@@ -89,12 +89,7 @@ def add_csrf(obj: dict, request: HttpRequest) -> dict:
 
 
 def create_object_log(
-    verb: str,
-    obj,
-    assessment_id: int | None,
-    user_id: int,
-    log_message: str = "",
-    use_reversion: bool = True,
+    verb: str, obj, assessment_id: int | None, user_id: int, log_message: str = ""
 ):
     """
     Create an object log for a given object and associate a reversion instance if it exists.
@@ -107,11 +102,10 @@ def create_object_log(
         assessment_id (int|None): the object assessment id
         user_id (int): the user id
         log_message (str): override for custom message
-        use_reversion (bool): use reversion data for object log
     """
     # Log action
+    meta = obj._meta
     if not log_message:
-        meta = obj._meta
         log_message = f'{verb} {meta.app_label}.{meta.model_name} #{obj.id}: "{obj}"'
     log = Log.objects.create(
         assessment_id=assessment_id,
@@ -120,14 +114,11 @@ def create_object_log(
         content_object=obj,
     )
     # Associate log with reversion
-    if use_reversion:
-        comment = (
-            f"{reversion.get_comment()}, Log {log.id}"
-            if reversion.get_comment()
-            else f"Log {log.id}"
-        )
-        audit_logger.info(f"[{log.id}] assessment-{assessment_id} user-{user_id} {log_message}")
-        reversion.set_comment(comment)
+    comment = (
+        f"{reversion.get_comment()}, Log {log.id}" if reversion.get_comment() else f"Log {log.id}"
+    )
+    audit_logger.info(f"[{log.id}] assessment-{assessment_id} user-{user_id} {log_message}")
+    reversion.set_comment(comment)
 
 
 def bulk_create_object_log(verb: str, obj_list: Iterable[Any], user_id: int):
@@ -475,22 +466,28 @@ class BaseCreate(
         self.parent = self.get_object(object=parent)  # call for assessment permissions check
         return super().dispatch(*args, **kwargs)
 
+    def _get_initial(self, filters: dict | None = None) -> dict | None:
+        filters = filters or {}
+        pk = tryParseInt(self.request.GET.get("initial"), default=-1)
+        if pk > 0:
+            filters.update(pk=pk)
+            initial = self.model.objects.filter(**filters).first()
+            if initial is None:
+                return None
+            visible_assessment = (
+                Assessment.objects.all()
+                .user_can_view(self.request.user)
+                .filter(id=initial.get_assessment().id)
+                .exists()
+            )
+            if initial and visible_assessment:
+                return model_to_dict(initial)
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-
-        # all inputs require a parent field
         kwargs["parent"] = self.parent
-
-        # check if we have an object-template to be used
-        pk = tryParseInt(self.request.GET.get("initial"), -1)
-
-        if pk > 0:
-            initial = self.model.objects.filter(pk=pk).first()
-            if initial and initial.get_assessment() in Assessment.objects.all().user_can_view(
-                self.request.user
-            ):
-                kwargs["initial"] = model_to_dict(initial)
-
+        if initial := self._get_initial():
+            kwargs["initial"] = initial
         return kwargs
 
     def get_context_data(self, **kwargs):

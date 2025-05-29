@@ -320,26 +320,56 @@ class TestSummaryAssessmentViewSet:
         key = f"api-summary-heatmap-datasets-{db_keys.assessment_working}.json"
         check_api_json_data(data, key, rewrite_data_files)
 
-    def test_json_data(self, db_keys, rewrite_data_files):
+    def test_json_data_permissions(self, db_keys):
         anon_client = get_client(api=True)
         rev_client = get_client("reviewer", api=True)
         team_client = get_client("team", api=True)
 
         url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
-        payload = {"config": {"visual_type": 9}}
+        payload = {"visual_type": 9}
 
         assert anon_client.post(url, payload, format="json").status_code == 403
         assert rev_client.post(url, payload, format="json").status_code == 403
+        resp = team_client.post(url, payload, format="json")
+        assert resp.status_code == 200
 
-        for bad_payload in [{}, {"config": "TEST"}, {"config": {"visual_type": "TEST"}}]:
+    def test_json_data_bad_data(self, db_keys):
+        team_client = get_client("team", api=True)
+        url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
+        for bad_payload in [{}, {"visual_type": "TEST"}, {"visual_type": {}}]:
             resp = team_client.post(url, bad_payload, format="json")
             assert resp.status_code == 400
 
+    def test_json_data_prisma(self, db_keys):
+        team_client = get_client("team", api=True)
+        url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
+
+        payload = {"visual_type": 9}
         resp = team_client.post(url, payload, format="json")
         assert resp.status_code == 200
-        resp_data = resp.json()
-        key = f"api-summary-assessment-visual-json-{db_keys.assessment_working}.json"
-        check_api_json_data(resp_data, key, rewrite_data_files)
+        assert len(resp.json()) > 0
+
+    def test_json_data_crossview(self, db_keys):
+        team_client = get_client("team", api=True)
+        url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
+
+        payload = {"visual_type": 1, "data": {}}
+        resp = team_client.post(url, payload, format="json")
+        assert resp.status_code == 400
+
+        payload = {"visual_type": 1, "dose_units": 1, "settings": {"hello": "world"}}
+        resp = team_client.post(url, payload, format="json")
+        assert resp.status_code == 200
+        assert len(resp.json()) > 0
+
+    def test_json_data_rob(self, db_keys):
+        team_client = get_client("team", api=True)
+        url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
+
+        payload = {"visual_type": 2, "evidence_type": 0, "settings": {"hello": "world"}}
+        resp = team_client.post(url, payload, format="json")
+        assert resp.status_code == 200
+        assert len(resp.json()) > 0
 
 
 @pytest.mark.django_db

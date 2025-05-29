@@ -72,7 +72,7 @@ def load_approach(assessment_id: int, approach: RobApproach, user_id: int | None
 @transaction.atomic
 def clone_approach(
     dest_assessment: Assessment, src_assessment: Assessment, user_id: int | None = None
-) -> dict[int, int]:
+):
     """
     Clone approach from one assessment to another.
     """
@@ -98,17 +98,12 @@ def clone_approach(
     dest_rob_settings.save()
 
     # copy domains and metrics to assessment
-    metric_map = {}
     for domain in src_assessment.rob_domains.all():
         metrics = list(domain.metrics.all())  # force evaluation
         domain.id = None
         domain.assessment = dest_assessment
         domain.save()
         for metric in metrics:
-            src_metric_id = metric.id
             metric.id = None
             metric.domain = domain
             metric.save()
-            metric_map[src_metric_id] = metric.id
-
-    return metric_map

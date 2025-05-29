@@ -14,26 +14,23 @@ from hawc.apps.summary.models import Visual
 
 @pytest.mark.django_db
 class TestExternalSiteForm:
-    def valid_data(self):
+    def valid_data(self, db_keys) -> dict:
         return dict(
-            title="title",
-            slug="slug",
-            description="hi",
-            external_url="https://public.tableau.com/views/foo1/foo2?:display_count=y&:origin=viz_share_link",
-            filters="[]",
+            parent=Assessment.objects.get(id=db_keys.assessment_working),
+            evidence_type=StudyType.OTHER,
+            visual_type=VisualType.EXTERNAL_SITE,
+            data=dict(
+                title="title",
+                slug="slug",
+                description="hi",
+                external_url="https://public.tableau.com/views/foo1/foo2?:display_count=y&:origin=viz_share_link",
+                filters="[]",
+            ),
         )
 
     def test_success(self, db_keys):
-        assessment = Assessment.objects.get(id=db_keys.assessment_working)
-        visual_type = VisualType.EXTERNAL_SITE
-
-        data = self.valid_data()
-        form = forms.ExternalSiteForm(
-            data=data,
-            parent=assessment,
-            visual_type=visual_type,
-            evidence_type=StudyType.OTHER,
-        )
+        form_kw = self.valid_data(db_keys)
+        form = forms.ExternalSiteForm(**form_kw)
         assert form.is_valid()
         assert form.cleaned_data == {
             "title": "title",
@@ -49,24 +46,18 @@ class TestExternalSiteForm:
         instance = form.save()
 
         # check saved data loads on initial form
-        form = forms.ExternalSiteForm(
-            instance=instance,
-            data=data,
-        )
+        form = forms.ExternalSiteForm(instance=instance, **form_kw)
         assert form.fields["external_url"].initial == "https://public.tableau.com/views/foo1/foo2"
 
     def test_urls(self, db_keys):
-        assessment = Assessment.objects.get(id=db_keys.assessment_working)
-        visual_type = VisualType.EXTERNAL_SITE
-        data = self.valid_data()
-        # make sure our site allowlist works
+        form_kw = self.valid_data(db_keys)
         for url in [
             "google.com",
             "http://google.com",
             "https://google.com",
         ]:
-            data["external_url"] = url
-            form = forms.ExternalSiteForm(data=data, parent=assessment, visual_type=visual_type)
+            form_kw["data"]["external_url"] = url
+            form = forms.ExternalSiteForm(**form_kw)
             assert form.is_valid() is False
             assert "not on the list of accepted domains" in form.errors["external_url"][0]
 
@@ -75,37 +66,25 @@ class TestExternalSiteForm:
             "public.tableau.com",
             "public.tableau.com/",
         ]:
-            data["external_url"] = url
-            form = forms.ExternalSiteForm(data=data, parent=assessment, visual_type=visual_type)
+            form_kw["data"]["external_url"] = url
+            form = forms.ExternalSiteForm(**form_kw)
             assert form.is_valid() is False
             assert "A URL path must be specified." == form.errors["external_url"][0]
 
     def test_filters(self, db_keys):
-        assessment = Assessment.objects.get(id=db_keys.assessment_working)
-        visual_type = VisualType.EXTERNAL_SITE
-        data = self.valid_data()
-
+        form_kw = self.valid_data(db_keys)
         # test valid filters
         for filters in ["[]", '[{"field":"hi", "value":"ho"}]']:
-            data["filters"] = filters
-            form = forms.ExternalSiteForm(data=data, parent=assessment, visual_type=visual_type)
+            form_kw["data"]["filters"] = filters
+            form = forms.ExternalSiteForm(**form_kw)
             assert form.is_valid() is True
 
         # test invalid filters
         for filters in ["[123]", '[{"field":"hi"}]']:
-            data["filters"] = filters
-            form = forms.ExternalSiteForm(data=data, parent=assessment, visual_type=visual_type)
+            form_kw["data"]["filters"] = filters
+            form = forms.ExternalSiteForm(**form_kw)
             assert form.is_valid() is False
             assert "filters" in form.errors
-
-
-@pytest.fixture
-def valid_plotly_data() -> dict:
-    return {
-        "title": "title",
-        "slug": "slug",
-        "settings": '{"data": [{"orientation": "h", "x": [1, 2, 3], "xaxis": "x", "y": [0, 1, 2], "yaxis": "y", "type": "bar"}], "layout": {"title":{"text":"test"}}}',
-    }
 
 
 @pytest.mark.django_db
@@ -178,11 +157,23 @@ class TestTagtreeForm:
         assert form.fields["width"].initial == 999
 
 
+@pytest.fixture
+def valid_plotly_data() -> dict:
+    return {
+        "title": "title",
+        "slug": "slug",
+        "settings": '{"data": [{"orientation": "h", "x": [1, 2, 3], "xaxis": "x", "y": [0, 1, 2], "yaxis": "y", "type": "bar"}], "layout": {"title":{"text":"test"}}}',
+    }
+
+
 @pytest.mark.django_db
 class TestPlotlyVisualForm:
     def _build_form(self, data: dict) -> forms.PlotlyVisualForm:
         return forms.PlotlyVisualForm(
-            parent=Assessment.objects.first(), visual_type=VisualType.PLOTLY, data=data
+            parent=Assessment.objects.first(),
+            evidence_type=StudyType.OTHER,
+            visual_type=VisualType.PLOTLY,
+            data=data,
         )
 
     def test_valid(self, valid_plotly_data: dict):
@@ -226,38 +217,40 @@ def create_image(
     return data.getvalue()
 
 
+def valid_image_data(db_keys, imgsize: tuple[int, int] = (2000, 2000)) -> dict:
+    file = SimpleUploadedFile("file.png", create_image(imgsize), content_type="image/png")
+    return dict(
+        parent=Assessment.objects.get(id=db_keys.assessment_working),
+        data={"title": "title", "slug": "slug", "caption": "hi", "settings-alt_text": "hi"},
+        files={"image": file},
+        visual_type=VisualType.IMAGE,
+        evidence_type=StudyType.OTHER,
+    )
+
+
 @pytest.mark.django_db
 class TestImageVisualForm:
     def test_valid(self, db_keys):
-        assessment = Assessment.objects.get(id=db_keys.assessment_working)
-        visual_type = VisualType.IMAGE
-        file = SimpleUploadedFile("file.png", create_image((2000, 2000)), content_type="image/png")
-        data = dict(title="title", slug="slug", caption="hi")
-        data.update({"settings-alt_text": "hi"})
-        form = forms.ImageVisualForm(
-            data=data, files={"image": file}, parent=assessment, visual_type=visual_type
-        )
+        form_kw = valid_image_data(db_keys)
+        form = forms.ImageVisualForm(**form_kw)
         assert form.is_valid()
 
     def test_clean_image(self, db_keys):
-        assessment = Assessment.objects.get(id=db_keys.assessment_working)
-        visual_type = VisualType.IMAGE
+        form_kw = valid_image_data(db_keys)
 
         # wrong extension
-        file = SimpleUploadedFile("file.txt", create_image((2000, 2000)), content_type="image/png")
-        data = dict(title="title", slug="slug", caption="hi")
-        form = forms.ImageVisualForm(
-            data=data, files={"image": file}, parent=assessment, visual_type=visual_type
+        form_kw["files"]["image"] = SimpleUploadedFile(
+            "file.txt", create_image((2000, 2000)), content_type="image/png"
         )
+        form = forms.ImageVisualForm(**form_kw)
         assert form.is_valid() is False
         assert "File extension “txt” is not allowed." in form.errors["image"][0]
 
         # wrong size
-        file = SimpleUploadedFile("file.png", create_image((5, 5)), content_type="image/png")
-        data = dict(title="title", slug="slug", caption="hi")
-        form = forms.ImageVisualForm(
-            data=data, files={"image": file}, parent=assessment, visual_type=visual_type
+        form_kw["files"]["image"] = SimpleUploadedFile(
+            "file.png", create_image((5, 5)), content_type="image/png"
         )
+        form = forms.ImageVisualForm(**form_kw)
         assert form.is_valid() is False
         assert "Image must be >10KB and <3 MB in size." in form.errors["image"][0]
 
@@ -268,6 +261,7 @@ class TestDataPivotDatasetForm:
         form = forms.DataPivotDatasetForm(
             parent=Assessment.objects.get(id=db_keys.assessment_final),
             visual_type=VisualType.DATA_PIVOT_FILE,
+            evidence_type=StudyType.OTHER,
             data={
                 "title": "title",
                 "slug": "title",
