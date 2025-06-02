@@ -8,9 +8,7 @@ import {createExploratoryHeatmapStore} from "../stores";
 import App from "./App";
 
 const exploratoryHeatmapFormAppStartup = function(el, config, djangoForm) {
-    const store = createExploratoryHeatmapStore(config);
-    store.base.setInitialData();
-    store.base.setDjangoForm(djangoForm);
+    const store = createExploratoryHeatmapStore(config, djangoForm);
     store.subclass.getDatasetOptions();
     ReactDOM.render(
         <Provider store={store}>

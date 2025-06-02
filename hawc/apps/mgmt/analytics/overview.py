@@ -16,7 +16,7 @@ from ...riskofbias import constants as robc
 from ...riskofbias.models import RiskOfBias, RiskOfBiasScore
 from ...study.models import Study
 from ...summary import constants as sc
-from ...summary.models import DataPivot, SummaryTable, Visual
+from ...summary.models import SummaryTable, Visual
 from .common import empty_plot, update_xscale
 
 
@@ -271,8 +271,6 @@ def experiment_type_plot(assessment_id):
 
 # summary data
 def summary_counts(assessment_id):
-    dp_count = DataPivot.objects.assessment_qs(assessment_id).count()
-
     # visual by type
     types = (
         Visual.objects.assessment_qs(assessment_id)
@@ -281,8 +279,6 @@ def summary_counts(assessment_id):
         .order_by("visual_type")
     )
     data = []
-    if dp_count:
-        data.append(("Data Pivot", dp_count))
     for type, n in list(types):
         data.append((sc.VisualType(type).label.title(), n))
     df = pd.DataFrame(data=data, columns=["type", "count"]).sort_values("count")
@@ -311,7 +307,6 @@ def summary_counts(assessment_id):
 
     return {
         "visual": Visual.objects.assessment_qs(assessment_id).count(),
-        "datapivot": dp_count,
         "table": SummaryTable.objects.assessment_qs(assessment_id).count(),
         "visual_barchart": visual_barchart,
         "table_barchart": table_barchart,

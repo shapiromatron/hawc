@@ -39,9 +39,9 @@ def total_time_spent(df: pd.DataFrame) -> str:
     if hr < 40:
         return f"{hr:,.1f} hours"
     elif hr < 200:
-        return f"{hr/8:,.1f} work days"
+        return f"{hr / 8:,.1f} work days"
     else:
-        return f"{hr/8/5:,.1f} work weeks"
+        return f"{hr / 8 / 5:,.1f} work weeks"
 
 
 def time_spent_summary_df(df: pd.DataFrame) -> pd.DataFrame:

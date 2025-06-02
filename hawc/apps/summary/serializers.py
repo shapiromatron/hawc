@@ -6,50 +6,6 @@ from ..riskofbias.serializers import AssessmentRiskOfBiasSerializer
 from . import constants, models
 
 
-class CollectionDataPivotSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source="get_absolute_url")
-    visual_type = serializers.CharField(source="get_visual_type_display")
-
-    class Meta:
-        model = models.DataPivot
-        fields = (
-            "id",
-            "slug",
-            "title",
-            "url",
-            "visual_type",
-            "caption",
-            "published",
-            "created",
-            "last_updated",
-        )
-
-
-class DataPivotSerializer(serializers.ModelSerializer):
-    url = serializers.CharField(source="get_absolute_url", read_only=True)
-    data_url = serializers.CharField(source="get_data_url", read_only=True)
-    download_url = serializers.CharField(source="get_download_url", read_only=True)
-
-    def to_representation(self, instance):
-        ret = super().to_representation(instance)
-        ret["visual_type"] = instance.get_visual_type_display()
-        return ret
-
-    class Meta:
-        model = models.DataPivot
-        fields = "__all__"
-
-
-class DataPivotQuerySerializer(DataPivotSerializer):
-    preferred_units = serializers.ListField(
-        allow_empty=True, child=serializers.IntegerField(min_value=0)
-    )
-
-    class Meta:
-        model = models.DataPivotQuery
-        fields = "__all__"
-
-
 class CollectionVisualSerializer(serializers.ModelSerializer):
     url = serializers.CharField(source="get_absolute_url")
     visual_type = serializers.CharField(source="get_visual_type_display")
@@ -64,7 +20,11 @@ class VisualSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
 
-        if instance.id != instance.FAKE_INITIAL_ID:
+        ret["assessment_rob_name"] = instance.assessment.get_rob_name_display()
+        ret["assessment_name"] = str(instance.assessment)
+        ret["visual_type"] = instance.get_visual_type_display()
+
+        if instance.id:
             ret["url"] = instance.get_absolute_url()
             ret["url_update"] = instance.get_update_url()
             ret["url_delete"] = instance.get_delete_url()
@@ -78,8 +38,6 @@ class VisualSerializer(serializers.ModelSerializer):
         ]:
             ret["rob_settings"] = AssessmentRiskOfBiasSerializer(instance.assessment).data
 
-        ret["visual_type"] = instance.get_visual_type_display()
-
         ret["endpoints"] = [
             SerializerHelper.get_serialized(d, json=False) for d in instance.get_endpoints()
         ]
@@ -87,9 +45,6 @@ class VisualSerializer(serializers.ModelSerializer):
         ret["studies"] = [
             SerializerHelper.get_serialized(d, json=False) for d in instance.get_studies()
         ]
-
-        ret["assessment_rob_name"] = instance.assessment.get_rob_name_display()
-        ret["assessment_name"] = str(instance.assessment)
 
         return ret
 

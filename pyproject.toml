@@ -19,43 +19,43 @@ requires-python = ">=3.12"
 # see https://peps.python.org/pep-0440/#version-specifiers
 dependencies = [
   # web application
-  "Django~=5.1.4",
+  "Django~=5.1.8",
   "django-crispy-forms==2.3",
   "crispy-bootstrap4==2024.10",
   "django-filter==24.3",
   "django-redis==5.4.0",
   "django-reversion==5.1.0",
-  "django-autocomplete-light==3.11.0",
+  "django-autocomplete-light==3.12.1",
   "django-taggit==6.1.0",
   "django-treebeard==4.7.1",
-  "djangorestframework==3.15.2",
+  "djangorestframework==3.16.0",
   "django-webpack-loader==3.1.1",
   "uritemplate==4.1.1",
   "inflection==0.5.1",
   "pyyaml==6.0.2",
   "gunicorn==23.0.0",
-  "wagtail~=6.3.1",
+  "wagtail~=6.4.1",
   "wagtail-draftail-anchors==0.6.0",
   # tasks
-  "celery==5.4.0",
-  "billiard==4.2.0",
-  "kombu==5.3.7",
+  "celery==5.5.1",
+  "billiard==4.2.1",
+  "kombu==5.5.2",
   # utilities
   "jsonschema==4.23.0",
-  "lxml==5.3.0",
+  "lxml~=5.3.2",
   "psycopg2-binary==2.9.10",
   "redis==5.2.1",
   "requests==2.32.3",
-  "pydantic==2.10.4",
-  "nh3==0.2.20",
+  "pydantic~=2.11.3",
+  "nh3~=0.2.21",
   "tinycss2==1.4.0",
   # computational
-  "numpy==2.2.1",
+  "numpy~=2.2.4",
   "pandas==2.2.3",
   "openpyxl==3.1.5",
-  "jinja2==3.1.5",
-  "plotly==5.24.1",
-  "scipy==1.15.0",
+  "jinja2~=3.1.6",
+  "plotly==6.0.1",
+  "scipy~=1.15.2",
   "pybmds==24.1",
   # exports
   "rispy==0.9.0",
@@ -65,32 +65,31 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   # build
-  "flit==3.10.1",
-  "poethepoet~=0.32.1",
+  "flit==3.12.0",  # make sure to sync w/ [build-system]
+  "poethepoet~=0.33.1",
   # lint and formatting tools
-  "ruff==0.8.6",  # make sure to sync w/ pre-commit
+  "ruff==0.11.4",  # make sure to sync w/ pre-commit
   "djhtml==3.0.7",  # make sure to sync w/ pre-commit
-  "pre-commit==4.0.1",
+  "pre-commit==4.2.0",
   # django development
-  "django-debug-toolbar==4.4.6",
-  "django-browser-reload==1.17.0",
-  "django-extensions==3.2.3",
-  "faker==33.3.0",
+  "django-debug-toolbar~=5.1",
+  "django-browser-reload~=1.18",
+  "django-extensions~=4.0",
   # tests
-  "coverage==7.6.10",
-  "pytest==8.3.4",
-  "pytest-django==4.9.0",
+  "coverage~=7.8.0",
+  "pytest~=8.3.5",
+  "pytest-django~=4.11.1",
   "vcrpy==7.0.0",
   "pytest-recording==0.13.2",
-  "playwright==1.49.1",
-  "pytest-playwright==0.6.2",
+  "playwright~=1.51.0",
+  "pytest-playwright~=0.7.0",
 ]
 docs = [
-  "mkdocs-material==9.5.49",
+  "mkdocs-material~=9.6.11",
 ]
 prod = [
-  "django-anymail==12.0",
-  "sentry_sdk==2.19.2",
+  "django-anymail==13.0",
+  "sentry_sdk~=2.25.1",
 ]
 
 [project.scripts]
@@ -103,7 +102,7 @@ Source = "https://github.com/shapiromatron/hawc"
 
 # --- --- --- --- --- --- --- --- --- --- BUILD --- --- --- --- --- --- --- --- --- ---
 [build-system]
-requires = ["flit_core ~=3.9"]
+requires = ["flit_core ~=3.12"]
 build-backend = "flit_core.buildapi"
 
 [tool.flit.sdist]
@@ -164,7 +163,7 @@ omit = [
 ]
 
 [tool.coverage.report]
-fail_under=92.0
+fail_under=90.0  # TODO - lower until bioassay-v2 complete
 precision=1
 
 # --- --- --- --- --- --- --- --- --- --- TASKS --- --- --- --- --- --- --- --- --- ---

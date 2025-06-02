@@ -159,7 +159,7 @@ class Command(UnicodeCommand):
         fields = self.get_select_fields(qs.model)
         select_include = self.generate_select(fields, db_table)
         qry_start = "SELECT DISTINCT" if "DISTINCT" in qry else "SELECT"
-        qry = f"{qry_start} {select_include} {qry[qry.find(' FROM'):]}"
+        qry = f"{qry_start} {select_include} {qry[qry.find(' FROM') :]}"
         self.convert_copy(db_table, fields, qry)
 
         for m2m in model._meta.many_to_many:
