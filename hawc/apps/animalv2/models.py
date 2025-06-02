@@ -280,14 +280,14 @@ class DoseGroup(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("id",)
+
     def get_assessment(self):
         return self.treatment.get_assessment()
 
     def get_study(self):
         return self.treatment.get_study()
-
-    class Meta:
-        ordering = ("id",)
 
 
 class Endpoint(models.Model):
@@ -399,14 +399,14 @@ class ObservationTime(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("id",)
+
     def get_assessment(self):
         return self.endpoint.get_assessment()
 
     def get_study(self):
         return self.endpoint.get_study()
-
-    class Meta:
-        ordering = ("id",)
 
     def __str__(self):
         return (
@@ -464,7 +464,6 @@ class DataExtraction(models.Model):
     )
     dose_response_observations = models.TextField(help_text="TODO")
     result_details = models.TextField(help_text="TODO")
-
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -510,6 +509,9 @@ class DoseResponseGroupLevelData(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("id",)
+
     def get_assessment(self):
         return self.data_extraction.get_assessment()
 
@@ -527,9 +529,11 @@ class DoseResponseAnimalLevelData(models.Model):
     animal_id = models.CharField(max_length=128, blank=True, help_text="TODO")
     dose = models.CharField(max_length=128, help_text="TODO")
     response = models.FloatField()
-
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def get_assessment(self):
         return self.data_extraction.get_assessment()
