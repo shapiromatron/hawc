@@ -1,7 +1,4 @@
-from ..assessment.api import (
-    AssessmentEditViewSet,
-    EditPermissionsCheckMixin,
-)
+from ..assessment.api import AssessmentEditViewSet, EditPermissionsCheckMixin
 from . import models, serializers
 
 
