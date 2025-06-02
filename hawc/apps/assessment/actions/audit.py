@@ -73,30 +73,9 @@ class AssessmentAuditSerializer(PydanticDrfSerializer):
         # get assessment visuals
         visual_qs = versions_by_content_type("summary", "visual")
         visual_qs = versions_by_related_field("assessment", [self.assessment.pk], visual_qs)
-        # get assessment data pivots
-        data_pivot_qs = versions_by_content_type("summary", "datapivot")
-        data_pivot_qs = versions_by_related_field("assessment", [self.assessment.pk], data_pivot_qs)
-        # get data pivot uploads
-        data_pivot_upload_qs = versions_by_content_type("summary", "datapivotupload")
-        data_pivot_upload_qs = data_pivot_upload_qs.filter(
-            object_id__in=set(data_pivot_qs.values_list("object_id", flat=True))
-        )
-        # get data pivot queries
-        data_pivot_query_qs = versions_by_content_type("summary", "datapivotquery")
-        data_pivot_query_qs = data_pivot_query_qs.filter(
-            object_id__in=set(data_pivot_qs.values_list("object_id", flat=True))
-        )
 
         return (
-            assess_qs
-            | attach_qs
-            | dataset_qs
-            | dataset_revision_qs
-            | summary_table_qs
-            | visual_qs
-            | data_pivot_qs
-            | data_pivot_upload_qs
-            | data_pivot_query_qs
+            assess_qs | attach_qs | dataset_qs | dataset_revision_qs | summary_table_qs | visual_qs
         )
 
     def get_animal_queryset(self):

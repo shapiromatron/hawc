@@ -10,7 +10,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.mail import mail_admins
 from django.db import transaction
 from django.db.models import QuerySet
-from django.db.models.base import ModelBase
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
@@ -31,7 +30,6 @@ from ..common.helper import new_window_a
 from ..common.widgets import DateCheckboxInput
 from ..myuser.autocomplete import UserAutocomplete
 from ..study.autocomplete import StudyAutocomplete
-from ..summary import models as summary_models
 from ..vocab.constants import VocabularyNamespace
 from . import autocomplete, constants, models
 from .actions import search
@@ -128,7 +126,6 @@ class AssessmentForm(forms.ModelForm):
         helper.add_row("editable", 3, "col-md-4")
         helper.add_row("conflicts_of_interest", 2, "col-md-6")
         helper.add_create_btn("dtxsids", reverse("assessment:dtxsid_create"), "Add new DTXSID")
-        helper.attrs["novalidate"] = ""
         return helper
 
 
@@ -588,7 +585,6 @@ class SearchForm(forms.Form):
         choices=(
             ("study", "Studies"),
             ("visual", "Visuals"),
-            ("data-pivot", "Data Pivots"),
         ),
     )
     order_by = forms.ChoiceField(
@@ -606,14 +602,8 @@ class SearchForm(forms.Form):
     order_by_override = {
         ("visual", "name"): "title",
         ("visual", "-name"): "-title",
-        ("data-pivot", "name"): "title",
-        ("data-pivot", "-name"): "-title",
         ("study", "name"): "short_citation",
         ("study", "-name"): "-short_citation",
-    }
-    model_class: dict[str, ModelBase] = {
-        "visual": summary_models.Visual,
-        "data-pivot": summary_models.DataPivotQuery,
     }
 
     def __init__(self, *args, **kwargs):
@@ -690,10 +680,9 @@ class SearchForm(forms.Form):
                     .prefetch_related("identifiers")
                     .order_by(order_by)
                 )
-            case "visual" | "data-pivot":
+            case "visual":
                 return (
                     search.search_visuals(
-                        model_cls=self.model_class[data["type"]],
                         query=data["query"],
                         all_public=data["all_public"],
                         public=data["public"],

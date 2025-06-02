@@ -21,32 +21,11 @@ class VisualAdmin(admin.ModelAdmin):
     list_filter = ("visual_type", "published", ("assessment", admin.RelatedOnlyFieldListFilter))
     search_fields = ("assessment__name", "title")
     raw_id_fields = ("endpoints",)
+    show_facets = admin.ShowFacets.ALWAYS
 
     @admin.display(description="URL")
     def show_url(self, obj):
         return format_html("<a href='{}'>{}</a>", obj.get_absolute_url(), obj.id)
-
-
-class DataPivotAdmin(admin.ModelAdmin):
-    list_display = (
-        "title",
-        "show_url",
-        "assessment_id",
-        "assessment",
-        "published",
-        "created",
-        "last_updated",
-    )
-    list_filter = ("published", ("evidence_type", admin.RelatedOnlyFieldListFilter))
-    search_fields = ("assessment__name", "title")
-
-    @admin.display(description="URL")
-    def show_url(self, obj):
-        return format_html("<a href='{}'>{}</a>", obj.get_absolute_url(), obj.id)
-
-
-class DataPivotQueryAdmin(DataPivotAdmin):
-    list_filter = ("published", "evidence_type")
 
 
 @admin.register(models.SummaryTable)
@@ -59,9 +38,5 @@ class SummaryTableAdmin(VersionAdmin):
         "published",
         "created",
     )
-
     list_filter = ("table_type", "published", ("assessment", admin.RelatedOnlyFieldListFilter))
-
-
-admin.site.register(models.DataPivotUpload, DataPivotAdmin)
-admin.site.register(models.DataPivotQuery, DataPivotQueryAdmin)
+    show_facets = admin.ShowFacets.ALWAYS
