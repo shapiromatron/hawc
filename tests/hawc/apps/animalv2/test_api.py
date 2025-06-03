@@ -1,6 +1,6 @@
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
+from django.db.models import Model, Q
 from django.urls import reverse
 from rest_framework.test import APIClient
 
@@ -8,22 +8,79 @@ from hawc.apps.animalv2 import constants, models
 from hawc.apps.assessment.models import DoseUnits, EffectTag, Log, Species, Strain
 from hawc.apps.study.models import Study
 
-
-def generic_get_any(model_class):
-    return model_class.objects.all().first()
+from ..test_utils import get_client
 
 
-def clone_and_change(d: dict, **kwargs):
-    cloned = dict(d)
-
-    for key in kwargs:
-        cloned[key] = kwargs[key]
-
-    return cloned
+def generic_get_any(model_class: type[Model]) -> Model:
+    return model_class.objects.all()[0]
 
 
-# function that makes a function that checks for an expected count
+def clone_and_change(d: dict, **kw):
+    return {**d, **kw}
+
+
+def check_details_of_last_log_entry(obj_id: int, start_of_msg: str):
+    """
+    retrieve the latest log entry and check that the object_id/message look right.
+    """
+    log_entry = Log.objects.latest("id")
+    assert log_entry.object_id == int(obj_id) and log_entry.message.startswith(start_of_msg)
+
+
+def generic_test_scenarios(client, url, scenarios):
+    for scenario in scenarios:
+        generic_test_scenario(client, url, scenario)
+
+
+def generic_test_scenario(client, url: str, scenario):
+    if "url" in scenario:
+        url = scenario["url"]
+
+    method = scenario.get("method", "POST").upper()
+    if method == "POST":
+        response = client.post(url, scenario["data"], format="json")
+    elif method == "PATCH":
+        response = client.patch(url, scenario["data"], format="json")
+    elif method == "DELETE":
+        response = client.delete(url)
+    elif method == "GET":
+        response = client.get(url, format="json")
+    else:
+        raise ValueError("Unknown method")
+
+    if "expected_code" in scenario:
+        assert response.status_code == scenario["expected_code"], scenario
+
+    if "expected_keys" in scenario:
+        assert (scenario["expected_keys"]).issubset(response.data.keys()), scenario
+
+    if "expected_content" in scenario:
+        assert str(response.data).lower().find(scenario["expected_content"].lower()) != -1, scenario
+
+    if "post_request_test" in scenario:
+        scenario["post_request_test"](response)
+
+    # make sure the audit/log table is getting updated while we're at it
+    if response.status_code in [200, 201, 204]:  # successful create/update/delete:
+        if method == "POST":
+            check_details_of_last_log_entry(response.data["id"], "Created")
+        elif method == "PATCH":
+            check_details_of_last_log_entry(response.data["id"], "Updated")
+        elif method == "DELETE":
+            # get the id from the url, e.g. "/epi/api/study-population/2/"
+            deleted_id = url.strip("/").split("/")[-1]
+            check_details_of_last_log_entry(deleted_id, "Deleted")
+
+
+def generic_perm_tester(url, data):
+    # anonymous and reviewers shouldn't be able to create
+    for client in (get_client(api=True), get_client("reviewer", api=True)):
+        response = client.post(url, data, format="json")
+        assert response.status_code == 403
+
+
 def generate_browse_checker(count):
+    # returns a function that makes request and gets expected count
     def _browse_test(resp):
         assert resp.json().get("count") == count
 
@@ -46,9 +103,7 @@ class TestExperimentViewSet:
 
     def test_valid_requests(self, db_keys):
         url = reverse("animalv2:api:experiment-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-
+        client = get_client("team", api=True)
         data = {
             "study": db_keys.study_working,
             "name": "Test Experiment",
@@ -199,9 +254,7 @@ class TestExperimentViewSet:
 
     def test_bad_requests(self, db_keys):
         url = reverse("animalv2:api:experiment-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-
+        client = get_client("team", api=True)
         scenarios = (
             {
                 "desc": "invalid design",
@@ -228,9 +281,7 @@ class TestChemicalViewSet:
 
     def test_valid_requests(self, db_keys):
         url = reverse("animalv2:api:chemical-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-
+        client = get_client("team", api=True)
         data = {
             "experiment": db_keys.animalv2_experiment,
             "name": "Test Chemical",
@@ -360,9 +411,7 @@ class TestChemicalViewSet:
 
     def test_bad_requests(self, db_keys):
         url = reverse("animalv2:api:chemical-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-
+        client = get_client("team", api=True)
         scenarios = (
             {
                 "desc": "invalid experiment",
@@ -390,7 +439,6 @@ class TestChemicalViewSet:
                 },
             },
         )
-
         generic_test_scenarios(client, url, scenarios)
 
 
@@ -411,8 +459,7 @@ class TestAnimalGroupViewSet:
 
     def test_valid_requests(self, db_keys):
         url = reverse("animalv2:api:animal-group-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
+        client = get_client("team", api=True)
 
         some_strain = generic_get_any(Strain)
         some_ag = generic_get_any(models.AnimalGroup)
@@ -554,8 +601,7 @@ class TestAnimalGroupViewSet:
 
     def test_bad_requests(self, db_keys):
         url = reverse("animalv2:api:animal-group-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
+        client = get_client("team", api=True)
 
         some_strain = generic_get_any(Strain)
         some_other_species = Species.objects.filter(~Q(id=some_strain.species.id)).first()
@@ -822,8 +868,7 @@ class TestTreatmentViewSet:
 
     def test_bad_requests(self, db_keys):
         url = reverse("animalv2:api:treatment-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
+        client = get_client("team", api=True)
 
         scenarios = (
             {
@@ -868,8 +913,7 @@ class TestDoseGroupViewSet:
 
     def test_valid_requests(self, db_keys):
         url = reverse("animalv2:api:dose-group-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
+        client = get_client("team", api=True)
 
         treatment = generic_get_any(models.Treatment)
         dose_units = generic_get_any(DoseUnits)
@@ -998,8 +1042,7 @@ class TestDoseGroupViewSet:
 
     def test_bad_requests(self, db_keys):
         url = reverse("animalv2:api:dose-group-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
+        client = get_client("team", api=True)
 
         scenarios = (
             {
@@ -1040,8 +1083,7 @@ class TestEndpointViewSet:
 
     def test_valid_requests(self, db_keys):
         url = reverse("animalv2:api:endpoint-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
+        client = get_client("team", api=True)
 
         tag = generic_get_any(EffectTag)
 
@@ -1177,8 +1219,7 @@ class TestEndpointViewSet:
 
     def test_bad_requests(self, db_keys):
         url = reverse("animalv2:api:endpoint-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
+        client = get_client("team", api=True)
 
         scenarios = (
             {
@@ -1215,8 +1256,7 @@ class TestObservationTimeViewSet:
 
     def test_valid_requests(self, db_keys):
         url = reverse("animalv2:api:observation-time-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
+        client = get_client("team", api=True)
 
         endpoint = generic_get_any(models.Endpoint)
         data = {
@@ -1343,8 +1383,7 @@ class TestObservationTimeViewSet:
 
     def test_bad_requests(self, db_keys):
         url = reverse("animalv2:api:observation-time-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
+        client = get_client("team", api=True)
 
         scenarios = (
             {
@@ -1394,8 +1433,7 @@ class TestDataExtractionViewSet:
 
     def test_valid_requests(self, db_keys):
         url = reverse("animalv2:api:data-extraction-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
+        client = get_client("team", api=True)
 
         endpoint = generic_get_any(models.Endpoint)
         treatment = generic_get_any(models.Treatment)
@@ -1551,11 +1589,8 @@ class TestDataExtractionViewSet:
 
     def test_bad_requests(self, db_keys):
         url = reverse("animalv2:api:data-extraction-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-
-        admin_client = APIClient()
-        admin_client.login(username="admin@hawcproject.org", password="pw")
+        client = get_client("team", api=True)
+        admin_client = get_client("admin", api=True)
 
         # make another experiment...
         alt_experiment_id = None
@@ -1719,8 +1754,7 @@ class TestDoseResponseGroupLevelDataViewSet:
 
     def test_valid_requests(self, db_keys):
         url = reverse("animalv2:api:dose-response-group-level-data-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
+        client = get_client("team", api=True)
 
         extraction = generic_get_any(models.DataExtraction)
 
@@ -1854,8 +1888,7 @@ class TestDoseResponseGroupLevelDataViewSet:
 
     def test_bad_requests(self, db_keys):
         url = reverse("animalv2:api:dose-response-group-level-data-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
+        client = get_client("team", api=True)
 
         scenarios = (
             {
@@ -1896,8 +1929,7 @@ class TestDoseResponseAnimalLevelDataViewSet:
 
     def test_valid_requests(self, db_keys):
         url = reverse("animalv2:api:dose-response-animal-level-data-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
+        client = get_client("team", api=True)
 
         extraction = generic_get_any(models.DataExtraction)
 
@@ -2047,8 +2079,7 @@ class TestDoseResponseAnimalLevelDataViewSet:
 
     def test_bad_requests(self, db_keys):
         url = reverse("animalv2:api:dose-response-animal-level-data-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
+        client = get_client("team", api=True)
 
         scenarios = (
             {
@@ -2080,8 +2111,7 @@ class TestStudyLevelValueViewSet:
 
     def test_valid_requests(self, db_keys):
         url = reverse("animalv2:api:study-level-value-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
+        client = get_client("team", api=True)
 
         dose_units = generic_get_any(DoseUnits)
         data = {
@@ -2235,9 +2265,7 @@ class TestStudyLevelValueViewSet:
 
     def test_bad_requests(self, db_keys):
         url = reverse("animalv2:api:study-level-value-list")
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-
+        client = get_client("team", api=True)
         scenarios = (
             {
                 "desc": "invalid value type",
@@ -2247,81 +2275,4 @@ class TestStudyLevelValueViewSet:
                 "data": {"value_type": "---"},
             },
         )
-
         generic_test_scenarios(client, url, scenarios)
-
-
-def check_details_of_last_log_entry(obj_id: int, start_of_msg: str):
-    """
-    retrieve the latest log entry and check that the object_id/message look right.
-    """
-    log_entry = Log.objects.latest("id")
-    assert log_entry.object_id == int(obj_id) and log_entry.message.startswith(start_of_msg)
-
-
-def generic_test_scenarios(client, url, scenarios):
-    for scenario in scenarios:
-        generic_test_scenario(client, url, scenario)
-
-
-def generic_test_scenario(client, url, scenario):
-    if "url" in scenario:
-        url = scenario["url"]
-
-    method = scenario.get("method", "POST")
-    if method.upper() == "POST":
-        response = client.post(url, scenario["data"], format="json")
-    elif method.upper() == "PATCH":
-        response = client.patch(url, scenario["data"], format="json")
-    elif method.upper() == "DELETE":
-        response = client.delete(url)
-    elif method.upper() == "GET":
-        response = client.get(url, format="json")
-    else:
-        raise ValueError("Unknown method")
-
-    """
-    print(f"\n###### START: '{scenario["desc"]}' ({response.status_code}) ######")
-    print(scenario["data"] if "data" in scenario else "(no data)")
-    print("----------")
-    print(response.data)
-    print(f"###### END: '{scenario["desc"]}' ######\n")
-    """
-
-    if "expected_code" in scenario:
-        assert response.status_code == scenario["expected_code"]
-
-    if "expected_keys" in scenario:
-        assert (scenario["expected_keys"]).issubset(response.data.keys())
-
-    if "expected_content" in scenario:
-        assert str(response.data).lower().find(scenario["expected_content"].lower()) != -1
-
-    if "post_request_test" in scenario:
-        scenario["post_request_test"](response)
-
-    # make sure the audit/log table is getting updated while we're at it
-    if response.status_code in [200, 201, 204]:  # successful create/update/delete:
-        if method.upper() == "POST":
-            check_details_of_last_log_entry(response.data["id"], "Created")
-        elif method.upper() == "PATCH":
-            check_details_of_last_log_entry(response.data["id"], "Updated")
-        elif method.upper() == "DELETE":
-            # get the id from the url, e.g. "/epi/api/study-population/2/"
-            deleted_id = url.strip("/").split("/")[-1]
-            check_details_of_last_log_entry(deleted_id, "Deleted")
-
-
-def generic_perm_tester(url, data):
-    # Reviewers shouldn't be able to create
-    client = APIClient()
-    assert client.login(username="reviewer@hawcproject.org", password="pw") is True
-    response = client.post(url, data, format="json")
-
-    assert response.status_code == 403
-
-    # Public shouldn't be able to create
-    client = APIClient()
-    response = client.post(url, data, format="json")
-
-    assert response.status_code == 403
