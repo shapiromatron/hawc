@@ -1,31 +1,17 @@
 from rest_framework import serializers
 
 from ..assessment.models import DoseUnits, DSSTox, EffectTag, Species, Strain
-from ..assessment.serializers import (
-    DSSToxSerializer,
-    SpeciesSerializer,
-    StrainSerializer,
-)
+from ..assessment.serializers import DSSToxSerializer, SpeciesSerializer, StrainSerializer
 from ..common.serializers import FlexibleChoiceField, IdLookupMixin
-from ..study.models import Study
-from ..study.serializers import StudySerializer
 from . import constants, models
 
 
 class ExperimentSerializer(IdLookupMixin, serializers.ModelSerializer):
-    study_id = serializers.PrimaryKeyRelatedField(
-        write_only=True,
-        source="study",
-        queryset=Study.objects.all(),
-        required=True,
-        allow_null=False,
-    )
-    study = StudySerializer(read_only=True)
     design = FlexibleChoiceField(choices=constants.ExperimentDesign.choices)
 
     class Meta:
         model = models.Experiment
-        exclude = ["created", "last_updated"]
+        fields = "__all__"
 
 
 class ChemicalSerializer(serializers.ModelSerializer):
@@ -40,30 +26,17 @@ class ChemicalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Chemical
-        fields = [
-            "id",
-            "experiment",
-            "name",
-            "cas",
-            "dtxsid_id",
-            "dtxsid",
-            "source",
-            "purity",
-            "vehicle",
-            "comments",
-        ]
+        fields = "__all__"
 
 
-# stripped down serializer for use when displaying an Animal Group's parents
 class SimpleAnimalGroupSerializer(serializers.ModelSerializer):
+    # Simplified serializer to display Animal Group parents
     class Meta:
         model = models.AnimalGroup
-        fields = ["id", "name"]
+        fields = ("id", "name")
 
 
 class AnimalGroupSerializer(serializers.ModelSerializer):
-    # TODO: support on-the-fly species/strain creation
-
     species_id = serializers.PrimaryKeyRelatedField(
         write_only=True,
         source="species",
@@ -115,41 +88,20 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
             strain = data.get("strain", self.instance.strain)
             parents = data.get("parents", self.instance.parents.all())
 
-        # check either the PATCH/PUT/POST payload if they supplied
-        # strain/species, or loook on the existing object. At
-        # the end of the day, they need to match.
-        species_src = "supplied" if "species" in data else "preexisting"
-        strain_src = "supplied" if "strain" in data else "preexisting"
-
-        # give a hopefully helpful error message for the problematic field
-        if species.id != strain.species.id:
-            if species_src == "supplied" and strain_src == "supplied":
-                error_field = "strain"
-                error_msg = "Strain must be of the same species as the supplied species."
-            elif species_src == "supplied":
-                error_field = "species"
-                error_msg = (
-                    "Species was supplied but existing strain was not (and would be invalid)."
-                )
-            elif strain_src == "supplied":
-                error_field = "strain"
-                error_msg = "Supplied strain is invalid for existing species."
-
-            errors[error_field] = error_msg
+        if species.id != strain.species_id:
+            errors["strain"] = "Strain must be valid for species"
 
         parent_errors = []
         if "parents" in data and self.instance is not None:
             # ensure they didn't supply the animal-group itself as a parent
-            parent_ids = [p.id for p in parents]
-            if self.instance.id in parent_ids:
-                # errors["parent_ids"] = "circular reference"
-                parent_errors.append("circular reference")
+            if self.instance.id in [p.id for p in parents]:
+                parent_errors.append("Self cannot be parent of self")
 
         # ensure experiment/parents match
-        if parents is not None:
-            if any([p.experiment_id != experiment.id for p in parents]):
+        if parents is not None and len(parents) > 0:
+            if any(p.experiment_id != experiment.id for p in parents):
                 parent_errors.append(
-                    "this animal group's experiment and one or more parent's experiment are mismatched."
+                    "This animal group's experiment and one or more parent's experiment are mismatched."
                 )
 
         if len(parent_errors) > 0:
@@ -162,7 +114,7 @@ class AnimalGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.AnimalGroup
-        exclude = ["created", "last_updated"]
+        fields = "__all__"
 
 
 class TreatmentSerializer(serializers.ModelSerializer):
@@ -179,19 +131,10 @@ class TreatmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Treatment
-        exclude = ["created", "last_updated"]
+        fields = "__all__"
 
 
 class DoseGroupSerializer(serializers.ModelSerializer):
-    treatment_id = serializers.PrimaryKeyRelatedField(
-        write_only=True,
-        source="treatment",
-        queryset=models.Treatment.objects.all(),
-        required=True,
-        allow_null=False,
-    )
-    treatment = TreatmentSerializer(read_only=True)
-
     dose_units = serializers.SlugRelatedField(
         slug_field="name",
         queryset=DoseUnits.objects.all(),
@@ -199,12 +142,11 @@ class DoseGroupSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.DoseGroup
-        exclude = ["created", "last_updated"]
+        fields = "__all__"
 
 
 class EndpointSerializer(serializers.ModelSerializer):
-    # TODO: name, system, organ, effect, effect-subtype have EHV-related _term fields in the db; these are not
-    # currently implemented in either the UI or the API.
+    # TODO - implement EHV integration
 
     additional_tags = serializers.SlugRelatedField(
         slug_field="slug",
@@ -233,37 +175,10 @@ class ObservationTimeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.ObservationTime
-        exclude = ["created", "last_updated"]
+        fields = "__all__"
 
 
 class DataExtractionSerializer(serializers.ModelSerializer):
-    endpoint_id = serializers.PrimaryKeyRelatedField(
-        write_only=True,
-        source="endpoint",
-        queryset=models.Endpoint.objects.all(),
-        required=True,
-        allow_null=False,
-    )
-    endpoint = EndpointSerializer(read_only=True)
-
-    treatment_id = serializers.PrimaryKeyRelatedField(
-        write_only=True,
-        source="treatment",
-        queryset=models.Treatment.objects.all(),
-        required=True,
-        allow_null=False,
-    )
-    treatment = TreatmentSerializer(read_only=True)
-
-    observation_timepoint_id = serializers.PrimaryKeyRelatedField(
-        write_only=True,
-        source="observation_timepoint",
-        queryset=models.ObservationTime.objects.all(),
-        required=True,
-        allow_null=False,
-    )
-    observation_timepoint = ObservationTimeSerializer(read_only=True)
-
     dataset_type = FlexibleChoiceField(choices=constants.DatasetType.choices)
     variance_type = FlexibleChoiceField(
         choices=constants.VarianceType.choices, required=False, allow_blank=True
@@ -272,92 +187,58 @@ class DataExtractionSerializer(serializers.ModelSerializer):
         choices=constants.MethodToControlForLitterEffects.choices
     )
 
-    def validate(self, data):
-        # check that endpoint/treatment are part of same experiment (and match the experiment associated
-        # with the data extraction), and that obstime is part of the same endpoint as the associated one
-
+    def validate(self, attrs):
         errors = []
         if self.instance is None:
-            experiment = data.get("experiment")
-            endpoint = data.get("endpoint")
-            treatment = data.get("treatment")
-            observation_timepoint = data.get("observation_timepoint")
+            experiment = attrs.get("experiment")
+            endpoint = attrs.get("endpoint")
+            treatment = attrs.get("treatment")
+            observation_timepoint = attrs.get("observation_timepoint")
         else:
-            experiment = data.get("experiment", self.instance.experiment)
-            endpoint = data.get("endpoint", self.instance.endpoint)
-            treatment = data.get("treatment", self.instance.treatment)
-            observation_timepoint = data.get(
+            experiment = attrs.get("experiment", self.instance.experiment)
+            endpoint = attrs.get("endpoint", self.instance.endpoint)
+            treatment = attrs.get("treatment", self.instance.treatment)
+            observation_timepoint = attrs.get(
                 "observation_timepoint", self.instance.observation_timepoint
             )
 
         if (
-            endpoint.experiment.id != treatment.experiment.id
-            or experiment.id != endpoint.experiment.id
+            endpoint.experiment_id != treatment.experiment_id
+            or experiment.id != endpoint.experiment_id
         ):
             errors.append("Endpoint/Treatment/Experiment mismatch")
 
-        if endpoint.id != observation_timepoint.endpoint.id:
+        if endpoint.id != observation_timepoint.endpoint_id:
             errors.append("Observation Time/Endpoint mismatch")
 
-        if len(errors) > 0:
+        if errors:
             raise serializers.ValidationError({"general": errors})
 
-        return data
+        return attrs
 
     class Meta:
         model = models.DataExtraction
-        exclude = ["created", "last_updated"]
+        fields = "__all__"
 
 
 class DoseResponseGroupLevelDataSerializer(serializers.ModelSerializer):
-    data_extraction_id = serializers.PrimaryKeyRelatedField(
-        write_only=True,
-        source="data_extraction",
-        queryset=models.DataExtraction.objects.all(),
-        required=True,
-        allow_null=False,
-    )
-    data_extraction = DataExtractionSerializer(read_only=True)
-
     treatment_related_effect = FlexibleChoiceField(choices=constants.TreatmentRelatedEffect.choices)
 
     class Meta:
         model = models.DoseResponseGroupLevelData
-        exclude = ["created", "last_updated"]
+        fields = "__all__"
 
 
 class DoseResponseAnimalLevelDataSerializer(serializers.ModelSerializer):
-    data_extraction_id = serializers.PrimaryKeyRelatedField(
-        write_only=True,
-        source="data_extraction",
-        queryset=models.DataExtraction.objects.all(),
-        required=True,
-        allow_null=False,
-    )
-    data_extraction = DataExtractionSerializer(read_only=True)
-
     class Meta:
         model = models.DoseResponseAnimalLevelData
-        exclude = ["created", "last_updated"]
+        fields = "__all__"
 
 
 class StudyLevelValueSerializer(IdLookupMixin, serializers.ModelSerializer):
-    study_id = serializers.PrimaryKeyRelatedField(
-        write_only=True,
-        source="study",
-        queryset=Study.objects.all(),
-        required=True,
-        allow_null=False,
-    )
-    study = StudySerializer(read_only=True)
-
     value_type = FlexibleChoiceField(choices=constants.StudyLevelTypeChoices.choices)
-
-    units = serializers.SlugRelatedField(
-        slug_field="name",
-        queryset=DoseUnits.objects.all(),
-    )
+    units = serializers.SlugRelatedField(slug_field="name", queryset=DoseUnits.objects.all())
 
     class Meta:
         model = models.StudyLevelValue
-        exclude = ["created", "last_updated"]
+        fields = "__all__"

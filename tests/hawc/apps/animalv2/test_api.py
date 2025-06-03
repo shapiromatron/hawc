@@ -35,7 +35,7 @@ class TestExperimentViewSet:
     def test_permissions(self, db_keys):
         url = reverse("animalv2:api:experiment-list")
         data = {
-            "study_id": db_keys.study_working,
+            "study": db_keys.study_working,
             "name": "Test Experiment",
             "design": "AA",
             "has_multiple_generations": False,
@@ -50,7 +50,7 @@ class TestExperimentViewSet:
         assert client.login(username="team@hawcproject.org", password="pw") is True
 
         data = {
-            "study_id": db_keys.study_working,
+            "study": db_keys.study_working,
             "name": "Test Experiment",
             "design": "AA",
             "has_multiple_generations": False,
@@ -598,7 +598,7 @@ class TestAnimalGroupViewSet:
                 "desc": "species/strain mismatch",
                 "expected_code": 400,
                 "expected_keys": {"strain"},
-                "expected_content": "must be of the same species",
+                "expected_content": "Strain must be valid for species",
                 "data": clone_and_change(good_data, species_id=some_other_species.id),
             },
         )
@@ -648,7 +648,7 @@ class TestAnimalGroupViewSet:
                 "method": "PATCH",
                 "expected_code": 400,
                 "expected_keys": {"parent_ids"},
-                "expected_content": "circular reference",
+                "expected_content": "Self cannot be parent of self",
                 "data": clone_and_change(good_data, parent_ids=[just_created_animal_group_id]),
             },
             {
@@ -858,7 +858,7 @@ class TestDoseGroupViewSet:
         treatment = generic_get_any(models.Treatment)
         dose_units = generic_get_any(DoseUnits)
         data = {
-            "treatment_id": treatment.id,
+            "treatment": treatment.id,
             "dose_group_id": 1,
             "dose": 1.5,
             "dose_units": dose_units.name,
@@ -874,7 +874,7 @@ class TestDoseGroupViewSet:
         treatment = generic_get_any(models.Treatment)
         dose_units = generic_get_any(DoseUnits)
         data = {
-            "treatment_id": treatment.id,
+            "treatment": treatment.id,
             "dose_group_id": 1,
             "dose": 1.5,
             "dose_units": dose_units.name,
@@ -1005,14 +1005,14 @@ class TestDoseGroupViewSet:
             {
                 "desc": "invalid treatment",
                 "expected_code": 400,
-                "expected_keys": {"treatment_id"},
+                "expected_keys": {"treatment"},
                 "expected_content": "does not exist",
-                "data": {"treatment_id": 999},
+                "data": {"treatment": 999},
             },
             {
                 "desc": "missing req'd fields",
                 "expected_code": 400,
-                "expected_keys": {"treatment_id", "dose_group_id", "dose", "dose_units"},
+                "expected_keys": {"treatment", "dose_group_id", "dose", "dose_units"},
                 "expected_content": "required",
                 "data": {},
             },
@@ -1381,9 +1381,9 @@ class TestDataExtractionViewSet:
         obstime = generic_get_any(models.ObservationTime)
         data = {
             "experiment": db_keys.animalv2_experiment,
-            "endpoint_id": endpoint.id,
-            "treatment_id": treatment.id,
-            "observation_timepoint_id": obstime.id,
+            "endpoint": endpoint.id,
+            "treatment": treatment.id,
+            "observation_timepoint": obstime.id,
             "result_details": "test details",
             "dose_response_observations": "test observations",
             "method_to_control_for_litter_effects": constants.MethodToControlForLitterEffects.YES,
@@ -1403,9 +1403,9 @@ class TestDataExtractionViewSet:
 
         data = {
             "experiment": db_keys.animalv2_experiment,
-            "endpoint_id": endpoint.id,
-            "treatment_id": treatment.id,
-            "observation_timepoint_id": obstime.id,
+            "endpoint": endpoint.id,
+            "treatment": treatment.id,
+            "observation_timepoint": obstime.id,
             "result_details": "test details",
             "dose_response_observations": "test observations",
             "method_to_control_for_litter_effects": constants.MethodToControlForLitterEffects.YES,
@@ -1573,7 +1573,7 @@ class TestDataExtractionViewSet:
                 "expected_code": 201,
                 "expected_keys": {"id"},
                 "data": {
-                    "study_id": db_keys.study_final_bioassay,
+                    "study": db_keys.study_final_bioassay,
                     "name": "Dummy Experiment",
                     "design": "AA",
                     "has_multiple_generations": False,
@@ -1613,9 +1613,9 @@ class TestDataExtractionViewSet:
 
         good_data = {
             "experiment": db_keys.animalv2_experiment,
-            "endpoint_id": endpoint.id,
-            "treatment_id": treatment.id,
-            "observation_timepoint_id": obstime.id,
+            "endpoint": endpoint.id,
+            "treatment": treatment.id,
+            "observation_timepoint": obstime.id,
             "result_details": "test details",
             "dose_response_observations": "test observations",
             "method_to_control_for_litter_effects": constants.MethodToControlForLitterEffects.YES,
@@ -1626,32 +1626,31 @@ class TestDataExtractionViewSet:
             {
                 "desc": "invalid endpoint",
                 "expected_code": 400,
-                "expected_keys": {"endpoint_id"},
+                "expected_keys": {"endpoint"},
                 "expected_content": "does not exist",
-                "data": {"endpoint_id": 999},
+                "data": {"endpoint": 999},
             },
             {
                 "desc": "invalid treatment",
                 "expected_code": 400,
-                "expected_keys": {"treatment_id"},
+                "expected_keys": {"treatment"},
                 "expected_content": "does not exist",
-                "data": {"treatment_id": 999},
+                "data": {"treatment": 999},
             },
             {
                 "desc": "invalid obstime",
                 "expected_code": 400,
-                "expected_keys": {"observation_timepoint_id"},
+                "expected_keys": {"observation_timepoint"},
                 "expected_content": "does not exist",
-                "data": {"observation_timepoint_id": 999},
+                "data": {"observation_timepoint": 999},
             },
             {
                 "desc": "missing req'd fields",
                 "expected_code": 400,
                 "expected_keys": {
                     "experiment",
-                    "endpoint_id",
-                    "treatment_id",
-                    "observation_timepoint_id",
+                    "endpoint",
+                    "treatment",
                     "dataset_type",
                 },
                 "expected_content": "required",
@@ -1669,7 +1668,7 @@ class TestDataExtractionViewSet:
                 "expected_code": 400,
                 "expected_keys": {"general"},
                 "expected_content": "Observation Time/Endpoint mismatch",
-                "data": clone_and_change(good_data, endpoint_id=alt_endpoint_id),
+                "data": clone_and_change(good_data, endpoint=alt_endpoint_id),
             },
             {
                 "desc": "bad dataset type",
@@ -1704,7 +1703,7 @@ class TestDoseResponseGroupLevelDataViewSet:
         extraction = generic_get_any(models.DataExtraction)
 
         data = {
-            "data_extraction_id": extraction.id,
+            "data_extraction": extraction.id,
             "treatment_name": "Test DRGLD",
             "treatment_related_effect": constants.TreatmentRelatedEffect.YES,
             "dose": "test dose",
@@ -1726,7 +1725,7 @@ class TestDoseResponseGroupLevelDataViewSet:
         extraction = generic_get_any(models.DataExtraction)
 
         data = {
-            "data_extraction_id": extraction.id,
+            "data_extraction": extraction.id,
             "treatment_name": "Test DRGLD",
             "treatment_related_effect": constants.TreatmentRelatedEffect.YES,
             "dose": "test dose",
@@ -1862,9 +1861,9 @@ class TestDoseResponseGroupLevelDataViewSet:
             {
                 "desc": "invalid data_Extraction",
                 "expected_code": 400,
-                "expected_keys": {"data_extraction_id"},
+                "expected_keys": {"data_extraction"},
                 "expected_content": "does not exist",
-                "data": {"data_extraction_id": 999},
+                "data": {"data_extraction": 999},
             },
             {
                 "desc": "bad treatment_related_effect",
@@ -1886,7 +1885,7 @@ class TestDoseResponseAnimalLevelDataViewSet:
         extraction = generic_get_any(models.DataExtraction)
 
         data = {
-            "data_extraction_id": extraction.id,
+            "data_extraction": extraction.id,
             "cage_id": "test cage",
             "animal_id": "test ani",
             "dose": "test dose",
@@ -1903,7 +1902,7 @@ class TestDoseResponseAnimalLevelDataViewSet:
         extraction = generic_get_any(models.DataExtraction)
 
         data = {
-            "data_extraction_id": extraction.id,
+            "data_extraction": extraction.id,
             "cage_id": "test cage",
             "animal_id": "test ani",
             "dose": "test dose",
@@ -2055,9 +2054,9 @@ class TestDoseResponseAnimalLevelDataViewSet:
             {
                 "desc": "invalid data_Extraction",
                 "expected_code": 400,
-                "expected_keys": {"data_extraction_id"},
+                "expected_keys": {"data_extraction"},
                 "expected_content": "does not exist",
-                "data": {"data_extraction_id": 999},
+                "data": {"data_extraction": 999},
             },
         )
 
@@ -2070,7 +2069,7 @@ class TestStudyLevelValueViewSet:
         url = reverse("animalv2:api:study-level-value-list")
         dose_units = generic_get_any(DoseUnits)
         data = {
-            "study_id": db_keys.study_working,
+            "study": db_keys.study_working,
             "value_type": constants.StudyLevelTypeChoices.LOEL,
             "units": dose_units.name,
             "system": "Dummy System",
@@ -2086,7 +2085,7 @@ class TestStudyLevelValueViewSet:
 
         dose_units = generic_get_any(DoseUnits)
         data = {
-            "study_id": db_keys.study_working,
+            "study": db_keys.study_working,
             "value_type": constants.StudyLevelTypeChoices.LOEL,
             "units": dose_units.name,
             "system": "Dummy System",
