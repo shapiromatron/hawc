@@ -636,6 +636,10 @@
     model: observationtime
 - model: contenttypes.contenttype
   fields:
+    app_label: animalv2
+    model: studylevelvalue
+- model: contenttypes.contenttype
+  fields:
     app_label: assessment
     model: label
 - model: contenttypes.contenttype
@@ -20140,6 +20144,17 @@
     comments: <p>test comments</p>
     created: 2024-01-20 21:12:17.714337+00:00
     last_updated: 2024-01-21 20:38:10.024296+00:00
+- model: animalv2.experiment
+  pk: 2
+  fields:
+    study: 1
+    name: Test Experiment Two
+    design: AA
+    has_multiple_generations: false
+    guideline_compliance: test compliance
+    comments: <p>test comments</p>
+    created: 2024-01-22 21:12:17.714337+00:00
+    last_updated: 2024-01-23 20:38:10.024296+00:00
 - model: animalv2.chemical
   pk: 1
   fields:

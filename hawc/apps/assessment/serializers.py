@@ -213,3 +213,9 @@ class StrainSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Strain
         fields = "__all__"
+
+
+class SpeciesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Species
+        fields = "__all__"

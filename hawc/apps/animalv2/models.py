@@ -40,6 +40,9 @@ class Experiment(models.Model):
 
     BREADCRUMB_PARENT = "study"
 
+    class Meta:
+        ordering = ("id",)
+
     def __str__(self):
         return self.name
 
@@ -105,6 +108,9 @@ class Chemical(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def __str__(self):
         return self.name
@@ -173,6 +179,9 @@ class AnimalGroup(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("id",)
+
     def __str__(self):
         return self.name
 
@@ -228,6 +237,9 @@ class Treatment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("id",)
+
     def __str__(self):
         return self.name
 
@@ -267,6 +279,9 @@ class DoseGroup(models.Model):
     )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def get_assessment(self):
         return self.treatment.get_assessment()
@@ -342,6 +357,9 @@ class Endpoint(models.Model):
     additional_tags = models.ManyToManyField(EffectTag, blank=True)
     comments = models.TextField(blank=True, help_text="TODO")
 
+    class Meta:
+        ordering = ("id",)
+
     def __str__(self):
         return self.name
 
@@ -380,6 +398,9 @@ class ObservationTime(models.Model):
     comments = models.TextField(blank=True, help_text="TODO")
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def get_assessment(self):
         return self.endpoint.get_assessment()
@@ -443,9 +464,11 @@ class DataExtraction(models.Model):
     )
     dose_response_observations = models.TextField(help_text="TODO")
     result_details = models.TextField(help_text="TODO")
-
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def get_assessment(self):
         return self.experiment.get_assessment()
@@ -486,6 +509,9 @@ class DoseResponseGroupLevelData(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ("id",)
+
     def get_assessment(self):
         return self.data_extraction.get_assessment()
 
@@ -503,9 +529,11 @@ class DoseResponseAnimalLevelData(models.Model):
     animal_id = models.CharField(max_length=128, blank=True, help_text="TODO")
     dose = models.CharField(max_length=128, help_text="TODO")
     response = models.FloatField()
-
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def get_assessment(self):
         return self.data_extraction.get_assessment()
@@ -533,6 +561,9 @@ class StudyLevelValue(models.Model):
     )  # TODO - review schema, add new comment types?
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
 
     def get_assessment(self):
         return self.study.get_assessment()
