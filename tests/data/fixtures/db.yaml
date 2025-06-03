@@ -636,16 +636,16 @@
     model: observationtime
 - model: contenttypes.contenttype
   fields:
+    app_label: animalv2
+    model: studylevelvalue
+- model: contenttypes.contenttype
+  fields:
     app_label: assessment
     model: label
 - model: contenttypes.contenttype
   fields:
     app_label: assessment
     model: labeleditem
-- model: contenttypes.contenttype
-  fields:
-    app_label: animalv2
-    model: studylevelvalue
 - model: auth.permission
   fields:
     name: Can access Wagtail admin
