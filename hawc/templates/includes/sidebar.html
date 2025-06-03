@@ -63,7 +63,9 @@
       </ul>
     </li>
   {% endif %}
-
+  <li class="{{li_class}}">
+    <a class="{{a_class}}" href="{% url 'search' %}">Search</a>
+  </li>
   {% if feature_flags.ENABLE_DOCS_LINK and user.is_authenticated %}
     {% if expand_docs %}
       {% include 'docs/components/sidebar_docs_tree.html' %}

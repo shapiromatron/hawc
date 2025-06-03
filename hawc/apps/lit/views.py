@@ -446,7 +446,7 @@ class BulkMerge(HtmxView):
             .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
         )
         key = (
-            f'{self.assessment.pk}-bulk-merge-tags-{"-".join(sorted(request.POST.getlist("tags")))}'
+            f"{self.assessment.pk}-bulk-merge-tags-{'-'.join(sorted(request.POST.getlist('tags')))}"
         )
         form = forms.BulkMergeConflictsForm(
             assessment=self.assessment, initial={**request.POST, "cache_key": key}
@@ -1073,6 +1073,7 @@ class TagsUpdate(BaseDetail):
             app="nestedTagEditorStartup",
             data=dict(
                 assessment_id=self.assessment.id,
+                references=models.Reference.objects.tag_pairs(self.assessment.references.all()),
                 base_url=api_root,
                 list_url=f"{api_root}?assessment_id={self.assessment.id}",
                 csrf=get_token(self.request),

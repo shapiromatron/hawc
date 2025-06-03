@@ -26,7 +26,7 @@ class DSSToxSerializer(serializers.ModelSerializer):
             substance = DssSubstance.create_from_dtxsid(validated_data["dtxsid"])
         except ValueError as exc:
             raise serializers.ValidationError(
-                f"Invalid DTXSID: {validated_data["dtxsid"]}"
+                f"Invalid DTXSID: {validated_data['dtxsid']}"
             ) from exc
         return models.DSSTox.objects.create(dtxsid=substance.dtxsid, content=substance.content)
 
@@ -212,4 +212,10 @@ class DatasetSerializer(serializers.ModelSerializer):
 class StrainSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Strain
+        fields = "__all__"
+
+
+class SpeciesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Species
         fields = "__all__"

@@ -10,26 +10,17 @@
     <div class="row">
       <div class="col-md-9">
         <select id="vis_selector" class="form-control col-md-12">
-          <option value="4" data-url="{% url viz_url_pattern assessment.id 4 %}">
-            Literature tagtree</option>
-          <option value="6" data-url="{% url viz_url_pattern assessment.id 6 %}">
-            Exploratory heatmap</option>
-          <option value="5" data-url="{% url viz_url_pattern assessment.id 5 %}">
-            Embedded external website</option>
-          <option value="7" data-url="{% url viz_url_pattern assessment.id 7 %}">
-            Plotly visual</option>
-          <option value="9" data-url="{% url viz_url_pattern assessment.id 9 %}">
-            PRISMA visual</option>
-          <option value="2" data-url="{% url viz_url_pattern assessment.id 2 %}">
-            {{assessment.get_rob_name_display}} heatmap</option>
-          <option value="3" data-url="{% url viz_url_pattern assessment.id 3 %}">
-            {{assessment.get_rob_name_display}} barchart</option>
-          <option value="100" data-url="{% url dp_url_pattern assessment.id %}">
-            Data pivot</option>
-          <option value="1" data-url="{% url viz_url_pattern assessment.id 1 %}">
-            Bioassay endpoint crossview</option>
-          <option value="8" data-url="{% url viz_url_pattern assessment.id 8 %}">
-            Static image</option>
+          <option value="4" data-url="{% url url_copy assessment.id 4 %}">Literature tagtree</option>
+          <option value="6" data-url="{% url url_copy assessment.id 6 %}">Exploratory heatmap</option>
+          <option value="5" data-url="{% url url_copy assessment.id 5 %}">Embedded external website</option>
+          <option value="7" data-url="{% url url_copy assessment.id 7 %}">Plotly visual</option>
+          <option value="9" data-url="{% url url_copy assessment.id 9 %}">PRISMA visual</option>
+          <option value="2" data-url="{% url url_copy assessment.id 2 %}">{{assessment.get_rob_name_display}} heatmap</option>
+          <option value="3" data-url="{% url url_copy assessment.id 3 %}">{{assessment.get_rob_name_display}} barchart</option>
+          <option value="10" data-url="{% url url_copy assessment.id 10 %}">Data pivot (from query)</option>
+          <option value="11" data-url="{% url url_copy assessment.id 11 %}">Data pivot (from file)</option>
+          <option value="1" data-url="{% url url_copy assessment.id 1 %}">Bioassay endpoint crossview</option>
+          <option value="8" data-url="{% url url_copy assessment.id 8 %}">Static image</option>
         </select>
       </div>
       <div class="col-md-3">
@@ -68,28 +59,70 @@
           between non-control dose-groups, and 2+ are required to create a line).
         </p>
       </div>
-      <div id="detail-100" class="col-md-12" >
-        <h3>Data Pivot</h3>
+      <div id="detail-10" class="col-md-12" >
         <div class="row">
-          <img alt="Image of a data pivot linechart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot.png' %}">
-          <img alt="Image of a data pivot barchart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot-barchart.png' %}">
+          {% if action == "Create" %}
+            <div class="col-md-12">
+              {% if assessment.has_animal_data %}
+                <input type="radio" id="10-bio" name="evidence-type" value="0" data-url="{% url url_copy assessment.id 10 0 %}" />
+                <label for="10-bio">Animal Bioassay</label>
+              {% endif %}
+              {% if assessment.has_epi_data %}
+                <input type="radio" id="10-epi" name="evidence-type" value="1" data-url="{% url url_copy assessment.id 10 1 %}" />
+                <label for="10-epi">Epidemiology</label>
+              {% endif %}
+              {% if assessment.has_epimeta_data %}
+                <input type="radio" id="10-epi-meta" name="evidence-type" value="4" data-url="{% url url_copy assessment.id 10 4 %}" />
+                <label for="10-epi-meta">Epidemiology meta-analysis/pooled analysis</label>
+              {% endif %}
+              {% if assessment.has_invitro_data %}
+                <input type="radio" id="10-invitro" name="evidence-type" value="2" data-url="{% url url_copy assessment.id 10 2 %}" />
+                <label for="10-invitro">In vitro</label>
+              {% endif %}
+              {% if assessment.has_eco_data %}
+                <input type="radio" id="10-eco" name="evidence-type" value="5" data-url="{% url url_copy assessment.id 10 5 %}" />
+                <label for="10-eco">Ecological</label>
+              {% endif %}
+            </div>
+          {% endif %}
+          <div class="col-md-12">
+            <h3>Data Pivot (from query)</h3>
+          </div>
+          <div class="col-md-12">
+            <img alt="Image of a data pivot linechart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot.png' %}">
+          </div>
+          <div class="col-md-12">
+            <img alt="Image of a data pivot barchart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot-barchart.png' %}">
+          </div>
+          <div class="col-md-12">
+            <p class='form-text text-muted'>Create a data-pivot based on querying information off the HAWC database for this assessment. Your settings will always be applied to this query; but it will contain the latest information from the database, so the visualization may change from time to time.</p>
+          </div>
         </div>
-        <p class="form-text text-muted">
-          Data from any data-stream in HAWC (bioassay, epidemiology, in-vitro) or
-          from a tab-delimited file can be used to generate custom forest-plot
-          style visualizations. Displayed text-fields and numbers to plot are
-          customizable; results can be sorted and filter, and conditional-formatting
-          can also be applied.
-        </p>
+      </div>
+      <div id="detail-11" class="col-md-12" >
+        <div class="row">
+          <div class="col-md-12">
+            <h3>Data Pivot (from file)</h3>
+          </div>
+          <div class="col-md-12">
+            <img alt="Image of a data pivot linechart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot.png' %}">
+          </div>
+          <div class="col-md-12">
+            <img alt="Image of a data pivot barchart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot-barchart.png' %}">
+          </div>
+          <div class="col-md-12">
+            <p class='form-text text-muted'>Create a data-pivot based on an uploaded Excel file of data. Your settings will always be applied to the uploaded dataset; therefore the visualization will be constant, but will not use the latest information from the HAWC database. However, if you <a href="{% url 'summary:dataset_interactivity' %}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);">design your dataset</a> appropriately, HAWC interactivity is available.</p>
+          </div>
+        </div>
       </div>
       <div id="detail-2" class="col-md-12">
         {% if action == "Create" %}
-          <input type="radio" id="bio" name="evidence-type" value="0" data-url="{% url viz_url_pattern assessment.id 2 0 %}" />
-          <label for="bio">Bioassay</label>
-          <input type="radio" id="epi" name="evidence-type" value="1" data-url="{% url viz_url_pattern assessment.id 2 1 %}" />
-          <label for="epi">Epidemiology</label>
-          <input type="radio" id="invitro" name="evidence-type" value="2" data-url="{% url viz_url_pattern assessment.id 2 2 %}" />
-          <label for="invitro">In vitro</label>
+          <input type="radio" id="2-bio" name="evidence-type" value="0" data-url="{% url url_copy assessment.id 2 0 %}" />
+          <label for="2-bio">Bioassay</label>
+          <input type="radio" id="2-epi" name="evidence-type" value="1" data-url="{% url url_copy assessment.id 2 1 %}" />
+          <label for="2-epi">Epidemiology</label>
+          <input type="radio" id="2-invitro" name="evidence-type" value="2" data-url="{% url url_copy assessment.id 2 2 %}" />
+          <label for="2-invitro">In vitro</label>
         {% endif %}
         <h3>{{assessment.get_rob_name_display}} heatmap</h3>
         <div class="row">
@@ -105,12 +138,12 @@
       </div>
       <div id="detail-3" class="col-md-12">
         {% if action == "Create" %}
-          <input type="radio" id="bio" name="evidence-type" value="0" data-url="{% url viz_url_pattern assessment.id 3 0 %}" />
-          <label for="bio">Bioassay</label>
-          <input type="radio" id="epi" name="evidence-type" value="1" data-url="{% url viz_url_pattern assessment.id 3 1 %}" />
-          <label for="epi">Epidemiology</label>
-          <input type="radio" id="invitro" name="evidence-type" value="2" data-url="{% url viz_url_pattern assessment.id 3 2 %}" />
-          <label for="invitro">In vitro</label>
+          <input type="radio" id="3-bio" name="evidence-type" value="0" data-url="{% url url_copy assessment.id 3 0 %}" />
+          <label for="3-bio">Bioassay</label>
+          <input type="radio" id="3-epi" name="evidence-type" value="1" data-url="{% url url_copy assessment.id 3 1 %}" />
+          <label for="3-epi">Epidemiology</label>
+          <input type="radio" id="3-invitro" name="evidence-type" value="2" data-url="{% url url_copy assessment.id 3 2 %}" />
+          <label for="3-invitro">In vitro</label>
         {% endif %}
         <h3>{{assessment.get_rob_name_display}} barchart</h3>
         <div class="row">

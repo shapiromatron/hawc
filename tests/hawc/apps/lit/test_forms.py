@@ -106,16 +106,12 @@ class TestImportForm:
             "just a long string of text",
             "not-numeric,but a csv",
             "1a,2b",
-            "1,,2",
-            "1,2, ,3",
         ]
         for bad_search_string in bad_search_strings:
             new_payload = {**payload, **{"search_string": bad_search_string}}
             form = ImportForm(new_payload, parent=parent)
             assert not form.is_valid()
-            assert form.errors == {
-                "search_string": ["Must be a comma-separated list of positive integer identifiers"]
-            }
+            assert form.errors == {"search_string": ["Must have one or more positive integer IDs"]}
 
         # check bad id lists
         bad_search_strings = [
@@ -125,7 +121,7 @@ class TestImportForm:
             new_payload = {**payload, **{"search_string": bad_search_string}}
             form = ImportForm(new_payload, parent=parent)
             assert not form.is_valid()
-            assert form.errors == {"search_string": ["At least one positive identifier must exist"]}
+            assert form.errors == {"search_string": ["Must have one or more positive integer IDs"]}
 
     def test_missing_id_in_hero(self, db_keys):
         """

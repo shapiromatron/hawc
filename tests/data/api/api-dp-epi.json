@@ -1,11 +1,28 @@
 {
   "assessment": 2,
+  "assessment_name": "Chemical X (2020)",
+  "assessment_rob_name": "Risk of bias",
   "caption": "<p>Example.</p>",
   "created": "2020-05-10T22:26:51.725098-04:00",
-  "data_url": "/summary/api/data_pivot/4/data/?format=tsv",
-  "download_url": "/summary/api/data_pivot/4/data/",
-  "id": 4,
+  "data_url": "/summary/api/visual/20/data/",
+  "dataset": null,
+  "dose_units": null,
+  "dp_id": 4,
+  "dp_slug": "data-pivot-epi",
+  "endpoints": [],
+  "evidence_type": 1,
+  "id": 20,
+  "image": null,
+  "label_htmx": "/assessment/label-item/129/20/?action=label",
+  "label_indicators_htmx": "/assessment/label-item/129/20/?action=label_indicators",
   "last_updated": "2020-05-10T22:46:43.863863-04:00",
+  "prefilters": {
+    "export_style": 0,
+    "preferred_units": "[]",
+    "prefilters": {
+      "published_only": true
+    }
+  },
   "published": true,
   "settings": {
     "barchart": {
@@ -1003,7 +1020,10 @@
     }
   },
   "slug": "data-pivot-epi",
+  "studies": [],
   "title": "data pivot - epi",
-  "url": "/summary/data-pivot/assessment/2/data-pivot-epi/",
+  "url": "/summary/visual/assessment/2/data-pivot-epi/",
+  "url_delete": "/summary/visual/assessment/2/data-pivot-epi/delete/",
+  "url_update": "/summary/visual/assessment/2/data-pivot-epi/update/",
   "visual_type": "Data pivot (epidemiology)"
 }

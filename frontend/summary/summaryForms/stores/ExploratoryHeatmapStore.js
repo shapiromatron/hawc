@@ -9,7 +9,12 @@ import h from "shared/utils/helpers";
 import {getInteractivityOptions} from "summary/interactivity/actions";
 
 import {NULL_VALUE} from "../../summary/constants";
-import {DATA_FILTER_CONTAINS, DATA_FILTER_LOGIC_AND} from "../../summary/filters";
+import {
+    DATA_FILTER_CONTAINS,
+    DATA_FILTER_LOGIC_AND,
+    DATA_FILTER_OPTIONS,
+    readableCustomQueryFilters,
+} from "../../summary/filters";
 
 let createDefaultAxisItem = function() {
         return {column: NULL_VALUE, items: null, wrap_text: 0, delimiter: ""};
@@ -151,6 +156,18 @@ class ExploratoryHeatmapStore {
 
     @computed get hasSettings() {
         return this.settings !== null;
+    }
+
+    @computed get filtersQueryReadable() {
+        const filters = this.settings.filters,
+            optMap = _.keyBy(DATA_FILTER_OPTIONS, "id");
+        return readableCustomQueryFilters(this.settings.filtersQuery, i => {
+            const filter = filters[i - 1], // convert 1 to 0 indexing
+                valStr = _.isNaN(_.toNumber(filter.value))
+                    ? `"${filter.value}"`
+                    : `${filter.value}`;
+            return `"${filter.column}" ${optMap[filter.type].label} ${valStr} {${i}}`;
+        });
     }
 
     @action.bound getDatasetOptions() {

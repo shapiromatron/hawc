@@ -507,6 +507,7 @@ class RoBHeatmapPlot extends D3Visualization {
             rowWidths = this.x_scale.domain().length * this.cell_size,
             options = {
                 dev: this.options.dev || false,
+                handleLegendDrag: this.options.handleLegendDrag,
                 collapseNR: false,
                 default_x: this.padding.left + rowWidths + offset,
                 default_y: this.padding.top + offset,

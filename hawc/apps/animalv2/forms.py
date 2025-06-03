@@ -24,7 +24,7 @@ class StudyLevelValueForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)
-        prefix = f"studylevelvalue-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        prefix = f"studylevelvalue-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if study:
             self.instance.study = study
@@ -119,7 +119,7 @@ class ChemicalForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop("parent", None)
-        prefix = f"chemical-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        prefix = f"chemical-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if experiment:
             self.instance.experiment = experiment
@@ -142,7 +142,7 @@ class AnimalGroupForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop("parent", None)
-        prefix = f"animalgroup-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        prefix = f"animalgroup-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if experiment:
             self.instance.experiment = experiment
@@ -189,7 +189,7 @@ class TreatmentForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop("parent", None)
-        prefix = f"treatment-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        prefix = f"treatment-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if experiment:
             self.instance.experiment = experiment
@@ -235,7 +235,7 @@ class EndpointForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop("parent", None)
-        prefix = f"endpoint-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        prefix = f"endpoint-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if experiment:
             self.instance.experiment = experiment
@@ -265,7 +265,7 @@ class ObservationTimeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop("parent", None)
-        prefix = f"observationtime-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        prefix = f"observationtime-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
         super().__init__(*args, prefix=prefix, **kwargs)
         # TODO - right now with name/name_term, the associated dropdown for picking an endpoint shows
         # an empty string for endpoints with a name_term but no freetext name.
@@ -301,7 +301,7 @@ class DataExtractionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop("parent", None)
-        prefix = f"dataextraction-{kwargs.get("instance").pk if "instance" in kwargs else "new"}"
+        prefix = f"dataextraction-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
         super().__init__(*args, prefix=prefix, **kwargs)
         if experiment:
             self.instance.experiment = experiment

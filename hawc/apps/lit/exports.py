@@ -165,6 +165,8 @@ def _long_export(qs: QuerySet, assessment_id: int) -> pd.DataFrame:
             models.Reference.objects.filter(assessment=assessment_id)
         )
     )
+    if refs.empty or ref_tags.empty:
+        return pd.DataFrame({"Result": ["No data available."]})
     return (
         refs.merge(
             ref_tags.merge(tags, left_on="tag_id", right_on="id", how="left").drop(

@@ -7,14 +7,6 @@ import {errorsDiv, inputClass} from "./inputs";
 import LabelInput from "./LabelInput";
 
 class SelectInput extends Component {
-    /**
-     * Builds a single <select> input.
-     *
-     * `Choices` should be an array of objects,
-     * with id:int and value:str properties, eg:
-     *  [{id: 0, value: 'Option 1'}, {id:1, value: 'Option 1'}];
-     */
-
     constructor(props) {
         super(props);
         this.handleSelect = this.handleSelect.bind(this);
