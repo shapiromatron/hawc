@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import _ from "lodash";
-import * as FormatModule from "shared/parsers/format";
-import * as QueryModule from "shared/parsers/query";
+import {parse as formatParse} from "shared/parsers/format";
+import {parse as queryParse} from "shared/parsers/query";
 import D3Plot from "shared/utils/D3Plot";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
@@ -16,9 +16,6 @@ import {buildStyleMap, NULL_CASE, OrderChoices} from "./shared";
 import {StyleLine, StyleRectangle, StyleSymbol, StyleText} from "./Styles";
 
 const EXTRA_BUFFER = 8; // extra buffer around plots to prevent boundary forest-plot points
-
-const Query = QueryModule;
-const Format = FormatModule;
 
 class DataPivotVisualization extends D3Plot {
     constructor(dp_data, dp_settings, plot_div, editable) {
@@ -152,7 +149,7 @@ class DataPivotVisualization extends D3Plot {
                 andValues = (l, r) => _.intersection(l, r),
                 orValues = (l, r) => _.union(l, r);
             try {
-                return Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
+                return queryParse(filter_query, {getValue, negateValue, andValues, orValues});
             } catch (err) {
                 console.error(err);
                 return [];
@@ -216,7 +213,7 @@ class DataPivotVisualization extends D3Plot {
                 .filter(d => d.name && d.formula)
                 .forEach(d => {
                     try {
-                        row[d.name] = Format.parse(d.formula, {
+                        row[d.name] = formatParse(d.formula, {
                             getValue: identifier => row[identifier],
                         });
                     } catch (err) {

@@ -1,9 +1,7 @@
 import _ from "lodash";
-import * as QueryModule from "shared/parsers/query";
+import {parse} from "shared/parsers/query";
 
 import {NULL_VALUE} from "./constants";
-
-const Query = QueryModule;
 
 export const DATA_FILTER_CONTAINS = "contains",
     DATA_FILTER_OPTIONS = [
@@ -91,7 +89,7 @@ export const DATA_FILTER_CONTAINS = "contains",
             andValues = (l, r) => _.intersection(l, r),
             orValues = (l, r) => _.union(l, r);
         try {
-            return Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
+            return parse(filter_query, {getValue, negateValue, andValues, orValues});
         } catch (err) {
             console.error(err);
             return [];
@@ -112,7 +110,7 @@ export const DATA_FILTER_CONTAINS = "contains",
                 return `${"  ".repeat(depth)}(\n${flat_arr.join("\n")}\n${"  ".repeat(depth)})`;
             };
         try {
-            let parsed = Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
+            let parsed = parse(filter_query, {getValue, negateValue, andValues, orValues});
             return stringify(parsed, 0);
         } catch (err) {
             return "Unable to parse query";

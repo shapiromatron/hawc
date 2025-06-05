@@ -1,13 +1,11 @@
 import {renderClientSideAutosuggest} from "shared/components/Autocomplete";
-import * as FormatModule from "shared/parsers/format";
+import {parse} from "shared/parsers/format";
 
 import $ from "$";
 
 import {_DataPivot_settings_conditionalFormat} from "./ConditionalFormat";
 import DataPivot from "./DataPivot";
 import {NULL_CASE} from "./shared";
-
-const Format = FormatModule;
 
 class _DataPivot_settings_refline {
     constructor(data_pivot, values) {
@@ -364,7 +362,7 @@ class _DataPivot_settings_calculated {
         const checkFormula = function() {
             const el = $(this);
             try {
-                Format.parse(el.val(), {getValue: () => null});
+                parse(el.val(), {getValue: () => null});
                 el.removeClass("is-invalid");
             } catch (err) {
                 el.addClass("is-invalid");

@@ -11,7 +11,7 @@
         "format": "eslint --cache --fix .",
         "test": "vitest run --config vitest.config.js --exclude tests/helpers.js",
         "test:ui": "vitest --ui --config vitest.config.js --exclude tests/helpers.js",
-        "generate-parsers": "peggy ./shared/parsers/query.pegjs && peggy ./shared/parsers/format.pegjs",
+        "generate-parsers": "peggy ./shared/parsers/query.pegjs --format es && peggy ./shared/parsers/format.pegjs --format es",
         "dev:vite": "vite --config vite.config.js"
     },
     "repository": {

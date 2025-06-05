@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
-import * as QueryModule from "shared/parsers/query";
+import {parse} from "shared/parsers/query";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
 
@@ -9,8 +9,6 @@ import $ from "$";
 import {applyStyles} from "./common";
 import D3Visualization from "./D3Visualization";
 import {DATA_FILTER_LOGIC_CUSTOM, filterFunction} from "./filters";
-
-const Query = QueryModule;
 
 class CrossviewPlot extends D3Visualization {
     constructor(parent, data, options) {
@@ -266,7 +264,7 @@ class CrossviewPlot extends D3Visualization {
         let dataset = [];
         if (settings.endpointFilterLogic === DATA_FILTER_LOGIC_CUSTOM) {
             try {
-                dataset = Query.parse(settings.filtersQuery, parserOptions);
+                dataset = parse(settings.filtersQuery, parserOptions);
             } catch (err) {
                 console.error(err);
             }
