@@ -1636,7 +1636,7 @@
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
-    enable_observations: true
+    enable_observations: false
     enable_risk_of_bias: true
     enable_bmd: true
     enable_summary_tables: true
@@ -1677,7 +1677,7 @@
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
-    enable_observations: true
+    enable_observations: false
     enable_risk_of_bias: true
     enable_bmd: true
     enable_summary_tables: true
@@ -1718,7 +1718,7 @@
     enable_literature_review: true
     enable_project_management: true
     enable_data_extraction: true
-    enable_observations: true
+    enable_observations: false
     enable_risk_of_bias: true
     enable_bmd: true
     enable_summary_tables: true
@@ -1758,7 +1758,7 @@
     enable_literature_review: false
     enable_project_management: false
     enable_data_extraction: true
-    enable_observations: true
+    enable_observations: false
     enable_risk_of_bias: false
     enable_bmd: true
     enable_summary_tables: false
