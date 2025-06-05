@@ -23,7 +23,7 @@
     <a href="#overview" data-toggle="collapse">Expand overview</a>
     <div id="overview" class="collapse">
       <br>
-      {% include "vocab/fragments/help_text.html" %}
+      {% include "animalv2/fragments/help_text.html" %}
     </div>
   </div>
 
@@ -73,7 +73,7 @@
   </thead>
   {% if assessment.enable_observations and data_extraction.completed %}
     {% for object in object_list %}
-      {% include "vocab/fragments/observation_detail.html" with experiment=experiment %}
+      {% include "animalv2/fragments/observation_detail.html" with experiment=experiment %}
     {% empty %}
       <tr>
         <td colspan="100%">

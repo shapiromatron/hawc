@@ -1,4 +1,7 @@
+from django.db.models import Manager
+
 from ..common.models import BaseManager
+from ..vocab.constants import ObservationStatus
 
 
 class ExperimentManager(BaseManager):
@@ -39,3 +42,21 @@ class DoseResponseGroupLevelDataManager(BaseManager):
 
 class DoseResponseAnimalLevelDataManager(BaseManager):
     assessment_relation = "data_extraction__experiment__study__assessment"
+
+
+class ObservationManager(Manager):
+    def default_observation(self, profile, endpoint):
+        reported_status = False
+        tested_status = False
+
+        if endpoint or profile.obs_status == ObservationStatus.REQ:
+            reported_status = True
+            tested_status = True
+        if profile.obs_status in (ObservationStatus.REC, ObservationStatus.TR):
+            reported_status = True
+            tested_status = False
+
+        default = self.model(
+            endpoint=profile.endpoint, tested_status=tested_status, reported_status=reported_status
+        )
+        return default

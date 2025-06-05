@@ -1,7 +1,8 @@
 import pytest
 
+from hawc.apps.animalv2.models import Observation, Term
 from hawc.apps.vocab.constants import ObservationStatus
-from hawc.apps.vocab.models import GuidelineProfile, Observation, Term
+from hawc.apps.vocab.models import GuidelineProfile
 
 
 @pytest.mark.django_db

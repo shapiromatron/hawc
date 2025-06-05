@@ -1,4 +1,4 @@
-<td hx-post="{% url 'vocab:observation-htmx' experiment status 'create' %}?endpoint={{object.endpoint.id}}"
+<td hx-post="{% url 'animalv2:observation-htmx' experiment status 'create' %}?endpoint={{object.endpoint.id}}"
     hx-target="this"
     hx-swap="outerHTML"
     hx-include="[name='{{object.endpoint.id}}-{{status}}']">

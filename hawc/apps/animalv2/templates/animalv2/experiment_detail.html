@@ -10,7 +10,7 @@
         <a class="dropdown-item" href="{{object.get_delete_url}}">Delete</a>
         <a class="dropdown-item" href="{% url 'vocab:api:guideline_profile-export' object.guideline %}?format=csv">View guideline profiles</a>
         {% if assessment.enable_observations and object.guideline %}
-          <a class="dropdown-item" href="{% url 'vocab:observation-list' object.pk %}?order_by=system">View observations</a>
+          <a class="dropdown-item" href="{% url 'animalv2:observation-list' object.pk %}?order_by=system">View observations</a>
         {% endif %}
       {% endactions %}
     {% endif %}

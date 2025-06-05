@@ -5,8 +5,6 @@ from django.apps import apps
 from django.conf import settings
 from django.db.models import Manager, Prefetch
 
-from . import constants
-
 
 class TermManager(Manager):
     def assessment_systems(self, assessment_id):
@@ -103,24 +101,6 @@ class TermManager(Manager):
                 )
             )
         )
-
-
-class ObservationManager(Manager):
-    def default_observation(self, profile, endpoint):
-        reported_status = False
-        tested_status = False
-
-        if endpoint or profile.obs_status == constants.ObservationStatus.REQ:
-            reported_status = True
-            tested_status = True
-        if profile.obs_status in (constants.ObservationStatus.REC, constants.ObservationStatus.TR):
-            reported_status = True
-            tested_status = False
-
-        default = self.model(
-            endpoint=profile.endpoint, tested_status=tested_status, reported_status=reported_status
-        )
-        return default
 
 
 class GuidelineProfileManager(Manager):

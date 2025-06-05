@@ -579,6 +579,26 @@ class StudyLevelValue(models.Model):
         return reverse("animalv2:studylevelvalues-htmx", args=[self.pk, "delete"])
 
 
+class Observation(models.Model):
+    objects = managers.ObservationManager()
+
+    experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE, blank=True, null=True)
+    endpoint = models.ForeignKey("vocab.Term", on_delete=models.CASCADE, blank=True, null=True)
+    tested_status = models.BooleanField(default=False)
+    reported_status = models.BooleanField(default=False)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
+
+    def __str__(self) -> str:
+        return f"{self.experiment}:{self.endpoint}"
+
+    def get_assessment(self):
+        return self.experiment.get_assessment()
+
+
 reversion.register(Experiment)
 reversion.register(Chemical)
 reversion.register(AnimalGroup)
@@ -590,3 +610,4 @@ reversion.register(DataExtraction)
 reversion.register(DoseResponseGroupLevelData)
 reversion.register(DoseResponseAnimalLevelData)
 reversion.register(StudyLevelValue)
+reversion.register(Observation)

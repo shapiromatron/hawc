@@ -1,6 +1,6 @@
 <tr class="observation-row"
     {% if object.endpoints %}
-      data-href="{% url 'animal:endpoint_list' assessment.id %}?effect_subtype={{object.endpoint.name}}"
+      data-href="{% url 'animalv2:endpoint_list' assessment.id %}?effect_subtype={{object.endpoint.name}}"
       style="cursor: pointer;"
     {% endif %}>
   <td>
@@ -15,7 +15,7 @@
   <td class="default-obs">
     {{object.id|yesno:'-,✔'}}
   </td>
-  {% include "vocab/fragments/observation_form.html" with status="tested_status" %}
-  {% include "vocab/fragments/observation_form.html" with status="reported_status" %}
+  {% include "animalv2/fragments/observation_form.html" with status="tested_status" %}
+  {% include "animalv2/fragments/observation_form.html" with status="reported_status" %}
 </a>
 </tr>
