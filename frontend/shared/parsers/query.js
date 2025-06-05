@@ -615,8 +615,6 @@ function peg$parse(input, options) {
   }
 }
 
-module.exports = {
-  StartRules: ["Query"],
-  SyntaxError: peg$SyntaxError,
-  parse: peg$parse
-};
+export const StartRules= ["Query"],
+  SyntaxError= peg$SyntaxError,
+  parse=peg$parse;

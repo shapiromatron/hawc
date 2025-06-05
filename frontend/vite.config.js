@@ -1,9 +1,11 @@
 import react from "@vitejs/plugin-react";
 import path from "path";
 import {defineConfig} from "vite";
+import {viteExternalsPlugin} from "vite-plugin-externals";
 
 export default defineConfig({
     root: ".",
+    base: "/static/bundles",
     plugins: [
         react({
             babel: {
@@ -22,6 +24,9 @@ export default defineConfig({
                 ],
             },
         }),
+        viteExternalsPlugin({
+            $: "$",
+        }),
     ],
     build: {
         outDir: "../hawc/static/bundles",
@@ -29,14 +34,13 @@ export default defineConfig({
         manifest: true,
         rollupOptions: {
             input: {
-                main: "./index.js",
+                main: "index.js",
             },
             output: {
                 entryFileNames: "[name].[hash].js",
                 chunkFileNames: "[name].[hash].js",
                 assetFileNames: "[name].[hash].[ext]",
             },
-            external: ["$"],
         },
     },
     resolve: {
@@ -61,7 +65,8 @@ export default defineConfig({
         port: 8050,
         host: "0.0.0.0",
         strictPort: true,
-        origin: "http://localhost:8050",
+        cors: true,
+        hmr: true,
     },
     optimizeDeps: {
         include: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],

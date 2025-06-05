@@ -1,6 +1,6 @@
 {% extends "admin/base_site.html" %}
 
-{% load render_bundle from webpack_loader %}
+{% comment %} {% load render_bundle from webpack_loader %} {% endcomment %}
 
 {% block breadcrumbs %}
   <div class="breadcrumbs">
@@ -23,5 +23,5 @@
     <p>Select an item above.</p>
   </div>
 
-  {% render_bundle "main" %}
+  {% comment %} {% render_bundle "main" %} {% endcomment %}
 {% endblock content %}

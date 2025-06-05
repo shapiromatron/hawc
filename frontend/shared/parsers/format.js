@@ -1255,8 +1255,6 @@ function peg$parse(input, options) {
   }
 }
 
-module.exports = {
-  StartRules: ["Format"],
-  SyntaxError: peg$SyntaxError,
-  parse: peg$parse
-};
+export const StartRules= ["Format"],
+  SyntaxError= peg$SyntaxError,
+  parse= peg$parse;

@@ -47,6 +47,7 @@
         "prettier": "^1.19.1",
         "rimraf": "^5.0.1",
         "vite": "^4.0.0",
+        "vite-plugin-externals": "^0.6.2",
         "vitest": "^3.2.2"
     },
     "dependencies": {
