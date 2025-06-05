@@ -26,7 +26,7 @@
 {% block extrajs %}
   {{ config|json_script:"config" }}
   <script>
-    $(document).ready(function() {
+    const loadVenn = function(){
       const config = document.getElementById("venn-config"),
             content = config ? JSON.parse(config.textContent) : {},
             el = document.getElementById("venn-main");
@@ -34,7 +34,8 @@
         const func = content.page ? app[content.page] : app;
         func(el, content.data);
       });
-    });
+        }
+    window.addEventListener("DOMContentLoaded", loadVenn);
     window.addEventListener("htmx:afterSwap", loadVenn)
   </script>
 {% endblock extrajs %}
