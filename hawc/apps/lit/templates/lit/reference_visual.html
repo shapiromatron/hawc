@@ -34,7 +34,7 @@
         const func = content.page ? app[content.page] : app;
         func(el, content.data);
       });
-        }
+    }
     window.addEventListener("DOMContentLoaded", loadVenn);
     window.addEventListener("htmx:afterSwap", loadVenn)
   </script>
