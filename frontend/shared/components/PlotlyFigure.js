@@ -21,7 +21,9 @@ class ResizableDiv extends Component {
         this.observer.observe(this.ref.current);
     }
     componentWillUnmount() {
-        this.observer.unobserve();
+        if (this.observer && this.ref.current) {
+            this.observer.unobserve(this.ref.current);
+        }
     }
     render() {
         const {children} = this.props;
@@ -48,6 +50,7 @@ class PlotlyFigure extends Component {
                     style={{width: "100%", height: "100%"}}
                 />
             );
+        // Use React.createElement instead of JSX to avoid esbuild parse errors in .js files
         return resizable ? <ResizableDiv>{plot}</ResizableDiv> : plot;
     }
 }

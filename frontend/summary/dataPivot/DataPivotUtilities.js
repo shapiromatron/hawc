@@ -1,11 +1,13 @@
+import * as FormatModule from "shared/parsers/format";
 import {renderClientSideAutosuggest} from "shared/components/Autocomplete";
-import Format from "shared/parsers/format";
 
 import $ from "$";
 
 import {_DataPivot_settings_conditionalFormat} from "./ConditionalFormat";
 import DataPivot from "./DataPivot";
 import {NULL_CASE} from "./shared";
+
+const Format = FormatModule;
 
 class _DataPivot_settings_refline {
     constructor(data_pivot, values) {

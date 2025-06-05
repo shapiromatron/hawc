@@ -1,7 +1,9 @@
 import _ from "lodash";
-import Query from "shared/parsers/query";
+import * as QueryModule from "shared/parsers/query";
 
 import {NULL_VALUE} from "./constants";
+
+const Query = QueryModule;
 
 export const DATA_FILTER_CONTAINS = "contains",
     DATA_FILTER_OPTIONS = [

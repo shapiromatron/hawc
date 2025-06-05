@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import _ from "lodash";
-import Format from "shared/parsers/format";
-import Query from "shared/parsers/query";
+import * as FormatModule from "shared/parsers/format";
+import * as QueryModule from "shared/parsers/query";
 import D3Plot from "shared/utils/D3Plot";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
@@ -16,6 +16,9 @@ import {buildStyleMap, NULL_CASE, OrderChoices} from "./shared";
 import {StyleLine, StyleRectangle, StyleSymbol, StyleText} from "./Styles";
 
 const EXTRA_BUFFER = 8; // extra buffer around plots to prevent boundary forest-plot points
+
+const Query = QueryModule;
+const Format = FormatModule;
 
 class DataPivotVisualization extends D3Plot {
     constructor(dp_data, dp_settings, plot_div, editable) {
