@@ -1,5 +1,5 @@
-import * as FormatModule from "shared/parsers/format";
 import {renderClientSideAutosuggest} from "shared/components/Autocomplete";
+import * as FormatModule from "shared/parsers/format";
 
 import $ from "$";
 

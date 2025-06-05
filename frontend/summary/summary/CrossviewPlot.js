@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
-import Query from "shared/parsers/query";
+import * as QueryModule from "shared/parsers/query";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
 
@@ -9,6 +9,8 @@ import $ from "$";
 import {applyStyles} from "./common";
 import D3Visualization from "./D3Visualization";
 import {DATA_FILTER_LOGIC_CUSTOM, filterFunction} from "./filters";
+
+const Query = QueryModule;
 
 class CrossviewPlot extends D3Visualization {
     constructor(parent, data, options) {
