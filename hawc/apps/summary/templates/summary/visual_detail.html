@@ -14,10 +14,12 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.app.startup("summaryStartup", function(summary){
-      window.isEditable = {{obj_perms.edit|lower}};
-      summary.Visual.displayAsPage({{object.id}}, $(".visualization"));
+    $(document).ready(function() {
+      window.app.startup("summaryStartup", function(summary){
+        window.isEditable = {{obj_perms.edit|lower}};
+        summary.Visual.displayAsPage({{object.id}}, $(".visualization"));
+      });
+      window.app.HAWCUtils.watchForHtmx('.visualization');
     });
-    window.app.HAWCUtils.watchForHtmx('.visualization');
   </script>
 {% endblock %}

@@ -53,8 +53,10 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.app.startup("animalStartup", function (animal) {
-      $("i.previewModalIcon").click(e=>animal.Endpoint.displayAsModal($(e.target).data("id"), { complete: true }));
+    $(document).ready(() => {
+      window.app.startup("animalStartup", function (animal) {
+        $("i.previewModalIcon").click(e=>animal.Endpoint.displayAsModal($(e.target).data("id"), { complete: true }));
+      });
     });
   </script>
 {% endblock %}
