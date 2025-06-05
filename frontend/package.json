@@ -12,8 +12,7 @@
         "test": "vitest run --config vitest.config.js --exclude tests/helpers.js",
         "test:ui": "vitest --ui --config vitest.config.js --exclude tests/helpers.js",
         "generate-parsers": "peggy ./shared/parsers/query.pegjs && peggy ./shared/parsers/format.pegjs",
-        "dev:vite": "vite --config vite.config.js",
-        "build:vite": "npm run clean && vite build --config vite.config.js && node vite-manifest-to-webpack-stats.js"
+        "dev:vite": "vite --config vite.config.js"
     },
     "repository": {
         "type": "git",
@@ -30,6 +29,7 @@
         "@babel/preset-env": "^7.22.7",
         "@babel/preset-react": "^7.27.1",
         "@babel/runtime": "^7.22.6",
+        "@vitejs/plugin-react": "^4.5.1",
         "@vitest/ui": "^3.2.2",
         "assert": "^2.0.0",
         "babel-eslint": "^10.1.0",
