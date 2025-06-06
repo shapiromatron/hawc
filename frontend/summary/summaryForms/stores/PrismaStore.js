@@ -121,7 +121,7 @@ class PrismaStore {
 
     @action.bound getDataset() {
         const {config} = this.root.base,
-            payload = {config: {visual_type: config.visual_type}};
+            payload = {visual_type: config.visual_type};
         h.handleSubmit(
             config.api_data_url,
             "POST",
