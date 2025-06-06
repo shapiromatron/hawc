@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import _ from "lodash";
-import Format from "shared/parsers/format";
-import Query from "shared/parsers/query";
+import * as FormatParser from "shared/parsers/format";
+import * as QueryParser from "shared/parsers/query";
 import D3Plot from "shared/utils/D3Plot";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
@@ -149,7 +149,7 @@ class DataPivotVisualization extends D3Plot {
                 andValues = (l, r) => _.intersection(l, r),
                 orValues = (l, r) => _.union(l, r);
             try {
-                return Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
+                return QueryParser.parse(filter_query, {getValue, negateValue, andValues, orValues});
             } catch (err) {
                 console.error(err);
                 return [];
@@ -213,7 +213,7 @@ class DataPivotVisualization extends D3Plot {
                 .filter(d => d.name && d.formula)
                 .forEach(d => {
                     try {
-                        row[d.name] = Format.parse(d.formula, {
+                        row[d.name] = FormatParser.parse(d.formula, {
                             getValue: identifier => row[identifier],
                         });
                     } catch (err) {
