@@ -4,15 +4,12 @@
     "version": "1.0.0",
     "description": "HAWC frontend code",
     "scripts": {
-        "clean": "rimraf ../hawc/static/bundles/* && rimraf ../hawc/webpack-stats.json",
-        "build": "npm run clean && vite build --config vite.config.js && node vite-manifest-to-webpack-stats.js",
+        "build": "vite build --config vite.config.js",
         "start": "vite --config vite.config.js",
         "lint": "eslint --cache .",
         "format": "eslint --cache --fix .",
         "test": "vitest run --config vitest.config.js --exclude tests/helpers.js",
-        "test:ui": "vitest --ui --config vitest.config.js --exclude tests/helpers.js",
-        "generate-parsers": "peggy ./shared/parsers/query.pegjs --format es && peggy ./shared/parsers/format.pegjs --format es",
-        "dev:vite": "vite --config vite.config.js"
+        "generate-parsers": "peggy ./shared/parsers/query.pegjs --format es && peggy ./shared/parsers/format.pegjs --format es"
     },
     "repository": {
         "type": "git",
@@ -45,7 +42,6 @@
         "mochapack": "^2.1.4",
         "peggy": "^4.0.2",
         "prettier": "^1.19.1",
-        "rimraf": "^5.0.1",
         "vite": "^4.0.0",
         "vite-plugin-externals": "^0.6.2",
         "vitest": "^3.2.2"

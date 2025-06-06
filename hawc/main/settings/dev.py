@@ -25,7 +25,7 @@ INTERNAL_IPS = [
 
 DJANGO_VITE["default"].update(
     **{
-        "dev_mode": os.environ.get("NO_VITE_DEV") is not None,
+        "dev_mode": os.environ.get("NO_VITE_DEV") is None,
         "manifest_path": str(PROJECT_PATH / "static" / "bundles" / "manifest.json"),
         "dev_server_port": 8050,
     }

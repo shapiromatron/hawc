@@ -42,7 +42,6 @@ jobs:
         cache-dependency-glob: "**/pyproject.toml"
     - name: install
       run: |
-        mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
         uv pip install --system -e ".[dev,docs]"
         uv pip install --system -e client
     - name: lint-py

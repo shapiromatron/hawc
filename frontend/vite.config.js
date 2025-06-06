@@ -1,7 +1,10 @@
 import react from "@vitejs/plugin-react";
+import fs from "fs";
 import path from "path";
 import {defineConfig} from "vite";
 import {viteExternalsPlugin} from "vite-plugin-externals";
+
+const outDir = "../hawc/static/bundles";
 
 export default defineConfig({
     root: ".",
@@ -27,9 +30,16 @@ export default defineConfig({
         viteExternalsPlugin({
             $: "$",
         }),
+        {
+            name: "create-empty-gitkeep",
+            closeBundle() {
+                const dest = path.resolve(__dirname, outDir, ".gitkeep");
+                fs.writeFileSync(dest, "");
+            },
+        },
     ],
     build: {
-        outDir: "../hawc/static/bundles",
+        outDir,
         emptyOutDir: true,
         manifest: true,
         rollupOptions: {
