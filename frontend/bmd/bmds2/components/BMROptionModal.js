@@ -8,9 +8,9 @@ import BaseModal from "./BaseModal";
 import ModalFooter from "./ModalFooter";
 
 class BMROptionModal extends BaseModal {
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.bmr) {
-            this.setState(h.deepCopy(nextProps.bmr));
+    componentDidUpdate(prevProps) {
+        if (prevProps.bmr !== this.props.bmr && this.props.bmr) {
+            this.setState(h.deepCopy(this.props.bmr));
         }
     }
 

@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React, {Component} from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 
 import {NULL_VALUE} from "../summary/constants";
 import config from "./config";
@@ -40,7 +40,8 @@ const getInteractivityOptions = function(columnNames) {
         return options;
     },
     renderExtensionTableBody = function(el) {
-        ReactDOM.render(<ExtensionTableBody />, el);
+        const root = createRoot(el);
+        root.render(<ExtensionTableBody />);
     },
     _getId = (settings, data) => {
         for (const column of settings.columns) {

@@ -1,6 +1,6 @@
 import {Provider} from "mobx-react";
 import React from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 
 import BulkTagReferencesMain from "./BulkTagReferences/Main";
 import BulkTagReferencesMainStore from "./BulkTagReferences/store";
@@ -20,13 +20,13 @@ export default {
     startupReferenceTable(el, config) {
         let tagtree = new TagTree(config.tags[0]),
             references = Reference.array(config.references, tagtree, false);
-        ReactDOM.render(
+        const root = createRoot(el);
+        root.render(
             <ReferenceTable
                 references={references}
                 showActions={false}
                 tagUDFContents={config.tag_binding_contents}
-            />,
-            el
+            />
         );
     },
     startupReferenceDetail(el, config) {
@@ -39,30 +39,31 @@ export default {
                 tagUDFContents: config.tag_binding_contents,
             };
 
-        ReactDOM.render(<ReferenceComponent reference={ref} {...options} />, el);
+        const root = createRoot(el);
+        root.render(<ReferenceComponent reference={ref} {...options} />);
     },
     startupReferenceList(el, config) {
-        ReactDOM.render(
+        const root = createRoot(el);
+        root.render(
             <Provider store={new ReferenceTreeMainStore(config)}>
                 <ReferenceTreeMain />
-            </Provider>,
-            el
+            </Provider>
         );
     },
     startupTagReferences(el, config) {
-        ReactDOM.render(
+        const root = createRoot(el);
+        root.render(
             <Provider store={new TagReferencesMainStore(config)}>
                 <TagReferencesMain />
-            </Provider>,
-            el
+            </Provider>
         );
     },
     startupBulkTagReferences(el, config) {
-        ReactDOM.render(
+        const root = createRoot(el);
+        root.render(
             <Provider store={new BulkTagReferencesMainStore(config)}>
                 <BulkTagReferencesMain />
-            </Provider>,
-            el
+            </Provider>
         );
     },
     startupTagTreeViz(el, config) {
@@ -80,6 +81,7 @@ export default {
         new TagTreeViz(tagtree, el, config.title, settings);
     },
     startupVenn(el, config) {
-        ReactDOM.render(<Venn data={config} />, el);
+        const root = createRoot(el);
+        root.render(<Venn data={config} />);
     },
 };

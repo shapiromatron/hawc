@@ -4,7 +4,7 @@ import * as cloud from "d3-cloud";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import Loading from "shared/components/Loading";
 import VisualToolbar from "shared/components/VisualToolbar";
 
@@ -101,7 +101,8 @@ const padding = 0,
             .append(svg.node())
             .append(toolbarNode);
 
-        ReactDOM.render(<VisualToolbar svg={svg.node()} />, toolbarNode.get(0));
+        const root = createRoot(toolbarNode.get(0));
+        root.render(<VisualToolbar svg={svg.node()} />);
     };
 
 @observer
