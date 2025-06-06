@@ -22,7 +22,7 @@ COPY ./tests/data/fixtures/db.yaml /app/test-db-fixture.yaml
 # https://pythonspeed.com/articles/system-packages-docker/
 RUN apt-get -y update && \
     apt-get -y upgrade && \
-    apt-get -y install netcat-openbsd && \
+    apt-get -y install --no-install-recommends netcat-openbsd && \
     rm -rf /var/lib/apt/lists/*
 
 COPY ./dist /app/build/dist
