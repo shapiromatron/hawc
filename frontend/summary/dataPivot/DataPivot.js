@@ -44,7 +44,7 @@ class DataPivot {
     }
 
     static get_object(pk, callback) {
-        const url = `/summary/api/data_pivot/${pk}/`,
+        const url = `/summary/api/visual/${pk}/`,
             handleError = err => {
                 $("#loading_div").hide();
                 handleVisualError(err, $("#dp_display"));
@@ -53,7 +53,7 @@ class DataPivot {
         fetch(url, h.fetchGet)
             .then(d => d.json())
             .then(d => {
-                fetch(d.data_url, h.fetchGet)
+                fetch(d.data_url + "?format=tsv", h.fetchGet)
                     .then(resp => {
                         if (!resp.ok) {
                             throw Error(`Invalid server response: ${resp.status}`);

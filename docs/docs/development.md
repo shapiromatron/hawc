@@ -20,7 +20,7 @@ See below for more details on how to automatically lint/format your code.
 
 ## Environment setup
 
-HAWC can be developed both on Windows and and Linux/Mac. Development on Mac/Linux is preferred as it is more similar to deployment.
+HAWC can be developed on Windows, Linux, or Mac. Development on Mac/Linux is preferred as it is more similar to deployment.
 
 Install [uv](https://docs.astral.sh/uv/); either via pip install or following the installation guide on the website.  Using `uv` is not required; you can build using standard Python + pip or Conda, depending on your personal preference.
 

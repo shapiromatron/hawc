@@ -69,14 +69,18 @@ class TestLabelItem:
         assessment_id = db_keys.assessment_working
         client = get_client("pm", htmx=True)
 
-        visual = Visual.objects.filter(assessment=assessment_id).first()
+        visual = Visual.objects.filter(assessment=assessment_id, title="example barchart").first()
+
         label_url = models.LabeledItem.get_label_url(visual, "label")
         label_indicator_url = models.LabeledItem.get_label_url(visual, "label_indicators")
-        initial_labeled_items = models.LabeledItem.objects.count()
-        label = models.Label.objects.filter(assessment=assessment_id)[1]
+        label = models.Label.objects.filter(assessment=assessment_id, depth=2).first()
 
-        # label
+        # check add label
+        assert visual.labels.count() == 0
         resp = client.post(label_url, data={"labels": label.pk})
+        assert visual.labels.count() == 1
+
+        # check template usage
         assertTemplateUsed(resp, "assessment/components/label_modal_content.html")
         assert resp.status_code == 200
         assert "Apply labels" in str(resp.content)
@@ -87,4 +91,6 @@ class TestLabelItem:
         assert f"{label.name}" in str(resp.content)
         assert resp.status_code == 200
 
-        assert models.LabeledItem.objects.count() == initial_labeled_items + 1
+        # check remove label
+        resp = client.post(label_url, data={"labels": []})
+        assert visual.labels.count() == 0

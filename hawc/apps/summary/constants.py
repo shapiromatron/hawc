@@ -10,6 +10,24 @@ class StudyType(models.IntegerChoices):
     ECO = 5, "Ecology"
     OTHER = 3, "Other"
 
+    def study_filter_prefix(self):
+        mapping = {
+            0: "bioassay",
+            1: "epi",
+            4: "epi_meta",
+            2: "in_vitro",
+            5: "eco",
+        }
+        return mapping[self]
+
+    def rob_prefix(self):
+        mapping = {
+            0: "required_animal",
+            1: "required_epi",
+            2: "required_invitro",
+        }
+        return mapping[self]
+
 
 class TableType(models.IntegerChoices):
     GENERIC = 0
@@ -28,11 +46,23 @@ class VisualType(models.IntegerChoices):
     PLOTLY = 7, "plotly"
     IMAGE = 8, "static image"
     PRISMA = 9, "PRISMA"
+    DATA_PIVOT_QUERY = 10, "Data Pivot Query"
+    DATA_PIVOT_FILE = 11, "Data Pivot File"
 
+
+WIP_VISUALS = []
 
 VISUAL_EVIDENCE_CHOICES = {
     VisualType.BIOASSAY_AGGREGATION: {StudyType.BIOASSAY},
     VisualType.BIOASSAY_CROSSVIEW: {StudyType.BIOASSAY},
+    VisualType.DATA_PIVOT_QUERY: {
+        StudyType.BIOASSAY,
+        StudyType.EPI,
+        StudyType.EPI_META,
+        StudyType.IN_VITRO,
+        StudyType.ECO,
+    },
+    VisualType.DATA_PIVOT_FILE: {StudyType.OTHER},
     VisualType.ROB_HEATMAP: {StudyType.BIOASSAY, StudyType.EPI, StudyType.IN_VITRO},
     VisualType.ROB_BARCHART: {StudyType.BIOASSAY, StudyType.EPI, StudyType.IN_VITRO},
     VisualType.LITERATURE_TAGTREE: {StudyType.OTHER},
