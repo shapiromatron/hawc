@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import reactJsSupport from 'vite-plugin-react-js-support';
 import commonjs from '@rollup/plugin-commonjs';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import path from 'path';
 
 export default defineConfig({
@@ -16,8 +17,27 @@ export default defineConfig({
         ],
       },
     }),
-    commonjs(),
+    nodeResolve({
+      preferBuiltins: false,
+    }),
+    commonjs({
+      include: ['node_modules/**', 'shared/parsers/**'],
+      transformMixedEsModules: true,
+    }),
   ],
+
+  esbuild: {
+    loader: 'jsx',
+    include: /.*\.js$/,
+  },
+
+  optimizeDeps: {
+    esbuildOptions: {
+      loader: {
+        '.js': 'jsx',
+      },
+    },
+  },
 
   resolve: {
     alias: {

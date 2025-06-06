@@ -5,8 +5,11 @@
     "description": "HAWC frontend code",
     "scripts": {
         "clean": "rimraf ../hawc/static/bundles/* && rimraf ../hawc/webpack-stats.json",
+        "clean:vite": "rimraf ../hawc/static/bundles/* && rimraf ../hawc/.vite/manifest.json",
         "build": "npm run clean && webpack --config webpack.config.js",
+        "build:vite": "npm run clean:vite && vite build",
         "start": "node devServer.js",
+        "start:vite": "vite --host 0.0.0.0 --port 8050",
         "lint": "eslint --cache .",
         "format": "eslint --cache --fix .",
         "test": "./node_modules/mochapack/bin/mochapack \"tests/**/*.js\"",

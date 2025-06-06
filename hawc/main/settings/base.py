@@ -113,7 +113,7 @@ INSTALLED_APPS = (
     "treebeard",
     "crispy_forms",
     "crispy_bootstrap4",
-    "webpack_loader",
+    "django_vite",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -356,12 +356,11 @@ REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BUL
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
-WEBPACK_LOADER = {
-    "DEFAULT": {
-        "BUNDLE_DIR_NAME": "bundles/",
-        "STATS_FILE": str(PROJECT_PATH / "webpack-stats.json"),
-        "POLL_INTERVAL": 0.1,
-        "IGNORE": [".+/.map"],
+DJANGO_VITE = {
+    "default": {
+        "dev_mode": False,  # Will be overridden in dev settings
+        "static_url_prefix": "bundles",
+        "manifest_path": str(PROJECT_PATH / "static" / "bundles" / ".vite" / "manifest.json"),
     }
 }
 
