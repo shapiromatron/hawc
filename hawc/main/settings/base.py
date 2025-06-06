@@ -359,10 +359,8 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 DJANGO_VITE = {
     "default": {
-        "dev_mode": True,
         "manifest_path": str(Path(STATIC_ROOT) / "bundles" / "manifest.json"),
         "static_url_prefix": "bundles",
-        "dev_server_port": 8050,
     },
 }
 

@@ -23,6 +23,14 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+DJANGO_VITE["default"].update(
+    **{
+        "dev_mode": os.environ.get("NO_VITE_DEV") is not None,
+        "manifest_path": str(PROJECT_PATH / "static" / "bundles" / "manifest.json"),
+        "dev_server_port": 8050,
+    }
+)
+
 # use console for email
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 

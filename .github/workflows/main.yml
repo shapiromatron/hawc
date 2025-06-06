@@ -132,6 +132,7 @@ jobs:
       DJANGO_DB_PW: password
       DJANGO_DB_USER: hawc
       INTEGRATION_TESTS: 1
+      NO_VITE_DEV: 1
       LIVESERVER_HOST: localhost
       LIVESERVER_PORT: 8000
       PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
