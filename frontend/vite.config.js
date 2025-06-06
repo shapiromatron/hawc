@@ -23,6 +23,7 @@ export default defineConfig({
     commonjs({
       include: ['node_modules/**', 'shared/parsers/**'],
       transformMixedEsModules: true,
+      defaultIsModuleExports: true,
     }),
   ],
 
@@ -63,8 +64,8 @@ export default defineConfig({
     emptyOutDir: true,
     manifest: true,
     rollupOptions: {
-      input: './index.js',
-      external: ['$', 'quill'],
+      input: './index-simple.js',
+      external: ['$'],
       plugins: [
         {
           name: 'disable-import-analysis',
@@ -80,7 +81,6 @@ export default defineConfig({
         assetFileNames: '[name].[hash].[ext]',
         globals: {
           $: '$',
-          quill: 'Quill',
         },
       },
     },
