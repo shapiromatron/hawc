@@ -381,5 +381,3 @@ IS_TESTING = False
 TEST_DB_FIXTURE = PROJECT_ROOT / "tests/data/fixtures/db.yaml"
 
 DISCLAIMER_TEXT = ""
-
-FORMS_URLFIELD_ASSUME_HTTPS = True
