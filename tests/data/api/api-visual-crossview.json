@@ -5,7 +5,10 @@
   "caption": "<p>example</p>",
   "created": "2020-05-08T15:37:19.255703-04:00",
   "data_url": "/summary/api/visual/4/data/",
+  "dataset": null,
   "dose_units": 1,
+  "dp_id": null,
+  "dp_slug": "",
   "endpoints": [
     {
       "FEL": -999,
@@ -1853,8 +1856,8 @@
   "evidence_type": 0,
   "id": 4,
   "image": null,
-  "label_htmx": "/assessment/label-item/132/4/?action=label",
-  "label_indicators_htmx": "/assessment/label-item/132/4/?action=label_indicators",
+  "label_htmx": "/assessment/label-item/129/4/?action=label",
+  "label_indicators_htmx": "/assessment/label-item/129/4/?action=label_indicators",
   "last_updated": "2020-05-08T15:37:19.255730-04:00",
   "prefilters": {
     "published_only": true
@@ -1876,58 +1879,24 @@
     "filters": [
       {
         "allValues": true,
-        "columns": 1,
+        "column": 1,
         "headerName": "Study",
         "name": "study",
-        "values": null,
-        "x": null,
-        "y": null
+        "values": [],
+        "x": 0,
+        "y": 25
       }
     ],
     "height": 600,
     "inner_height": 520,
     "inner_width": 940,
-    "labels": [
-      {
-        "caption": "",
-        "max_width": null,
-        "style": "base",
-        "x": null,
-        "y": null
-      }
-    ],
+    "labels": [],
     "padding_left": 75,
     "padding_top": 45,
-    "reflines_dose": [
-      {
-        "style": "base",
-        "title": "",
-        "value": null
-      }
-    ],
-    "reflines_response": [
-      {
-        "style": "base",
-        "title": "",
-        "value": null
-      }
-    ],
-    "refranges_dose": [
-      {
-        "lower": null,
-        "style": "base",
-        "title": "",
-        "upper": null
-      }
-    ],
-    "refranges_response": [
-      {
-        "lower": null,
-        "style": "base",
-        "title": "",
-        "upper": null
-      }
-    ],
+    "reflines_dose": [],
+    "reflines_response": [],
+    "refranges_dose": [],
+    "refranges_response": [],
     "response_range": "",
     "title": "Title",
     "title_x": 0,

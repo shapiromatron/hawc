@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block content %}
+  {% debug_badge object.id %}
   <div class='visualization'></div>
   {% include "assessment/components/label_modal.html" with modal_id="label-modal"%}
 {% endblock %}

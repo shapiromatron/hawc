@@ -15,7 +15,7 @@ from hawc.apps.lit.models import Reference, ReferenceFilterTag
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.study import constants as studyconstants
 from hawc.apps.study.models import Study
-from hawc.apps.summary.models import DataPivot
+from hawc.apps.summary.models import Visual
 from hawc_client import BaseClient, HawcClient, HawcClientException
 
 
@@ -1290,6 +1290,11 @@ class TestClient(LiveServerTestCase, TestCase):
         response = client.summary.visual_list(self.db_keys.assessment_client)
         assert isinstance(response, pd.DataFrame)
 
+    def test_summary_table_list(self):
+        client = HawcClient(self.live_server_url)
+        response = client.summary.table_list(self.db_keys.assessment_client)
+        assert isinstance(response, pd.DataFrame)
+
     def test_summary_crud(self):
         client = HawcClient(self.live_server_url)
         client.authenticate("admin@hawcproject.org", "pw")
@@ -1328,28 +1333,29 @@ class TestClient(LiveServerTestCase, TestCase):
         # Data Pivot #
         # read
         slug = "animal-bioassay-data-pivot-endpoint"
-        dp_id = DataPivot.objects.get(slug=slug).pk
-        dp = client.summary.get_datapivot(dp_id)
+        dp_id = Visual.objects.get(slug=slug).pk
+        dp = client.summary.get_visual(dp_id)
         assert dp["slug"] == slug
 
         # create
         new_slug = f"{slug}-2"
         new_dp_data = dp.copy()
         new_dp_data["slug"] = new_slug
+        new_dp_data["visual_type"] = 10
         new_dp_data.pop("id")
-        new_dp = client.summary.create_datapivot(new_dp_data)
+        new_dp = client.summary.create_visual(new_dp_data)
         assert new_dp["slug"] == new_slug
         new_dp_id = new_dp["id"]
 
         # update
         assert new_dp_data["published"] is True
         new_dp_data["published"] = False
-        new_dp = client.summary.update_datapivot(new_dp_id, new_dp_data)
+        new_dp = client.summary.update_visual(new_dp_id, new_dp_data)
         assert new_dp["published"] is False
 
         # Delete all the objects we created
         assert client.summary.delete_visual(visual_id) is None
-        assert client.summary.delete_datapivot(new_dp_id) is None
+        assert client.summary.delete_visual(new_dp_id) is None
 
     #####################
     # StudyClient tests #

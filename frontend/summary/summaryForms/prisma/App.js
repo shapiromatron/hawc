@@ -5,7 +5,7 @@ import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
 import FormActions from "shared/components/FormActions";
 import UnderDevelopment from "shared/components/UnderDevelopment";
 
-import OverallPanel from "./OverallPanel";
+import OverallPanel from "../shared/OverallPanel";
 import PreviewPanel from "./PreviewPanel";
 import SettingsPanel from "./SettingsPanel";
 

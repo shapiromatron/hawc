@@ -8,9 +8,7 @@ import {createPrismaStore} from "../stores";
 import App from "./App";
 
 const prismaFormAppStartup = function(el, config, djangoForm) {
-    const store = createPrismaStore(config);
-    store.base.setInitialData();
-    store.base.setDjangoForm(djangoForm);
+    const store = createPrismaStore(config, djangoForm);
     ReactDOM.render(
         <Provider store={store}>
             <App />
