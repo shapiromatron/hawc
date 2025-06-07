@@ -21,10 +21,7 @@ class MetricToggle extends Component {
                 type="button"
                 title="Show/hide description"
                 className="float-right btn btn-sm btn-light"
-                onClick={() => {
-                    store.toggle();
-                    h.maybeScrollIntoView(this, {yOffset: -50, animate: true});
-                }}>
+                onClick={() => store.toggle()}>
                 <i className={store.show ? "fa fa-fw fa-compress" : "fa fa-fw fa-expand"}></i>
                 &nbsp;{store.show ? "Hide details" : "Show details"}
             </button>

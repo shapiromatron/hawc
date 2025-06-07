@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM, {findDOMNode} from "react-dom";
 
 import $ from "$";
 
@@ -353,32 +353,6 @@ const helpers = {
         history.pushState(null, null, "?" + queryParams.toString());
     },
     nullString: "<null>",
-    maybeScrollIntoView(reactNode, options) {
-        // scroll into view if not currently visible; can optionally specify an offset too.
-        // eslint-disable-next-line react/no-find-dom-node
-        const node = ReactDOM.findDOMNode(reactNode);
-        options = options || {};
-        if (node) {
-            setTimeout(() => {
-                const rect = node.getBoundingClientRect(),
-                    isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight,
-                    y = rect.top + window.pageYOffset + (options.yOffset || 0);
-                if (!isVisible) {
-                    window.scrollTo({top: y, behavior: "smooth"});
-                    if (options.animate) {
-                        node.animate(
-                            [
-                                {transform: "translateY(-2px)"},
-                                {transform: "translateY(4px)"},
-                                {transform: "translateY(-2px)"},
-                            ],
-                            {delay: 1000, duration: 100, iterations: 3}
-                        );
-                    }
-                }
-            }, 250);
-        }
-    },
     groupNest(values, ...keys) {
         // performs d3.group and transforms it into the old d3.nest structure
         function groupToNest(group, depth) {
