@@ -21,9 +21,7 @@ class ResizableDiv extends Component {
         this.observer.observe(this.ref.current);
     }
     componentWillUnmount() {
-        if (this.observer && this.ref.current) {
-            this.observer.unobserve(this.ref.current);
-        }
+        this.observer.unobserve();
     }
     render() {
         const {children} = this.props;

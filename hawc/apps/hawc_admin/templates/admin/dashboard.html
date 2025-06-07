@@ -1,7 +1,5 @@
 {% extends "admin/base_site.html" %}
 
-{% comment %} {% load render_bundle from webpack_loader %} {% endcomment %}
-
 {% block breadcrumbs %}
   <div class="breadcrumbs">
     <a href="{% url 'admin:index' %}">Home</a>
@@ -18,10 +16,7 @@
     <button hx-get="{% url 'admin_dashboard' %}?action=users">Users</button>
     <button hx-get="{% url 'admin_dashboard' %}?action=daily_changes">Daily changes</button>
   </div>
-
   <div id="dashboard-content">
     <p>Select an item above.</p>
   </div>
-
-  {% comment %} {% render_bundle "main" %} {% endcomment %}
 {% endblock content %}
