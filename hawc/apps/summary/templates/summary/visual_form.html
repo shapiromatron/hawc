@@ -1,91 +1,24 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <div class="tabbable" style="display:none;">
-    <ul class="nav nav-tabs">
-      <li class="nav-item">
-        <a class="nav-link active" href="#data" data-toggle="tab">Visualization settings</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#settings" data-toggle="tab">Figure customization</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#preview" data-toggle="tab">Preview</a>
-      </li>
-    </ul>
-
-    <div class="tab-content">
-      <div id="data"     class="tab-pane active">
-        {% crispy form %}
-      </div>
-      <div id="settings" class="tab-pane"></div>
-      <div id="preview"  class="tab-pane"></div>
-    </div>
-  </div>
-
   <div id="main" style="display:none;"></div>
+  <div id="formContainer" style="display:none;">
+    {% crispy form %}
+  </div>
   {% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
 {% endblock %}
 
 {% block extrajs %}
   {{ smart_tag_form.media }}
-  <script id="config" type="text/json" charset="utf-8">
-    {
-      "assessment": {{assessment.id}},
-      "crud": "{{crud}}",
-      "csrf": "{{csrf_token}}",
-      "dose_units": {{dose_units|safe}},
-      "instance": {{instance|safe}},
-      "visual_type": {{visual_type}},
-      "cancel_url": "{% if crud == "Create" %}{% url 'summary:visualization_list' pk=assessment.id %}{% else %}{{object.get_absolute_url}}{% endif %}",
-      "data_url": "{% url 'summary:api:visual-list' %}",
-      "endpoint_url": "{% url 'autocomplete' 'animal-endpointautocomplete' %}",
-      "preview_url": "{% url 'summary:visualization_create_tester' assessment.id visual_type evidence_type %}",
-      "rob_metrics": {{rob_metrics|safe}},
-      "initial_data": {{initial_data|safe}},
-      "api_heatmap_datasets": "{{form.instance.get_api_heatmap_datasets}}",
-      "clear_cache_url": "{{assessment.get_clear_cache_url}}"
-      {% if api_data_url %},"api_data_url": "{{api_data_url|safe}}"{% endif %}
-    }
-  </script>
+  {{ config|json_script:"config" }}
   <script type="text/javascript">
-    window.app.startup("summaryFormsStartup", function(summaryForms){
-      const config = window.app.getConfig(),
-            djangoForm = $('#data form').get(0),
-            mainElement = $("#main");
-
-      if (config.visual_type === 6){
-        window.app.startup("summaryFormsStartup", function (summaryForms) {
-          summaryForms.exploratoryHeatmapFormAppStartup(mainElement.get(0), config, djangoForm);
-          mainElement.show();
-        });
-      } else if (config.visual_type === 9){
-        window.app.startup("summaryFormsStartup", function (summaryForms) {
-          summaryForms.prismaFormAppStartup(mainElement.get(0), config, djangoForm);
-          mainElement.show();
-        });
-      } else {
-        const mountElement = $('.tabbable');
-        mountElement.show();
-        summaryForms.VisualForm.create(config.visual_type, mountElement, config);
-      }
-
-      if (config.visual_type !== 6) {
-        $('input[data-pf]').each(window.app.HAWCUtils.bindCheckboxToPrefilter)
-
-        window.app.startup("smartTagsStartup", function (smartTags) {
-          new smartTags.SmartTagEditor(
-            $('#id_caption'),
-            {submitEl: '#visualForm', takeFocusEl: "#id_title"}
-          );
-        });
-
-        {% if crud == "Create" %}
-          $('#id_title').on('keyup', function () {
-            $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));
-          });
-        {% endif %}
-      }
+    $(document).ready(function() {
+      window.app.startup("summaryFormsStartup", function(summaryForms){
+        const config = window.app.getConfig(),
+              djangoForm = document.querySelector('#visualForm'),
+              mainElement = document.querySelector('#main');
+        summaryForms.startup(config, djangoForm, mainElement);
+      });
     });
   </script>
 {% endblock %}

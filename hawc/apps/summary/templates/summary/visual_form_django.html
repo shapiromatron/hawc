@@ -7,19 +7,13 @@
 
 {% block extrajs %}
   {{ smart_tag_form.media }}
+  {{ config|json_script:"config" }}
   <script type="text/javascript">
-    window.app.startup("summaryFormsStartup", function (summaryForms) {
-      {% if crud == "Create" %}
-        $('#id_title').on('keyup', function () {
-          $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));
-        });
-      {% endif %}
-      window.app.startup("smartTagsStartup", function (smartTags) {
-        new smartTags.SmartTagEditor(
-          $('#id_caption'),
-          {submitEl: '#visualForm', takeFocusEl: "#id_title"}
-        );
-      })
+    $(document).ready(function() {
+      window.app.startup("summaryFormsStartup", function(summaryForms){
+        const config = window.app.getConfig();
+        summaryForms.startup(config);
+      });
     });
   </script>
 {% endblock %}

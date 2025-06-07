@@ -34,20 +34,21 @@
 
 
 {% block extrajs %}
-
   {{ config|json_script:"config" }}
   <script type="text/javascript">
-    window.app.startup("animalStartup", function(animal){
-      const data = window.app.getConfig();
-      animal.AnimalGroup.get_object(data.id, function(d){
-        inserts = [d.build_details_table()];
-        if (data.has_dosing_regime){
-          inserts.push($("<h3>Dosing regime</h3>"));
-          inserts.push(d.build_dr_details_table());
-        }
-        $('div#animal-group-header').after(inserts);
+    $(document).ready(() => {
+      window.app.startup("animalStartup", function(animal){
+        const data = window.app.getConfig();
+        animal.AnimalGroup.get_object(data.id, function(d){
+          inserts = [d.build_details_table()];
+          if (data.has_dosing_regime){
+            inserts.push($("<h3>Dosing regime</h3>"));
+            inserts.push(d.build_dr_details_table());
+          }
+          $('div#animal-group-header').after(inserts);
+        });
+        animal.startupAnimalGroupTable(document.getElementById("animalGroupTableMain"), data);
       });
-      animal.startupAnimalGroupTable(document.getElementById("animalGroupTableMain"), data);
     });
   </script>
 {% endblock %}

@@ -13,14 +13,14 @@ keywords = [
 ]
 classifiers = [
   "Intended Audience :: Science/Research",
-  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 # see https://peps.python.org/pep-0440/#version-specifiers
 dependencies = [
   # web application
-  "Django~=5.1.8",
-  "django-crispy-forms==2.3",
+  "Django~=5.2.1",
+  "django-crispy-forms==2.4",
   "crispy-bootstrap4==2024.10",
   "django-filter==24.3",
   "django-redis==5.4.0",
@@ -29,36 +29,36 @@ dependencies = [
   "django-taggit==6.1.0",
   "django-treebeard==4.7.1",
   "djangorestframework==3.16.0",
-  "django-webpack-loader==3.1.1",
+  "django-vite==3.1.0",
   "uritemplate==4.1.1",
   "inflection==0.5.1",
   "pyyaml==6.0.2",
   "gunicorn==23.0.0",
-  "wagtail~=6.4.1",
+  "wagtail~=7.0.0",
   "wagtail-draftail-anchors==0.6.0",
   # tasks
-  "celery==5.5.1",
+  "celery==5.5.2",
   "billiard==4.2.1",
-  "kombu==5.5.2",
+  "kombu==5.5.3",
   # utilities
-  "jsonschema==4.23.0",
-  "lxml~=5.3.2",
+  "jsonschema==4.24.0",
+  "lxml~=5.4.0",
   "psycopg2-binary==2.9.10",
-  "redis==5.2.1",
+  "redis==6.2.0",
   "requests==2.32.3",
-  "pydantic~=2.11.3",
+  "pydantic~=2.11.5",
   "nh3~=0.2.21",
   "tinycss2==1.4.0",
   # computational
-  "numpy~=2.2.4",
+  "numpy~=2.2.6",
   "pandas==2.2.3",
   "openpyxl==3.1.5",
   "jinja2~=3.1.6",
-  "plotly==6.0.1",
-  "scipy~=1.15.2",
+  "plotly==6.1.2",
+  "scipy~=1.15.3",
   "pybmds==24.1",
   # exports
-  "rispy==0.9.0",
+  "rispy==0.10.0",
   "python-docx==1.1.2",
 ]
 
@@ -66,30 +66,30 @@ dependencies = [
 dev = [
   # build
   "flit==3.12.0",  # make sure to sync w/ [build-system]
-  "poethepoet~=0.33.1",
+  "poethepoet~=0.34.0",
   # lint and formatting tools
-  "ruff==0.11.4",  # make sure to sync w/ pre-commit
-  "djhtml==3.0.7",  # make sure to sync w/ pre-commit
+  "ruff==0.11.11",  # make sure to sync w/ pre-commit
+  "djhtml==3.0.8",  # make sure to sync w/ pre-commit
   "pre-commit==4.2.0",
   # django development
-  "django-debug-toolbar~=5.1",
-  "django-browser-reload~=1.18",
-  "django-extensions~=4.0",
+  "django-debug-toolbar~=5.2.0",
+  "django-browser-reload~=1.18.0",
+  "django-extensions~=4.1",
   # tests
-  "coverage~=7.8.0",
+  "coverage~=7.8.2",
   "pytest~=8.3.5",
   "pytest-django~=4.11.1",
   "vcrpy==7.0.0",
-  "pytest-recording==0.13.2",
-  "playwright~=1.51.0",
+  "pytest-recording==0.13.4",
+  "playwright~=1.52.0",
   "pytest-playwright~=0.7.0",
 ]
 docs = [
-  "mkdocs-material~=9.6.11",
+  "mkdocs-material~=9.6.14",
 ]
 prod = [
   "django-anymail==13.0",
-  "sentry_sdk~=2.25.1",
+  "sentry_sdk~=2.29.1",
 ]
 
 [project.scripts]
@@ -102,7 +102,7 @@ Source = "https://github.com/shapiromatron/hawc"
 
 # --- --- --- --- --- --- --- --- --- --- BUILD --- --- --- --- --- --- --- --- --- ---
 [build-system]
-requires = ["flit_core ~=3.12"]
+requires = ["flit_core~=3.12"]
 build-backend = "flit_core.buildapi"
 
 [tool.flit.sdist]
@@ -126,7 +126,7 @@ exclude = [
 # --- --- --- --- --- --- --- --- --- --- FORMAT --- --- --- --- --- --- --- --- --- ---
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py313"
 lint.select = ["F", "E", "W", "I", "UP", "S", "B", "T20", "RUF"]
 lint.ignore = ["E501", "S308", "S314", "S603", "RUF012", "RUF015"]
 lint.unfixable = ["F401", "F841"]

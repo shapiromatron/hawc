@@ -267,6 +267,7 @@ class RoBBarchartPlot extends D3Visualization {
         const offset = 20,
             options = {
                 dev: this.options.dev || false,
+                handleLegendDrag: this.options.handleLegendDrag,
                 collapseNR: true,
                 default_x: this.padding.left + this.data.settings.plot_width + offset,
                 default_y: this.padding.top + offset,

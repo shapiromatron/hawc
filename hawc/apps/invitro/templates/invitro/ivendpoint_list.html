@@ -58,8 +58,10 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.app.startup("invitroStartup", function (app) {
-      $("i.previewModalIcon").click(e => app.IVEndpoint.displayAsModal($(e.target).data("id")));
+    $(document).ready(function() {
+      window.app.startup("invitroStartup", function (app) {
+        $("i.previewModalIcon").click(e => app.IVEndpoint.displayAsModal($(e.target).data("id")));
+      });
     });
   </script>
 {% endblock %}

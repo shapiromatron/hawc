@@ -6,7 +6,7 @@
 
 {% block content %}
   <div class='d-flex'>
-    <h2>{{object.title}}</h2>
+    <h2>{% debug_badge object.id %}{{object.title}}</h2>
     {% include "assessment/fragments/label_indicators.html" %}
     {% include "common/unpublished_badge.html" %}
     {% if obj_perms.edit %}
@@ -26,11 +26,13 @@
 {% block extrajs %}
   {{ config|json_script:"config" }}
   <script type="text/javascript">
-    window.app.startup("summaryStartup", function(summary){
-      window.isEditable = {{obj_perms.edit|lower}};
-      const config = JSON.parse(document.getElementById('config').textContent),
-            el = document.getElementById('visualization');
-      summary.startupPrismaAppRender(el, config.settings, config.data, config);
+    $(document).ready(function() {
+      window.app.startup("summaryStartup", function(summary){
+        window.isEditable = {{obj_perms.edit|lower}};
+        const config = JSON.parse(document.getElementById('config').textContent),
+              el = document.getElementById('visualization');
+        summary.startupPrismaAppRender(el, config.settings, config.data, config);
+      });
     });
   </script>
 {% endblock %}

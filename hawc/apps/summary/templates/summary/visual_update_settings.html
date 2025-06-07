@@ -1,4 +1,4 @@
-{% extends 'summary/datapivot_detail.html' %}
+{% extends 'summary/visual_detail_dp.html' %}
 
 {% load static %}
 
@@ -38,18 +38,20 @@
 {% block extrajs %}
   {{ config|json_script:"dp-config" }}
   <script type="text/javascript">
-    $('#loading_div').html(window.app.HAWCUtils.loading())
-    window.app.startup("dataPivotStartup", function(app){
-      const config = JSON.parse(document.getElementById('dp-config').textContent),
-            options = {
-        container: '#data_pivot',
-        dataDiv: '#dp_data',
-        settingsDiv: '#dp_settings',
-        displayDiv: '#dp_display',
-        submissionDiv: '#dp_settings_form',
-        settingsField: '#id_settings',
-      };
-      app.DataPivot.displayEditView(config.data_url, config.settings, options)
+    $(document).ready(function() {
+      $('#loading_div').html(window.app.HAWCUtils.loading())
+      window.app.startup("dataPivotStartup", function(app){
+        const config = JSON.parse(document.getElementById('dp-config').textContent),
+              options = {
+          container: '#data_pivot',
+          dataDiv: '#dp_data',
+          settingsDiv: '#dp_settings',
+          displayDiv: '#dp_display',
+          submissionDiv: '#dp_settings_form',
+          settingsField: '#id_settings',
+        };
+        app.DataPivot.displayEditView(config.data_url, config.settings, options)
+      });
     });
   </script>
 {% endblock extrajs %}

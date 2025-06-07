@@ -1,5 +1,5 @@
 import {renderClientSideAutosuggest} from "shared/components/Autocomplete";
-import Format from "shared/parsers/format";
+import {parse} from "shared/parsers/format";
 
 import $ from "$";
 
@@ -362,7 +362,7 @@ class _DataPivot_settings_calculated {
         const checkFormula = function() {
             const el = $(this);
             try {
-                Format.parse(el.val(), {getValue: () => null});
+                parse(el.val(), {getValue: () => null});
                 el.removeClass("is-invalid");
             } catch (err) {
                 el.addClass("is-invalid");

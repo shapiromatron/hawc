@@ -1,5 +1,5 @@
 import _ from "lodash";
-import Query from "shared/parsers/query";
+import {parse} from "shared/parsers/query";
 
 import {NULL_VALUE} from "./constants";
 
@@ -89,30 +89,16 @@ export const DATA_FILTER_CONTAINS = "contains",
             andValues = (l, r) => _.intersection(l, r),
             orValues = (l, r) => _.union(l, r);
         try {
-            return Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
+            return parse(filter_query, {getValue, negateValue, andValues, orValues});
         } catch (err) {
             console.error(err);
             return [];
         }
     },
-    readableCustomQueryFilters = function(filters, filter_query) {
-        let optMap = _.keyBy(DATA_FILTER_OPTIONS, "id"),
-            getValue = i => {
-                const filter = filters[i - 1], // convert 1 to 0 indexing
-                    valStr = _.isNaN(_.toNumber(filter.value))
-                        ? `"${filter.value}"`
-                        : `${filter.value}`;
-                return `"${filter.column}" ${optMap[filter.type].label} ${valStr} {${i}}`;
-            },
-            negateValue = v => {
-                return ["NOT", v];
-            },
-            andValues = (l, r) => {
-                return [l, "AND", r];
-            },
-            orValues = (l, r) => {
-                return [l, "OR", r];
-            },
+    readableCustomQueryFilters = function(filter_query, getValue) {
+        let negateValue = v => ["NOT", v],
+            andValues = (l, r) => [l, "AND", r],
+            orValues = (l, r) => [l, "OR", r],
             stringify = (arr, depth) => {
                 if (!Array.isArray(arr)) {
                     return `${"  ".repeat(depth)}${arr}`;
@@ -124,7 +110,7 @@ export const DATA_FILTER_CONTAINS = "contains",
                 return `${"  ".repeat(depth)}(\n${flat_arr.join("\n")}\n${"  ".repeat(depth)})`;
             };
         try {
-            let parsed = Query.parse(filter_query, {getValue, negateValue, andValues, orValues});
+            let parsed = parse(filter_query, {getValue, negateValue, andValues, orValues});
             return stringify(parsed, 0);
         } catch (err) {
             return "Unable to parse query";

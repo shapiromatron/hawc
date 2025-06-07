@@ -1,5 +1,9 @@
 name: ci-checks
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   pull_request:
   push:
@@ -12,7 +16,7 @@ on:
 jobs:
   backend:
     name: backend
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     services:
       postgres:
@@ -34,7 +38,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v5
       with:
-        python-version: '3.12'
+        python-version: '3.13'
         architecture: 'x64'
     - name: Install uv
       uses: astral-sh/setup-uv@v5
@@ -42,7 +46,6 @@ jobs:
         cache-dependency-glob: "**/pyproject.toml"
     - name: install
       run: |
-        mv tests/data/ci-webpack-stats.json hawc/webpack-stats.json
         uv pip install --system -e ".[dev,docs]"
         uv pip install --system -e client
     - name: lint-py
@@ -81,7 +84,7 @@ jobs:
 
   frontend:
     name: frontend
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -113,7 +116,7 @@ jobs:
   integration:
     name: integration
     needs: [frontend]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     services:
       postgres:
@@ -132,6 +135,7 @@ jobs:
       DJANGO_DB_PW: password
       DJANGO_DB_USER: hawc
       INTEGRATION_TESTS: 1
+      NO_VITE_DEV: 1
       LIVESERVER_HOST: localhost
       LIVESERVER_PORT: 8000
       PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
@@ -140,7 +144,7 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v5
       with:
-        python-version: '3.12'
+        python-version: '3.13'
         architecture: 'x64'
     - name: Install uv
       uses: astral-sh/setup-uv@v5

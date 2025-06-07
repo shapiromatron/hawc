@@ -258,9 +258,14 @@ class RisImportForm(SearchForm):
         if fileObj.name[-4:] not in (".txt", ".ris"):
             raise forms.ValidationError(self.RIS_EXTENSION)
 
+        try:
+            data = fileObj.read().decode("utf-8-sig")
+        except UnicodeDecodeError as err:
+            raise forms.ValidationError(self.UNPARSABLE_RIS) from err
+
         # convert BytesIO file to StringIO file
         with StringIO() as f:
-            f.write(fileObj.read().decode("utf-8-sig"))
+            f.write(data)
             f.seek(0)
             fileObj.seek(0)
             readable = ris.RisImporter.file_readable(f)

@@ -2,78 +2,13 @@ import json
 import re
 
 import pytest
-from django.test.client import Client
 from django.urls import reverse
 from django.utils.http import urlencode
 from rest_framework.test import APIClient
 
-from hawc.apps.summary import models
+from hawc.apps.summary import constants, models
 
 from ..test_utils import check_api_json_data, get_client
-
-
-@pytest.mark.django_db
-def test_api_visual_heatmap(db_keys):
-    client = Client()
-    assert client.login(username="team@hawcproject.org", password="pw") is True
-
-    url = reverse("summary:api:visual-detail", args=(db_keys.visual_heatmap,))
-    response = client.get(url)
-    assert response.status_code == 200
-
-    json = response.json()
-    assert json["title"] == "example heatmap"
-    assert json["settings"] == {
-        "title": "",
-        "xAxisLabel": "",
-        "yAxisLabel": "",
-        "padding_top": 20,
-        "cell_size": 40,
-        "padding_right": 400,
-        "padding_bottom": 35,
-        "padding_left": 20,
-        "x_field": "study",
-        "study_label_field": "short_citation",
-        "included_metrics": [1, 2],
-        "excluded_score_ids": [],
-        "show_legend": True,
-        "show_na_legend": True,
-        "show_nr_legend": True,
-        "legend_x": 239,
-        "legend_y": 17,
-        "sort_order": "short_citation",
-    }
-
-
-@pytest.mark.django_db
-def test_api_visual_barchart(db_keys):
-    client = Client()
-    assert client.login(username="team@hawcproject.org", password="pw") is True
-
-    # test rob barchart request returns successfully
-    url = reverse("summary:api:visual-detail", args=(db_keys.visual_barchart,))
-    response = client.get(url)
-    assert response.status_code == 200
-
-    json = response.json()
-    assert json["title"] == "example barchart"
-    assert json["settings"] == {
-        "title": "Title",
-        "xAxisLabel": "Percent of studies",
-        "yAxisLabel": "",
-        "plot_width": 400,
-        "row_height": 30,
-        "padding_top": 40,
-        "padding_right": 400,
-        "padding_bottom": 40,
-        "padding_left": 70,
-        "show_values": True,
-        "included_metrics": [1, 2],
-        "show_legend": True,
-        "show_na_legend": True,
-        "legend_x": 640,
-        "legend_y": 10,
-    }
 
 
 @pytest.mark.django_db
@@ -83,11 +18,9 @@ class TestVisual:
     """
 
     def _test_visual_crud_api(self, data, rewrite_data_files: bool, slug: str):
-        user_anon = APIClient()
-        user_reviewer = APIClient()
-        assert user_reviewer.login(username="reviewer@hawcproject.org", password="pw") is True
-        user_team = APIClient()
-        assert user_team.login(username="team@hawcproject.org", password="pw") is True
+        user_anon = get_client(api=True)
+        user_reviewer = get_client("reviewer", api=True)
+        user_team = get_client("team", api=True)
 
         # read visual
         url = models.Visual.objects.get(slug=slug).get_api_detail()
@@ -276,16 +209,15 @@ class TestVisual:
 
 
 @pytest.mark.django_db
-class TestDataPivot:
+class TestVisualDataPivot:
     def _test_dp(self, rewrite_data_files: bool, slug: str, fn_key: str, db_keys):
-        user_anon = APIClient()
-        user_reviewer = APIClient()
-        assert user_reviewer.login(username="reviewer@hawcproject.org", password="pw") is True
-        user_team = APIClient()
-        assert user_team.login(username="team@hawcproject.org", password="pw") is True
+        user_anon = get_client(api=True)
+        user_reviewer = get_client("reviewer", api=True)
+        user_team = get_client("team", api=True)
 
-        # check DataPivot read
-        dp = models.DataPivot.objects.get(slug=slug)
+        dp = models.Visual.objects.get(slug=slug)
+
+        # check api detail
         url = dp.get_api_detail()
         response = user_anon.get(url)
         assert response.status_code == 200
@@ -294,29 +226,21 @@ class TestDataPivot:
         key = f"api-dp-{fn_key}.json"
         check_api_json_data(data, key, rewrite_data_files)
 
-        # check DataPivot data read
-        url = dp.get_data_url().replace("tsv", "json")
+        # check api data
+        url = dp.get_data_url() + "?format=json"
         response = user_anon.get(url)
         assert response.status_code == 200
-        data = response.json()
+
+        dataset = response.json()
         key = f"api-dp-data-{fn_key}.json"
-        check_api_json_data(data, key, rewrite_data_files)
+        check_api_json_data(dataset, key, rewrite_data_files)
 
-        # check DataPivotQuery read
-        dpq = models.DataPivotQuery.objects.get(slug=slug)
-        url = reverse("summary:api:data_pivot_query-detail", args=(dpq.pk,))
-        response = user_anon.get(url)
-        assert response.status_code == 200
-
-        data = response.json()
-        key = f"api-dp_query-{fn_key}.json"
-        check_api_json_data(data, key, rewrite_data_files)
-
-        # check DataPivotQuery create
+        # check api create
         data["title"] = data["title"] + "-2"
         data["slug"] = data["slug"] + "-2"
+        data["visual_type"] = constants.VisualType.DATA_PIVOT_QUERY
         data["assessment"] = db_keys.assessment_working
-        url = reverse("summary:api:data_pivot_query-list")
+        url = reverse("summary:api:visual-list")
         for user in [user_anon, user_reviewer]:
             response = user.post(url, data, format="json")
             assert response.status_code == 403
@@ -325,7 +249,7 @@ class TestDataPivot:
         assert response.json()["title"] == data["title"]
 
         dpq_id = response.json()["id"]
-        url = reverse("summary:api:data_pivot_query-detail", args=(dpq_id,))
+        url = reverse("summary:api:visual-detail", args=(dpq_id,))
 
         # update data pivot
         data["title"] = "updated-title"
@@ -396,26 +320,56 @@ class TestSummaryAssessmentViewSet:
         key = f"api-summary-heatmap-datasets-{db_keys.assessment_working}.json"
         check_api_json_data(data, key, rewrite_data_files)
 
-    def test_json_data(self, db_keys, rewrite_data_files):
+    def test_json_data_permissions(self, db_keys):
         anon_client = get_client(api=True)
         rev_client = get_client("reviewer", api=True)
         team_client = get_client("team", api=True)
 
         url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
-        payload = {"config": {"visual_type": 9}}
+        payload = {"visual_type": 9}
 
         assert anon_client.post(url, payload, format="json").status_code == 403
         assert rev_client.post(url, payload, format="json").status_code == 403
+        resp = team_client.post(url, payload, format="json")
+        assert resp.status_code == 200
 
-        for bad_payload in [{}, {"config": "TEST"}, {"config": {"visual_type": "TEST"}}]:
+    def test_json_data_bad_data(self, db_keys):
+        team_client = get_client("team", api=True)
+        url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
+        for bad_payload in [{}, {"visual_type": "TEST"}, {"visual_type": {}}]:
             resp = team_client.post(url, bad_payload, format="json")
             assert resp.status_code == 400
 
+    def test_json_data_prisma(self, db_keys):
+        team_client = get_client("team", api=True)
+        url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
+
+        payload = {"visual_type": 9}
         resp = team_client.post(url, payload, format="json")
         assert resp.status_code == 200
-        resp_data = resp.json()
-        key = f"api-summary-assessment-visual-json-{db_keys.assessment_working}.json"
-        check_api_json_data(resp_data, key, rewrite_data_files)
+        assert len(resp.json()) > 0
+
+    def test_json_data_crossview(self, db_keys):
+        team_client = get_client("team", api=True)
+        url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
+
+        payload = {"visual_type": 1, "data": {}}
+        resp = team_client.post(url, payload, format="json")
+        assert resp.status_code == 400
+
+        payload = {"visual_type": 1, "dose_units": 1, "settings": {"hello": "world"}}
+        resp = team_client.post(url, payload, format="json")
+        assert resp.status_code == 200
+        assert len(resp.json()) > 0
+
+    def test_json_data_rob(self, db_keys):
+        team_client = get_client("team", api=True)
+        url = reverse("summary:api:assessment-json-data", args=(db_keys.assessment_working,))
+
+        payload = {"visual_type": 2, "evidence_type": 0, "settings": {"hello": "world"}}
+        resp = team_client.post(url, payload, format="json")
+        assert resp.status_code == 200
+        assert len(resp.json()) > 0
 
 
 @pytest.mark.django_db

@@ -1,28 +1,10 @@
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import h from "shared/utils/helpers";
 
-const moveArrayElementUp = function(arr, index) {
-        if (index === 0) {
-            return;
-        }
-        let b = arr[index];
-        arr[index] = arr[index - 1];
-        arr[index - 1] = b;
-        return arr;
-    },
-    moveArrayElementDown = function(arr, index) {
-        if (index + 1 >= arr.length) {
-            return;
-        }
-        let b = arr[index];
-        arr[index] = arr[index + 1];
-        arr[index + 1] = b;
-        return arr;
-    },
-    deleteArrayElement = function(arr, index) {
-        arr.splice(index, 1);
-        return arr;
-    },
+const moveArrayElementUp = h.moveArrayElementUp,
+    moveArrayElementDown = h.moveArrayElementDown,
+    deleteArrayElement = h.deleteArrayElement,
     ActionsTh = function(props) {
         return (
             <th>

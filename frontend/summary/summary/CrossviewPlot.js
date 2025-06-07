@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
-import Query from "shared/parsers/query";
+import {parse} from "shared/parsers/query";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
 
@@ -95,22 +95,23 @@ class CrossviewPlot extends D3Visualization {
             xAxisOffsetY = this.data.settings.xlabel_y || 0,
             yAxisOffsetX = this.data.settings.ylabel_x || 0,
             yAxisOffsetY = this.data.settings.ylabel_y || 0,
-            settings = this.data.settings;
+            settings = this.data.settings,
+            options = this.options;
 
         // add labels
-        let dragTitle = this.options.dev
+        let dragTitle = options.dev
                 ? HAWCUtils.updateDragLocationTransform((x, y) => {
-                      this.data.settings.title_x = parseInt(x);
-                      this.data.settings.title_y = parseInt(y);
+                      options.updateSettingFunc("title_x", parseInt(x));
+                      options.updateSettingFunc("title_y", parseInt(y));
                   })
-                : function() {},
-            dragX = this.options.dev
+                : h.noop,
+            dragX = options.dev
                 ? HAWCUtils.updateDragLocationTransform((x, y) => {
-                      this.data.settings.xlabel_x = parseInt(x);
-                      this.data.settings.xlabel_y = parseInt(y);
+                      options.updateSettingFunc("xlabel_x", parseInt(x));
+                      options.updateSettingFunc("xlabel_y", parseInt(y));
                   })
-                : function() {},
-            dragY = this.options.dev
+                : h.noop,
+            dragY = options.dev
                 ? d3.drag().on("drag", function(event) {
                       let regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
                           p = d3.select(this),
@@ -122,21 +123,21 @@ class CrossviewPlot extends D3Visualization {
                               "transform",
                               `translate(${x},${y}) rotate(270,${yAxisXDefault + x},${midY + y})`
                           );
-                          settings.ylabel_x = x;
-                          settings.ylabel_y = y;
+                          options.updateSettingFunc("ylabel_x", parseInt(x));
+                          options.updateSettingFunc("ylabel_y", parseInt(y));
                       }
                   })
-                : function() {};
+                : h.noop;
 
         this.vis
             .append("svg:text")
             .attr("x", midX)
             .attr("y", -10)
             .attr("transform", `translate(${titleOffsetX},${titleOffsetY})`)
-            .text(this.data.settings.title)
+            .text(settings.title)
             .attr("text-anchor", "middle")
             .attr("class", "dr_title")
-            .attr("cursor", this.options.dev ? "pointer" : "default")
+            .attr("cursor", options.dev ? "pointer" : "default")
             .call(dragTitle);
 
         this.vis
@@ -144,10 +145,10 @@ class CrossviewPlot extends D3Visualization {
             .attr("x", midX)
             .attr("y", d3.max(this.y_scale.range()) + 30)
             .attr("transform", `translate(${xAxisOffsetX},${xAxisOffsetY})`)
-            .text(this.data.settings.xAxisLabel)
+            .text(settings.xAxisLabel)
             .attr("text-anchor", "middle")
             .attr("class", "dr_axis_labels x_axis_label")
-            .attr("cursor", this.options.dev ? "pointer" : "default")
+            .attr("cursor", options.dev ? "pointer" : "default")
             .call(dragX);
 
         this.vis
@@ -159,25 +160,25 @@ class CrossviewPlot extends D3Visualization {
                 `translate(${yAxisOffsetX},${yAxisOffsetY}) rotate(270,${yAxisXDefault +
                     yAxisOffsetX},${midY + yAxisOffsetY})`
             )
-            .text(this.data.settings.yAxisLabel)
+            .text(settings.yAxisLabel)
             .attr("text-anchor", "middle")
             .attr("class", "dr_axis_labels y_axis_label")
-            .attr("cursor", this.options.dev ? "pointer" : "default")
+            .attr("cursor", options.dev ? "pointer" : "default")
             .call(dragY);
     }
 
     processData() {
         // create new class for each colorFilter
         if (this.data.settings.colorFilters) {
-            this.data.settings.colorFilters.forEach(function(d, i) {
-                d.className = "_cv_colorFilter" + i;
-            });
+            this.data.settings.colorFilters.forEach(
+                (d, i) => (d.className = `_cv_colorFilter${i}`)
+            );
         }
 
         if (this.data.settings.endpointFilters) {
-            this.data.settings.endpointFilters.forEach(function(d) {
-                d.fn = _.partial(filterFunction(d.filterType), _, d.value);
-            });
+            this.data.settings.endpointFilters.forEach(
+                d => (d.fn = _.partial(filterFunction(d.filterType), _, d.value))
+            );
         }
 
         // filter endpoints
@@ -185,20 +186,14 @@ class CrossviewPlot extends D3Visualization {
             settings = this.data.settings,
             getFilters = function(d) {
                 var obj = {};
-                settings.filters.forEach(function(fld) {
-                    obj[fld.name] = CrossviewPlot._cw_filter_process[fld.name](d);
-                });
+                settings.filters.forEach(
+                    fld => (obj[fld.name] = CrossviewPlot._cw_filter_process[fld.name](d))
+                );
                 return obj;
             },
             processEndpoint = function(e) {
                 var filters = getFilters(e),
-                    egFilter = settings.dose_isLog
-                        ? function(eg, i) {
-                              return i > 0;
-                          }
-                        : function(eg, i) {
-                              return true;
-                          },
+                    egFilter = settings.dose_isLog ? (eg, i) => i > 0 : (eg, i) => true,
                     classes = [],
                     stroke = settings.colorBase,
                     egs,
@@ -217,10 +212,8 @@ class CrossviewPlot extends D3Visualization {
 
                 egs = e.data.groups
                     .filter(egFilter)
-                    .filter(function(eg) {
-                        return isFinite(e._percent_change_control(eg.dose_group_id));
-                    })
-                    .map(function(eg) {
+                    .filter(eg => isFinite(e._percent_change_control(eg.dose_group_id)))
+                    .map(eg => {
                         return {
                             dose: eg.dose,
                             resp: e._percent_change_control(eg.dose_group_id) / 100,
@@ -271,7 +264,7 @@ class CrossviewPlot extends D3Visualization {
         let dataset = [];
         if (settings.endpointFilterLogic === DATA_FILTER_LOGIC_CUSTOM) {
             try {
-                dataset = Query.parse(settings.filtersQuery, parserOptions);
+                dataset = parse(settings.filtersQuery, parserOptions);
             } catch (err) {
                 console.error(err);
             }
@@ -397,9 +390,7 @@ class CrossviewPlot extends D3Visualization {
                     y: y(d.upper),
                     height: Math.abs(y(d.upper) - y(d.lower)),
                     title: d.title,
-                    styles: _.find(D3Visualization.styles.rectangles, {
-                        name: d.style,
-                    }),
+                    styles: _.find(D3Visualization.styles.rectangles, {name: d.style}),
                 };
             },
             make_vrng = d => {
@@ -409,9 +400,7 @@ class CrossviewPlot extends D3Visualization {
                     y: y.range()[1],
                     height: Math.abs(y.range()[1] - y.range()[0]),
                     title: d.title,
-                    styles: _.find(D3Visualization.styles.rectangles, {
-                        name: d.style,
-                    }),
+                    styles: _.find(D3Visualization.styles.rectangles, {name: d.style}),
                 };
             };
 
@@ -455,31 +444,25 @@ class CrossviewPlot extends D3Visualization {
             svg = this.svg,
             hrefs,
             vrefs,
-            filter_ref = function(d) {
-                return $.isNumeric(d.value);
-            },
-            make_href = function(d) {
+            filter_ref = d => $.isNumeric(d.value),
+            make_href = d => {
                 return {
                     x1: x.range()[0],
                     x2: x.range()[1],
                     y1: y(d.value),
                     y2: y(d.value),
                     title: d.title,
-                    styles: _.find(D3Visualization.styles.lines, {
-                        name: d.style,
-                    }),
+                    styles: _.find(D3Visualization.styles.lines, {name: d.style}),
                 };
             },
-            make_vref = function(d) {
+            make_vref = d => {
                 return {
                     x1: x(d.value),
                     x2: x(d.value),
                     y1: y.range()[0],
                     y2: y.range()[1],
                     title: d.title,
-                    styles: _.find(D3Visualization.styles.lines, {
-                        name: d.style,
-                    }),
+                    styles: _.find(D3Visualization.styles.lines, {name: d.style}),
                 };
             };
 
@@ -518,35 +501,34 @@ class CrossviewPlot extends D3Visualization {
 
     _draw_labels() {
         var self = this,
+            options = this.options,
             drag,
             dlabels,
             labels;
 
-        dlabels = _.map(this.plot_settings.labels, function(d) {
+        dlabels = _.map(this.plot_settings.labels, d => {
             d._style = _.find(D3Visualization.styles.texts, {name: d.style});
             return d;
         });
 
         // add labels
-        if (this.options.dev) {
-            drag = d3.drag().on("drag", function(event) {
-                var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
-                    p = d3.select(this),
-                    m = regexp.exec(p.attr("transform"));
-                if (m !== null && m.length === 3) {
-                    var i = d3
-                            .selectAll("g.labels")
-                            .nodes()
-                            .indexOf(this),
-                        x = parseFloat(m[1]) + event.dx,
-                        y = parseFloat(m[2]) + event.dy;
-                    p.attr("transform", `translate(${x},${y})`);
-                    self.setLabelLocation(i, x, y);
-                }
-            });
-        } else {
-            drag = h.noop;
-        }
+        drag = options.dev
+            ? d3.drag().on("drag", function(event) {
+                  var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
+                      p = d3.select(this),
+                      m = regexp.exec(p.attr("transform"));
+                  if (m !== null && m.length === 3) {
+                      var i = d3
+                              .selectAll("g.labels")
+                              .nodes()
+                              .indexOf(this),
+                          x = parseFloat(m[1]) + event.dx,
+                          y = parseFloat(m[2]) + event.dy;
+                      p.attr("transform", `translate(${x},${y})`);
+                      self.updateArrayXY("labels", i, x, y);
+                  }
+              })
+            : h.noop;
 
         labels = this.vis
             .append("g")
@@ -555,18 +537,16 @@ class CrossviewPlot extends D3Visualization {
             .data(dlabels)
             .enter()
             .append("g")
-            .attr("class", "labels")
-            .attr("transform", d => `translate(${d.x || 0},${d.y || 0})`)
             .attr("cursor", this.options.dev ? "pointer" : "auto")
             .call(drag)
+            .attr("class", "labels")
+            .attr("transform", d => `translate(${d.x || 0},${d.y || 0})`)
             .each(function(d) {
                 d3.select(this)
                     .append("text")
                     .attr("x", 0)
                     .attr("y", 0)
-                    .text(function(d) {
-                        return d.caption;
-                    })
+                    .text(d => d.caption)
                     .each(function(d) {
                         applyStyles(self.svg, this, d._style);
                     })
@@ -581,15 +561,13 @@ class CrossviewPlot extends D3Visualization {
                 d3.select(this)
                     .insert("rect", ":first-child")
                     .attr("fill", "orange")
-                    .attr("opacity", "0.1")
+                    .attr("opacity", "0.2")
                     .attr("x", bb.x)
                     .attr("y", bb.y)
                     .attr("width", bb.width)
                     .attr("height", bb.height)
                     .append("svg:title")
-                    .text(function(d) {
-                        return "drag to reposition";
-                    });
+                    .text("drag to reposition");
             });
         }
     }
@@ -603,13 +581,14 @@ class CrossviewPlot extends D3Visualization {
             return;
 
         var self = this,
+            options = this.options,
             translate = `translate(${this.plot_settings.colorFilterLegendX},${this.plot_settings.colorFilterLegendY})`,
-            drag = !this.options.dev
-                ? function() {}
-                : HAWCUtils.updateDragLocationTransform(function(x, y) {
-                      self.plot_settings.colorFilterLegendX = x;
-                      self.plot_settings.colorFilterLegendY = y;
-                  }),
+            drag = this.options.dev
+                ? HAWCUtils.updateDragLocationTransform(function(x, y) {
+                      options.updateSettingFunc("colorFilterLegendX", parseInt(x));
+                      options.updateSettingFunc("colorFilterLegendY", parseInt(y));
+                  })
+                : h.noop,
             labels,
             bb;
 
@@ -661,9 +640,7 @@ class CrossviewPlot extends D3Visualization {
                 .attr("width", bb.width)
                 .attr("height", bb.height)
                 .append("svg:title")
-                .text(function(d) {
-                    return "drag to reposition";
-                });
+                .text("drag to reposition");
         }
     }
 
@@ -744,28 +721,15 @@ class CrossviewPlot extends D3Visualization {
         }
     }
 
-    setFilterLocation(i, x, y) {
-        _.extend(this.data.settings.filters[i], {x, y});
-    }
-
-    setLabelLocation(i, x, y) {
-        _.extend(this.data.settings.labels[i], {x, y});
-    }
-
     layout_filter(g, filters, i) {
         var self = this,
             settings = this.data.settings.filters[i],
             xOffset = this._filter_left_offset || this.settings.filter_padding,
             nPerCol = Math.ceil(filters.length / settings.columns),
-            cols,
+            cols = _.chunk(filters, nPerCol),
             bb,
             title,
             colg;
-
-        cols = _.chain(filters)
-            .groupBy((el, j) => Math.floor(j / nPerCol))
-            .toArray()
-            .value();
 
         // print header
         title = d3
@@ -777,7 +741,7 @@ class CrossviewPlot extends D3Visualization {
             .attr("class", "crossview_title")
             .text(filters[0].headerName);
 
-        //build column-groups
+        // build column-groups
         colg = d3
             .select(g)
             .selectAll("g.crossview_cols")
@@ -787,7 +751,7 @@ class CrossviewPlot extends D3Visualization {
             .attr("transform", `translate(${xOffset},0)`)
             .attr("class", "crossview_cols");
 
-        //layout text
+        // layout text
         colg.selectAll(".crossview_fields")
             .data(d => d)
             .enter()
@@ -840,11 +804,17 @@ class CrossviewPlot extends D3Visualization {
         }
     }
 
+    updateArrayXY(arr, i, x, y) {
+        this.options.updateSettingFunc(`${arr}[${i}].x`, parseInt(x));
+        this.options.updateSettingFunc(`${arr}[${i}].y`, parseInt(y));
+    }
+
     draw_text() {
         var self = this,
-            drag = this.options.dev
+            options = this.options,
+            drag = options.dev
                 ? HAWCUtils.updateDragLocationTransform(function(x, y) {
-                      self.setFilterLocation($(this).index(), x, y);
+                      self.updateArrayXY("filters", $(this).index(), x, y);
                   })
                 : function() {};
 
