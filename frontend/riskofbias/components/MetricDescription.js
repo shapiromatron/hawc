@@ -2,7 +2,6 @@ import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import h from "shared/utils/helpers";
 
 class DescriptionStore {
     // A global toggle to show/hide metric descriptions
