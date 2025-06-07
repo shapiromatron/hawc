@@ -113,7 +113,8 @@ INSTALLED_APPS = (
     "treebeard",
     "crispy_forms",
     "crispy_bootstrap4",
-    "webpack_loader",
+    # "webpack_loader",
+    "django_vite",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -356,13 +357,11 @@ REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BUL
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
-WEBPACK_LOADER = {
-    "DEFAULT": {
-        "BUNDLE_DIR_NAME": "bundles/",
-        "STATS_FILE": str(PROJECT_PATH / "webpack-stats.json"),
-        "POLL_INTERVAL": 0.1,
-        "IGNORE": [".+/.map"],
-    }
+DJANGO_VITE = {
+    "default": {
+        "manifest_path": str(Path(STATIC_ROOT) / "bundles" / "manifest.json"),
+        "static_url_prefix": "bundles",
+    },
 }
 
 # can anyone create a new assessment; or can only those in the group `can-create-assessments`
@@ -381,5 +380,3 @@ IS_TESTING = False
 TEST_DB_FIXTURE = PROJECT_ROOT / "tests/data/fixtures/db.yaml"
 
 DISCLAIMER_TEXT = ""
-
-FORMS_URLFIELD_ASSUME_HTTPS = True

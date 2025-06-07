@@ -17,6 +17,8 @@
 
 {% block extrajs %}
   <script>
-    window.app.HAWCUtils.dynamicFormListeners();
+    $(document).ready(function() {
+      window.app.HAWCUtils.dynamicFormListeners();
+    });
   </script>
 {% endblock extrajs %}

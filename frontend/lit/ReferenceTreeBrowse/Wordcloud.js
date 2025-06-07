@@ -1,6 +1,6 @@
 // adapted from `https://observablehq.com/@d3/word-cloud`
 import * as d3 from "d3";
-import * as cloud from "d3-cloud";
+import cloud from "d3-cloud";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";

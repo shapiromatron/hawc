@@ -233,21 +233,22 @@
 {% block extrajs %}
   {{ config|json_script:"config" }}
   <script type="text/javascript">
-    const config = window.app.getConfig();
+    $(document).ready(function() {
+      const config = window.app.getConfig();
+      window.app.startup("litStartup", function(lit){
+        let tagtree = new lit.TagTree(config.tags[0], config.assessment_id, null);
+        tagtree.add_references(config.references);
+        tagtree.render(
+          document.getElementById('tags'),
+          {handleTagClick: (x) => {window.location.href = x.get_list_link()}, showReferenceCount: true, style: {height: "25rem"}}
+        )
+      });
 
-    window.app.startup("litStartup", function(lit){
-      let tagtree = new lit.TagTree(config.tags[0], config.assessment_id, null);
-      tagtree.add_references(config.references);
-      tagtree.render(
-        document.getElementById('tags'),
-        {handleTagClick: (x) => {window.location.href = x.get_list_link()}, showReferenceCount: true, style: {height: "25rem"}}
-      )
+      const histo = document.getElementById("referenceYearHistogram");
+      if (histo){
+        window.app.renderPlotlyFromApi(histo, config.referenceYearHistogramUrl);
+      }
     });
-
-    const histo = document.getElementById("referenceYearHistogram");
-    if (histo){
-      window.app.renderPlotlyFromApi(histo, config.referenceYearHistogramUrl);
-    }
   </script>
   {% include "common/helptext_popup_js.html" %}
 {% endblock extrajs %}

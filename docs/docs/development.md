@@ -20,9 +20,9 @@ See below for more details on how to automatically lint/format your code.
 
 ## Environment setup
 
-Install [uv](https://docs.astral.sh/uv/); either via pip install or following the installation guide on teh website. That's the primary way we'll install python and related packages.
+HAWC can be developed on Windows, Linux, or Mac. Development on Mac/Linux is preferred as it is more similar to deployment.
 
-HAWC can be developed both on Windows and and Linux/Mac. Development on Mac/Linux is preferred as it is more similar to deployment.
+Install [uv](https://docs.astral.sh/uv/); either via pip install or following the installation guide on the website.  Using `uv` is not required; you can build using standard Python + pip or Conda, depending on your personal preference.
 
 ```bash title="Mac/Linux"
 # clone repository; we'll put in ~/dev but you can put anywhere
@@ -32,7 +32,7 @@ git clone https://github.com/shapiromatron/hawc.git
 
 # create virtual environment
 cd ~/dev/hawc
-uv venv --python=3.12
+uv venv --python=3.13
 
 # activate the environment
 source ./.venv/bin/activate
@@ -46,13 +46,13 @@ createuser --superuser --no-password hawc
 createdb -E UTF-8 -U hawc hawc
 ```
 
-For Windows, use anaconda or miniconda to get requirements can be used to get dependencies:
+For Windows, using Anaconda or Miniconda is preferred for additional dependencies:
 
 ```batch title="Windows"
 :: create a conda environment with our hard to get dependencies
 conda create --name hawc
 conda activate hawc
-conda install python=3.12 postgresql
+conda install python=3.13 postgresql
 conda install -c conda-forge nodejs
 conda install -c conda-forge yarn=1.22.19
 

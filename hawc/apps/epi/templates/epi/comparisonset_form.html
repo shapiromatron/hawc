@@ -26,7 +26,7 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.addEventListener("DOMContentLoaded", function(){
+    $(document).ready(function() {
       new window.app.DynamicFormset($('#gFormset'), 'form', {oneFormRequired: true});
       $('#gFormset').insertBefore($('#gcForm .form-actions'));
     });
