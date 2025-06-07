@@ -1,51 +1,56 @@
 {
-    "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-    "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
-    "files": { "ignoreUnknown": false, "ignore": ["shared/parsers/*.js"] },
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
+  "files": { "ignoreUnknown": false, "ignore": ["shared/parsers/*.js"] },
+  "formatter": {
+    "enabled": true,
+    "useEditorconfig": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 4,
+    "lineEnding": "lf",
+    "lineWidth": 100,
+    "attributePosition": "auto",
+    "bracketSpacing": true
+  },
+  "organizeImports": { "enabled": true },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": false,
+      "a11y": { "noBlankTarget": "error" },
+      "correctness": {
+        "noChildrenProp": "error",
+        "noUnusedVariables": "error",
+        "useJsxKeyInIterable": "error"
+      },
+      "security": { "noDangerouslySetInnerHtmlWithChildren": "error" },
+      "style": { "useBlockStatements": "off" },
+      "suspicious": {
+        "noCommentText": "error",
+        "noConsole": { "level": "error", "options": { "allow": ["warn", "error"] } },
+        "noDuplicateJsxProps": "error",
+        "noSparseArray": "error"
+      }
+    },
+    "ignore": ["shared/parsers"]
+  },
+  "json": {
     "formatter": {
-        "enabled": true,
-        "useEditorconfig": true,
-        "formatWithErrors": false,
-        "indentStyle": "space",
-        "indentWidth": 4,
-        "lineEnding": "lf",
-        "lineWidth": 100,
-        "attributePosition": "auto",
-        "bracketSpacing": true
-    },
-    "organizeImports": { "enabled": true },
-    "linter": {
-        "enabled": true,
-        "rules": {
-            "recommended": false,
-            "a11y": { "noBlankTarget": "error" },
-            "correctness": {
-                "noChildrenProp": "error",
-                "noUnusedVariables": "error",
-                "useJsxKeyInIterable": "error"
-            },
-            "security": { "noDangerouslySetInnerHtmlWithChildren": "error" },
-            "style": { "useBlockStatements": "off" },
-            "suspicious": {
-                "noCommentText": "error",
-                "noConsole": { "level": "error", "options": { "allow": ["warn", "error"] } },
-                "noDuplicateJsxProps": "error",
-                "noSparseArray": "error"
-            }
-        },
-        "ignore": ["shared/parsers"]
-    },
-    "javascript": {
-        "formatter": {
-            "jsxQuoteStyle": "double",
-            "quoteProperties": "asNeeded",
-            "trailingCommas": "es5",
-            "semicolons": "always",
-            "arrowParentheses": "asNeeded",
-            "bracketSameLine": false,
-            "quoteStyle": "double",
-            "attributePosition": "auto",
-            "bracketSpacing": false
-        }
+      "indentWidth": 2
     }
+  },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "es5",
+      "semicolons": "always",
+      "arrowParentheses": "asNeeded",
+      "bracketSameLine": true,
+      "quoteStyle": "double",
+      "attributePosition": "auto",
+      "bracketSpacing": false
+    }
+  }
 }

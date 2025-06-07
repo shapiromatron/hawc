@@ -1,11 +1,11 @@
 import $ from "$";
 
-import {_DataPivot_settings_general} from "./DataPivotUtilities";
 import LegendSettings from "./DPFLegendSettings";
+import {_DataPivot_settings_general} from "./DataPivotUtilities";
 
-let build_settings_general_tab = function(self) {
+let build_settings_general_tab = function (self) {
     var tab = $('<div class="tab-pane" id="data_pivot_settings_general">'),
-        build_general_settings = function() {
+        build_general_settings = function () {
             var div = $("<div>"),
                 tbl = $('<table class="table table-sm table-bordered">'),
                 tbody = $("<tbody>"),

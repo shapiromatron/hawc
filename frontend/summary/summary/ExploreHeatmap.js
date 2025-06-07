@@ -1,4 +1,4 @@
-import {inject, observer, Provider} from "mobx-react";
+import {Provider, inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import ReactDOM from "react-dom";
@@ -12,14 +12,14 @@ import h from "shared/utils/helpers";
 import $ from "$";
 
 import BaseVisual from "./BaseVisual";
+import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
 import {addLabelAction, addLabelIndicators, handleVisualError} from "./common";
 import {NULL_VALUE} from "./constants";
-import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
 import DatasetTable from "./heatmap/DatasetTable";
 import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 import HeatmapDatastore from "./heatmap/HeatmapDatastore";
 
-const startupHeatmapAppRender = function(el, settings, datastore, options) {
+const startupHeatmapAppRender = function (el, settings, datastore, options) {
     const store = new HeatmapDatastore(settings, datastore, options);
     try {
         if (store.withinRenderableBounds) {
@@ -261,7 +261,7 @@ class ExploreHeatmap extends BaseVisual {
                 const settings = this.getSettings(),
                     dataset = resp.dataset;
 
-                modal.getModal().on("shown.bs.modal", function() {
+                modal.getModal().on("shown.bs.modal", function () {
                     try {
                         startupHeatmapAppRender($plotDiv[0], settings, dataset, options);
                     } catch (err) {

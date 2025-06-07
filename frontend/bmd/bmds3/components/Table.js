@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 
-const Table = function({label, extraClasses, colWidths, colNames, data, footer}) {
+const Table = function ({label, extraClasses, colWidths, colNames, data, footer}) {
     return (
         <table className={`table table-sm ${extraClasses}`}>
             <colgroup>

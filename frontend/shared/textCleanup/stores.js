@@ -176,10 +176,7 @@ class GroupStore {
         return this.selectedObjects.size === this.objects.length;
     }
     @computed get fieldNames() {
-        return _.chain(this.objects[0])
-            .omit(["id", "ids", "field", "showDetails"])
-            .keys()
-            .value();
+        return _.chain(this.objects[0]).omit(["id", "ids", "field", "showDetails"]).keys().value();
     }
 }
 

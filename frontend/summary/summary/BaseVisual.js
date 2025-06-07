@@ -26,11 +26,11 @@ class BaseVisual {
         return arr;
     }
 
-    displayAsPage($el, options) {
+    displayAsPage(_$el, _options) {
         throw "Abstract method; requires implementation";
     }
 
-    displayAsModal($el, options) {
+    displayAsModal(_$el, _options) {
         throw "Abstract method; requires implementation";
     }
 
@@ -44,10 +44,7 @@ class BaseVisual {
     }
 
     object_hyperlink() {
-        return $("<a>")
-            .attr("href", this.data.url)
-            .attr("target", "_blank")
-            .text(this.data.title);
+        return $("<a>").attr("href", this.data.url).attr("target", "_blank").text(this.data.title);
     }
 }
 

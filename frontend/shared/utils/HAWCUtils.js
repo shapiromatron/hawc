@@ -5,8 +5,8 @@ import Tablesort from "tablesort";
 
 import $ from "$";
 
-import h from "./helpers";
 import Hero from "./Hero";
+import h from "./helpers";
 
 class HAWCUtils {
     static Hero = Hero;
@@ -24,7 +24,7 @@ class HAWCUtils {
         var win = window.open(href, "_blank", "height=500,width=980,resizable=yes,scrollbars=yes");
         win.focus();
 
-        win.onbeforeunload = function(e) {
+        win.onbeforeunload = function (_e) {
             let event = new CustomEvent(window.app.HAWCUtils.HAWC_NEW_WINDOW_POPUP_CLOSING, {
                 detail: {},
             });
@@ -38,7 +38,7 @@ class HAWCUtils {
     static build_breadcrumbs(arr) {
         // builds a string of breadcrumb hyperlinks for navigation
         var links = [];
-        arr.forEach(function(v) {
+        arr.forEach(function (v) {
             links.push(`<a target="_blank" href="${v.url}">${v.name}</a>`);
         });
         return links.join("<span> / </span>");
@@ -59,7 +59,7 @@ class HAWCUtils {
         var $menu = $(
             '<div class="dropdown-menu dropdown-menu-right" aria-labelledby="actionsDropdownButton">'
         );
-        items.forEach(function(d) {
+        items.forEach(function (d) {
             if (d instanceof Object) {
                 let attrs = _.map(d, (v, k) => (k == "text" ? "" : `${k}=${v}`)).join(" ");
                 $menu.append(`<a class="dropdown-item" ${attrs}>${d.text}</a>`);
@@ -97,13 +97,13 @@ class HAWCUtils {
         // and requires a _.partial injection of th settings module.
         const opts = options || {},
             re_floats = /(-?[0-9]*\.?[0-9]+)/gm,
-            getFloats = function(txt) {
+            getFloats = function (txt) {
                 // expects an attribute like 'translate(277', '1.1920928955078125e-7)'
                 if (_.isNull(txt) || txt.indexOf("translate") !== 0) return;
                 return [...txt.matchAll(re_floats)].map(d => parseFloat(d[0]));
             };
 
-        return d3.drag().on("drag", function(event) {
+        return d3.drag().on("drag", function (event) {
             var x,
                 y,
                 p = d3.select(this),
@@ -141,7 +141,7 @@ class HAWCUtils {
     static updateDragLocationXY(setDragCB) {
         // a new drag location, requires binding to d3.drag,
         // and requires a _.partial injection of the settings module.
-        return d3.drag().on("drag", function(event) {
+        return d3.drag().on("drag", function (event) {
             var p = d3.select(this),
                 x = parseInt(parseInt(p.attr("x"), 10) + event.dx, 10),
                 y = parseInt(parseInt(p.attr("y"), 10) + event.dy, 10);
@@ -158,21 +158,14 @@ class HAWCUtils {
         if (!_.isFinite(max_width) || max_width <= 0) return;
         var $text = d3.select(text),
             // trim whitespace to prevent falsey empty strings after split
-            words = text.textContent
-                .trim()
-                .split(/\s+/)
-                .reverse(),
+            words = text.textContent.trim().split(/\s+/).reverse(),
             word,
             line = [],
             lineNumber = 0,
             lineHeight = text.getBBox().height, // px
             x = $text.attr("x"),
             y = $text.attr("y"),
-            tspan = $text
-                .text(null)
-                .append("tspan")
-                .attr("x", x)
-                .attr("y", y);
+            tspan = $text.text(null).append("tspan").attr("x", x).attr("y", y);
 
         while ((word = words.pop())) {
             line.push(word);
@@ -229,7 +222,7 @@ class HAWCUtils {
                 if (o && typeof o === "object") {
                     return o;
                 }
-            } catch (e) {
+            } catch (_e) {
                 console.warn("un-parsable JSON-like string", el);
             }
         }
@@ -296,12 +289,7 @@ class HAWCUtils {
             handleChange = () => {
                 const selector = `#detail-${$selectEl.val()}`,
                     clone = $insertItems.find(selector).clone();
-                $insertEl.fadeOut(() =>
-                    $insertEl
-                        .html(clone)
-                        .trigger("select:change")
-                        .fadeIn()
-                );
+                $insertEl.fadeOut(() => $insertEl.html(clone).trigger("select:change").fadeIn());
             };
         $selectEl.on("change", handleChange).trigger("change");
     }
@@ -319,7 +307,7 @@ class HAWCUtils {
 
         checkbox.prop("checked", hasItems);
         checkbox
-            .on("change", function() {
+            .on("change", function () {
                 inputDiv.toggle(checkbox.prop("checked"));
                 if (checkbox.prop("checked") === false) {
                     input.val("");
@@ -416,7 +404,7 @@ class HAWCUtils {
     static addAnchorLinks(parent, selector) {
         $(parent)
             .find(selector)
-            .each(function(index) {
+            .each(function (_index) {
                 const id = $(this).attr("id");
                 if (id) {
                     $(this).append(
@@ -435,7 +423,7 @@ class HAWCUtils {
     }
 
     static addScrollHtmx(editClass, detailClass, deleteBtnId = null) {
-        $("body").on("htmx:afterSwap", function(evt) {
+        $("body").on("htmx:afterSwap", function (evt) {
             const elSwapOut = evt.detail.target,
                 elSwapIn = evt.detail.elt,
                 editElement = $(elSwapIn).hasClass(editClass)
@@ -472,7 +460,7 @@ class HAWCUtils {
             }
         });
         if (deleteBtnId) {
-            $("body").on("htmx:afterRequest", function(evt) {
+            $("body").on("htmx:afterRequest", function (evt) {
                 // handle successful row deletion
                 const elSwapOut = evt.detail.target,
                     targetEl = evt.detail.elt,

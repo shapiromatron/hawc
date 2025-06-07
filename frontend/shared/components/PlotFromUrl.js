@@ -20,7 +20,7 @@ class PlotFromUrl extends Component {
             .then(json => {
                 this.setState({data: json});
             })
-            .catch(error => {
+            .catch(_error => {
                 this.setState({error: true});
             });
     }

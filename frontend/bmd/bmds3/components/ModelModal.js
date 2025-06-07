@@ -15,7 +15,7 @@ const showDegree = model => {
         const name = model.name.toLowerCase();
         return name.includes("polynomial") || name.includes("multistage");
     },
-    getParamPriors = function(model) {
+    getParamPriors = function (model) {
         const {parameters} = model.results;
         return _.range(parameters.names.length).map(i => {
             return [
@@ -26,11 +26,11 @@ const showDegree = model => {
             ];
         });
     },
-    getParamFooter = function(model) {
+    getParamFooter = function (model) {
         const bounded = _.sum(model.results.parameters.bounded) > 0;
         return bounded ? <p className="text-sm">{seErrorWarning}</p> : null;
     },
-    getParams = function(model) {
+    getParams = function (model) {
         const {parameters} = model.results;
         return _.range(parameters.names.length).map(i => {
             return [
@@ -47,7 +47,9 @@ const showDegree = model => {
                     parameterFormatter(parameters.values[i])
                 ),
                 parameters.bounded[i] ? (
-                    <span title={parameters.se[i]}>Not Reported</span>
+                    <span key={i} title={parameters.se[i]}>
+                        Not Reported
+                    </span>
                 ) : (
                     parameterFormatter(parameters.se[i])
                 ),
@@ -62,7 +64,7 @@ class ModelModal extends React.Component {
         const {store} = this.props,
             model = store.modalModel,
             {results} = model,
-            getGofData = function() {
+            getGofData = function () {
                 const {gof} = model.results;
                 return _.range(gof.dose.length).map(i => {
                     return [
@@ -76,7 +78,7 @@ class ModelModal extends React.Component {
                     ];
                 });
             },
-            getLikelihoodData = function() {
+            getLikelihoodData = function () {
                 const {deviance} = model.results;
                 return _.range(deviance.names.length).map(i => {
                     return [
@@ -87,7 +89,7 @@ class ModelModal extends React.Component {
                     ];
                 });
             },
-            getTestData = function() {
+            getTestData = function () {
                 const {tests} = model.results;
                 return _.range(tests.names.length).map(i => {
                     return [
@@ -199,7 +201,7 @@ class ModelModal extends React.Component {
         const {store} = this.props,
             model = store.modalModel,
             {results} = model,
-            getGofData = function() {
+            getGofData = function () {
                 const {gof} = model.results,
                     {dataset} = store;
                 return _.range(gof.residual.length).map(i => {
@@ -213,7 +215,7 @@ class ModelModal extends React.Component {
                     ];
                 });
             },
-            getLikelihoodData = function() {
+            getLikelihoodData = function () {
                 const {deviance} = model.results;
                 return _.range(deviance.names.length).map(i => {
                     return [

@@ -12,7 +12,7 @@ class MetricScores extends Component {
                 .values()
                 .value(),
             numReviews = scoresByRobReview.length,
-            getSpanClass = function(numReviews) {
+            getSpanClass = function (numReviews) {
                 if (numReviews <= 1) {
                     return "col-md-12";
                 } else if (numReviews === 2) {

@@ -78,7 +78,7 @@ const URL_TEMPLATES = "/rasterize/",
             // $("<div>").attr("class", "p-2 m-2").css("background", "orange").appendTo("#main-content-container").append($(canvas));
 
             img.setAttribute("src", imgData);
-            img.onload = function() {
+            img.onload = function () {
                 ctx.drawImage(img, 0, 0, width, height);
                 drawBorder(ctx, width, height);
                 canvas.toBlob(

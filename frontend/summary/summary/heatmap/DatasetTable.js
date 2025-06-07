@@ -5,7 +5,7 @@ import h from "shared/utils/helpers";
 
 import {getAction, getDetailUrl, showAsModal} from "../../interactivity/actions";
 
-const pillItems = function(text, delimiter) {
+const pillItems = function (text, delimiter) {
         if (!delimiter) {
             return text;
         }
@@ -21,7 +21,7 @@ const pillItems = function(text, delimiter) {
                 </span>
             ));
     },
-    getInteractivityMap = function(columns) {
+    getInteractivityMap = function (columns) {
         const map = {};
         columns.forEach(col => {
             const action = getAction(col.on_click_event);

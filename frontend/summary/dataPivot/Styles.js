@@ -45,7 +45,7 @@ class StyleSymbol {
     _draw_setting_controls() {
         var form = $("<form>"),
             set = this.settings,
-            add_horizontal_field = function(label_text, html_obj) {
+            add_horizontal_field = function (label_text, html_obj) {
                 return $('<div class="form-group row"></div>')
                     .append(`<label class="col-sm-3 col-form-label">${label_text}</label>`)
                     .append($('<div class="col-sm-9"></div>').append(html_obj));
@@ -56,7 +56,7 @@ class StyleSymbol {
             self = this;
 
         //image
-        form.append(imageHolder).on("change", "input,select", function() {
+        form.append(imageHolder).on("change", "input,select", function () {
             sv.apply_new_styles(self.get_modified_settings(), true);
         });
 
@@ -65,7 +65,7 @@ class StyleSymbol {
             .val(set.name)
             .change(update_title);
         form.append(add_horizontal_field("Name", name_field));
-        var update_title = function() {
+        var update_title = function () {
             self.$modal.find(".modal-header h3").html(name_field.val());
         };
         update_title();
@@ -210,7 +210,7 @@ class StyleText {
     _draw_setting_controls() {
         var form = $("<form>"),
             set = this.settings,
-            add_horizontal_field = function(label_text, html_obj) {
+            add_horizontal_field = function (label_text, html_obj) {
                 return $('<div class="form-group row"></div>')
                     .append(`<label class="col-sm-3 col-form-label">${label_text}</label>`)
                     .append($('<div class="col-sm-9"></div>').append(html_obj));
@@ -221,7 +221,7 @@ class StyleText {
             self = this;
 
         //image
-        form.append(imageHolder).on("change", "input,select", function() {
+        form.append(imageHolder).on("change", "input,select", function () {
             sv.apply_new_styles(self.get_modified_settings(), true);
         });
 
@@ -230,7 +230,7 @@ class StyleText {
             .val(set.name)
             .change(update_title);
         form.append(add_horizontal_field("Name", name_field));
-        var update_title = function() {
+        var update_title = function () {
             self.$modal.find(".modal-header h3").html(name_field.val());
         };
         update_title();
@@ -352,7 +352,7 @@ class StyleLine {
     _draw_setting_controls() {
         var form = $("<form>"),
             set = this.settings,
-            add_horizontal_field = function(label_text, html_obj) {
+            add_horizontal_field = function (label_text, html_obj) {
                 return $('<div class="form-group row"></div>')
                     .append(`<label class="col-sm-3 col-form-label">${label_text}</label>`)
                     .append($('<div class="col-sm-9"></div>').append(html_obj));
@@ -363,7 +363,7 @@ class StyleLine {
             self = this;
 
         //image
-        form.append(imageHolder).on("change", "input,select", function() {
+        form.append(imageHolder).on("change", "input,select", function () {
             sv.apply_new_styles(self.get_modified_settings(), true);
         });
 
@@ -372,7 +372,7 @@ class StyleLine {
             .val(set.name)
             .change(update_title);
         form.append(add_horizontal_field("Name", name_field));
-        var update_title = function() {
+        var update_title = function () {
             self.$modal.find(".modal-header h3").html(name_field.val());
         };
         update_title();
@@ -464,7 +464,7 @@ class StyleRectangle {
     _draw_setting_controls() {
         var form = $("<form>"),
             set = this.settings,
-            add_horizontal_field = function(label_text, html_obj) {
+            add_horizontal_field = function (label_text, html_obj) {
                 return $('<div class="form-group row"></div>')
                     .append(`<label class="col-sm-3 col-form-label">${label_text}</label>`)
                     .append($('<div class="col-sm-9"></div>').append(html_obj));
@@ -476,7 +476,7 @@ class StyleRectangle {
             value;
 
         //image
-        form.append(imageHolder).on("change", "input,select", function() {
+        form.append(imageHolder).on("change", "input,select", function () {
             sv.apply_new_styles(self.get_modified_settings(), true);
         });
 
@@ -485,7 +485,7 @@ class StyleRectangle {
             .val(set.name)
             .change(update_title);
         form.append(add_horizontal_field("Name", name_field));
-        var update_title = function() {
+        var update_title = function () {
             self.$modal.find(".modal-header h3").html(name_field.val());
         };
         update_title();

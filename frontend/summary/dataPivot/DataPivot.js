@@ -11,17 +11,17 @@ import $ from "$";
 
 import {getInteractivityOptions} from "../interactivity/actions";
 import {handleVisualError} from "../summary/common";
-import ColumnSelectManager from "./components/ColumnNameSelect";
-import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
-import DataPivotVisualization from "./DataPivotVisualization";
 import build_data_tab from "./DPFDataTab";
 import build_description_tab from "./DPFDescriptionTab";
 import build_settings_general_tab from "./DPFGeneralSettingsTab";
 import build_ordering_tab from "./DPFOrderTab";
 import build_reference_tab from "./DPFReferenceTab";
 import build_styles_tab from "./DPFStyleTab";
-import Store from "./store";
+import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
+import DataPivotVisualization from "./DataPivotVisualization";
 import StyleManager from "./StyleManager";
+import ColumnSelectManager from "./components/ColumnNameSelect";
+import Store from "./store";
 
 class DataPivot {
     constructor(data, settings, dom_bindings, title, url) {
@@ -102,7 +102,7 @@ class DataPivot {
                     display_div: options.displayDiv,
                 });
 
-                $(options.submissionDiv).submit(function() {
+                $(options.submissionDiv).submit(function () {
                     $(options.settingsField).val(dp.get_settings_json());
                     return true;
                 });
@@ -116,7 +116,7 @@ class DataPivot {
 
     static move_row(arr, obj, moveUp) {
         // class-level function; used to delete a settings input row
-        var swap = function(arr, a, b) {
+        var swap = function (arr, a, b) {
                 if (a < 0 || b < 0) return;
                 if (a >= arr.length || b >= arr.length) return;
                 arr[a] = arr.splice(b, 1, arr[a])[0];
@@ -143,17 +143,17 @@ class DataPivot {
         var td = $("<td>"),
             up = $(
                 '<button class="btn btn-info btn-sm" title="move up"><i class="fa fa-arrow-up"></button>'
-            ).on("click", function() {
+            ).on("click", function () {
                 DataPivot.move_row(arr, self, true);
             }),
             down = $(
                 '<button class="btn btn-info btn-sm mx-1" title="move down"><i class="fa fa-arrow-down"></button>'
-            ).on("click", function() {
+            ).on("click", function () {
                 DataPivot.move_row(arr, self, false);
             }),
             del = $(
                 '<button class="btn btn-danger btn-sm" title="remove"><i class="fa fa-trash"></button>'
-            ).on("click", function() {
+            ).on("click", function () {
                 DataPivot.delete_row(arr, self);
             });
 
@@ -201,7 +201,7 @@ class DataPivot {
         this.$display_div = $(dom_bindings.display_div);
 
         // rebuild visualization whenever selected
-        $('a[data-toggle="tab"]').on("shown.bs.tab", function(e) {
+        $('a[data-toggle="tab"]').on("shown.bs.tab", function (e) {
             if (self.$display_div[0] === $($(e.target).attr("href"))[0]) {
                 self.build_data_pivot_vis(self.$display_div, editable);
             }
@@ -265,7 +265,7 @@ class DataPivot {
                 ),
             ];
 
-        this.$settings_div.html(content).on("shown.bs.tab", function(e) {
+        this.$settings_div.html(content).on("shown.bs.tab", function (e) {
             if ($(e.target).attr("href") === "#data_pivot_settings_general") {
                 self._dp_settings_general.update_merge_until();
             }
@@ -302,10 +302,7 @@ class DataPivot {
     }
 
     object_hyperlink() {
-        return $("<a>")
-            .attr("href", this.url)
-            .attr("target", "_blank")
-            .text(this.title);
+        return $("<a>").attr("href", this.url).attr("target", "_blank").text(this.title);
     }
 }
 

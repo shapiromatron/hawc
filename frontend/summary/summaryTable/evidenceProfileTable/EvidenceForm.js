@@ -7,9 +7,9 @@ import HelpTextPopup from "shared/components/HelpTextPopup";
 import QuillTextInput from "shared/components/QuillTextInput";
 import TextInput from "shared/components/TextInput";
 
-import {CUSTOM_JUDGEMENT, HELP_TEXT} from "./common";
 import {FactorsForm} from "./Factors";
 import {JudgementSelector} from "./Judgement";
+import {CUSTOM_JUDGEMENT, HELP_TEXT} from "./common";
 
 const EvidenceForm = observer(props => {
         const {store, contentType, createMethodName, judgementRowSpan} = props,

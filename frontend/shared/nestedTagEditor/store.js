@@ -22,11 +22,11 @@ class TagEditorStore {
 
     @action.bound fetchTags() {
         const url = this.config.list_url,
-            getOptions = function(nodes) {
+            getOptions = function (nodes) {
                 let opts = [],
-                    addOption = function(node) {
+                    addOption = function (node) {
                         let indentedName =
-                            _.times(node.data.depth, d => "━ ").join("") + node.data.name;
+                            _.times(node.data.depth, _d => "━ ").join("") + node.data.name;
                         opts.push([node.id, indentedName]);
                         if (node.children) {
                             node.children.forEach(addOption);
@@ -37,14 +37,14 @@ class TagEditorStore {
                 opts.unshift([NO_PARENT, "---"]);
                 return opts;
             },
-            addNodeDepth = function(node, depth) {
+            addNodeDepth = function (node, depth) {
                 // add depth to each node, and recursively to child nodes
                 node.data.depth = depth;
                 if (node.children) {
                     node.children.forEach(d => addNodeDepth(d, depth + 1));
                 }
             },
-            addNodeReferenceCount = function(node, tagReferences) {
+            addNodeReferenceCount = function (node, tagReferences) {
                 // add references to each node, and recursively to child nodes
                 node.data.references = new Set(tagReferences[node.id]);
                 if (node.children) {
@@ -101,7 +101,7 @@ class TagEditorStore {
 
         return fetch(url, h.fetchPost(csrf, obj, "PATCH"))
             .then(response => response.json())
-            .then(json => this.fetchTags())
+            .then(_json => this.fetchTags())
             .catch(ex => console.error("Tag patch failed", ex));
     }
 
@@ -128,7 +128,7 @@ class TagEditorStore {
 
         return fetch(url, h.fetchPost(csrf, obj, "PATCH"))
             .then(response => response.json())
-            .then(json => this.fetchTags())
+            .then(_json => this.fetchTags())
             .catch(ex => console.error("Tag patch failed", ex));
     }
 }
