@@ -44,14 +44,12 @@
         this.$el.html(opts).val(init);
       },
     };
-
-    window.addEventListener("DOMContentLoaded", function(){
+    $(document).ready(function() {
       new window.app.DynamicFormset($('#egFormset'), 'form', {oneFormRequired: false});
       $('#egFormset').insertBefore($('#eForm .form-actions'));
       $('#egBenchmarkFormset').insertBefore($('#eForm .form-actions'));
       new OELwidget($('#id_NOEL'));
       new OELwidget($('#id_LOEL'));
     });
-
   </script>
 {% endblock extrajs %}

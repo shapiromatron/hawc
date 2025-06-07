@@ -219,14 +219,13 @@
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function () {
-    // change selector detail
+      // change selector detail
       window.app.HAWCUtils.onSelectChangeShowDetail(
         document.getElementById("vis_selector"),
         document.getElementById("detail_display"),
         document.getElementById("detail_library")
       );
-
-    // change the url when selector changes
+      // change the url when selector changes
       $("#detail_display").on("subselect:change", function () {
         let selection = $("#vis_selector option:selected"),
             subselection = $("#detail_display input[type=radio][name=evidence-type]:checked"),

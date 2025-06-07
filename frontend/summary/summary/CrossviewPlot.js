@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
-import Query from "shared/parsers/query";
+import {parse} from "shared/parsers/query";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
 
@@ -264,7 +264,7 @@ class CrossviewPlot extends D3Visualization {
         let dataset = [];
         if (settings.endpointFilterLogic === DATA_FILTER_LOGIC_CUSTOM) {
             try {
-                dataset = Query.parse(settings.filtersQuery, parserOptions);
+                dataset = parse(settings.filtersQuery, parserOptions);
             } catch (err) {
                 console.error(err);
             }

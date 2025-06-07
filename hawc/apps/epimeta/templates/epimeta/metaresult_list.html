@@ -60,8 +60,10 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.app.startup("epiMetaStartup", function (app) {
-      $("i.previewModalIcon").click(e=>app.MetaResult.displayAsModal($(e.target).data("id")));
+    $(document).ready(function() {
+      window.app.startup("epiMetaStartup", function (app) {
+        $("i.previewModalIcon").click(e=>app.MetaResult.displayAsModal($(e.target).data("id")));
+      });
     });
   </script>
 {% endblock %}

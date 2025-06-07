@@ -24,7 +24,7 @@
                 // only show proper strains for a given species
           var selected = $('#id_strain option:selected').val(),
               update_strain_opts = function(d){
-            var opts = _.map(d, v => `<option value="${v.id}">${v.name}</option>`).join('');
+            var opts = d.map(v => `<option value="${v.id}">${v.name}</option>`).join('');
             $('#id_strain').html(opts);
             $(`#id_strain option[value="${selected}"]`).prop('selected', true);
             if (onStrainUpdateComplete !== undefined) {
