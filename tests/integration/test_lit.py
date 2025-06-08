@@ -146,7 +146,9 @@ class TestLiterature(PlaywrightTestCase):
         # go back and check delete again
         page.get_by_text("Actions").click()
         page.get_by_role("link", name="View Workflows").click()
+        expect(page.get_by_title("Click to update")).to_be_visible()
         page.get_by_title("Click to update").click()
+        expect(page.get_by_title("Click to update")).not_to_be_visible()
         page.get_by_role("button", name=" Delete").click()
         expect(page.get_by_text("Are you sure you want to")).to_be_visible()
         page.get_by_role("button", name=" Delete").click()
