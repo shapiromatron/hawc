@@ -148,7 +148,7 @@ class DosingRegimeForm {
         for (var j = 0; j < this.columns; j++) {
             var th = $("<th>"),
                 input_group = $('<div class="input-group"></div>'),
-                select = $('<select class="form-control"></select>');
+                select = $(`<select id="dose-unit-${j}" class="form-control"></select>`);
             this.dose_types.forEach(v =>
                 select.append(`<option value="${v.id}">${v.name}</option>`)
             );

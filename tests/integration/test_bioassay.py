@@ -90,7 +90,8 @@ class TestBioassay(PlaywrightTestCase):
         expect(page).to_have_url(re.compile(r"/ani/dosing-regime/\d+/update/"))
         expect(page.locator("text=Add new representation")).to_be_visible()
         page.get_by_role("link", name="Add new representation").click()
-        page.get_by_role("cell", name="µM   Delete").get_by_role("combobox").select_option("1")  # noqa: RUF001
+
+        page.locator("#dose-unit-1").select_option("1")
         page.locator("#dose_0").nth(1).fill("0")
         page.locator("#dose_1").nth(1).fill("10")
         page.locator("#dose_2").nth(1).fill("20")
