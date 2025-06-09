@@ -204,7 +204,8 @@ sequence = [
 
 [tool.poe.tasks.test-js]
 help = "Run javascript tests"
-cmd = "npm --prefix ./frontend run test"
+cwd = "frontend"
+cmd = "yarn run test"
 
 [tool.poe.tasks.format]
 help = "Fix formatting issues where possible"
@@ -219,7 +220,8 @@ sequence = [
 
 [tool.poe.tasks.format-js]
 help = "Fix javascript formatting issues where possible"
-cmd = "npm --prefix ./frontend run format"
+cwd = "frontend"
+cmd = "yarn run format"
 
 [tool.poe.tasks.format-html]
 help = "Fix HTML formatting issues where possible"
@@ -238,7 +240,8 @@ sequence = [
 
 [tool.poe.tasks.lint-js]
 help = "Check javascript formatting issues"
-cmd = "npm --prefix ./frontend run lint"
+cwd = "frontend"
+cmd = "npm run lint"
 
 [tool.poe.tasks.lint-html]
 help = "Check HTML formatting issues where possible"

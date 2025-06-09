@@ -54,7 +54,7 @@ conda create --name hawc
 conda activate hawc
 conda install python=3.13 postgresql
 conda install -c conda-forge nodejs
-conda install -c conda-forge yarn
+conda install -c conda-forge yarn==4.9.2
 
 :: clone repository; we'll put in dev but you can put anywhere
 mkdir %HOMEPATH%\dev
@@ -110,9 +110,6 @@ cd ~/dev/hawc/frontend
 
 # install javascript dependencies
 yarn install
-
-# Note: This project uses Yarn Berry v4+ with node_modules linker mode
-# If upgrading from an older environment, remove your node_modules folder first
 
 # start node hot-reloading server
 uv run poe run-py
