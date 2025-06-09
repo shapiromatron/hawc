@@ -362,14 +362,12 @@ class AssessmentModulesForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        obs_enabled = cleaned_data.get("enable_observations")
+        enable_observations = cleaned_data.get("enable_observations")
         vocabulary = cleaned_data.get("vocabulary")
 
-        if obs_enabled and vocabulary != VocabularyNamespace.ToxRefDB:
-            self.add_error(
-                "enable_observations",
-                "Toxicity Reference Database Vocabulary must be selected to enable observations.",
-            )
+        if enable_observations and vocabulary != VocabularyNamespace.ToxRefDB:
+            message = f"To enable observations, {VocabularyNamespace.ToxRefDB.label} must be used."
+            self.add_error("enable_observations", message)
 
         return cleaned_data
 
