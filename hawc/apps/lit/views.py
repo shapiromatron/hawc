@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
@@ -10,7 +11,7 @@ from django.shortcuts import get_object_or_404, render
 from django.template import loader
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, View
 
 from ..assessment.constants import AssessmentViewPermissions
 from ..assessment.models import Assessment
@@ -25,6 +26,7 @@ from ..common.views import (
     BaseFilterList,
     BaseList,
     BaseUpdate,
+    MessageMixin,
     create_object_log,
     htmx_required,
 )
@@ -1251,3 +1253,72 @@ class AssessmentInteractive(HtmxView):
             "qs": models.Reference.objects.assessment_qs(self.assessment.id).filter(id__in=ids)
         }
         return render(request, "lit/components/venn_reference_list.html", context=context)
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class DuplicateResolution(BaseList):
+    parent_model = Assessment
+    model = models.DuplicateCandidateGroup
+    template_name = "lit/duplicate_resolution.html"
+    breadcrumb_active_name = "Duplicate resolution"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+
+    paginate_by = 10
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(assessment=self.assessment)
+            .filter(resolution=constants.DuplicateResolution.UNRESOLVED)
+            .prefetch_related("candidates", "candidates__identifiers", "candidates__tags")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Duplicate resolution"
+        )
+        return context
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class ResolvedDuplicates(BaseFilterList):
+    parent_model = Assessment
+    model = models.DuplicateCandidateGroup
+    filterset_class = filterset.DuplicateCandidateGroupFilterSet
+    template_name = "lit/resolved_duplicates.html"
+    breadcrumb_active_name = "Resolved duplicates"
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER
+
+    paginate_by = 10
+
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .filter(assessment=self.assessment)
+            .exclude(resolution=constants.DuplicateResolution.UNRESOLVED)
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["breadcrumbs"] = lit_overview_crumbs(
+            self.request.user, self.assessment, "Resolved duplicates"
+        )
+        context["resolution_state"] = constants.DuplicateResolution
+        return context
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class IdentifyDuplicates(MessageMixin, View):
+    success_message = "Duplicate identification requested."
+
+    def get(self, request, *args, **kwargs):
+        assessment = get_object_or_404(Assessment, pk=kwargs["pk"])
+        if not assessment.user_can_edit_object(request.user):
+            raise PermissionDenied()
+        url = reverse("lit:duplicate-resolution", args=(assessment.pk,))
+        models.DuplicateCandidateGroup.create_duplicate_candidate_groups(assessment.pk)
+        self.send_message()
+        return HttpResponseRedirect(url)
