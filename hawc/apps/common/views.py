@@ -248,7 +248,11 @@ class AssessmentPermissionsMixin:
         obj = kwargs.get("object") or super().get_object(**kwargs)
 
         if not hasattr(self, "assessment"):
-            self.assessment = obj.get_assessment()
+            try:
+                self.assessment = obj.get_assessment()
+            except ValueError as err:
+                logger.warning(f"Cannot fetch assessment for {obj=}, {obj.pk=}")
+                raise PermissionDenied() from err
 
         permission_checked = False
         user = self.request.user
