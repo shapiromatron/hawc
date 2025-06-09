@@ -7,7 +7,7 @@ following applications installed on your local development system:
 - [Git](https://git-scm.com/)
 - [uv](https://docs.astral.sh/uv/)
 - [Node.js](https://nodejs.org) LTS v22
-- [Yarn](https://yarnpkg.com/) < 2
+- [Yarn](https://yarnpkg.com/) Berry v4+
 - [PostgreSQL](https://www.postgresql.org/) >= 16
 
 When writing code for HAWC, there are a few requirements for code acceptance. We have built-in CI using github actions for enforcement:
@@ -54,7 +54,7 @@ conda create --name hawc
 conda activate hawc
 conda install python=3.13 postgresql
 conda install -c conda-forge nodejs
-conda install -c conda-forge yarn=1.22.19
+conda install -c conda-forge yarn
 
 :: clone repository; we'll put in dev but you can put anywhere
 mkdir %HOMEPATH%\dev
@@ -110,6 +110,9 @@ cd ~/dev/hawc/frontend
 
 # install javascript dependencies
 yarn install
+
+# Note: This project uses Yarn Berry v4+ with node_modules linker mode
+# If upgrading from an older environment, remove your node_modules folder first
 
 # start node hot-reloading server
 uv run poe run-py

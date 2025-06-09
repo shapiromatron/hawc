@@ -60,5 +60,6 @@
         "tablesort": "~5.3.0",
         "textures": "^1.2.3",
         "velocity-react": "^1.4.3"
-    }
+    },
+    "packageManager": "yarn@4.9.2"
 }

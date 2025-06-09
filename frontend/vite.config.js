@@ -29,6 +29,7 @@ export default defineConfig({
         }),
         viteExternalsPlugin({
             $: "$",
+            jquery: "$",
         }),
         {
             name: "create-empty-gitkeep",

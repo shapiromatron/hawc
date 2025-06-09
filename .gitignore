@@ -29,6 +29,8 @@ uv.lock
 .ruff_cache/
 .venv/
 .vscode/
+.yarn/cache/
+.yarn/install-state.gz
 /data/
 docs/site
 __pycache__/
