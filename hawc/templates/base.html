@@ -1,6 +1,6 @@
 {% load cache %}
 {% load static %}
-{% load render_bundle from webpack_loader %}
+{% load django_vite %}
 
 <!DOCTYPE html>
 <html class="js" lang="en-us">
@@ -100,7 +100,8 @@
     <script type="text/javascript" src="{% static 'vendor/jquery/3.7.0/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/bootstrap/4.6.2/js/bootstrap.bundle.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/htmx/2.0.3/htmx.min.js' %}"></script>
-    {% render_bundle 'main' %}
+    {% vite_hmr_client %}
+    {% vite_asset 'index.js' %}
     {% if form %}{{ form.media }}{% endif %}
     {% block extrajs %}{% endblock %}
   </body>

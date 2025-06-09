@@ -33,7 +33,7 @@ class MetaResult {
 
     _unpack_single_results() {
         var single_results = this.single_results;
-        this.data.single_results.forEach(function(v, i) {
+        this.data.single_results.forEach(function (v, _i) {
             single_results.push(new SingleStudyResult(v));
         });
         this.data.single_results = [];
@@ -72,7 +72,7 @@ class MetaResult {
         var tbl = new BaseTable();
         tbl.addHeaderRow(["Name", "Weight", "N", "Risk estimate", "Notes"]);
         tbl.setColGroup([30, 15, 15, 15, 25]);
-        _.each(this.single_results, function(d) {
+        _.each(this.single_results, function (d) {
             tbl.addRow(d.build_table_row(d));
         });
         return tbl.getTbl();
@@ -103,11 +103,7 @@ class MetaResult {
         }
         $content.append(this.build_details_table()).append($singleResultsDiv);
 
-        modal
-            .addHeader(title)
-            .addBody($content)
-            .addFooter("")
-            .show({maxWidth: 900});
+        modal.addHeader(title).addBody($content).addFooter("").show({maxWidth: 900});
     }
 
     displayFullPager($el) {
@@ -117,10 +113,7 @@ class MetaResult {
                 .append("<h3>Individual study results</h3>")
                 .append(this.build_single_results_table());
         }
-        $el.hide()
-            .append(this.build_details_table())
-            .append($singleResultsDiv)
-            .fadeIn();
+        $el.hide().append(this.build_details_table()).append($singleResultsDiv).fadeIn();
     }
 }
 

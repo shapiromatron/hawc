@@ -14,9 +14,11 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.app.startup("summaryInteractivityStartup", app => {
-      const el = document.getElementById("tblBody");
-      app.renderExtensionTableBody(el);
+    $(document).ready(function() {
+      window.app.startup("summaryInteractivityStartup", app => {
+        const el = document.getElementById("tblBody");
+        app.renderExtensionTableBody(el);
+      });
     });
   </script>
 {% endblock %}

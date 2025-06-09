@@ -19,8 +19,7 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.addEventListener("DOMContentLoaded", function(){
-
+    $(document).ready(function() {
       var elFormset = $("#rFormset").insertBefore($('#rForm .form-actions')),
           isNew = "{{crud|lower}}" == "create",
           fs = new window.app.DynamicFormset(elFormset, 'form', {oneFormRequired: true}),
@@ -117,7 +116,6 @@
       // we only want to show the metric units UI for particular selected metrics
       $("#id_metric").change(showOrHideMetricUnits);
       showOrHideMetricUnits();
-
     });
   </script>
 {% endblock extrajs %}

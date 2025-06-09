@@ -232,19 +232,13 @@
 {% endblock content %}
 
 {% block extrajs %}
-  {% if crud == "Read" and object.dtxsids.first %}
-    <script type="text/javascript">
-      window.addEventListener("DOMContentLoaded", function () {
+  <script type="text/javascript">
+    $(document).ready(function() {
+      {% if crud == "Read" and object.dtxsids.first %}
         const dtxsids = {{dtxsids|safe}},
               el = document.getElementById('dtxsid-app');
-        window.app.startup("assessmentStartup", function(app){
-          app.renderDssToxTabs(el, dtxsids);
-        });
-      });
-    </script>
-  {% endif %}
-  <script type="text/javascript">
-    $(window).ready(function() {
+        window.app.startup("assessmentStartup", app => app.renderDssToxTabs(el, dtxsids));
+      {% endif %}
       window.app.HAWCUtils.addScrollHtmx("attachment-edit-row", "attachment-detail-row");
     });
   </script>

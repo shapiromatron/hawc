@@ -19,7 +19,7 @@ class EndpointFormStore {
         let toggle = {};
         const useVocab = this.canUseControlledVocabulary,
             {object} = this.config;
-        _.forEach(fields, function(field) {
+        _.forEach(fields, function (field) {
             // default case
             toggle[field] = useVocab;
             // special case where we've already specified a custom value

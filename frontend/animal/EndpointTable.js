@@ -1,6 +1,6 @@
 import _ from "lodash";
-import h from "shared/utils/helpers";
 import TableFootnotes from "shared/utils/TableFootnotes";
+import h from "shared/utils/helpers";
 
 import $ from "$";
 
@@ -13,7 +13,7 @@ class EndpointTable {
         this.endpoint.addObserver(this);
     }
 
-    update(status) {
+    update(_status) {
         this.build_table();
     }
 
@@ -33,7 +33,7 @@ class EndpointTable {
 
     hasValues(val) {
         return _.chain(this.endpoint.data.groups)
-            .map(function(d) {
+            .map(function (d) {
                 return d[val];
             })
             .some(x => !_.isNil(x))
@@ -51,7 +51,7 @@ class EndpointTable {
             $(
                 '<a class="btn btn-sm btn-light" title="View alternate dose" href="#"><i class="fa fa-chevron-right"></i></a>'
             )
-                .on("click", function(e) {
+                .on("click", function (e) {
                     e.preventDefault();
                     self.endpoint.doseUnits.next();
                 })
@@ -94,7 +94,7 @@ class EndpointTable {
     build_body() {
         this.tbody = $("<tbody></tbody>");
         var self = this;
-        this.endpoint.data.groups.forEach(function(v, i) {
+        this.endpoint.data.groups.forEach(function (v, i) {
             if (!v.isReported) return;
 
             var tr = $("<tr>"),

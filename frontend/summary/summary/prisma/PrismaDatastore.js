@@ -3,7 +3,7 @@ import HAWCModal from "shared/utils/HAWCModal";
 import h from "shared/utils/helpers";
 import {NULL_VALUE} from "summary/summary/constants";
 
-const mapStyles = function(styles) {
+const mapStyles = function (styles) {
         return {
             x: styles.x,
             y: styles.y,
@@ -21,7 +21,7 @@ const mapStyles = function(styles) {
             ry: styles.border_radius,
         };
     },
-    mapArrowStyles = function(styles) {
+    mapArrowStyles = function (styles) {
         return {
             "arrow-color": styles["color"],
             "arrow-width": styles["width"],

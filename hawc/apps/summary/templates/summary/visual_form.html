@@ -12,11 +12,13 @@
   {{ smart_tag_form.media }}
   {{ config|json_script:"config" }}
   <script type="text/javascript">
-    window.app.startup("summaryFormsStartup", function(summaryForms){
-      const config = window.app.getConfig(),
-            djangoForm = document.querySelector('#visualForm'),
-            mainElement = document.querySelector('#main');
-      summaryForms.startup(config, djangoForm, mainElement);
+    $(document).ready(function() {
+      window.app.startup("summaryFormsStartup", function(summaryForms){
+        const config = window.app.getConfig(),
+              djangoForm = document.querySelector('#visualForm'),
+              mainElement = document.querySelector('#main');
+        summaryForms.startup(config, djangoForm, mainElement);
+      });
     });
   </script>
 {% endblock %}

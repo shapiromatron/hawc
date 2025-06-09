@@ -31,16 +31,9 @@ class BaseTable {
             this._numCols = cols;
         } else if (this._numCols === undefined) {
             this._numCols = d3.sum(
-                _.map(
-                    this.thead
-                        .first()
-                        .children()
-                        .first()
-                        .children(),
-                    function(d) {
-                        return parseInt($(d).attr("colspan")) || 1;
-                    }
-                )
+                _.map(this.thead.first().children().first().children(), function (d) {
+                    return parseInt($(d).attr("colspan")) || 1;
+                })
             );
         }
         return this._numCols;
@@ -55,7 +48,7 @@ class BaseTable {
             tagName = isHeader ? "<th>" : "<td>";
         if (val instanceof Array) {
             tr = $("<tr>");
-            val.forEach(function(v) {
+            val.forEach(function (v) {
                 tr.append($(tagName).html(v));
             });
         } else if (val instanceof $ && val.first().prop("tagName") === "TR") {
@@ -89,7 +82,7 @@ class BaseTable {
 
         $(orderByDropdownSelector)
             .find("option")
-            .each(function() {
+            .each(function () {
                 var currOption = $(this);
 
                 var optionText = currOption.text().toLowerCase();
@@ -103,7 +96,7 @@ class BaseTable {
     }
 
     enableSortableHeaderLinks(currentActiveSort, headersToSortKeys, options = {}) {
-        this.thead.find("th").each(function() {
+        this.thead.find("th").each(function () {
             var currHeaderCell = $(this);
             var currHeaderText = currHeaderCell.html();
             var sortKey = headersToSortKeys[currHeaderText.toLowerCase()];
@@ -123,9 +116,7 @@ class BaseTable {
                     var clickableLink = $("<a/>")
                         .attr("href", "?order_by=" + sortKey)
                         .html(currHeaderText);
-                    $(this)
-                        .empty()
-                        .append(clickableLink);
+                    $(this).empty().append(clickableLink);
                 }
             } else {
                 var warnAboutMissingMapping = true;

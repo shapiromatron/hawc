@@ -14,7 +14,7 @@ class Result {
     constructor(data) {
         this.data = data;
         this.comparison_set = new ComparisonSet(data.comparison_set);
-        this.resultGroups = _.map(data.results, function(d) {
+        this.resultGroups = _.map(data.results, function (d) {
             return new ResultGroup(d);
         });
         this.factors = _.filter(this.data.factors, {
@@ -59,7 +59,7 @@ class Result {
             .addHeader(title)
             .addBody($content)
             .addFooter("")
-            .show(opts, function() {
+            .show(opts, function () {
                 $content.trigger("plotDivShown");
             });
     }

@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import TagTreeComponent from "./components/TagTree";
 import NestedTag from "./NestedTag";
+import TagTreeComponent from "./components/TagTree";
 
 class TagTree {
     constructor(rootNode, assessment_id, search_id) {
@@ -88,7 +88,7 @@ class TagTree {
     choices() {
         // get choices for a select input
         const choices = [],
-            addTag = function(tag) {
+            addTag = function (tag) {
                 choices.push({id: tag.data.pk, label: tag.get_full_name()});
                 tag.children.forEach(addTag);
             };

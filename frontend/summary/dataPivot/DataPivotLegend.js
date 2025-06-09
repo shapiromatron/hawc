@@ -4,8 +4,8 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 import $ from "$";
 
 import {applyStyles} from "../summary/common";
-import {NULL_CASE} from "./shared";
 import {StyleLine, StyleRectangle, StyleSymbol} from "./Styles";
+import {NULL_CASE} from "./shared";
 
 class DataPivotLegend {
     constructor(svg, vis, settings, dp_settings, options) {
@@ -47,7 +47,7 @@ class DataPivotLegend {
     }
 
     _build_options() {
-        return this.settings.fields.map(function(v) {
+        return this.settings.fields.map(function (v) {
             return $(`<option value="${v.label}">${v.label}</option>`).data("d", v);
         });
     }
@@ -61,12 +61,12 @@ class DataPivotLegend {
         var self = this,
             cursor = this.options.editable ? "pointer" : "auto",
             buffer = 5,
-            apply_styles = function(d) {
+            apply_styles = function (d) {
                 applyStyles(self.svg, this, d.style);
             },
             drag = !this.options.editable
-                ? function() {}
-                : HAWCUtils.updateDragLocationTransform(function(x, y) {
+                ? function () {}
+                : HAWCUtils.updateDragLocationTransform(function (x, y) {
                       self.settings.left = parseInt(x, 10);
                       self.settings.top = parseInt(y, 10);
                   });
@@ -99,7 +99,7 @@ class DataPivotLegend {
         this.legend_columns = [];
 
         // add bars
-        this.settings.fields.forEach(function(datum, i) {
+        this.settings.fields.forEach(function (datum, i) {
             if (i % rows === 0) {
                 colg = self.legend.append("g");
                 self.legend_columns.push(colg);
@@ -182,10 +182,7 @@ class DataPivotLegend {
                     .append("path")
                     .attr(
                         "d",
-                        d3
-                            .symbol()
-                            .size(style.size)
-                            .type(HAWCUtils.symbolStringToType(style.type))
+                        d3.symbol().size(style.size).type(HAWCUtils.symbolStringToType(style.type))
                     )
                     .attr("transform", d => `translate(${d.x},${d.y})`)
                     .each(apply_styles);
@@ -212,7 +209,7 @@ class DataPivotLegend {
             this.legend_columns[i].attr("transform", `translate(${offset},0)`);
         }
 
-        var resize_legend = function() {
+        var resize_legend = function () {
             var dim = self.legend.node().getBoundingClientRect();
             self.legend
                 .select("rect")
@@ -225,7 +222,7 @@ class DataPivotLegend {
 
     add_or_update_field(obj, legend_item) {
         if (isFinite(obj.symbol_index)) {
-            legend_item = this.settings.fields.filter(function(v) {
+            legend_item = this.settings.fields.filter(function (v) {
                 return v.symbol_index === obj.symbol_index;
             })[0];
         }

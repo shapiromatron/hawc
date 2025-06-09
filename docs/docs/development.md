@@ -20,9 +20,9 @@ See below for more details on how to automatically lint/format your code.
 
 ## Environment setup
 
-Install [uv](https://docs.astral.sh/uv/); either via pip install or following the installation guide on teh website. That's the primary way we'll install python and related packages.
+HAWC can be developed on Windows, Linux, or Mac. Development on Mac/Linux is preferred as it is more similar to deployment.
 
-HAWC can be developed both on Windows and and Linux/Mac. Development on Mac/Linux is preferred as it is more similar to deployment.
+Install [uv](https://docs.astral.sh/uv/); either via pip install or following the installation guide on the website.  Using `uv` is not required; you can build using standard Python + pip or Conda, depending on your personal preference.
 
 ```bash title="Mac/Linux"
 # clone repository; we'll put in ~/dev but you can put anywhere
@@ -32,7 +32,7 @@ git clone https://github.com/shapiromatron/hawc.git
 
 # create virtual environment
 cd ~/dev/hawc
-uv venv --python=3.12
+uv venv --python=3.13
 
 # activate the environment
 source ./.venv/bin/activate
@@ -46,13 +46,13 @@ createuser --superuser --no-password hawc
 createdb -E UTF-8 -U hawc hawc
 ```
 
-For Windows, use anaconda or miniconda to get requirements can be used to get dependencies:
+For Windows, using Anaconda or Miniconda is preferred for additional dependencies:
 
 ```batch title="Windows"
 :: create a conda environment with our hard to get dependencies
 conda create --name hawc
 conda activate hawc
-conda install python=3.12 postgresql
+conda install python=3.13 postgresql
 conda install -c conda-forge nodejs
 conda install -c conda-forge yarn=1.22.19
 
@@ -426,42 +426,17 @@ done
 
 - [Python for VS Code](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
 - [Ruff](https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff)
-- [Eslint for VS Code](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+- [Biome for VS Code](https://marketplace.visualstudio.com/items?itemName=biomejs.biome)
 - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker)
 
 When using the recommended settings below, your python and javascript code should automatically format whenever you save to fix most, but not all requirements. In addition, you should have pretty good autocompletion. Python type annotations are enabled with warnings, but not enforced; this may change as we continue to annotate the existing codebase. You can add these settings to your overall VSCode settings.json file, or create a [workspace](https://code.visualstudio.com/docs/editor/workspaces) for HAWC and add it to the workspace settings.json file.
 
 ```json
 {
-    "[dockerfile]": {
-        "editor.formatOnSave": false
-    },
-    "[css]": {
-        "editor.formatOnSave": false,
-    },
-    "[javascript]": {
-        "editor.formatOnSave": false,
-    },
-    "[markdown]": {
-        "editor.wordWrap": "bounded",
-        "editor.quickSuggestions": false
-    },
-    "[python]": {
-        "editor.defaultFormatter": "charliermarsh.ruff",
-        "editor.formatOnSave": true,
-        "editor.codeActionsOnSave": {
-            "source.fixAll": true
-        },
-    },
-    "editor.codeActionsOnSave": {
-        "source.fixAll": false,
-        "source.fixAll.eslint": true
-    },
-    "editor.formatOnPaste": false,
     "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
     "editor.rulers": [100, 120],
     "editor.tabSize": 4,
-    "eslint.format.enable": true,
     "files.eol": "\n",
     "files.exclude": {
         "**/*.pytest_cache": true,
@@ -469,16 +444,36 @@ When using the recommended settings below, your python and javascript code shoul
     },
     "files.insertFinalNewline": true,
     "files.trimTrailingWhitespace": true,
-    "python.analysis.diagnosticSeverityOverrides": {
-        "reportUnknownMemberType": "information",
-    },
-    "python.analysis.typeCheckingMode": "basic",
-    "python.languageServer": "Pylance",
-    "python.linting.flake8Enabled": false,
     "search.exclude": {
         "**/node_modules": true,
         "**/.git": true,
     },
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit"
+        },
+    },
+    "python.analysis.typeCheckingMode": "standard",
+    "python.testing.pytestEnabled": true,
+    "ruff.importStrategy": "fromEnvironment",
+    "ruff.nativeServer": "on",
+    "[javascript]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "biomejs.biome",
+        "editor.codeActionsOnSave": {
+			"source.fixAll.biome": "explicit",
+			"source.organizeImports.biome": "explicit",
+		}
+	},
+	"biome.configurationPath": "frontend\\biome.json",  // windows only
+	"biome.lsp.bin": "frontend\\node_modules\\@biomejs\\cli-win32-x64\\biome.exe",  // windows only
+    "[markdown]": {
+        "editor.formatOnSave": true,
+        "editor.wordWrap": "bounded",
+        "editor.quickSuggestions": false
+    }
 }
 ```
 

@@ -9,9 +9,9 @@ import h from "shared/utils/helpers";
 import $ from "$";
 
 import BaseVisual from "./BaseVisual";
-import {addLabelIndicators, handleVisualError} from "./common";
 import EndpointAggregationExposureResponsePlot from "./EndpointAggregationExposureResponsePlot";
 import EndpointAggregationForestPlot from "./EndpointAggregationForestPlot";
+import {addLabelIndicators, handleVisualError} from "./common";
 
 class EndpointAggregation extends BaseVisual {
     constructor(data) {
@@ -45,13 +45,11 @@ class EndpointAggregation extends BaseVisual {
 
         $('<button type="button" class="btn btn-sm" title="Toggle table-view representation">')
             .append('<i class="fa fa-chevron-right"></i>')
-            .click(function() {
+            .click(function () {
                 self.buildTbl();
             });
 
-        $el.empty()
-            .append(this.$plotDiv)
-            .append(this.$tblDiv);
+        $el.empty().append(this.$plotDiv).append(this.$tblDiv);
 
         if (!options.visualOnly) {
             var headerRow = $('<div class="d-flex">').append([
@@ -85,7 +83,7 @@ class EndpointAggregation extends BaseVisual {
         this.$tblDiv = $("<div>");
         this.$plotDiv = $("<div>");
 
-        modal.getModal().on("shown.bs.modal", function() {
+        modal.getModal().on("shown.bs.modal", function () {
             self.buildPlot();
             caption.renderAndEnable();
         });
@@ -114,11 +112,9 @@ class EndpointAggregation extends BaseVisual {
 
     buildTblPOD() {
         var tbl = new BaseTable(),
-            showEndpointDetail = function(e) {
+            showEndpointDetail = function (e) {
                 e.preventDefault();
-                var tr = $(this)
-                    .parent()
-                    .parent();
+                var tr = $(this).parent().parent();
                 if (tr.data("detail_row")) {
                     tr.data("detail_row").toggle_view(!tr.data("detail_row").object_visible);
                 } else {
@@ -143,7 +139,7 @@ class EndpointAggregation extends BaseVisual {
             "BMDL",
         ]);
 
-        this.endpoints.forEach(function(e) {
+        this.endpoints.forEach(function (e) {
             const study = e.data.animal_group.experiment.study,
                 experiment = e.data.animal_group.experiment,
                 animalGroup = e.data.animal_group;
@@ -168,7 +164,7 @@ class EndpointAggregation extends BaseVisual {
 
         tbl.addHeaderRow(["Study", "Experiment", "Animal Group", "Endpoint"]);
 
-        this.endpoints.forEach(function(e) {
+        this.endpoints.forEach(function (e) {
             const study = e.data.animal_group.experiment.study,
                 experiment = e.data.animal_group.experiment,
                 animalGroup = e.data.animal_group,

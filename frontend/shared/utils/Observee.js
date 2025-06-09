@@ -15,7 +15,7 @@ class Observee {
     }
 
     notifyObservers(msg) {
-        this._observers.forEach(function(d) {
+        this._observers.forEach(function (d) {
             d.update(msg);
         });
     }

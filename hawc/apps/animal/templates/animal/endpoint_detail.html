@@ -49,13 +49,15 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    const data = {{object.get_json|safe}};
-    window.app.startup("animalStartup", function(app){
-      var endpoint = new app.Endpoint(data);
-      endpoint.build_details_table($('#endpoint-details-table'));
-      endpoint.build_endpoint_table($('#dr-tbl'));
-      endpoint.renderPlot($('#bmd_ds_plot'), {showBmd: true});
-      endpoint.build_general_notes($('#endpoint-general-notes'));
-    })
+    $(document).ready(() => {
+      const data = {{object.get_json|safe}};
+      window.app.startup("animalStartup", function(app){
+        var endpoint = new app.Endpoint(data);
+        endpoint.build_details_table($('#endpoint-details-table'));
+        endpoint.build_endpoint_table($('#dr-tbl'));
+        endpoint.renderPlot($('#bmd_ds_plot'), {showBmd: true});
+        endpoint.build_general_notes($('#endpoint-general-notes'));
+      })
+    });
   </script>
 {% endblock %}

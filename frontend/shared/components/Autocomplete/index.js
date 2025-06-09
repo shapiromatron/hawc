@@ -49,7 +49,7 @@ class Autocomplete extends Component {
                 suggestions={suggestions}
                 onSuggestionsFetchRequested={throttledFetchRequest}
                 onSuggestionsClearRequested={() => this.setState({suggestions: []})}
-                onSuggestionSelected={(event, {suggestion}) => {
+                onSuggestionSelected={(_event, {suggestion}) => {
                     this.setState({currentId: suggestion.id});
                     onChange(suggestion);
                 }}
@@ -59,7 +59,7 @@ class Autocomplete extends Component {
                     placeholder,
                     className: "form-control",
                     value: currentText,
-                    onChange: (event, {newValue}) => {
+                    onChange: (_event, {newValue}) => {
                         if (newValue === "") {
                             onChange(null);
                         }

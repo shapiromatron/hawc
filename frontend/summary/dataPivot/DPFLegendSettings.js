@@ -5,15 +5,13 @@ import $ from "$";
 
 import DataPivot from "./DataPivot";
 import DataPivotLegend from "./DataPivotLegend";
-import {NULL_CASE} from "./shared";
 import StyleViewer from "./StyleViewer";
+import {NULL_CASE} from "./shared";
 
-const build_tr = function(label, input) {
-        return $("<tr>")
-            .append(`<th>${label}</th>`)
-            .append($("<td>").append(input));
+const build_tr = function (label, input) {
+        return $("<tr>").append(`<th>${label}</th>`).append($("<td>").append(input));
     },
-    add_horizontal_field = function(label_text, html_obj) {
+    add_horizontal_field = function (label_text, html_obj) {
         return $('<div class="form-group">')
             .append(`<label class="col-form-label">${label_text}</label>`)
             .append($('<div class="form-group">').append(html_obj));
@@ -147,36 +145,36 @@ class LegendSettings {
             colgroup = $('<colgroup><col style="width: 30%;"><col style="width: 70%;">'),
             show_legend = $('<input type="checkbox">')
                 .prop("checked", settings.show)
-                .on("change", function() {
+                .on("change", function () {
                     settings.show = $(this).prop("checked");
                 }),
             number_columns = $(
                 `<input class="form-control" type="range" min="1" max="5" value="${settings.columns}">`
-            ).on("change", function() {
+            ).on("change", function () {
                 settings.columns = parseInt($(this).val()) || 1;
                 legend._draw_legend();
             }),
             left = $("<input type='number' class='form-control'>")
                 .val(settings.left)
-                .on("change", function() {
+                .on("change", function () {
                     settings.left = parseInt($(this).val()) || 1;
                     legend._draw_legend();
                 }),
             top = $("<input type='number' class='form-control'>")
                 .val(settings.top)
-                .on("change", function() {
+                .on("change", function () {
                     settings.top = parseInt($(this).val(), 10) || 1;
                     legend._draw_legend();
                 }),
             border_width = $(
                 `<input class="form-control" type="range" min="0" max="10" value="${settings.style.border_width}">`
-            ).on("change", function() {
+            ).on("change", function () {
                 settings.style.border_width = parseFloat($(this).val(), 10) || 0;
                 legend._draw_legend();
             }),
             border_color = $(
                 `<input class="form-control" name="fill" type="color" value="${settings.style.border_color}">`
-            ).on("change", function() {
+            ).on("change", function () {
                 settings.style.border_color = $(this).val();
                 legend._draw_legend();
             }),
@@ -184,19 +182,19 @@ class LegendSettings {
             legend_item = legend.add_select(),
             legend_item_up = $(
                 '<button class="btn btn-light"><i class="fa fa-arrow-up"></i></button>'
-            ).on("click", function() {
+            ).on("click", function () {
                 legend.move_field(legend_item.find("option:selected").data("d"), -1);
                 legend._draw_legend();
             }),
             legend_item_down = $(
                 '<button class="btn btn-light"><i class="fa fa-arrow-down"></i></button>'
-            ).on("click", function() {
+            ).on("click", function () {
                 legend.move_field(legend_item.find("option:selected").data("d"), 1);
                 legend._draw_legend();
             }),
             legend_item_delete = $('<button class="btn btn-danger">Delete</button>').on(
                 "click",
-                function() {
+                function () {
                     legend.delete_field(legend_item.find("option:selected").data("d"));
                     legend._draw_legend();
                 }

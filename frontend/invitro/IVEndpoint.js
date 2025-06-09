@@ -34,7 +34,7 @@ class IVEndpoint {
 
     _build_ivegs() {
         var groups = this.data.groups;
-        groups.sort(function(a, b) {
+        groups.sort(function (a, b) {
             return a.id - b.id;
         });
         this.egs = groups.map(v => new IVEndpointGroup(v));
@@ -76,21 +76,21 @@ class IVEndpoint {
     build_details_table() {
         var self = this,
             tbl = new DescriptiveTable(),
-            getBenchmarkText = function(d) {
+            getBenchmarkText = function (d) {
                 return `${d.benchmark}: ${d.value}`;
             },
-            getCriticalValue = function(idx) {
+            getCriticalValue = function (idx) {
                 try {
                     return `${self.egs[idx].data.dose} ${self.data.experiment.dose_units.name}`;
-                } catch (err) {
+                } catch (_err) {
                     return undefined;
                 }
             },
-            getObservationTime = function() {
+            getObservationTime = function () {
                 if (self.data.observation_time.length > 0)
                     return `${self.data.observation_time} ${self.data.observation_time_units}`;
             },
-            getCategory = function(cat) {
+            getCategory = function (cat) {
                 if (cat) return cat.names.join("→");
             };
 
@@ -118,7 +118,7 @@ class IVEndpoint {
             .add_tbody_tr_list("Benchmarks", this.data.benchmarks.map(getBenchmarkText));
 
         // add additional fields
-        _.each(this.data.additional_fields, function(val, key) {
+        _.each(this.data.additional_fields, function (val, key) {
             tbl.add_tbody_tr(HAWCUtils.prettifyVariableName(key), val);
         });
 
@@ -129,7 +129,7 @@ class IVEndpoint {
         var self = this,
             tbl = new BaseTable(),
             units = this.data.experiment.dose_units.name,
-            getAvailableColumns = function() {
+            getAvailableColumns = function () {
                 var opts = {
                     hasN: false,
                     hasResponse: false,
@@ -139,7 +139,7 @@ class IVEndpoint {
                     hasCytotox: false,
                     hasPrecip: false,
                 };
-                self.egs.forEach(function(v) {
+                self.egs.forEach(function (v) {
                     if (v.data.n !== null) opts.hasN = true;
                     if (v.data.response !== null) opts.hasResponse = true;
                     if (v.data.variance !== null) opts.hasVariance = true;
@@ -151,7 +151,7 @@ class IVEndpoint {
                 return opts;
             },
             opts = getAvailableColumns(),
-            headers = function(opts) {
+            headers = function (opts) {
                 var arr = [`Dose (${units})`];
                 if (opts.hasN) arr.push("N");
                 if (opts.hasResponse) arr.push("Response");
@@ -164,7 +164,7 @@ class IVEndpoint {
             };
 
         tbl.addHeaderRow(headers(opts));
-        this.egs.forEach(function(v, i) {
+        this.egs.forEach(function (v, i) {
             opts.isLOEL = i === self.data.LOEL;
             opts.isNOEL = i === self.data.NOEL;
             tbl.addRow(v.build_row(tbl, opts));

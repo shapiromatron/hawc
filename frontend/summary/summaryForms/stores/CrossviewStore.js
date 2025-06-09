@@ -16,7 +16,7 @@ import {
     readableCustomQueryFilters,
 } from "../../summary/filters";
 
-const _getDefaultSettings = function() {
+const _getDefaultSettings = function () {
         return {
             title: "",
             xAxisLabel: "Dose (<add units>)",
@@ -55,7 +55,7 @@ const _getDefaultSettings = function() {
             filtersQuery: "",
         };
     },
-    createFilter = function(field) {
+    createFilter = function (field) {
         return {
             name: field.id,
             headerName: field.label,
@@ -66,14 +66,14 @@ const _getDefaultSettings = function() {
             y: 0,
         };
     },
-    createReflines = function(style) {
+    createReflines = function (style) {
         return {
             value: 1,
             title: "",
             style: style.id,
         };
     },
-    createRefranges = function(style) {
+    createRefranges = function (style) {
         return {
             lower: 1,
             upper: 2,
@@ -81,7 +81,7 @@ const _getDefaultSettings = function() {
             style: style.id,
         };
     },
-    createLabels = function(style) {
+    createLabels = function (style) {
         return {
             caption: "",
             style: style.id,
@@ -90,7 +90,7 @@ const _getDefaultSettings = function() {
             y: 0,
         };
     },
-    createColorFilters = function(field) {
+    createColorFilters = function (field) {
         return {
             field: field.id,
             value: "",
@@ -98,7 +98,7 @@ const _getDefaultSettings = function() {
             color: "#8BA870",
         };
     },
-    createEndpointFilters = function(field, filter) {
+    createEndpointFilters = function (field, _filter) {
         return {
             field: field.id,
             filterType: DATA_FILTER_CONTAINS,
@@ -156,7 +156,7 @@ class CrossviewStore {
     @action.bound moveArrayElementDown(type, index) {
         moveArrayElementDown(this.settings[type], index);
     }
-    @action setFromJsonSettings(settings, firstTime) {
+    @action setFromJsonSettings(settings, _firstTime) {
         this.settings = settings;
     }
     @computed get settingsHash() {

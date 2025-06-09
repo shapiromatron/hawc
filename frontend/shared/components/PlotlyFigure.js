@@ -16,7 +16,7 @@ class ResizableDiv extends Component {
     }
     componentDidMount() {
         this.observer = new window.ResizeObserver(
-            _.debounce(el => window.dispatchEvent(new Event("resize")), 500)
+            _.debounce(_el => window.dispatchEvent(new Event("resize")), 500)
         );
         this.observer.observe(this.ref.current);
     }
@@ -74,7 +74,7 @@ PlotlyFigure.defaultProps = {
     resizable: false,
 };
 
-const renderPlotlyFigure = function(el, config, resizable = false) {
+const renderPlotlyFigure = function (el, config, resizable = false) {
     el.innerHTML = "";
     try {
         ReactDOM.render(<PlotlyFigure {...config} resizable={resizable} />, el);

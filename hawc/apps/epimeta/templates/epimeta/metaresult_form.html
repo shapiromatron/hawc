@@ -23,7 +23,7 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
       $("#srFormset").insertBefore($(".form-actions"));
       new window.app.DynamicFormset($('#srFormset'), 'form');
     });

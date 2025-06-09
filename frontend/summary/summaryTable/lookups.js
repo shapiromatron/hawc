@@ -1,14 +1,14 @@
 import {TableType} from "./constants";
 import EvidenceProfileForm from "./evidenceProfileTable/Form";
-import EvidenceProfileTableStore from "./evidenceProfileTable/store.js";
 import EvidenceProfileTable from "./evidenceProfileTable/Table";
-import GenericTableStore from "./genericTable/store.js";
+import EvidenceProfileTableStore from "./evidenceProfileTable/store.js";
 import GenericTable from "./genericTable/Table";
 import GenericTableForm from "./genericTable/TableForm";
+import GenericTableStore from "./genericTable/store.js";
 import StudyEvaluationData from "./studyEvaluationTable/DataForm";
-import StudyEvaluationTableStore from "./studyEvaluationTable/store.js";
 import StudyEvaluationTable from "./studyEvaluationTable/Table";
 import StudyEvaluationTableForm from "./studyEvaluationTable/TableForm";
+import StudyEvaluationTableStore from "./studyEvaluationTable/store.js";
 
 const tableStoreLookup = {
         [TableType.GENERIC]: GenericTableStore,
@@ -28,7 +28,7 @@ const tableStoreLookup = {
     tableDataComponentLookup = {
         [TableType.STUDY_EVALUATION_TABLE]: StudyEvaluationData,
     },
-    getTableStore = function(table, editStore) {
+    getTableStore = function (table, editStore) {
         const Cls = tableStoreLookup[table.table_type];
         if (!Cls) {
             throw `Unknown table type: ${table.table_type}`;
@@ -40,21 +40,21 @@ const tableStoreLookup = {
             return new Cls(false, table);
         }
     },
-    getViewTableComponent = function(table) {
+    getViewTableComponent = function (table) {
         const Component = tableViewComponentLookup[table.table_type];
         if (!Component) {
             throw `Unknown table type: ${table.table_type}`;
         }
         return Component;
     },
-    getEditTableComponent = function(table) {
+    getEditTableComponent = function (table) {
         const Component = tableEditComponentLookup[table.table_type];
         if (!Component) {
             throw `Unknown table type: ${table.table_type}`;
         }
         return Component;
     },
-    getTableDataComponent = function(table) {
+    getTableDataComponent = function (table) {
         const Component = tableDataComponentLookup[table.table_type];
         return Component;
     };

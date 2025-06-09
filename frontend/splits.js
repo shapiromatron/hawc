@@ -1,5 +1,5 @@
 const startup = (name, cb) => {
-    // big switch statement for successful webpack splitting and compilation
+    // big switch statement for splitting and compilation
     switch (name) {
         case "assessmentStartup":
             import("./assessment/index.js").then(app => cb(app.default));

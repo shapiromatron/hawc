@@ -13,7 +13,8 @@ class VocabBrowseStore {
                 d[field] = +d[field] || d[field];
             }
             d._key = i;
-            d._searchString = `${d.system} ${d.organ} ${d.effect} ${d.effect_subtype} ${d.name}`.toLocaleLowerCase();
+            d._searchString =
+                `${d.system} ${d.organ} ${d.effect} ${d.effect_subtype} ${d.name}`.toLocaleLowerCase();
             return d;
         });
     }

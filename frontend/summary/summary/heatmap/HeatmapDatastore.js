@@ -115,7 +115,7 @@ class HeatmapDatastore {
         let state = {};
         _.each(this.intersection, (items, column) => {
             state[column] = {};
-            _.each(items, (value, key) => {
+            _.each(items, (_value, key) => {
                 state[column][key] = false;
             });
         });
@@ -124,7 +124,7 @@ class HeatmapDatastore {
 
     setScales() {
         const setScales = (fields, intersection) => {
-            const getSpecifiedAxisOrder = function(field) {
+            const getSpecifiedAxisOrder = function (field) {
                     /*
                     If an order is not specified, sort tokens.
                     If an order is specified, use the specified order, and append additional tokens to the end.
@@ -203,10 +203,10 @@ class HeatmapDatastore {
     }
 
     @computed get filterWidgetState() {
-        return _.mapValues(this._filterWidgetState, (items, column) => {
+        return _.mapValues(this._filterWidgetState, (items, _column) => {
             return _.every(items, v => !v)
                 ? _.mapValues(items, () => true)
-                : _.mapValues(items, (visible, item) => visible);
+                : _.mapValues(items, (visible, _item) => visible);
         });
     }
 
@@ -219,13 +219,13 @@ class HeatmapDatastore {
     }
 
     @computed get n_rows() {
-        return this.scales.y.filter((d, i) =>
+        return this.scales.y.filter((_d, i) =>
             this.settings.compress_y ? this.totals.y[i] > 0 : true
         ).length;
     }
 
     @computed get n_cols() {
-        return this.scales.x.filter((d, i) =>
+        return this.scales.x.filter((_d, i) =>
             this.settings.compress_x ? this.totals.x[i] > 0 : true
         ).length;
     }
@@ -300,7 +300,7 @@ class HeatmapDatastore {
         let {scales, intersection} = this,
             index = -1,
             removedRows = this.rowsRemovedByFilters,
-            getIntersection = function(arr, set2) {
+            getIntersection = function (arr, set2) {
                 return set2 ? arr.filter(x => set2.has(x)) : [];
             },
             getRows = filters => {
@@ -316,10 +316,10 @@ class HeatmapDatastore {
             },
             {compress_x, compress_y} = this.settings,
             xy_map = scales.x
-                .filter((d, i) => (compress_x ? this.totals.x[i] > 0 : true))
+                .filter((_d, i) => (compress_x ? this.totals.x[i] > 0 : true))
                 .map((x, i) => {
                     return scales.y
-                        .filter((d, i) => (compress_y ? this.totals.y[i] > 0 : true))
+                        .filter((_d, i) => (compress_y ? this.totals.y[i] > 0 : true))
                         .map((y, j) => {
                             index += 1;
                             return {
@@ -335,13 +335,15 @@ class HeatmapDatastore {
                 })
                 .flat();
         if (this.settings.show_totals) {
-            const x_steps = scales.x.filter((d, i) => (compress_x ? this.totals.x[i] > 0 : true))
-                    .length,
-                y_steps = scales.y.filter((d, i) => (compress_y ? this.totals.y[i] > 0 : true))
-                    .length;
+            const x_steps = scales.x.filter((_d, i) =>
+                    compress_x ? this.totals.x[i] > 0 : true
+                ).length,
+                y_steps = scales.y.filter((_d, i) =>
+                    compress_y ? this.totals.y[i] > 0 : true
+                ).length;
             xy_map.push(
                 ...scales.x
-                    .filter((d, i) => (compress_x ? this.totals.x[i] > 0 : true))
+                    .filter((_d, i) => (compress_x ? this.totals.x[i] > 0 : true))
                     .map((x, i) => {
                         index += 1;
                         return {
@@ -355,7 +357,7 @@ class HeatmapDatastore {
                         };
                     }),
                 ...scales.y
-                    .filter((d, i) => (compress_y ? this.totals.y[i] > 0 : true))
+                    .filter((_d, i) => (compress_y ? this.totals.y[i] > 0 : true))
                     .map((y, i) => {
                         index += 1;
                         return {

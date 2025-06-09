@@ -17,9 +17,11 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    const id = {{object.id}};
-    window.app.startup("epiStartup", function(app){
-      app.Exposure.displayFullPager($("#objContainer"), id);
+    $(document).ready(function() {
+      const id = {{object.id}};
+      window.app.startup("epiStartup", function(app){
+        app.Exposure.displayFullPager($("#objContainer"), id);
+      });
     });
   </script>
 {% endblock %}
