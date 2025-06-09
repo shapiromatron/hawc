@@ -10,7 +10,7 @@ import QuillTextInput from "shared/components/QuillTextInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 
-import {COL_ATTRIBUTE, colAttributeChoices, ROW_TYPE} from "./constants";
+import {COL_ATTRIBUTE, ROW_TYPE, colAttributeChoices} from "./constants";
 
 class EditButton extends Component {
     render() {
@@ -520,8 +520,8 @@ class Table extends Component {
                                                 editable && store.editingCell(rowIdx, colIdx)
                                                     ? " bg-lightblue"
                                                     : col.attribute == COL_ATTRIBUTE.ROB.id
-                                                    ? " text-center align-middle cursor-pointer"
-                                                    : ""
+                                                      ? " text-center align-middle cursor-pointer"
+                                                      : ""
                                             }`}
                                             style={
                                                 editable && store.editingCell(rowIdx, colIdx)

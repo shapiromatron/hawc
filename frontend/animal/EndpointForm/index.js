@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import Store from "./store";
 
-export default function(el, config) {
+export default function (el, config) {
     const store = new Store(config);
 
     ReactDOM.render(

@@ -74,7 +74,7 @@ class StudyPopulation {
 
     build_links_div() {
         var $el = $("<div>"),
-            liFunc = function(d) {
+            liFunc = function (d) {
                 return `<li><a href="${d.url}">${d.name}</a></li>`;
             };
 
@@ -106,10 +106,7 @@ class StudyPopulation {
     }
 
     displayFullPager($el) {
-        $el.hide()
-            .append(this.build_details_table())
-            .append(this.build_links_div())
-            .fadeIn();
+        $el.hide().append(this.build_details_table()).append(this.build_links_div()).fadeIn();
     }
 
     displayAsModal() {
@@ -119,11 +116,7 @@ class StudyPopulation {
                 .append($('<div class="row">').append(this.build_details_table()))
                 .append($('<div class="row">').append(this.build_links_div()));
 
-        modal
-            .addHeader(title)
-            .addBody($content)
-            .addFooter("")
-            .show({maxWidth: 1000});
+        modal.addHeader(title).addBody($content).addFooter("").show({maxWidth: 1000});
     }
 }
 

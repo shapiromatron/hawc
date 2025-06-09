@@ -160,80 +160,280 @@ const ER = {
         studyHeroId: defineProps("studyHeroId", "HERO ID", "study-hero_id"),
         studyPubmedId: defineProps("studyPubmedId", "PMID", "study-pubmed_id"),
         studyDoi: defineProps("studyDoi", "DOI", "study-doi"),
-        studyShortCitation: defineProps("studyShortCitation", "Short Citation", "study-short_citation"),
+        studyShortCitation: defineProps(
+            "studyShortCitation",
+            "Short Citation",
+            "study-short_citation"
+        ),
         studyFullCitation: defineProps("studyFullCitation", "Full Citation", "study-full_citation"),
-        studyStudyIdentifier: defineProps("studyStudyIdentifier", "Study Identifier", "study-study_identifier"),
+        studyStudyIdentifier: defineProps(
+            "studyStudyIdentifier",
+            "Study Identifier",
+            "study-study_identifier"
+        ),
         designPk: defineProps("designPk", "Design ID", "design-pk"),
         designSummary: defineProps("designSummary", "Design Summary", "design-summary"),
         designStudyName: defineProps("designStudyName", "Study Name", "design-study_name"),
         studyDesign: defineProps("studyDesign", "Study Design", "design-study_design"),
         designSource: defineProps("designSource", "Source", "design-source"),
         designAgeProfile: defineProps("designAgeProfile", "Age Profile", "design-age_profile"),
-        designAgeDescription: defineProps("designAgeDescription", "Age Description", "design-age_description"),
+        designAgeDescription: defineProps(
+            "designAgeDescription",
+            "Age Description",
+            "design-age_description"
+        ),
         designSex: defineProps("designSex", "Sex", "design-sex"),
         designRace: defineProps("designRace", "Race", "design-race"),
-        designParticipantN: defineProps("designParticipantN", "Participant N", "design-participant_n"),
-        designYearsEnrolled: defineProps("designYearsEnrolled", "Years Enrolled", "design-years_enrolled"),
-        designYearsFollowup: defineProps("designYearsFollowup", "Years Follow up", "design-years_followup"),
+        designParticipantN: defineProps(
+            "designParticipantN",
+            "Participant N",
+            "design-participant_n"
+        ),
+        designYearsEnrolled: defineProps(
+            "designYearsEnrolled",
+            "Years Enrolled",
+            "design-years_enrolled"
+        ),
+        designYearsFollowup: defineProps(
+            "designYearsFollowup",
+            "Years Follow up",
+            "design-years_followup"
+        ),
         designCountries: defineProps("designCountries", "Countries", "design-countries"),
         designRegion: defineProps("designRegion", "Region", "design-region"),
         designCriteria: defineProps("designCriteria", "Criteria", "design-criteria"),
-        designSusceptibility: defineProps("designSusceptibility", "Susceptibility", "design-susceptibility"),
+        designSusceptibility: defineProps(
+            "designSusceptibility",
+            "Susceptibility",
+            "design-susceptibility"
+        ),
         chemicalPk: defineProps("chemicalPk", "Chemical ID", "chemical-pk"),
         chemicalName: defineProps("chemicalName", "Chemical Name", "chemical-name"),
         chemicalDTSXID: defineProps("chemicalDTSXID", "DTSXID", "chemical-DTSXID"),
         exposurePk: defineProps("exposurePk", "Exposure ID", "exposure-pk"),
         exposureName: defineProps("exposureName", "Exposure Name", "exposure-name"),
-        exposureMeasurementType: defineProps("exposureMeasurementType", "Exposure Measurement Type", "exposure-measurement_type"),
-        exposureBiomonitoringMatrix: defineProps("exposureBiomonitoringMatrix", "Exposure Biomonitoring Matrix", "exposure-biomonitoring_matrix"),
-        exposureBiomonitoringSource: defineProps("exposureBiomonitoringSource", "Exposure Biomonitoring Source", "exposure-biomonitoring_source"),
-        exposureMeasurementTiming: defineProps("exposureMeasurementTiming", "Exposure Measurement Timing", "exposure-measurement_timing"),
-        exposureRoute: defineProps("exposureExposureRoute", "Exposure Route", "exposure-exposure_route"),
-        exposureMeasurementMethod: defineProps("exposureMeasurementMethod", "Exposure Measurement Method", "exposure-measurement_method"),
+        exposureMeasurementType: defineProps(
+            "exposureMeasurementType",
+            "Exposure Measurement Type",
+            "exposure-measurement_type"
+        ),
+        exposureBiomonitoringMatrix: defineProps(
+            "exposureBiomonitoringMatrix",
+            "Exposure Biomonitoring Matrix",
+            "exposure-biomonitoring_matrix"
+        ),
+        exposureBiomonitoringSource: defineProps(
+            "exposureBiomonitoringSource",
+            "Exposure Biomonitoring Source",
+            "exposure-biomonitoring_source"
+        ),
+        exposureMeasurementTiming: defineProps(
+            "exposureMeasurementTiming",
+            "Exposure Measurement Timing",
+            "exposure-measurement_timing"
+        ),
+        exposureRoute: defineProps(
+            "exposureExposureRoute",
+            "Exposure Route",
+            "exposure-exposure_route"
+        ),
+        exposureMeasurementMethod: defineProps(
+            "exposureMeasurementMethod",
+            "Exposure Measurement Method",
+            "exposure-measurement_method"
+        ),
         exposureLevelPk: defineProps("exposureLevelPk", "Exposure Level ID", "exposure_level-pk"),
-        exposureLevelName: defineProps("exposureLevelName", "Exposure Level Name", "exposure_level-name"),
-        exposureLevelSubPopulation: defineProps("exposureLevelSubPopulation", "Exposure Level Supopulation", "exposure_level-sub_population"),
-        exposureLevelMedian: defineProps("exposureLevelMedian", "Exposure Level Median", "exposure_level-median"),
-        exposureLevelMean: defineProps("exposureLevelMean", "Exposure Level Mean", "exposure_level-mean"),
-        exposureLevelVariance: defineProps("exposureLevelVariance", "Exposure Level Variance", "exposure_level-variance"),
-        exposureLevelVarianceType: defineProps("exposureLevelVarianceType", "Exposure Level Variance Type", "exposure_level-variance_type"),
-        exposureLevelUnits: defineProps("exposureLevelUnits", "Exposure Level Units", "exposure_level-units"),
-        exposureLevelCiLcl: defineProps("exposureLevelCiLcl", "Exposure Level Lower CI", "exposure_level-ci_lcl"),
-        exposureLevelPercentile25: defineProps("exposureLevelPercentile25", "Exposure Level P25", "exposure_level-percentile_25"),
-        exposureLevelPercentile75: defineProps("exposureLevelPercentile75", "Exposure Level P75", "exposure_level-percentile_75"),
-        exposureLevelCiUcl: defineProps("exposureLevelCiUcl", "Expsoure Level Upper CI", "exposure_level-ci_ucl"),
-        exposureLevelCiType: defineProps("exposureLevelCiType", "Exposure Level CI Type", "exposure_level-ci_type"),
-        exposureLevelNegligibleExposure: defineProps("exposureLevelNegligibleExposure", "Exposure Level Negligible Exposure", "exposure_level-negligible_exposure"),
+        exposureLevelName: defineProps(
+            "exposureLevelName",
+            "Exposure Level Name",
+            "exposure_level-name"
+        ),
+        exposureLevelSubPopulation: defineProps(
+            "exposureLevelSubPopulation",
+            "Exposure Level Supopulation",
+            "exposure_level-sub_population"
+        ),
+        exposureLevelMedian: defineProps(
+            "exposureLevelMedian",
+            "Exposure Level Median",
+            "exposure_level-median"
+        ),
+        exposureLevelMean: defineProps(
+            "exposureLevelMean",
+            "Exposure Level Mean",
+            "exposure_level-mean"
+        ),
+        exposureLevelVariance: defineProps(
+            "exposureLevelVariance",
+            "Exposure Level Variance",
+            "exposure_level-variance"
+        ),
+        exposureLevelVarianceType: defineProps(
+            "exposureLevelVarianceType",
+            "Exposure Level Variance Type",
+            "exposure_level-variance_type"
+        ),
+        exposureLevelUnits: defineProps(
+            "exposureLevelUnits",
+            "Exposure Level Units",
+            "exposure_level-units"
+        ),
+        exposureLevelCiLcl: defineProps(
+            "exposureLevelCiLcl",
+            "Exposure Level Lower CI",
+            "exposure_level-ci_lcl"
+        ),
+        exposureLevelPercentile25: defineProps(
+            "exposureLevelPercentile25",
+            "Exposure Level P25",
+            "exposure_level-percentile_25"
+        ),
+        exposureLevelPercentile75: defineProps(
+            "exposureLevelPercentile75",
+            "Exposure Level P75",
+            "exposure_level-percentile_75"
+        ),
+        exposureLevelCiUcl: defineProps(
+            "exposureLevelCiUcl",
+            "Expsoure Level Upper CI",
+            "exposure_level-ci_ucl"
+        ),
+        exposureLevelCiType: defineProps(
+            "exposureLevelCiType",
+            "Exposure Level CI Type",
+            "exposure_level-ci_type"
+        ),
+        exposureLevelNegligibleExposure: defineProps(
+            "exposureLevelNegligibleExposure",
+            "Exposure Level Negligible Exposure",
+            "exposure_level-negligible_exposure"
+        ),
         outcomePk: defineProps("outcomePk", "Outcome ID", "outcome-pk"),
         outcomeSystem: defineProps("outcomeSystem", "Outcome System", "outcome-system"),
         outcomeEffect: defineProps("outcomeEffect", "Outcome Effect", "outcome-effect"),
-        outcomeEffectDetail: defineProps("outcomeEffectDetail", "Outcome Effect Detail", "outcome-effect_detail"),
+        outcomeEffectDetail: defineProps(
+            "outcomeEffectDetail",
+            "Outcome Effect Detail",
+            "outcome-effect_detail"
+        ),
         outcomeEndpoint: defineProps("outcomeEndpoint", "Outcome Endpoint", "outcome-endpoint"),
         dataExtractionPk: defineProps("dataExtractionPk", "Data ID", "data_extraction-pk"),
-        dataExtractionSubPopulation: defineProps("dataExtractionSubPopulation", "Data Subpopulation", "data_extraction-sub_population"),
-        dataExtractionOutcomeMeasurementTiming: defineProps("dataExtractionOutcomeMeasurementTiming", "Data Measurement Timing", "dataExtractionOutcomeMeasurementTiming"),
-        dataExtractionEffectEstimateType: defineProps("dataExtractionEffectEstimateType", "Data Estimate Type", "data_extraction-effect_estimate_type"),
-        dataExtractionEffectEstimate: defineProps("dataExtractionEffectEstimate", "Data Estimate", "data_extraction-effect_estimate"),
-        dataExtractionCiLcl: defineProps("dataExtractionCiLcl", "Data Lower CI", "data_extraction-ci_lcl"),
-        dataExtractionCiUcl: defineProps("dataExtractionCiUcl", "Data Upper CI", "data_extraction-ci_ucl"),
-        dataExtractionCiType: defineProps("dataExtractionCiType", "Data CI Type", "data_extraction-ci_type"),
-        dataExtractionUnits: defineProps("dataExtractionUnits", "Data Units", "data_extraction-units"),
-        dataExtractionVarianceType: defineProps("dataExtractionVarianceType", "Data Variance Type", "data_extraction-variance_type"),
-        dataExtractionVariance: defineProps("dataExtractionVariance", "Data Variance", "data_extraction-variance"),
+        dataExtractionSubPopulation: defineProps(
+            "dataExtractionSubPopulation",
+            "Data Subpopulation",
+            "data_extraction-sub_population"
+        ),
+        dataExtractionOutcomeMeasurementTiming: defineProps(
+            "dataExtractionOutcomeMeasurementTiming",
+            "Data Measurement Timing",
+            "dataExtractionOutcomeMeasurementTiming"
+        ),
+        dataExtractionEffectEstimateType: defineProps(
+            "dataExtractionEffectEstimateType",
+            "Data Estimate Type",
+            "data_extraction-effect_estimate_type"
+        ),
+        dataExtractionEffectEstimate: defineProps(
+            "dataExtractionEffectEstimate",
+            "Data Estimate",
+            "data_extraction-effect_estimate"
+        ),
+        dataExtractionCiLcl: defineProps(
+            "dataExtractionCiLcl",
+            "Data Lower CI",
+            "data_extraction-ci_lcl"
+        ),
+        dataExtractionCiUcl: defineProps(
+            "dataExtractionCiUcl",
+            "Data Upper CI",
+            "data_extraction-ci_ucl"
+        ),
+        dataExtractionCiType: defineProps(
+            "dataExtractionCiType",
+            "Data CI Type",
+            "data_extraction-ci_type"
+        ),
+        dataExtractionUnits: defineProps(
+            "dataExtractionUnits",
+            "Data Units",
+            "data_extraction-units"
+        ),
+        dataExtractionVarianceType: defineProps(
+            "dataExtractionVarianceType",
+            "Data Variance Type",
+            "data_extraction-variance_type"
+        ),
+        dataExtractionVariance: defineProps(
+            "dataExtractionVariance",
+            "Data Variance",
+            "data_extraction-variance"
+        ),
         dataExtractionN: defineProps("dataExtractionN", "Data N", "data_extraction-n"),
-        dataExtractionPValue: defineProps("dataExtractionPValue", "Data P-Value", "data_extraction-p_value"),
-        dataExtractionSignificant: defineProps("dataExtractionSignificant", "Data Significance", "data_extraction-significant"),
-        dataExtractionGroup: defineProps("dataExtractionGroup", "Data Group", "data_extraction-group"),
-        dataExtractionExposureRank: defineProps("dataExtractionExposureRank", "Data Exposure Rank", "data_extraction-exposure_rank"),
-        dataExtractionExposureTransform: defineProps("dataExtractionExposureTransform", "Data Exposure Transform", "data_extraction-exposure_transform"),
-        dataExtractionOutcomeTransform: defineProps("dataExtractionOutcomeTransform", "Data Outcome Transform", "data_extraction-outcome_transform"),
-        dataExtractionConfidence: defineProps("dataExtractionConfidence", "Data Confidence", "data_extraction-confidence"),
-        dataExtractionDataLocation: defineProps("dataExtractionDataLocation", "Data Location", "data_extraction-data_location"),
-        dataExtractionEffectDescription: defineProps("dataExtractionEffectDescription", "Data Effect Description", "data_extraction-effect_description"),
-        dataExtractionStatisticalMethod: defineProps("dataExtractionStatisticalMethod", "Data Statistical Method", "data_extraction-statistical_method"),
-        adjustmentFactorPk: defineProps("adjustmentFactorPk", "Adjustment Factor ID", "adjustment_factor-pk"),
-        adjustmentFactorName: defineProps("adjustmentFactorName", "Adjustment Factor Name", "adjustment_factor-name"),
-        adjustmentFactorDescription: defineProps("adjustmentFactorDescription", "Adjustment Factor Description", "adjustment_factor-description"),
+        dataExtractionPValue: defineProps(
+            "dataExtractionPValue",
+            "Data P-Value",
+            "data_extraction-p_value"
+        ),
+        dataExtractionSignificant: defineProps(
+            "dataExtractionSignificant",
+            "Data Significance",
+            "data_extraction-significant"
+        ),
+        dataExtractionGroup: defineProps(
+            "dataExtractionGroup",
+            "Data Group",
+            "data_extraction-group"
+        ),
+        dataExtractionExposureRank: defineProps(
+            "dataExtractionExposureRank",
+            "Data Exposure Rank",
+            "data_extraction-exposure_rank"
+        ),
+        dataExtractionExposureTransform: defineProps(
+            "dataExtractionExposureTransform",
+            "Data Exposure Transform",
+            "data_extraction-exposure_transform"
+        ),
+        dataExtractionOutcomeTransform: defineProps(
+            "dataExtractionOutcomeTransform",
+            "Data Outcome Transform",
+            "data_extraction-outcome_transform"
+        ),
+        dataExtractionConfidence: defineProps(
+            "dataExtractionConfidence",
+            "Data Confidence",
+            "data_extraction-confidence"
+        ),
+        dataExtractionDataLocation: defineProps(
+            "dataExtractionDataLocation",
+            "Data Location",
+            "data_extraction-data_location"
+        ),
+        dataExtractionEffectDescription: defineProps(
+            "dataExtractionEffectDescription",
+            "Data Effect Description",
+            "data_extraction-effect_description"
+        ),
+        dataExtractionStatisticalMethod: defineProps(
+            "dataExtractionStatisticalMethod",
+            "Data Statistical Method",
+            "data_extraction-statistical_method"
+        ),
+        adjustmentFactorPk: defineProps(
+            "adjustmentFactorPk",
+            "Adjustment Factor ID",
+            "adjustment_factor-pk"
+        ),
+        adjustmentFactorName: defineProps(
+            "adjustmentFactorName",
+            "Adjustment Factor Name",
+            "adjustment_factor-name"
+        ),
+        adjustmentFactorDescription: defineProps(
+            "adjustmentFactorDescription",
+            "Adjustment Factor Description",
+            "adjustment_factor-description"
+        ),
         /* eslint-enable */
     },
     ERv2Settings = {

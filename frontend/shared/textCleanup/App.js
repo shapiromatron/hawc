@@ -89,7 +89,7 @@ class App extends Component {
                 <b>To begin, select a data-type to cleanup</b>
                 <ul>
                     {Object.entries(groupedItems)
-                        .filter(([app, items]) => items.some(item => item.count > 0))
+                        .filter(([_app, items]) => items.some(item => item.count > 0))
                         .map(([app, items]) => {
                             return (
                                 <div key={app}>

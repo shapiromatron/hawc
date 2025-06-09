@@ -6,12 +6,12 @@ import h from "shared/utils/helpers";
 
 import $ from "$";
 
-import {applyStyles} from "./common";
 import D3Visualization from "./D3Visualization";
+import {applyStyles} from "./common";
 import {DATA_FILTER_LOGIC_CUSTOM, filterFunction} from "./filters";
 
 class CrossviewPlot extends D3Visualization {
-    constructor(parent, data, options) {
+    constructor(_parent, _data, _options) {
         super(...arguments);
         this.setDefaults();
     }
@@ -112,7 +112,7 @@ class CrossviewPlot extends D3Visualization {
                   })
                 : h.noop,
             dragY = options.dev
-                ? d3.drag().on("drag", function(event) {
+                ? d3.drag().on("drag", function (event) {
                       let regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
                           p = d3.select(this),
                           m = regexp.exec(p.attr("transform"));
@@ -157,8 +157,9 @@ class CrossviewPlot extends D3Visualization {
             .attr("y", midY)
             .attr(
                 "transform",
-                `translate(${yAxisOffsetX},${yAxisOffsetY}) rotate(270,${yAxisXDefault +
-                    yAxisOffsetX},${midY + yAxisOffsetY})`
+                `translate(${yAxisOffsetX},${yAxisOffsetY}) rotate(270,${
+                    yAxisXDefault + yAxisOffsetX
+                },${midY + yAxisOffsetY})`
             )
             .text(settings.yAxisLabel)
             .attr("text-anchor", "middle")
@@ -184,16 +185,16 @@ class CrossviewPlot extends D3Visualization {
         // filter endpoints
         var self = this,
             settings = this.data.settings,
-            getFilters = function(d) {
+            getFilters = function (d) {
                 var obj = {};
                 settings.filters.forEach(
                     fld => (obj[fld.name] = CrossviewPlot._cw_filter_process[fld.name](d))
                 );
                 return obj;
             },
-            processEndpoint = function(e) {
+            processEndpoint = function (e) {
                 var filters = getFilters(e),
-                    egFilter = settings.dose_isLog ? (eg, i) => i > 0 : (eg, i) => true,
+                    egFilter = settings.dose_isLog ? (_eg, i) => i > 0 : (_eg, _i) => true,
                     classes = [],
                     stroke = settings.colorBase,
                     egs,
@@ -233,12 +234,12 @@ class CrossviewPlot extends D3Visualization {
                     resp_extent: d3.extent(egs, d => d.resp),
                 };
             },
-            applyEndpointFilters = function(e) {
+            applyEndpointFilters = function (e) {
                 if (settings.endpointFilterLogic.length === 0) return true;
                 var val,
                     res = _.map(
                         settings.endpointFilters,
-                        function(filter) {
+                        function (filter) {
                             val = CrossviewPlot._cw_filter_process[filter.field](e);
                             return filter.fn(val);
                         },
@@ -279,7 +280,7 @@ class CrossviewPlot extends D3Visualization {
 
         // build filters
         var filters = _.chain(settings.filters)
-            .map(function(f) {
+            .map(function (f) {
                 var vals = _.chain(f.values);
                 if (f.allValues) {
                     vals = _.chain(dataset)
@@ -290,7 +291,7 @@ class CrossviewPlot extends D3Visualization {
                         .filter(d => d !== "");
                 }
                 return vals
-                    .map(function(d) {
+                    .map(function (d) {
                         return {
                             field: f.name,
                             status: false,
@@ -300,7 +301,7 @@ class CrossviewPlot extends D3Visualization {
                     })
                     .value();
             })
-            .filter(function(d) {
+            .filter(function (d) {
                 return d.length > 0;
             })
             .value();
@@ -326,7 +327,7 @@ class CrossviewPlot extends D3Visualization {
     }
 
     _set_ranges() {
-        var parseRange = function(txt) {
+        var parseRange = function (txt) {
                 var arr = txt.split(",");
                 if (arr.length !== 2) return false;
                 arr = _.map(arr, parseFloat);
@@ -409,10 +410,7 @@ class CrossviewPlot extends D3Visualization {
             .map(make_hrng)
             .value();
 
-        vrng = _.chain(this.plot_settings.refranges_dose)
-            .filter(filter_rng)
-            .map(make_vrng)
-            .value();
+        vrng = _.chain(this.plot_settings.refranges_dose).filter(filter_rng).map(make_vrng).value();
 
         const ranges = [...hrng, ...vrng];
         if (ranges.length === 0) return;
@@ -428,7 +426,7 @@ class CrossviewPlot extends D3Visualization {
             .attr("y", d => d.y)
             .attr("width", d => d.width)
             .attr("height", d => d.height)
-            .each(function(d) {
+            .each(function (d) {
                 applyStyles(svg, this, d.styles);
             });
 
@@ -471,10 +469,7 @@ class CrossviewPlot extends D3Visualization {
             .map(make_href)
             .value();
 
-        vrefs = _.chain(this.plot_settings.reflines_dose)
-            .filter(filter_ref)
-            .map(make_vref)
-            .value();
+        vrefs = _.chain(this.plot_settings.reflines_dose).filter(filter_ref).map(make_vref).value();
 
         hrefs.push.apply(hrefs, vrefs);
         if (hrefs.length === 0) return;
@@ -489,7 +484,7 @@ class CrossviewPlot extends D3Visualization {
             .attr("x2", d => d.x2)
             .attr("y1", d => d.y1)
             .attr("y2", d => d.y2)
-            .each(function(d) {
+            .each(function (d) {
                 applyStyles(svg, this, d.styles);
             });
 
@@ -513,15 +508,12 @@ class CrossviewPlot extends D3Visualization {
 
         // add labels
         drag = options.dev
-            ? d3.drag().on("drag", function(event) {
+            ? d3.drag().on("drag", function (event) {
                   var regexp = /\((-?[0-9]+)[, ](-?[0-9]+)\)/,
                       p = d3.select(this),
                       m = regexp.exec(p.attr("transform"));
                   if (m !== null && m.length === 3) {
-                      var i = d3
-                              .selectAll("g.labels")
-                              .nodes()
-                              .indexOf(this),
+                      var i = d3.selectAll("g.labels").nodes().indexOf(this),
                           x = parseFloat(m[1]) + event.dx,
                           y = parseFloat(m[2]) + event.dy;
                       p.attr("transform", `translate(${x},${y})`);
@@ -541,22 +533,22 @@ class CrossviewPlot extends D3Visualization {
             .call(drag)
             .attr("class", "labels")
             .attr("transform", d => `translate(${d.x || 0},${d.y || 0})`)
-            .each(function(d) {
+            .each(function (_d) {
                 d3.select(this)
                     .append("text")
                     .attr("x", 0)
                     .attr("y", 0)
                     .text(d => d.caption)
-                    .each(function(d) {
+                    .each(function (d) {
                         applyStyles(self.svg, this, d._style);
                     })
-                    .each(function(d) {
+                    .each(function (d) {
                         HAWCUtils.wrapText(this, d.max_width);
                     });
             });
 
         if (this.options.dev) {
-            labels.each(function(d) {
+            labels.each(function (_d) {
                 var bb = this.getBBox();
                 d3.select(this)
                     .insert("rect", ":first-child")
@@ -584,7 +576,7 @@ class CrossviewPlot extends D3Visualization {
             options = this.options,
             translate = `translate(${this.plot_settings.colorFilterLegendX},${this.plot_settings.colorFilterLegendY})`,
             drag = this.options.dev
-                ? HAWCUtils.updateDragLocationTransform(function(x, y) {
+                ? HAWCUtils.updateDragLocationTransform(function (x, y) {
                       options.updateSettingFunc("colorFilterLegendX", parseInt(x));
                       options.updateSettingFunc("colorFilterLegendY", parseInt(y));
                   })
@@ -613,17 +605,17 @@ class CrossviewPlot extends D3Visualization {
             .append("text")
             .attr("class", "crossview_colorFilter")
             .attr("x", 0)
-            .attr("y", (d, i) => (i + 1) * 15)
+            .attr("y", (_d, i) => (i + 1) * 15)
             .text(d => d.headerName)
             .style("fill", d => d.color)
-            .on("mouseover", function(event, d) {
+            .on("mouseover", function (_event, d) {
                 d3.select(this).style("fill", self.plot_settings.colorHover);
                 self.vis
                     .selectAll("." + d.className)
                     .style("stroke", self.plot_settings.colorHover);
                 self._bringColorFilterToFront(d);
             })
-            .on("mouseout", function(event, d) {
+            .on("mouseout", function (_event, d) {
                 d3.select(this).style("fill", d.color);
                 self.vis.selectAll("." + d.className).style("stroke", d.color);
             });
@@ -669,7 +661,7 @@ class CrossviewPlot extends D3Visualization {
             .append("g")
             .attr("class", "crossview_path_group");
 
-        paths.each(function(d) {
+        paths.each(function (d) {
             let g = d3.select(this);
             d.forEach(point => {
                 g.append("circle")
@@ -680,14 +672,12 @@ class CrossviewPlot extends D3Visualization {
                     .attr("opacity", 0)
                     .attr("fill", self.plot_settings.colorHover);
             });
-            g.on("mouseover", function() {
+            g.on("mouseover", function () {
                 let that = d3.select(this);
                 that.moveToFront();
                 that.selectAll("circle").style("opacity", 1);
-            }).on("mouseout", function() {
-                d3.select(this)
-                    .selectAll("circle")
-                    .style("opacity", 0);
+            }).on("mouseout", function () {
+                d3.select(this).selectAll("circle").style("opacity", 0);
             });
         });
 
@@ -696,8 +686,8 @@ class CrossviewPlot extends D3Visualization {
             .attr("class", d => `crossview_paths ${d[0].classes.join(" ")}`)
             .attr("d", line)
             .style("stroke", d => d[0].currentStroke)
-            .on("click", (event, d) => d[0].endpoint.displayAsModal())
-            .on("mouseover", function(event, d) {
+            .on("click", (_event, d) => d[0].endpoint.displayAsModal())
+            .on("mouseover", function (_event, d) {
                 if (
                     self.active_filters.length === 0 ||
                     d[0].currentStroke === self.plot_settings.colorSelected
@@ -706,7 +696,7 @@ class CrossviewPlot extends D3Visualization {
                 }
                 self.change_show_selected_fields(this, d, true);
             })
-            .on("mouseout", function(event, d) {
+            .on("mouseout", function (_event, d) {
                 d3.select(this).style("stroke", d[0].currentStroke);
                 self.change_show_selected_fields(this, d, false);
             })
@@ -757,24 +747,24 @@ class CrossviewPlot extends D3Visualization {
             .enter()
             .append("text")
             .attr("x", 0)
-            .attr("y", (d, i) => i * self.settings.tag_height)
+            .attr("y", (_d, i) => i * self.settings.tag_height)
             .attr("text-anchor", "start")
             .attr("class", "crossview_fields")
             .text(v => v.text)
-            .on("click", function(event, v) {
+            .on("click", function (_event, v) {
                 self.change_active_filters(v, this);
             })
-            .on("mouseover", function(event, d) {
+            .on("mouseover", function (_event, d) {
                 d3.select(this).attr("fill", self.plot_settings.colorHover);
                 self._update_hover_filters(d);
             })
-            .on("mouseout", function() {
+            .on("mouseout", function () {
                 d3.select(this).attr("fill", null);
                 self._update_hover_filters();
             });
 
         // offset filter-column groups to prevent overlap
-        colg.each(function(d) {
+        colg.each(function (_d) {
             d3.select(this).attr("transform", `translate(${xOffset},0)`);
             xOffset += this.getBBox().width + self.settings.column_padding;
         });
@@ -813,10 +803,10 @@ class CrossviewPlot extends D3Visualization {
         var self = this,
             options = this.options,
             drag = options.dev
-                ? HAWCUtils.updateDragLocationTransform(function(x, y) {
+                ? HAWCUtils.updateDragLocationTransform(function (x, y) {
                       self.updateArrayXY("filters", $(this).index(), x, y);
                   })
-                : function() {};
+                : function () {};
 
         this.vis
             .append("g")
@@ -826,12 +816,12 @@ class CrossviewPlot extends D3Visualization {
             .enter()
             .append("g")
             .attr("class", "filter")
-            .attr("transform", function(d, i) {
+            .attr("transform", function (_d, i) {
                 var x = self.data.settings.filters[i].x || 0,
                     y = self.data.settings.filters[i].y || 0;
                 return `translate(${x},${y})`;
             })
-            .each(function(d, i) {
+            .each(function (d, i) {
                 self.layout_filter(this, d, i);
             })
             .call(drag);
@@ -845,7 +835,7 @@ class CrossviewPlot extends D3Visualization {
     change_show_selected_fields(path, v, hover_on) {
         // Highlight all filters for path currently being hovered
         var self = this,
-            filterMatches = function(filter) {
+            filterMatches = function (filter) {
                 return self.isMatch(v[0].filters[filter.field], filter.text);
             };
 
@@ -855,9 +845,7 @@ class CrossviewPlot extends D3Visualization {
         // only show if the field is a selected subset, if selected subset exists
         if (this.path_subset && !d3.select(path).classed("crossview_selected")) return;
 
-        d3.select(path)
-            .classed("crossview_path_hover", hover_on)
-            .moveToFront();
+        d3.select(path).classed("crossview_path_hover", hover_on).moveToFront();
         d3.select(this.svg)
             .selectAll(".crossview_fields")
             .attr("fill", null)
@@ -901,7 +889,7 @@ class CrossviewPlot extends D3Visualization {
 
         d3.select(this.svg)
             .selectAll(".crossview_paths")
-            .each(function(d) {
+            .each(function (d) {
                 d[0].currentStroke = d[0].baseStroke;
             })
             .style("stroke", null)
@@ -909,14 +897,14 @@ class CrossviewPlot extends D3Visualization {
         this.path_subset = undefined;
 
         if (this.active_filters.length > 0) {
-            this.active_filters.forEach(function(filter) {
-                paths = paths.filter(function(d) {
+            this.active_filters.forEach(function (filter) {
+                paths = paths.filter(function (d) {
                     return self.isMatch(d[0].filters[filter.field], filter.text);
                 });
             });
             paths
                 .classed("crossview_selected", true)
-                .each(function(d) {
+                .each(function (d) {
                     d[0].currentStroke = self.plot_settings.colorSelected;
                 })
                 .moveToFront();
@@ -930,7 +918,7 @@ class CrossviewPlot extends D3Visualization {
         // if a hover_filter exists, toggle hover-css for selected paths
         var self = this,
             paths = this.path_subset || d3.select(this.svg).selectAll(".crossview_paths"),
-            isMatching = function(d) {
+            isMatching = function (d) {
                 return self.isMatch(d[0].filters[hover_filter.field], hover_filter.text);
             };
 

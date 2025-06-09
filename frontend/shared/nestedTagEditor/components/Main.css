@@ -23,5 +23,5 @@
 .draggable-ghost {
     outline: 0.5rem solid orange;
     z-index: 999;
-    background-color: #C8EBFB;
+    background-color: #c8ebfb;
 }

@@ -26,7 +26,7 @@ class EditEndpoint {
 
         //update values in doses table
         $("#doses_title").html(`Dose<br>(${firstDoses.name})`);
-        $(".doses").each(function(i, v) {
+        $(".doses").each(function (i, v) {
             $(v).html(firstDoses.values[i]);
         });
 
@@ -45,7 +45,7 @@ class EditEndpoint {
         $("#id_variance_type")
             .on("change", () => {
                 var varHeader = $("#varianceHeader"),
-                    getVarType = function() {
+                    getVarType = function () {
                         const varType = parseInt($("#id_variance_type").val());
                         switch (varType) {
                             case 0:
@@ -77,7 +77,7 @@ class EditEndpoint {
 
         // change required fields based on dataset-type
         $("#id_data_type")
-            .on("change", function() {
+            .on("change", function () {
                 var varTypeDiv = $("#div_id_variance_type"),
                     CI = $("#div_id_confidence_interval"),
                     shows,
@@ -141,7 +141,7 @@ class EditEndpoint {
         vals.groups = [];
 
         // save form values
-        $("#endpoint :input").each(function() {
+        $("#endpoint :input").each(function () {
             if (!this.name.includes("form-")) {
                 vals[this.name] = $(this).val();
             }
@@ -153,11 +153,11 @@ class EditEndpoint {
         // save endpoint-group data
         $("#eg")
             .find("tbody > tr")
-            .each(function(i, tr) {
+            .each(function (_i, tr) {
                 var row = {};
                 $(tr)
                     .find(":input")
-                    .each(function(i, d) {
+                    .each(function (_i, d) {
                         const name = d.name.split("-").pop(),
                             valueMaybe = parseFloat(d.value),
                             value = $.isNumeric(valueMaybe) ? valueMaybe : null;

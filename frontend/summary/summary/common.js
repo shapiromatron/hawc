@@ -17,7 +17,7 @@ const Patterns = {
         waves: "waves",
         hexagons: "hexagons",
     },
-    createPattern = function(styles) {
+    createPattern = function (styles) {
         const pattern_fill = styles.pattern_fill || "#ffffff";
         switch (styles.pattern) {
             case Patterns.solid:
@@ -149,7 +149,7 @@ const Patterns = {
             alert(msg);
         }
     },
-    addLabelAction = function(url) {
+    addLabelAction = function (url) {
         return {
             "hx-get": url,
             "hx-target": "#label-modal-content",
@@ -158,7 +158,7 @@ const Patterns = {
             "data-target": "#label-modal",
         };
     },
-    addLabelIndicators = function(url) {
+    addLabelIndicators = function (url) {
         return `<div id="label-indicators" hx-get="${url}" hx-trigger="load" hx-swap="none">`;
     };
 

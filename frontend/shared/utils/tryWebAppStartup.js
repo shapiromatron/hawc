@@ -1,6 +1,6 @@
 export default function tryWebAppStartup() {
     /*
-    Attempts to start webpack application startup if current page has requirements.
+    Attempts to start JS startup if current page has requirements.
 
     If both a #config and #main are present, parse #config as JSON and then start selected
     application, inserting content into the #main element.

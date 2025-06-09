@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import Root from "./Root";
 import RobMetricsStore from "./store";
 
-export default function(el, config) {
+export default function (el, config) {
     const store = new RobMetricsStore(config);
     ReactDOM.render(
         <Provider store={store}>

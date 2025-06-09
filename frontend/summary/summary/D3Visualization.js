@@ -16,7 +16,7 @@ class D3Visualization extends D3Plot {
         return HAWCUtils.abstractMethod();
     }
 
-    render($div) {
+    render(_$div) {
         return HAWCUtils.abstractMethod();
     }
 

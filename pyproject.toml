@@ -109,7 +109,6 @@ build-backend = "flit_core.buildapi"
 include = [
   "hawc/static/bundles/**/*",
   "hawc/gitcommit.json",
-  "hawc/webpack-stats.json",
 ]
 exclude = [
   ".github",

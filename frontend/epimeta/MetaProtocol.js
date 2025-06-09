@@ -59,18 +59,11 @@ class MetaProtocol {
                 .append(this.build_details_table())
                 .append(this.build_links_div());
 
-        modal
-            .addHeader(title)
-            .addBody($content)
-            .addFooter("")
-            .show({maxWidth: 900});
+        modal.addHeader(title).addBody($content).addFooter("").show({maxWidth: 900});
     }
 
     displayFullPager($el) {
-        $el.hide()
-            .append(this.build_details_table())
-            .append(this.build_links_div())
-            .fadeIn();
+        $el.hide().append(this.build_details_table()).append(this.build_links_div()).fadeIn();
     }
 
     build_links_div() {

@@ -2,17 +2,17 @@ import HAWCModal from "shared/utils/HAWCModal";
 
 import $ from "$";
 
-import {NULL_CASE} from "./shared";
-import {StyleLine, StyleRectangle, StyleSymbol, StyleText} from "./Styles";
 import StyleViewer from "./StyleViewer";
+import {StyleLine, StyleRectangle, StyleSymbol, StyleText} from "./Styles";
+import {NULL_CASE} from "./shared";
 
-const _build_options = function(styles) {
+const _build_options = function (styles) {
         return styles.map(v =>
             $(`<option value="${v.settings.name}">${v.settings.name}</option>`).data("d", v)
         );
     },
-    toTitleCase = function(str) {
-        return str.replace(/\w\S*/g, function(word) {
+    toTitleCase = function (str) {
+        return str.replace(/\w\S*/g, function (word) {
             return word.charAt(0).toUpperCase() + word.substr(1).toLowerCase();
         });
     };
@@ -46,7 +46,7 @@ class StyleEditor {
                     .addHeader(modalHeader)
                     .addBody(modalBody)
                     .addFooter(modalFooter)
-                    .show({}, cb => style.draw_modal(this.modal.$modalDiv));
+                    .show({}, _cb => style.draw_modal(this.modal.$modalDiv));
             },
             get_style = () => style_selector.find("option:selected").data("d"),
             load_style = () => {
@@ -166,9 +166,9 @@ class StyleManager {
     save_settings(style_object, style_type) {
         var self = this,
             new_styles = style_object.get_modified_settings(),
-            isNameUnique = function(style_type, name, style_object) {
+            isNameUnique = function (style_type, name, style_object) {
                 var unique = true;
-                self.styles[style_type].forEach(function(v) {
+                self.styles[style_type].forEach(function (v) {
                     if (v.settings.name === name && v !== style_object) {
                         unique = false;
                     }
@@ -196,7 +196,7 @@ class StyleManager {
 
         return true;
     }
-    delete_style = function(styleType, style) {
+    delete_style = function (styleType, style) {
         var i,
             styles = this.styles[styleType],
             settingStyles = this.pivot.settings.styles[styleType];

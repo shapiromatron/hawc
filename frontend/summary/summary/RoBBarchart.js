@@ -4,9 +4,9 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 
 import $ from "$";
 
-import {addLabelIndicators} from "./common";
 import RoBBarchartPlot from "./RoBBarchartPlot";
 import RoBHeatmap from "./RoBHeatmap";
+import {addLabelIndicators} from "./common";
 
 class RoBBarchart extends RoBHeatmap {
     displayAsPage($el, options) {
@@ -48,7 +48,7 @@ class RoBBarchart extends RoBHeatmap {
             $plotDiv = $("<div>"),
             modal = new HAWCModal();
 
-        modal.getModal().on("shown.bs.modal", function() {
+        modal.getModal().on("shown.bs.modal", function () {
             new RoBBarchartPlot(self, data, options).render($plotDiv);
             caption.renderAndEnable();
         });

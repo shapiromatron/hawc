@@ -9,7 +9,7 @@ import GroupDescription from "./GroupDescription";
 class Group {
     constructor(data) {
         this.data = data;
-        this.descriptions = _.map(this.data.descriptions, function(d) {
+        this.descriptions = _.map(this.data.descriptions, function (d) {
             return new GroupDescription(d);
         });
     }
@@ -41,7 +41,7 @@ class Group {
     get_content() {
         var d = this.data,
             vals = [],
-            addTuple = function(lbl, val) {
+            addTuple = function (lbl, val) {
                 if (val) vals.push([lbl, val]);
             };
 
@@ -60,17 +60,15 @@ class Group {
     build_tr() {
         var d = this.data,
             ul = $("<ul>"),
-            url = $("<a>")
-                .attr("href", d.url)
-                .text(d.name),
-            addLI = function(key, val) {
+            url = $("<a>").attr("href", d.url).text(d.name),
+            addLI = function (key, val) {
                 if (val) {
                     ul.append(`<li><strong>${key}:</strong> ${val}</li>`);
                 }
             },
             content = this.get_content();
 
-        _.each(content, function(d) {
+        _.each(content, function (d) {
             var val = d[1] instanceof Array ? d[1].join(", ") : d[1];
             addLI(d[0], val);
         });
@@ -82,7 +80,7 @@ class Group {
         var content = this.get_content(),
             tbl = new DescriptiveTable();
 
-        _.each(content, function(d) {
+        _.each(content, function (d) {
             if (d[1] instanceof Array) {
                 tbl.add_tbody_tr_list(d[0], d[1]);
             } else {
@@ -101,7 +99,7 @@ class Group {
         tbl.addHeaderRow(headers);
         tbl.setColGroup(colgroups);
 
-        _.each(this.descriptions, function(d) {
+        _.each(this.descriptions, function (d) {
             tbl.addRow(d.build_tr(tbl.footnotes));
         });
 

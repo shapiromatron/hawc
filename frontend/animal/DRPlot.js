@@ -50,7 +50,7 @@ class DRPlot extends D3Plot {
             delete this.error_bars_upper;
             delete this.error_bars_lower;
             delete this.error_bar_group;
-        } catch (err) {
+        } catch (_err) {
             // continue regardless of error
         }
         this.plot_div.html("");
@@ -211,11 +211,7 @@ class DRPlot extends D3Plot {
             .scale(y)
             .ticks(this.y_axis_settings.number_ticks, this.y_axis_settings.label_format);
 
-        this.vis
-            .selectAll(".y_axis")
-            .transition()
-            .duration(1000)
-            .call(this.yAxis);
+        this.vis.selectAll(".y_axis").transition().duration(1000).call(this.yAxis);
 
         this.rebuild_y_gridlines({animate: true});
 
@@ -244,14 +240,14 @@ class DRPlot extends D3Plot {
             .transition()
             .duration(1000)
             .call(this.xAxis)
-            .on("end", function() {
+            .on("end", function () {
                 //force lowest dose on axis to 0
                 var vals = [];
-                d3.selectAll(".x_axis text").each(function() {
+                d3.selectAll(".x_axis text").each(function () {
                     vals.push(parseFloat($(this).text()));
                 });
                 var min = d3.min(vals).toString();
-                var min_label = d3.selectAll(".x_axis text").filter(function() {
+                var min_label = d3.selectAll(".x_axis text").filter(function () {
                     return $(this).text() === min;
                 });
                 min_label.text(0);
@@ -272,7 +268,7 @@ class DRPlot extends D3Plot {
             dose_units = this.endpoint.doseUnits.activeUnit.name;
 
         values = _.chain(ep.groups)
-            .map(function(v, i) {
+            .map(function (v, i) {
                 var y,
                     cls = "dose_points",
                     txts = [`Dose = ${v.dose} ${dose_units}`, `N = ${v.n}`];
@@ -383,7 +379,7 @@ class DRPlot extends D3Plot {
                 delete this.error_bars_lower;
                 delete this.error_bar_group;
             }
-        } catch (err) {
+        } catch (_err) {
             // continue regardless of error
         }
 
@@ -391,7 +387,7 @@ class DRPlot extends D3Plot {
             this.error_bar_group = this.vis.append("g").attr("class", "error_bars");
         }
 
-        var bars = this.values.filter(function(v) {
+        var bars = this.values.filter(function (v) {
                 return $.isNumeric(v.y_lower) && $.isNumeric(v.y_upper);
             }),
             bar_options = {
@@ -451,10 +447,10 @@ class DRPlot extends D3Plot {
                 .data(this.sigs_data)
                 .transition()
                 .duration(1000)
-                .attr("x", function(d) {
+                .attr("x", function (d) {
                     return x(d.x);
                 })
-                .attr("y", function(d) {
+                .attr("y", function (d) {
                     return y(d.y);
                 });
         } else {
@@ -466,12 +462,12 @@ class DRPlot extends D3Plot {
                 .enter()
                 .append("circle")
                 .attr("r", this.radius)
-                .attr("class", function(d) {
+                .attr("class", function (d) {
                     return d.cls;
                 })
                 .attr("transform", d => `translate(${x(d.x)},${y(d.y)})`);
 
-            this.dot_labels = this.dots.append("svg:title").text(function(d) {
+            this.dot_labels = this.dots.append("svg:title").text(function (d) {
                 return d.txt;
             });
 
@@ -532,7 +528,7 @@ class DRPlot extends D3Plot {
         var doseUnits = this.endpoint.doseUnits.activeUnit.id;
         this.bmd
             .filter(d => d.dose_units_id === doseUnits)
-            .forEach(function(d) {
+            .forEach(function (d) {
                 legend_settings.items.push({
                     text: d.name,
                     classes: "",
@@ -575,7 +571,7 @@ class DRPlot extends D3Plot {
     }
 
     remove_bmd_line(model_id) {
-        this.bmd = _.reject(this.bmd, function(d) {
+        this.bmd = _.reject(this.bmd, function (d) {
             return d.id === model_id;
         });
         this.render_bmd_lines();

@@ -1,8 +1,8 @@
 import _ from "lodash";
 import h from "shared/utils/helpers";
 
-import {SCORE_SHADES, SCORE_TEXT} from "./constants";
 import RiskOfBiasScore from "./RiskOfBiasScore";
+import {SCORE_SHADES, SCORE_TEXT} from "./constants";
 
 /*
 Functions designed to transform data from the api to be used in the Study object as well
@@ -40,7 +40,7 @@ export const mutateRobSettings = settings => {
             study._robPrepped = true;
         });
     },
-    transformStudy = function(study, data) {
+    transformStudy = function (study, data) {
         // unpack rob information and nest by domain
         mutateRobSettings(data.rob_settings);
         mutateRobStudies([data], data.rob_settings);
