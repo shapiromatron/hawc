@@ -1,6 +1,6 @@
 import $ from "$";
 
-let build_styles_tab = function(self) {
+let build_styles_tab = function (self) {
     var tab = $('<div class="tab-pane" id="data_pivot_settings_styles">'),
         symbol_div = self.style_manager.build_styles_crud("symbols"),
         line_div = self.style_manager.build_styles_crud("lines"),

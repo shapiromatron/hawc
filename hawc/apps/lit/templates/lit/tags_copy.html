@@ -36,18 +36,20 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.app.startup("litStartup", function(lit){
-      $('#tag-copy-content').insertAfter($('#div_id_assessment')).removeClass('hidden');
-      const handleChange = function () {
-        const assessment_id = $('#id_assessment').val(),
-              url = `/lit/api/assessment/${assessment_id}/tagtree/`
-        $.get(url, function(data){
-          const tree = {data:{}, id:1, children: data.tree},
-                tagtree = new lit.TagTree(tree)
-          tagtree.render(document.getElementById('tags'));
-        });
-      }
-      $('#id_assessment').on('change', handleChange).trigger('change');
+    $(document).ready(function() {
+      window.app.startup("litStartup", function(lit){
+        $('#tag-copy-content').insertAfter($('#div_id_assessment')).removeClass('hidden');
+        const handleChange = function () {
+          const assessment_id = $('#id_assessment').val(),
+                url = `/lit/api/assessment/${assessment_id}/tagtree/`
+          $.get(url, function(data){
+            const tree = {data:{}, id:1, children: data.tree},
+                  tagtree = new lit.TagTree(tree)
+            tagtree.render(document.getElementById('tags'));
+          });
+        }
+        $('#id_assessment').on('change', handleChange).trigger('change');
+      });
     });
   </script>
 {% endblock extrajs %}

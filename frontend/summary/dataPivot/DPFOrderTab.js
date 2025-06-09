@@ -3,7 +3,6 @@ import _ from "lodash";
 import $ from "$";
 
 import {filterLogicHelpText, filterQueryHelpText} from "../summary/filters";
-import buildSortingTable from "./components/SortTable";
 import {
     _DataPivot_settings_filters,
     _DataPivot_settings_spacers,
@@ -11,9 +10,10 @@ import {
     buildHeaderTr,
 } from "./DataPivotUtilities";
 import DataPivotVisualization from "./DataPivotVisualization";
+import buildSortingTable from "./components/SortTable";
 import {NULL_CASE} from "./shared";
 
-let buildFilterTable = function(tab, dp, handleTableChange) {
+let buildFilterTable = function (tab, dp, handleTableChange) {
         var thead = $("<thead>").html(
                 buildHeaderTr(["Field name", "Filter type", "Value", "Ordering"])
             ),
@@ -21,7 +21,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             tbody = $("<tbody>").on("change autocompletechange", "input,select", handleTableChange),
             tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.filters,
-            addDataRow = function(i) {
+            addDataRow = function (i) {
                 let obj;
                 if (!settings[i]) {
                     settings[i] = _DataPivot_settings_filters.defaults();
@@ -29,7 +29,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                 obj = new _DataPivot_settings_filters(dp, settings[i]);
                 tbody.append(obj.tr);
             },
-            newDataRow = function() {
+            newDataRow = function () {
                 addDataRow(settings.length);
                 handleTableChange();
             },
@@ -49,7 +49,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             tbl
         );
     },
-    buildFilterBooleanDiv = function(tab, dp, handleTableChange) {
+    buildFilterBooleanDiv = function (tab, dp, handleTableChange) {
         let div = $("<div>"),
             and = $(`<div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="filter_logic" value="and">
@@ -84,7 +84,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
         string.find("input").val(string_value);
 
         // set event binding to change settings
-        div.on("change", 'input[name="filter_logic"]', function() {
+        div.on("change", 'input[name="filter_logic"]', function () {
             let val = $('input[name="filter_logic"]:checked').val();
             dp.settings.plot_settings.filter_logic = val;
             if (_.includes(["and", "or"], val)) {
@@ -94,7 +94,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             }
             handleTableChange();
         });
-        div.on("change", 'input[name="filter_query"]', function() {
+        div.on("change", 'input[name="filter_query"]', function () {
             dp.settings.plot_settings.filter_query = $('input[name="filter_query"]').val();
             handleTableChange();
         });
@@ -110,7 +110,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         tab.append(div, "<hr/>");
     },
-    buildSpacingTable = function(tab, dp) {
+    buildSpacingTable = function (tab, dp) {
         let tbody = $("<tbody>"),
             thead = $("<thead>").html(
                 buildHeaderTr(["Row index", "Show line?", "Line style", "Extra space?", "Delete"])
@@ -118,7 +118,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             colgroup = buildColGroup(["", "", "", "", "120px"]),
             tbl = $('<table class="table table-sm table-bordered">').html([thead, colgroup, tbody]),
             settings = dp.settings.spacers,
-            addDataRow = function(i) {
+            addDataRow = function (i) {
                 let obj;
                 if (!settings[i]) {
                     settings[i] = _DataPivot_settings_spacers.defaults();
@@ -126,7 +126,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                 obj = new _DataPivot_settings_spacers(dp, settings[i], i);
                 tbody.append(obj.tr);
             },
-            newDataRow = function() {
+            newDataRow = function () {
                 addDataRow(settings.length);
             },
             newRowBtn = $(
@@ -146,9 +146,9 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             "<hr/>"
         );
     },
-    buildManualOverrideRows = function(dp, tbody) {
+    buildManualOverrideRows = function (dp, tbody) {
         let rows = [],
-            get_selected_fields = function(v) {
+            get_selected_fields = function (v) {
                 return v.field_name !== NULL_CASE;
             },
             descriptions = dp.settings.description_settings.filter(get_selected_fields),
@@ -187,7 +187,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         // apply manual index offsets
         let row_override_map = _.keyBy(overrides, "pk"),
-            get_default = function(pk) {
+            get_default = function (pk) {
                 return {
                     pk,
                     include: true,
@@ -197,13 +197,13 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                     symbol_style: NULL_CASE,
                 };
             },
-            get_matched_override_or_default = function(pk) {
+            get_matched_override_or_default = function (pk) {
                 let match = row_override_map[pk];
                 return match ? match : get_default(pk);
             };
 
         // build rows
-        data.forEach(function(v) {
+        data.forEach(function (v) {
             let obj = get_matched_override_or_default(v._dp_pk),
                 descs = descriptions.map(v2 => v[v2.field_name]).join("<br>"),
                 include = $('<input name="ov_include" type="checkbox">').prop(
@@ -230,7 +230,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
 
         return tbody.html(rows);
     },
-    buildOrderingTable = function(tab, dp, tbody) {
+    buildOrderingTable = function (tab, dp, tbody) {
         let thead = $("<thead>").html(
                 buildHeaderTr([
                     "Description",
@@ -241,7 +241,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
                     "Override symbol style",
                 ])
             ),
-            resetOverrideRows = function() {
+            resetOverrideRows = function () {
                 if (!confirm("Remove all row-level customization settings?")) {
                     return;
                 }
@@ -269,24 +269,24 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             tbl
         );
     },
-    resetRowOrderOverrides = function(dp) {
-        dp.settings.row_overrides.forEach(function(v) {
+    resetRowOrderOverrides = function (dp) {
+        dp.settings.row_overrides.forEach(function (v) {
             v.index = null;
         });
     },
-    showOverrideRebuildRequired = function(dp, tbody) {
+    showOverrideRebuildRequired = function (dp, tbody) {
         let btn = $('<button class="btn btn-primary">Click to rebuild</button>').on(
                 "click",
-                function() {
+                function () {
                     buildManualOverrideRows(dp, tbody);
                 }
             ),
             td = $('<td colspan="6">').append("<p>Row-ordering has changed.</p>", btn);
         tbody.html($("<tr>").append(td));
     },
-    updateOverrideSettingState = function(dp, tbody) {
+    updateOverrideSettingState = function (dp, tbody) {
         dp.settings.row_overrides = [];
-        tbody.find("tr").each(function(i, v) {
+        tbody.find("tr").each(function (_i, v) {
             let $v = $(v),
                 obj = {
                     pk: $v.data("pk"),
@@ -313,14 +313,14 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             }
         });
     },
-    buildOrderingTab = function(dp) {
+    buildOrderingTab = function (dp) {
         let tab = $('<div class="tab-pane" id="data_pivot_settings_ordering">'),
             overrideTbody = $("<tbody>"),
-            handleTableChange = function() {
+            handleTableChange = function () {
                 resetRowOrderOverrides(dp);
                 showOverrideRebuildRequired(dp, overrideTbody);
             },
-            handleStateOverrideUpdate = function() {
+            handleStateOverrideUpdate = function () {
                 updateOverrideSettingState(dp, overrideTbody);
             };
 
@@ -330,7 +330,7 @@ let buildFilterTable = function(tab, dp, handleTableChange) {
             .on("change", "input,select", handleStateOverrideUpdate);
 
         // update whenever tab is clicked
-        dp.$div.on("shown.bs.tab", 'a.dp_ordering_tab[data-toggle="tab"]', function() {
+        dp.$div.on("shown.bs.tab", 'a.dp_ordering_tab[data-toggle="tab"]', function () {
             buildManualOverrideRows(dp, overrideTbody);
         });
 

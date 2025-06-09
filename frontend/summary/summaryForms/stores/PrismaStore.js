@@ -4,7 +4,7 @@ import {deleteArrayElement} from "shared/components/EditableRowData";
 import h from "shared/utils/helpers";
 import {NULL_VALUE} from "summary/summary/constants";
 
-const _getDefaultSettings = function() {
+const _getDefaultSettings = function () {
         return {
             sections: [],
             boxes: [],
@@ -47,7 +47,7 @@ const _getDefaultSettings = function() {
             },
         };
     },
-    createSectionRow = function() {
+    createSectionRow = function () {
         return {
             key: h.randomString(),
             label: "",
@@ -55,7 +55,7 @@ const _getDefaultSettings = function() {
             styles: null,
         };
     },
-    createBoxRow = function(firstSection) {
+    createBoxRow = function (firstSection) {
         return {
             key: h.randomString(),
             label: "",
@@ -70,14 +70,14 @@ const _getDefaultSettings = function() {
             items: [],
         };
     },
-    createNewBoxItem = function() {
+    createNewBoxItem = function () {
         return {
             key: h.randomString(),
             label: "",
             count_filters: [],
         };
     },
-    createArrowRow = function(firstSection) {
+    createArrowRow = function (firstSection) {
         return {
             key: h.randomString(),
             use_style_overrides: false,
@@ -115,7 +115,7 @@ class PrismaStore {
         _.set(this.settings, path, value);
     }
 
-    @action setFromJsonSettings(settings, firstTime) {
+    @action setFromJsonSettings(settings, _firstTime) {
         this.settings = settings;
     }
 

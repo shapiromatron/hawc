@@ -14,13 +14,8 @@ import {
 @observer
 class FilterLogic extends Component {
     render() {
-        const {
-            filtersLogic,
-            filtersQuery,
-            filtersQueryReadable,
-            onLogicChange,
-            onQueryChange,
-        } = this.props;
+        const {filtersLogic, filtersQuery, filtersQueryReadable, onLogicChange, onQueryChange} =
+            this.props;
         return (
             <div className="col-md-12">
                 <RadioInput

@@ -7,9 +7,9 @@ import AutoSuggest from "react-autosuggest";
 import h from "shared/utils/helpers";
 
 import {
-    boldPatternText,
     DEBOUNCE_MS,
     DEFAULT_MIN_SEARCH_LENGTH,
+    boldPatternText,
     theme,
 } from "./Autocomplete/constants";
 
@@ -71,7 +71,7 @@ class AutocompleteSelectableText extends Component {
                     suggestions,
                     className: "form-control mb-2",
                     placeholder: placeholder || "",
-                    onChange: (event, {newValue}) => onChange(newValue),
+                    onChange: (_event, {newValue}) => onChange(newValue),
                 }}
                 theme={theme}
             />

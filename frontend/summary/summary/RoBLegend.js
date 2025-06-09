@@ -78,7 +78,7 @@ class RoBLegend {
                 ? HAWCUtils.updateDragLocationTransform((x, y) =>
                       handleLegendDrag(parseInt(x), parseInt(y))
                   )
-                : function() {},
+                : function () {},
             fields = this.get_data(),
             title,
             g;
@@ -106,7 +106,7 @@ class RoBLegend {
             .enter()
             .append("rect")
             .attr("x", 0)
-            .attr("y", (d, i) => i * width + title_offset)
+            .attr("y", (_d, i) => i * width + title_offset)
             .attr("height", width)
             .attr("width", width)
             .attr("class", "heatmap_selectable")
@@ -118,7 +118,7 @@ class RoBLegend {
             .enter()
             .append("text")
             .attr("x", half_width)
-            .attr("y", (d, i) => i * width + half_width + title_offset)
+            .attr("y", (_d, i) => i * width + half_width + title_offset)
             .attr("text-anchor", "middle")
             .attr("dy", "3.5px")
             .attr("class", "centeredLabel")
@@ -131,7 +131,7 @@ class RoBLegend {
             .enter()
             .append("text")
             .attr("x", width + 5)
-            .attr("y", (d, i) => i * width + half_width + title_offset)
+            .attr("y", (_d, i) => i * width + half_width + title_offset)
             .attr("dy", "3.5px")
             .attr("class", "dr_axis_labels")
             .text(d => d.description);
@@ -144,7 +144,7 @@ class RoBLegend {
                 .enter()
                 .append("text")
                 .attr("x", half_width)
-                .attr("y", (d, i) => dim.height + (i + 1) * 15)
+                .attr("y", (_d, i) => dim.height + (i + 1) * 15)
                 .attr("class", "centeredLabel footnote_icon")
                 .text(d => d[0]);
 
@@ -153,7 +153,7 @@ class RoBLegend {
                 .enter()
                 .append("text")
                 .attr("x", width + 5)
-                .attr("y", (d, i) => dim.height + (i + 1) * 15)
+                .attr("y", (_d, i) => dim.height + (i + 1) * 15)
                 .attr("class", "dr_axis_labels footnote_text")
                 .text(d => d[1]);
         }

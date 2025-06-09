@@ -58,7 +58,7 @@ class DataTable extends React.Component {
                 _.mapValues(row, (val, key, obj) => (renderers[key] ? renderers[key](obj) : val))
             ),
             // setup columns for use in datatables
-            columns = _.map(data[0], (val, key) => ({data: key, title: h.titleCase(key)}));
+            columns = _.map(data[0], (_val, key) => ({data: key, title: h.titleCase(key)}));
         return datatables ? (
             <DataTableWrapper
                 className="table table-striped table-sm"

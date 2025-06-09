@@ -40,32 +40,24 @@ const toolbarOptions = {
             },
         },
     },
-    formatSmartTagButtons = function(q) {
+    formatSmartTagButtons = function (q) {
         var tb = q.getModule("toolbar");
-        $(tb.container)
-            .find(".ql-smartTag")
-            .append('<i class="fa fa-tag">');
-        $(tb.container)
-            .find(".ql-smartInline")
-            .append('<i class="fa fa-sticky-note">');
+        $(tb.container).find(".ql-smartTag").append('<i class="fa fa-tag">');
+        $(tb.container).find(".ql-smartInline").append('<i class="fa fa-sticky-note">');
         q.smartTagModal = new SmartTagModal(q, $("#smartTagModal"));
     },
-    hideSmartTagButtons = function(q) {
+    hideSmartTagButtons = function (q) {
         var tb = q.getModule("toolbar");
-        $(tb.container)
-            .find(".ql-smartTag")
-            .hide();
-        $(tb.container)
-            .find(".ql-smartInline")
-            .hide();
+        $(tb.container).find(".ql-smartTag").hide();
+        $(tb.container).find(".ql-smartInline").hide();
     };
 
-export default function() {
+export default function () {
     let focusedItem = $(":focus"),
         modal = $("#smartTagModal"),
         showHawcTools = modal.length === 1;
 
-    this.each(function() {
+    this.each(function () {
         let editor = document.createElement("div"),
             textarea = $(this),
             q;
@@ -87,10 +79,8 @@ export default function() {
         }
 
         q.pasteHTML(textarea.val());
-        q.on("text-change", function(delta, oldDelta, source) {
-            let content = $(editor)
-                .find(".ql-editor")
-                .html();
+        q.on("text-change", function (_delta, _oldDelta, _source) {
+            let content = $(editor).find(".ql-editor").html();
             textarea.val(content);
         });
         textarea.data("_quill", q);

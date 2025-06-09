@@ -14,9 +14,9 @@ class TableFootnotes {
         var keys = [],
             self = this;
         if (!(texts instanceof Array)) texts = [texts];
-        texts.forEach(function(text) {
+        texts.forEach(function (text) {
             var key;
-            self.footnotes.forEach(function(v) {
+            self.footnotes.forEach(function (v) {
                 if (text === v.text) {
                     key = v.key;
                     return;
@@ -35,7 +35,7 @@ class TableFootnotes {
     html_list() {
         // return an html formatted list of footnotes
         var list = [];
-        this.footnotes.forEach(function(v, i) {
+        this.footnotes.forEach(function (v, _i) {
             list.push(`<sup>${v.key}</sup> ${v.text}`);
         });
         return list;

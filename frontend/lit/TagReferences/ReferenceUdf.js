@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import React, {useEffect} from "react";
 import HAWCUtils from "shared/utils/HAWCUtils";
 
-const resetDynamicForm = function(formSelector, values, errors) {
+const resetDynamicForm = function (formSelector, values, errors) {
         const root = $(formSelector);
         if (root.length === 0) {
             return;
@@ -16,8 +16,8 @@ const resetDynamicForm = function(formSelector, values, errors) {
         root.find(".bg-pink").removeClass("bg-pink");
 
         // add data to form
-        _.forEach(values, function(value, name) {
-            _.forEach(value, function(val) {
+        _.forEach(values, function (value, name) {
+            _.forEach(value, function (val) {
                 const input = root.find(`[name="${name}"]`);
                 if (input.prop("multiple")) {
                     input.children(`option[value="${val}"]`).prop("selected", true);
@@ -25,7 +25,7 @@ const resetDynamicForm = function(formSelector, values, errors) {
                     switch (input.prop("type")) {
                         case "radio":
                         case "checkbox":
-                            input.each(function() {
+                            input.each(function () {
                                 if ($(this).attr("value") == val) {
                                     // multiple select checkbox
                                     $(this).attr("checked", val);
@@ -47,16 +47,13 @@ const resetDynamicForm = function(formSelector, values, errors) {
         });
 
         // add errors to form
-        _.forEach(_.fromPairs(errors), function(error, field) {
+        _.forEach(_.fromPairs(errors), function (error, field) {
             const input = root.find(`[name="${field}"]`);
             input.addClass("is-invalid");
             input
                 .closest("div.form-group")
                 .append(`<div class="invalid-feedback d-block">${error.join(" ")}</div>`);
-            input
-                .closest('[id^="collapse-"]')
-                .siblings('[id^="udf-header-"]')
-                .addClass("bg-pink");
+            input.closest('[id^="collapse-"]').siblings('[id^="udf-header-"]').addClass("bg-pink");
         });
 
         // enable conditional logic

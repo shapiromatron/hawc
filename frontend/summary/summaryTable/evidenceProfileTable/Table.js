@@ -8,7 +8,7 @@ import {FactorsCell} from "./Factors";
 import {Judgement} from "./Judgement";
 
 const subTitleStyle = {backgroundColor: "#f5f5f5"},
-    NoDataRow = function(no_content_text) {
+    NoDataRow = function (no_content_text) {
         return (
             <tr>
                 <td colSpan={5}>

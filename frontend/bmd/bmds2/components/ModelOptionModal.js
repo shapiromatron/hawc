@@ -9,7 +9,7 @@ import BaseModal from "./BaseModal";
 class ModelOptionModal extends BaseModal {
     _getDefaults(model) {
         let defaults = {};
-        _.each(model.defaults, (v, k) => {
+        _.each(model.defaults, (v, _k) => {
             let val = v.d;
             if (v.t === "b") {
                 val = val === 1;

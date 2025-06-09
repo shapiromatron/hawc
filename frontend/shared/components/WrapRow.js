@@ -1,6 +1,6 @@
 import React from "react/cjs/react.production.min";
 
-const wrapRow = function(children, rowClassName = "row", childClassName = "col-md-3") {
+const wrapRow = function (children, rowClassName = "row", childClassName = "col-md-3") {
     /* Create a row with equally sized columns from a list of components. */
     return (
         <div className={rowClassName}>

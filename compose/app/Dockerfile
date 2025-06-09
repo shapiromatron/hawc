@@ -1,10 +1,9 @@
-FROM quay.io/centos/centos:stream9-minimal
+FROM python:3.13-slim-bookworm
 
-ENV PYTHON_VERSION=3.12 \
-    PYTHONBUFFERED=1 \
+ENV PYTHONUNBUFFERED=1 \
     PYTHONIOENCODING=UTF-8 \
     PYTHONFAULTHANDLER=1 \
-    PIP_NO_CACHE=off \
+    PIP_NO_CACHE_DIR=off \
     LANG=C.UTF-8
 
 RUN groupadd -g 555 -r app && \
@@ -21,20 +20,17 @@ COPY ./tests/data/fixtures/db.yaml /app/test-db-fixture.yaml
 
 # security updates
 # https://pythonspeed.com/articles/system-packages-docker/
-RUN INSTALL_PKGS="python${PYTHON_VERSION} nc" && \
-    VERIFY_PKGS="python${PYTHON_VERSION}" && \
-    microdnf -y --setopt=tsflags=nodocs install $INSTALL_PKGS && \
-    rpm -V $VERIFY_PKGS && \
-    microdnf -y clean all --enablerepo='*' && \
-    ln -s /usr/bin/"python${PYTHON_VERSION}" /usr/local/bin/python
+RUN apt-get -y update && \
+    apt-get -y upgrade && \
+    apt-get -y install --no-install-recommends netcat-openbsd && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY ./dist /app/build/dist
 
 WORKDIR /app/build
 
-RUN python -m ensurepip --upgrade && \
-    python -m pip install -U pip && \
-    python -m pip install "$(ls dist/hawc-*.whl | head -1)[prod]" && \
+RUN python -m pip install -U pip --root-user-action=ignore && \
+    python -m pip install "$(ls dist/hawc-*.whl | head -1)[prod]" --no-cache-dir && \
     mkdir -p /app/logs && \
     python -m pip uninstall -y pip setuptools && \
     rm -rf /app/build && \

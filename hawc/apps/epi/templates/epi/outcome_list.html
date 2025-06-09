@@ -52,8 +52,10 @@
 
 {% block extrajs %}
   <script type="text/javascript">
-    window.app.startup("epiStartup", function (app) {
-      $("i.previewModalIcon").click(e => app.Outcome.displayAsModal($(e.target).data("id")));
+    $(document).ready(function() {
+      window.app.startup("epiStartup", function (app) {
+        $("i.previewModalIcon").click(e => app.Outcome.displayAsModal($(e.target).data("id")));
+      });
     });
   </script>
 {% endblock %}
