@@ -149,7 +149,7 @@ class GuidelineProfileViewSet(viewsets.GenericViewSet):
     filename = "guideline_profiles"
 
     def get_queryset(self, guideline=None) -> QuerySet:
-        guideline_id = models.GuidelineProfile.objects.get_guideline_id(guideline)
+        guideline_id = models.GuidelineProfile.objects.get_guideline_id(guideline)  # TODO FIX
         qs = models.GuidelineProfile.objects.all()
         if guideline_id:
             qs = qs.filter(guideline_id=guideline_id)

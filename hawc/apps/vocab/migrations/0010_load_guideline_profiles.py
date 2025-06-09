@@ -9,6 +9,7 @@ from django.db import migrations
 def load_fixture(apps, schema_editor):
     here = Path(__file__).parent
     fixtures = (here / "../fixtures").resolve()
+    call_command("loaddata", str(fixtures / "guidelines.jsonl"), app_label="vocab")
     call_command("loaddata", str(fixtures / "guideline_profiles.jsonl"), app_label="vocab")
 
 
@@ -18,7 +19,7 @@ def unload_fixture(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("vocab", "0009_guidelineprofile"),
+        ("vocab", "0009_guideline_profile"),
     ]
 
     operations = [

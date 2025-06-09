@@ -1,8 +1,4 @@
-import json
-from pathlib import Path
-
 from django.apps import apps
-from django.conf import settings
 from django.db.models import Manager, Prefetch
 
 
@@ -101,31 +97,3 @@ class TermManager(Manager):
                 )
             )
         )
-
-
-class GuidelineProfileManager(Manager):
-    def get_guideline_choices(self) -> list:
-        guidelines = self._load_guideline_data()
-        choices = [
-            (guideline["guideline_name"], guideline["guideline_name"]) for guideline in guidelines
-        ]
-        return choices
-
-    def get_guideline_id(self, name) -> int:
-        guidelines = self._load_guideline_data()
-        if name:
-            id = list(filter(lambda x: x["guideline_name"] == name, guidelines))[0]["guideline_id"]
-            return int(id)
-        return None
-
-    def get_guideline_name(self, guideline_id) -> str:
-        guidelines = self._load_guideline_data()
-        name = list(filter(lambda x: x["guideline_id"] == f"{guideline_id}", guidelines))[0][
-            "guideline_name"
-        ]
-        return name
-
-    def _load_guideline_data(self) -> dict:
-        """Return guideline fixture data."""
-        p = Path(settings.PROJECT_PATH) / "apps/vocab/fixtures/guidelines.json"
-        return json.loads(p.read_text())

@@ -54,7 +54,7 @@ class GuidelineProfileSerializer(serializers.ModelSerializer):
     def validate_guideline_id(self, guideline_id):
         # validate guideline
         if guideline_id:
-            valid_guidelines = self.model.objects._load_guideline_data()
+            valid_guidelines = self.model.objects._load_guideline_data()  # TODO -FIX
             ids = [guideline["guideline_id"] for guideline in valid_guidelines]
             if guideline_id not in ids:
                 raise ValidationError(f"{guideline_id} is not a valid guideline")

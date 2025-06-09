@@ -49,5 +49,5 @@ class TestObservationManager:
 @pytest.mark.django_db
 class TestGuidlineProfileManager:
     def test_guideline_id(self):
-        guideline_id = GuidelineProfile.objects.get_guideline_id("Carcinogenicty")
+        guideline_id = GuidelineProfile.objects.get_guideline_id("Carcinogenicty")  # TODO FIX
         assert guideline_id == 9

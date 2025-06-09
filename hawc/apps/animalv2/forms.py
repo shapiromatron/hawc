@@ -68,7 +68,7 @@ class ExperimentForm(ModelForm):
             choices=((True, "Yes"), (False, "No"))
         )
         self.fields["guideline"].widget = forms.Select(
-            choices=GuidelineProfile.objects.get_guideline_choices()
+            choices=GuidelineProfile.objects.get_guideline_choices()  # TODO - fix
         )
 
     @property

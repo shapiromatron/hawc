@@ -31,14 +31,15 @@ class TermAdmin(admin.ModelAdmin):
         return False
 
 
+@admin.register(models.Guideline)
+class GuidelineAdmin(admin.ModelAdmin):
+    list_display = ("id", "number", "name", "profile_name", "description")
+
+
 @admin.register(models.GuidelineProfile)
 class GuidelineProfileAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "guideline_id",
-        "endpoint",
-        "obs_status",
-        "description",
-    )
-    list_filter = ("guideline_id", "obs_status")
-    search_fields = ("guideline id", "obs_status")
+    list_display = ("id", "guideline", "endpoint_id", "obs_status", "description")
+    list_filter = ("guideline", "obs_status")
+    list_select_related = ("guideline", "endpoint")
+    search_fields = ("endpoint__name",)
+    raw_id_fields = ("endpoint",)

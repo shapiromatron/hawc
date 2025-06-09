@@ -431,7 +431,7 @@ class ObservationList(BaseFilterList):
 
     def generate_observations(self, observations):
         # Get all GP instances pertaining to toxrefdb
-        guideline_id = GuidelineProfile.objects.get_guideline_id(self.parent.guideline)
+        guideline_id = GuidelineProfile.objects.get_guideline_id(self.parent.guideline)  # TODO FIX
         profiles = GuidelineProfile.objects.filter(
             guideline_id=guideline_id,
         ).select_related("endpoint__parent", "endpoint__parent__parent")
@@ -494,7 +494,9 @@ class ObservationViewSet(HtmxViewSet):
             return
 
         # Get default statuses for an object
-        guideline_id = GuidelineProfile.objects.get_guideline_id(instance.experiment.guideline)
+        guideline_id = GuidelineProfile.objects.get_guideline_id(
+            instance.experiment.guideline
+        )  # TODO FIX
 
         profile = GuidelineProfile.objects.filter(
             guideline_id=guideline_id, endpoint_id=instance.endpoint.id
