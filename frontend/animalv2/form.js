@@ -2,21 +2,18 @@ import _ from "lodash";
 
 import $ from "$";
 
-const cloneSubformRow = function(lastRow, totalFormField) {
+const cloneSubformRow = function (lastRow, totalFormField) {
         // adapted from https://stackoverflow.com/questions/501719/
         const newElement = lastRow.clone(true);
         let total = totalFormField.val();
-        newElement.find(":input").each(function() {
+        newElement.find(":input").each(function () {
             const name = $(this)
                     .attr("name")
                     .replace(`-${total - 1}-`, `-${total}-`),
                 id = `id_${name}`;
-            $(this)
-                .attr({name, id})
-                .val("")
-                .removeAttr("checked");
+            $(this).attr({name, id}).val("").removeAttr("checked");
         });
-        newElement.find("label").each(function() {
+        newElement.find("label").each(function () {
             var newFor = $(this)
                 .attr("for")
                 .replace(`-${total - 1}-`, `-${total}-`);
@@ -27,24 +24,22 @@ const cloneSubformRow = function(lastRow, totalFormField) {
         lastRow.after(newElement);
 
         // TODO - some DOM elements (the outer td and some of the help labeling) are wrong; fix
-        newElement.find("td, small").each(function() {
+        newElement.find("td, small").each(function () {
             const loopEl = $(this),
                 incorrectId = loopEl.attr("id");
             loopEl.attr("id", incorrectId.replace(`-${total - 2}-`, `-${total - 1}-`));
         });
     },
-    experimentFormStartup = function(form) {
-        $(form)
-            .find("#id_name")
-            .focus();
+    experimentFormStartup = function (form) {
+        $(form).find("#id_name").focus();
     },
-    animalGroupFormStartup = function(form) {
+    animalGroupFormStartup = function (form) {
         // TODO - fix - name is `animalgroup-1-species`
-        let onSpeciesChange = function(e, onStrainUpdateComplete) {
+        let onSpeciesChange = function (_e, onStrainUpdateComplete) {
             // only show proper strains for a given species
             let selected = $("#id_strain option:selected").val();
-            let update_strain_opts = function(d) {
-                var opts = _.map(d, function(v, i) {
+            let update_strain_opts = function (d) {
+                var opts = _.map(d, function (v, _i) {
                     return `<option value="${v.id}">${v.name}</option>`;
                 }).join("");
 
@@ -57,27 +52,24 @@ const cloneSubformRow = function(lastRow, totalFormField) {
             };
             $.get("/assessment/api/strain", {species: $("#id_species").val()}, update_strain_opts);
         };
-        $(form)
-            .find("#id_species")
-            .change(onSpeciesChange)
-            .trigger("change");
+        $(form).find("#id_species").change(onSpeciesChange).trigger("change");
 
         // refresh species after "Add new strain" popup closes. Wait half a second
         // to give the addition, if any, time to register.
         $("a[title='Create strain']").on(
             window.app.HAWCUtils.HAWC_NEW_WINDOW_POPUP_CLOSING,
-            function(e) {
-                setTimeout(function() {
+            function (_e) {
+                setTimeout(function () {
                     let numStrainsBefore = $("#id_strain option").length;
 
                     // reload the species
-                    onSpeciesChange(null, function() {
+                    onSpeciesChange(null, function () {
                         let strains = $("#id_strain option");
 
                         if (strains.length > numStrainsBefore) {
                             // a new one was added; let's select it.
                             let highestId = -1;
-                            strains.each(function() {
+                            strains.each(function () {
                                 highestId = Math.max(Number($(this).val()), highestId);
                             });
 
@@ -88,12 +80,10 @@ const cloneSubformRow = function(lastRow, totalFormField) {
             }
         );
     },
-    dataExtractionFormStartup = function(form) {
+    dataExtractionFormStartup = function (form) {
         // TODO fix - names are dataextraction-1-is_qualitative_only
-        let onQualitativeChange = function() {
-            let isQualOnly = $(form)
-                .find("#id_is_qualitative_only")
-                .is(":checked");
+        let onQualitativeChange = function () {
+            let isQualOnly = $(form).find("#id_is_qualitative_only").is(":checked");
 
             let quantitativeFields = [
                 "data_location",
@@ -108,7 +98,7 @@ const cloneSubformRow = function(lastRow, totalFormField) {
                 "result_details",
             ];
 
-            quantitativeFields.forEach(function(fieldName) {
+            quantitativeFields.forEach(function (fieldName) {
                 // ok to just hide values; the server will validate
                 let parentDiv = $(`#id_${fieldName}`).parents("div.form-group");
                 if (isQualOnly) {
@@ -119,20 +109,17 @@ const cloneSubformRow = function(lastRow, totalFormField) {
             });
         };
 
-        $(form)
-            .find("#id_is_qualitative_only")
-            .change(onQualitativeChange)
-            .trigger("change");
+        $(form).find("#id_is_qualitative_only").change(onQualitativeChange).trigger("change");
     },
-    formsetSetup = function(form, prefixes) {
+    formsetSetup = function (form, prefixes) {
         if (!Array.isArray(prefixes)) {
             prefixes = [prefixes];
         }
 
         $(form)
             .find("button.add-subobject")
-            .each(function(index, element) {
-                $(this).click(function() {
+            .each(function (index, _element) {
+                $(this).click(function () {
                     const formPrefix = prefixes[index],
                         parentWrapper = $(this).parent("div.formset_wrapper"),
                         lastRow = parentWrapper.find("tr:last"),
