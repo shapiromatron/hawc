@@ -37,11 +37,11 @@ class ArrayTableRow extends Component {
                                 {names.map((d, i) => (
                                     <th key={i}>{d}</th>
                                 ))}
-                                <ActionsTh onClickNew={d => createArrayElement(arrayName)} />
+                                <ActionsTh onClickNew={_d => createArrayElement(arrayName)} />
                             </tr>
                         </thead>
                         <tbody>
-                            {settings[arrayName].map((item, index) => (
+                            {settings[arrayName].map((_item, index) => (
                                 <Row key={index} index={index} arrayName={arrayName} />
                             ))}
                         </tbody>

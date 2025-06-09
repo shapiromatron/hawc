@@ -42,7 +42,7 @@ class ClientSideAutosuggest extends Component {
                     className: "form-control",
                     name,
                     value,
-                    onChange: (event, {newValue}) => {
+                    onChange: (_event, {newValue}) => {
                         this.setState({value: newValue});
                     },
                 }}
@@ -57,7 +57,7 @@ ClientSideAutosuggest.propTypes = {
     options: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
-const renderClientSideAutosuggest = function(el, name, value, options) {
+const renderClientSideAutosuggest = function (el, name, value, options) {
     ReactDOM.render(<ClientSideAutosuggest name={name} value={value} options={options} />, el);
 };
 

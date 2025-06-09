@@ -169,7 +169,7 @@ class Bmd3Store {
         this.isExecuting = true;
         fetch(url, opts)
             .then(response => response.json())
-            .then(response => {
+            .then(_response => {
                 setTimeout(this.pollExecutionStatus, 5000);
             })
             .catch(ex => {
@@ -380,7 +380,7 @@ class Bmd3Store {
         this.showSelectedSaveNotification = false;
         fetch(url, opts)
             .then(response => response.json())
-            .then(response => {
+            .then(_response => {
                 this.showSelectedSaveNotification = true;
                 setTimeout(() => {
                     this.showSelectedSaveNotification = false;

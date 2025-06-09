@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import Root from "./Root";
 import SummaryTableEditStore from "./store";
 
-export default function(el, config) {
+export default function (el, config) {
     const store = new SummaryTableEditStore(config);
     ReactDOM.render(
         <Provider store={store}>

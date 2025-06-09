@@ -16,7 +16,6 @@ bin/dev.local.sh
 celerybeat*
 hawc/gitcommit.json
 hawc/main/settings/local.py
-hawc/webpack-stats.json
 package-lock.json
 uv.lock
 
@@ -29,8 +28,7 @@ uv.lock
 .ruff_cache/
 .venv/
 .vscode/
-.yarn/cache/
-.yarn/install-state.gz
+.yarn
 /data/
 docs/site
 __pycache__/

@@ -7,7 +7,7 @@ import D3Visualization from "./D3Visualization";
 import RoBLegend from "./RoBLegend";
 
 class RoBBarchartPlot extends D3Visualization {
-    constructor(parent, data, options) {
+    constructor(_parent, _data, _options) {
         // stacked-bars of rob information. Criteria are on the y-axis,
         // and studies are on the x-axis
         super(...arguments);
@@ -37,10 +37,7 @@ class RoBBarchartPlot extends D3Visualization {
 
     resize_plot_dimensions() {
         // Resize plot based on the dimensions of the labels.
-        var xlabel_width = this.vis
-            .select(".y_axis")
-            .node()
-            .getBoundingClientRect().width;
+        var xlabel_width = this.vis.select(".y_axis").node().getBoundingClientRect().width;
         if (this.padding.left < this.padding.left_original + xlabel_width) {
             this.padding.left = this.padding.left_original + xlabel_width;
             this.render(this.plot_div);
@@ -114,7 +111,7 @@ class RoBBarchartPlot extends D3Visualization {
 
                 this.score_ids.forEach(id => (weights[id] = 0));
 
-                scores.forEach(function(rob) {
+                scores.forEach(function (rob) {
                     weights[rob.data.score] = (weights[rob.data.score] || 0) + total_weight;
                 });
 
@@ -198,8 +195,8 @@ class RoBBarchartPlot extends D3Visualization {
             .enter()
             .append("svg:g")
             .attr("class", "score")
-            .style("fill", (d, i) => colors(i))
-            .style("stroke", (d, i) => d3.rgb(colors(i)).darker());
+            .style("fill", (_d, i) => colors(i))
+            .style("stroke", (_d, i) => d3.rgb(colors(i)).darker());
 
         // Add a rect for each score.
         groups
@@ -208,7 +205,7 @@ class RoBBarchartPlot extends D3Visualization {
             .enter()
             .append("svg:rect")
             .attr("x", d => x(d[0]))
-            .attr("y", (d, i) => y(d.data.label) + 5)
+            .attr("y", (d, _i) => y(d.data.label) + 5)
             .attr("width", d => x(d[1] - d[0]))
             .attr("height", 20);
 

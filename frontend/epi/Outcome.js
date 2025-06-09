@@ -57,13 +57,13 @@ class Outcome {
             );
         }
 
-        _.each(this.results, function(d, i) {
+        _.each(this.results, function (d, i) {
             var isActive = i === 0;
             tabs.append(d.build_tab(isActive));
             content.append(d.build_content_tab(isActive));
         });
 
-        container.on("shown.bs.tab", 'a[data-toggle="tab"]', function(e) {
+        container.on("shown.bs.tab", 'a[data-toggle="tab"]', function (e) {
             e.stopPropagation();
             $(this.getAttribute("href")).trigger("plotDivShown");
         });
@@ -74,9 +74,9 @@ class Outcome {
     get_unused_comparison_sets() {
         // get comparison sets associated with no results
         var usedSets = _.map(this.results, "comparison_set");
-        return _.filter(this.comparison_sets, function(d2) {
+        return _.filter(this.comparison_sets, function (d2) {
             return !_.some(
-                _.map(usedSets, function(d1) {
+                _.map(usedSets, function (d1) {
                     return d1.isEqual(d2);
                 })
             );

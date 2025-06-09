@@ -5,7 +5,7 @@ import React from "react";
 
 import {param_cw} from "../constants";
 
-const getText = function(model, k, v) {
+const getText = function (model, k, v) {
     let def = model.defaults[k],
         tmp;
     switch (def.t) {

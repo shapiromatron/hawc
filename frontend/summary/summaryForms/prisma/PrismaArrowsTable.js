@@ -4,9 +4,9 @@ import React, {Component} from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
 import {
     ActionsTh,
+    MoveRowTd,
     moveArrayElementDown,
     moveArrayElementUp,
-    MoveRowTd,
 } from "shared/components/EditableRowData";
 import IntegerInput from "shared/components/IntegerInput";
 import SelectInput from "shared/components/SelectInput";

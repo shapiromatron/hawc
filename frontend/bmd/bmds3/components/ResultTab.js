@@ -13,7 +13,7 @@ import DoseResponsePlot from "./DoseResponsePlot";
 import ModelModal from "./ModelModal";
 import {SettingsTable} from "./SettingsTab";
 
-const RecommendationTd = function({results, model_index}) {
+const RecommendationTd = function ({results, model_index}) {
     const bin = results.model_bin[model_index],
         notes = results.model_notes[model_index],
         label = {

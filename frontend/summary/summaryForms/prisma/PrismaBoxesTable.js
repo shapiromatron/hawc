@@ -4,9 +4,9 @@ import React, {Component} from "react";
 import CheckboxInput from "shared/components/CheckboxInput";
 import {
     ActionsTh,
+    MoveRowTd,
     moveArrayElementDown,
     moveArrayElementUp,
-    MoveRowTd,
 } from "shared/components/EditableRowData";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
@@ -253,12 +253,8 @@ PrismaBoxesTable.propTypes = {
 class ListTable extends Component {
     render() {
         const {row, index, store} = this.props,
-            {
-                createNewBoxItem,
-                changeSettings,
-                getCountFilters,
-                deleteArrayElement,
-            } = store.subclass,
+            {createNewBoxItem, changeSettings, getCountFilters, deleteArrayElement} =
+                store.subclass,
             items = row.items;
 
         return (

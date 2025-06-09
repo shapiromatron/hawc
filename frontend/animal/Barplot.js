@@ -259,10 +259,7 @@ class Barplot extends D3Plot {
 
     x_axis_change_chart_update() {
         this.xAxis.scale(this.x_scale);
-        this.vis
-            .selectAll(".x_axis")
-            .transition()
-            .call(this.xAxis);
+        this.vis.selectAll(".x_axis").transition().call(this.xAxis);
     }
 
     y_axis_change_chart_update() {
@@ -277,11 +274,7 @@ class Barplot extends D3Plot {
             .scale(y)
             .ticks(this.y_axis_settings.number_ticks, this.y_axis_settings.label_format);
 
-        this.vis
-            .selectAll(".y_axis")
-            .transition()
-            .duration(1000)
-            .call(this.yAxis);
+        this.vis.selectAll(".y_axis").transition().duration(1000).call(this.yAxis);
 
         this.rebuild_y_gridlines({animate: true});
 

@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-const gcf = function(X, A) {
+const gcf = function (X, A) {
         // Good for X>A+1
         var A0 = 0,
             B0 = 1,
@@ -23,7 +23,7 @@ const gcf = function(X, A) {
         var Prob = Math.exp(A * Math.log(X) - X - logGamma(A)) * A1;
         return 1 - Prob;
     },
-    gser = function(X, A) {
+    gser = function (X, A) {
         // Good for X<A+1
         var T9 = 1 / A,
             G = T9,
@@ -36,7 +36,7 @@ const gcf = function(X, A) {
         G = G * Math.exp(A * Math.log(X) - X - logGamma(A));
         return G;
     },
-    logGamma = function(Z) {
+    logGamma = function (Z) {
         var S =
                 1 +
                 76.18009173 / Z -
@@ -48,7 +48,7 @@ const gcf = function(X, A) {
             LG = (Z - 0.5) * Math.log(Z + 4.5) - (Z + 4.5) + Math.log(S * 2.50662827465);
         return LG;
     },
-    normalCDF = function(X) {
+    normalCDF = function (X) {
         // cumulative density function (CDF) for the standard normal distribution
         // HASTINGS.  MAX ERROR = .000001
         var T = 1 / (1 + 0.2316419 * Math.abs(X)),
@@ -59,7 +59,7 @@ const gcf = function(X, A) {
                 (0.3193815 + T * (-0.3565638 + T * (1.781478 + T * (-1.821256 + T * 1.330274))));
         return X > 0 ? 1 - p : p;
     },
-    gammaCDF = function(x, a) {
+    gammaCDF = function (x, a) {
         // adapted from http://www.math.ucla.edu/~tom/distributions/gamma.html
         if (x <= 0) {
             return 0;
@@ -78,7 +78,7 @@ const gcf = function(X, A) {
             return gcf(x, a);
         }
     },
-    inv_tdist_05 = function(df) {
+    inv_tdist_05 = function (df) {
         // Calculates the inverse t-distribution using a piecewise linear form for
         // the degrees of freedom specified. Assumes a two-tailed distribution with
         // an alpha of 0.05. Based on curve-fitting using Excel's T.INV.2T function
@@ -92,33 +92,18 @@ const gcf = function(X, A) {
             return 12.7062047361747;
         } else if (df < 12) {
             b = [
-                7.9703237683e-5,
-                -3.5145890027e-3,
-                0.063259191874,
-                -0.5963723075,
-                3.129413441,
-                -8.8538894383,
-                13.358101926,
+                7.9703237683e-5, -3.5145890027e-3, 0.063259191874, -0.5963723075, 3.129413441,
+                -8.8538894383, 13.358101926,
             ];
         } else if (df < 62) {
             b = [
-                1.1184055716e-10,
-                -2.7885328039e-8,
-                2.8618499662e-6,
-                -1.5585120701e-4,
-                4.8300645273e-3,
-                -0.084316656676,
-                2.7109288893,
+                1.1184055716e-10, -2.7885328039e-8, 2.8618499662e-6, -1.5585120701e-4,
+                4.8300645273e-3, -0.084316656676, 2.7109288893,
             ];
         } else {
             b = [
-                5.1474329765e-16,
-                -7.262226388e-13,
-                4.2142967681e-10,
-                -1.2973354626e-7,
-                2.275308052e-5,
-                -2.2594979441e-3,
-                2.0766977669,
+                5.1474329765e-16, -7.262226388e-13, 4.2142967681e-10, -1.2973354626e-7,
+                2.275308052e-5, -2.2594979441e-3, 2.0766977669,
             ];
             if (df > 350) {
                 console.warn("Extrapolating beyond inv_tdist_05 regression range (N>350).");
@@ -135,7 +120,7 @@ const gcf = function(X, A) {
             b[6]
         );
     },
-    addStdev = function(endpoint) {
+    addStdev = function (endpoint) {
         const {data_type, variance_type, groups} = endpoint.data;
         if (data_type !== "C") {
             return;
@@ -161,7 +146,7 @@ const gcf = function(X, A) {
                 break;
         }
     },
-    addContinuousConfidenceIntervals = function(endpoint) {
+    addContinuousConfidenceIntervals = function (endpoint) {
         /*
         Approximation; only used during forms; after save calculated more robustly on server
         */
@@ -177,7 +162,7 @@ const gcf = function(X, A) {
             d.upper_ci = upper_ci;
         });
     },
-    addDichotomousConfidenceIntervals = function(endpoint) {
+    addDichotomousConfidenceIntervals = function (endpoint) {
         /*
         Procedure adds confidence intervals to dichotomous datasets.
         Add confidence intervals to dichotomous datasets. (pg 80)

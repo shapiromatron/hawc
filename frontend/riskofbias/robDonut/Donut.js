@@ -119,10 +119,7 @@ class Donut extends D3Plot {
 
         scoresByDomain.forEach((domainScores, domainIndex) => {
             let firstScore = domainScores[0],
-                scoresByMetric = _.chain(domainScores)
-                    .groupBy("metric_id")
-                    .values()
-                    .value();
+                scoresByMetric = _.chain(domainScores).groupBy("metric_id").values().value();
 
             domain_donut_data.push({
                 weight: 1, // equally weighted
@@ -170,14 +167,14 @@ class Donut extends D3Plot {
                 .attr("r", this.radius_inner)
                 .style("fill", this.data.overall_question_data.score_svg_style.fill)
                 .attr("transform", donut_center)
-                .on("mouseover", function() {
+                .on("mouseover", function () {
                     if (self.viewlock) return;
                     d3.select(this).classed("hovered", true);
                     $(":animated")
                         .promise()
                         .done(() => self.show_subset(self.data.overall_question_data));
                 })
-                .on("mouseout", function() {
+                .on("mouseout", function () {
                     if (self.viewlock) return;
                     d3.select(this).classed("hovered", false);
                     metric_arcs.classed("hovered", false);
@@ -206,14 +203,8 @@ class Donut extends D3Plot {
             .value(d => d.weight);
 
         // setup arc helper functions
-        var domain_arc = d3
-                .arc()
-                .innerRadius(this.radius_inner)
-                .outerRadius(this.radius_outer),
-            details_arc = d3
-                .arc()
-                .innerRadius(this.radius_middle)
-                .outerRadius(this.radius_outer);
+        var domain_arc = d3.arc().innerRadius(this.radius_inner).outerRadius(this.radius_outer),
+            details_arc = d3.arc().innerRadius(this.radius_middle).outerRadius(this.radius_outer);
 
         this.domain_outer_radius = this.radius_outer;
         this.details_arc = details_arc;
@@ -278,14 +269,14 @@ class Donut extends D3Plot {
             .style("fill", d => d.data.score_svg_style.fill)
             .attr("class", "donuts metric_arc")
             .attr("d", details_arc)
-            .on("mouseover", function(event, v1) {
+            .on("mouseover", function (_event, v1) {
                 if (self.viewlock) return;
                 d3.select(this).classed("hovered", true);
                 $(":animated")
                     .promise()
                     .done(() => self.show_subset(v1.data));
             })
-            .on("mouseout", function() {
+            .on("mouseout", function () {
                 if (self.viewlock) return;
                 d3.select(this).classed("hovered", false);
                 metric_arcs.classed("hovered", false);
@@ -300,14 +291,14 @@ class Donut extends D3Plot {
             .enter()
             .append("path")
             .attr("class", "donuts domain_arc")
-            .on("mouseover", function(event, domain) {
+            .on("mouseover", function (_event, domain) {
                 if (self.viewlock) return;
                 d3.select(this).classed("hovered", true);
                 $(":animated")
                     .promise()
                     .done(() => self.show_domain_header(domain.data.domain));
             })
-            .on("mouseout", function() {
+            .on("mouseout", function () {
                 if (self.viewlock) return;
                 d3.select(this).classed("hovered", false);
                 metric_arcs.classed("hovered", false);
@@ -360,7 +351,7 @@ class Donut extends D3Plot {
             this.rotated_label_end_padding;
 
         var autosizeFields = $("text.autosized");
-        autosizeFields.each(function() {
+        autosizeFields.each(function () {
             var fld = $(this);
             if (fld[0].getBBox().width > maxLabelWidth) {
                 var choppedText = fld.html().slice(0, -3);
@@ -383,16 +374,10 @@ class Donut extends D3Plot {
         var new_radius = this.radius_middle;
         if (this.domain_outer_radius === this.radius_middle) new_radius = this.radius_outer;
 
-        this.domain_arc = d3
-            .arc()
-            .innerRadius(this.radius_inner)
-            .outerRadius(new_radius);
+        this.domain_arc = d3.arc().innerRadius(this.radius_inner).outerRadius(new_radius);
         this.domain_outer_radius = new_radius;
 
-        this.domain_arcs
-            .transition()
-            .duration("500")
-            .attr("d", this.domain_arc);
+        this.domain_arcs.transition().duration("500").attr("d", this.domain_arc);
     }
 
     clear_subset() {
