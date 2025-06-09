@@ -14,6 +14,7 @@ class TestLiterature(PlaywrightTestCase):
         self.login_and_goto_url(
             page, f"{self.live_server_url}/lit/assessment/2/", "pm@hawcproject.org"
         )
+        expect(page.locator("css=#tags")).to_be_visible()
         assert page.locator("css=#tags .nestedTag").count() > 5
 
         # /lit/assessment/:id/references/
