@@ -16,7 +16,6 @@ bin/dev.local.sh
 celerybeat*
 hawc/gitcommit.json
 hawc/main/settings/local.py
-hawc/webpack-stats.json
 package-lock.json
 uv.lock
 

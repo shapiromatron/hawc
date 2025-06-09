@@ -9,7 +9,7 @@ class IVEndpointGroup {
 
     build_row(tbl, opts) {
         var tr = $("<tr>"),
-            getDose = function(dose) {
+            getDose = function (dose) {
                 var txt = dose;
                 if (opts.isNOEL)
                     txt += tbl.footnotes.add_footnote("NOEL (No Observed Effect Level)");
@@ -17,7 +17,7 @@ class IVEndpointGroup {
                     txt += tbl.footnotes.add_footnote("LOEL (Lowest Observed Effect Level)");
                 return txt;
             },
-            getNumeric = function(val) {
+            getNumeric = function (val) {
                 return $.isNumeric(val) ? h.ff(val) : "-";
             };
 

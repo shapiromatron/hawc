@@ -28,7 +28,7 @@ class ExtensionTableBody extends Component {
     }
 }
 
-const getInteractivityOptions = function(columnNames) {
+const getInteractivityOptions = function (columnNames) {
         const names = new Set(columnNames),
             options = [];
         _.forEach(config, val => {
@@ -39,7 +39,7 @@ const getInteractivityOptions = function(columnNames) {
         options.unshift({id: NULL_VALUE, label: NULL_VALUE});
         return options;
     },
-    renderExtensionTableBody = function(el) {
+    renderExtensionTableBody = function (el) {
         ReactDOM.render(<ExtensionTableBody />, el);
     },
     _getId = (settings, data) => {

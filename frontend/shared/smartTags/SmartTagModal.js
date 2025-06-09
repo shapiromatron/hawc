@@ -24,7 +24,7 @@ class SmartTagModal {
         this.$span.removeClass("active");
     }
 
-    renderModal(e) {
+    renderModal(_e) {
         if (!this.isActive) {
             return;
         }
@@ -34,7 +34,7 @@ class SmartTagModal {
         }
     }
 
-    getModelClass(type) {
+    getModelClass(_type) {
         let map = {
             endpoint: Endpoint,
             study: Study,

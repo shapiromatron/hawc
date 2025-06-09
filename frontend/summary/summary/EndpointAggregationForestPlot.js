@@ -6,7 +6,7 @@ import $ from "$";
 import D3Visualization from "./D3Visualization";
 
 class EndpointAggregationForestPlot extends D3Visualization {
-    constructor(parent, data, options) {
+    constructor(_parent, _data, _options) {
         super(...arguments);
         this.setDefaults();
     }
@@ -50,7 +50,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
             lower_ci,
             upper_ci,
             egs,
-            getCoordClass = function(e, i) {
+            getCoordClass = function (e, i) {
                 if (e.data.LOEL == i) return "LOEL";
                 if (e.data.NOEL == i) return "NOEL";
                 return "";
@@ -58,10 +58,10 @@ class EndpointAggregationForestPlot extends D3Visualization {
             dose_units = this.data.endpoints[0].dose_units;
 
         _.chain(this.data.endpoints)
-            .filter(function(e) {
+            .filter(function (e) {
                 return e.hasEGdata();
             })
-            .each(function(e) {
+            .each(function (e) {
                 const shortCitation = e.data.animal_group.experiment.study.short_citation,
                     experimentName = e.data.animal_group.experiment.name,
                     animalGroup = e.data.animal_group.name,
@@ -73,7 +73,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
                     label: `${shortCitation}- ${experimentName}- ${animalGroup}: ${endpointName}`,
                 });
 
-                egs.forEach(function(eg, i) {
+                egs.forEach(function (eg, i) {
                     var txt = [
                         e.data.animal_group.experiment.study.short_citation,
                         e.data.name,
@@ -142,10 +142,10 @@ class EndpointAggregationForestPlot extends D3Visualization {
             points,
             lines,
             endpoint_labels,
-            min_x: d3.min(points, function(v) {
+            min_x: d3.min(points, function (v) {
                 return v.lower_ci;
             }),
-            max_x: d3.max(points, function(v) {
+            max_x: d3.max(points, function (v) {
                 return v.upper_ci;
             }),
             min_y: 0,
@@ -198,12 +198,12 @@ class EndpointAggregationForestPlot extends D3Visualization {
         // Resize plot based on the dimensions of the labels.
         var ylabel_width =
             d3.max(
-                this.plot_div.find(".forest_plot_labels").map(function() {
+                this.plot_div.find(".forest_plot_labels").map(function () {
                     return this.getComputedTextLength();
                 })
             ) +
             d3.max(
-                this.plot_div.find(".dr_tick_text").map(function() {
+                this.plot_div.find(".dr_tick_text").map(function () {
                     return this.getComputedTextLength();
                 })
             );
@@ -224,16 +224,16 @@ class EndpointAggregationForestPlot extends D3Visualization {
             .data(this.lines)
             .enter()
             .append("line")
-            .attr("x1", function(d) {
+            .attr("x1", function (_d) {
                 return x(x.domain()[0]);
             })
-            .attr("y1", function(d) {
+            .attr("y1", function (d) {
                 return y(d.y);
             })
-            .attr("x2", function(d) {
+            .attr("x2", function (_d) {
                 return x(x.domain()[1]);
             })
-            .attr("y2", function(d) {
+            .attr("y2", function (d) {
                 return y(d.y);
             })
             .attr("class", "primary_gridlines");
@@ -251,10 +251,10 @@ class EndpointAggregationForestPlot extends D3Visualization {
     add_dose_points() {
         var x = this.x_scale,
             y = this.y_scale,
-            lines = this.points.filter(function(v) {
+            lines = this.points.filter(function (v) {
                 return $.isNumeric(v.lower_ci) && $.isNumeric(v.upper_ci);
             }),
-            points = this.points.filter(function(v) {
+            points = this.points.filter(function (v) {
                 return $.isNumeric(v.x);
             });
 
@@ -304,7 +304,7 @@ class EndpointAggregationForestPlot extends D3Visualization {
             .attr("class", d => "dose_points " + d.class)
             .style("cursor", "pointer")
             .attr("transform", d => `translate(${x(d.x)},${y(d.y)})`)
-            .on("click", (event, d) => d.endpoint.displayAsModal());
+            .on("click", (_event, d) => d.endpoint.displayAsModal());
 
         // add the outer element last
         this.dots.append("svg:title").text(d => d.text);
@@ -319,13 +319,13 @@ class EndpointAggregationForestPlot extends D3Visualization {
             .enter()
             .append("text")
             .attr("x", -5)
-            .attr("y", function(v, i) {
+            .attr("y", function (v, _i) {
                 return y_scale(v.y);
             })
             .attr("dy", "0.5em")
             .attr("class", "dr_tick_text")
             .attr("text-anchor", "end")
-            .text(function(d, i) {
+            .text(function (d, _i) {
                 return d.dose;
             });
 
@@ -335,22 +335,22 @@ class EndpointAggregationForestPlot extends D3Visualization {
             .enter()
             .append("text")
             .attr("x", -this.padding.left + 25)
-            .attr("y", function(v, i) {
+            .attr("y", function (v, _i) {
                 return y_scale(v.y);
             })
             .attr("class", "dr_title forest_plot_labels")
             .attr("text-anchor", "start")
             .style("cursor", "pointer")
-            .text(function(d, i) {
+            .text(function (d, _i) {
                 return d.label;
             })
-            .on("click", function(event, v) {
+            .on("click", function (_event, v) {
                 v.endpoint.displayAsModal();
             });
     }
 
     add_legend() {
-        var addItem = function(txt, cls, color) {
+        var addItem = function (txt, cls, color) {
                 return {
                     text: txt,
                     classes: cls,

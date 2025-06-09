@@ -2,9 +2,9 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
+import Hero from "shared/utils/Hero";
 import {markKeywords} from "shared/utils/_helpers";
 import h from "shared/utils/helpers";
-import Hero from "shared/utils/Hero";
 import {getReferenceTagListUrl} from "shared/utils/urls";
 
 class Reference extends Component {
@@ -138,7 +138,7 @@ class Reference extends Component {
                         &nbsp;Source
                     </a>
                     <div className="dropdown-menu dropdown-menu-right py-0">
-                        {data.searches.map((d, i) => (
+                        {data.searches.map((d, _i) => (
                             <a className="dropdown-item small" key={d.url} href={d.url}>
                                 {d.title}
                             </a>
@@ -261,7 +261,7 @@ class Reference extends Component {
                 {expanded && data.searches.length > 0 ? (
                     <div>
                         <label>Searches/imports:&nbsp;</label>
-                        {data.searches.map((d, i) => (
+                        {data.searches.map((d, _i) => (
                             <a className="btn btn-light mr-1 mb-2" key={d.url} href={d.url}>
                                 {d.title}
                             </a>

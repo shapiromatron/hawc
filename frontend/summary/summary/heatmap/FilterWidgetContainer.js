@@ -129,10 +129,7 @@ class FilterWidget extends Component {
 
         // cycle through columns to see if there's a single item in a column
         for (let column of action.columns) {
-            const items = _.chain(matched)
-                .uniqBy(column)
-                .sortBy(column)
-                .value();
+            const items = _.chain(matched).uniqBy(column).sortBy(column).value();
 
             // only show button if there's a single item
             if (items.length === 1) {

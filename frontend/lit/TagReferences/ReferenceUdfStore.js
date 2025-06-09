@@ -2,7 +2,7 @@ import $ from "jquery";
 import _ from "lodash";
 import {action, autorun, computed, observable} from "mobx";
 
-const renderTagForm = function(tagId, referenceId, tagNames, udf) {
+const renderTagForm = function (tagId, referenceId, tagNames, udf) {
     return `<div class='box-shadow rounded mt-3 mb-4'>
         <a
             class="text-black text-decoration-none clickable bg-gray rounded-top px-3 d-flex justify-content-start align-items-center flex-wrap border-bottom-light"

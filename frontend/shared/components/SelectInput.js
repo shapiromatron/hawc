@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import HelpText from "./HelpText";
-import {errorsDiv, inputClass} from "./inputs";
 import LabelInput from "./LabelInput";
+import {errorsDiv, inputClass} from "./inputs";
 
 class SelectInput extends Component {
     constructor(props) {
@@ -23,7 +23,7 @@ class SelectInput extends Component {
         this.props.handleSelect(value);
     }
 
-    renderField(fieldClass, fieldId) {
+    renderField(_fieldClass, fieldId) {
         const value = this.props.value || _.first(this.props.choices).id,
             {errors, className} = this.props;
         return (
@@ -51,8 +51,8 @@ class SelectInput extends Component {
         const fieldId = this.props.id
                 ? this.props.id
                 : this.props.name
-                ? `id_${this.props.name}`
-                : null,
+                  ? `id_${this.props.name}`
+                  : null,
             {errors} = this.props;
 
         if (this.props.fieldOnly) {

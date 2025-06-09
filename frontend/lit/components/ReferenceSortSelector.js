@@ -15,7 +15,7 @@ class ReferenceSortSelector extends Component {
         };
     }
     render() {
-        const choices = _.map(SortBy, (v, k) => {
+        const choices = _.map(SortBy, (v, _k) => {
             return {id: v[0], label: v[1]};
         });
         return (

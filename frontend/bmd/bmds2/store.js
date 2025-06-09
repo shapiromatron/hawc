@@ -36,7 +36,7 @@ class Bmd2Store {
     // actions
 
     // fetch-settings
-    @action.bound fetchEndpoint(id) {
+    @action.bound fetchEndpoint(_id) {
         const url = `/ani/api/endpoint/${this.config.endpoint_id}/`;
         fetch(url, h.fetchGet)
             .then(response => response.json())

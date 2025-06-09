@@ -28,11 +28,7 @@ class DescriptiveTable {
             if (opts.pre) {
                 td.css("white-space", "pre-wrap");
             }
-            this._tbody.append(
-                $("<tr>")
-                    .append($("<th>").html(description))
-                    .append(td)
-            );
+            this._tbody.append($("<tr>").append($("<th>").html(description)).append(td));
         }
         return this;
     }
@@ -40,13 +36,11 @@ class DescriptiveTable {
     add_tbody_tr_list(description, list_items) {
         if (list_items.length > 0) {
             var ul = $('<ul class="list-group list-group-flush">').append(
-                    list_items.map(function(v) {
+                    list_items.map(function (v) {
                         return $('<li class="list-group-item p-0 bg-transparent">').html(v);
                     })
                 ),
-                tr = $("<tr>")
-                    .append(`<th>${description}</th>`)
-                    .append($("<td>").append(ul));
+                tr = $("<tr>").append(`<th>${description}</th>`).append($("<td>").append(ul));
 
             this._tbody.append(tr);
         }
@@ -58,9 +52,7 @@ class DescriptiveTable {
             const badges = items.map(
                     item => `<a href="${item.url}" class="badge badge-info mr-1">${item.text}</a>`
                 ),
-                tr = $("<tr>")
-                    .append(`<th>${description}</th>`)
-                    .append($("<td>").append(badges));
+                tr = $("<tr>").append(`<th>${description}</th>`).append($("<td>").append(badges));
 
             this._tbody.append(tr);
         }

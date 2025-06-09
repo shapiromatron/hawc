@@ -1,4 +1,4 @@
-export const addOuterTag = function(html, tag) {
+export const addOuterTag = function (html, tag) {
     // if the html's outermost tag is not the given tag, add it
     // otherwise return the original html
     let regex = /^\s*<(.*)>.*<\/\1>\s*$/,
@@ -6,13 +6,13 @@ export const addOuterTag = function(html, tag) {
     return match == null || match[1] != tag ? `<${tag}>${html}</${tag}>` : html;
 };
 
-export const escapeRegex = function(text) {
+export const escapeRegex = function (text) {
     // Escape text containing regex special characters.
     // Lifted from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions#escaping
     return text.replace(/[.+?^${}()|[\]\\]/g, "\\$&");
 };
 
-export const markKeywords = function(text, allSettings) {
+export const markKeywords = function (text, allSettings) {
     const all_tokens = allSettings.set1.keywords
             .concat(allSettings.set2.keywords)
             .concat(allSettings.set3.keywords),
@@ -36,7 +36,7 @@ export const markKeywords = function(text, allSettings) {
     return text;
 };
 
-export const markText = function(text, settings) {
+export const markText = function (text, settings) {
     if (settings.keywords.length === 0) {
         return text;
     }
@@ -48,7 +48,7 @@ export const markText = function(text, settings) {
     );
     return text.replace(
         re,
-        (match, token) =>
+        (_match, token) =>
             `<mark class="hawc-mk" title="${settings.name}" style="border-bottom: 1px solid ${settings.color}; box-shadow: inset 0 -4px 0 ${settings.color};">${token}</mark>`
     );
 };

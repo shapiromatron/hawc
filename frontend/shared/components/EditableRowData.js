@@ -5,7 +5,7 @@ import h from "shared/utils/helpers";
 const moveArrayElementUp = h.moveArrayElementUp,
     moveArrayElementDown = h.moveArrayElementDown,
     deleteArrayElement = h.deleteArrayElement,
-    ActionsTh = function(props) {
+    ActionsTh = function (props) {
         return (
             <th>
                 Actions
@@ -20,7 +20,7 @@ const moveArrayElementUp = h.moveArrayElementUp,
             </th>
         );
     },
-    MoveRowTd = function(props) {
+    MoveRowTd = function (props) {
         return (
             <td>
                 {props.onEdit ? (
@@ -74,11 +74,11 @@ class EditableRow extends Component {
         return this.renderViewRow(this.props.row, this.props.index);
     }
 
-    renderViewRow(row, index) {
+    renderViewRow(_row, _index) {
         throw new Error("Requires implementation");
     }
 
-    renderEditRow(row, index) {
+    renderEditRow(_row, _index) {
         throw new Error("Requires implementation");
     }
 }

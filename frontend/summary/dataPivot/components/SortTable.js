@@ -68,7 +68,7 @@ class SortingTable extends Component {
                                                 items={data.custom.map(d => {
                                                     return {id: d, label: d};
                                                 })}
-                                                onOrderChange={(id, oldIndex, newIndex) =>
+                                                onOrderChange={(_id, oldIndex, newIndex) =>
                                                     store.changeOrder(idx, oldIndex, newIndex)
                                                 }
                                             />

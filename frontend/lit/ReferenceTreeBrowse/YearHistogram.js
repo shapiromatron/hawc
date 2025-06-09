@@ -83,7 +83,7 @@ class YearHistogram extends Component {
                 config={config}
                 useResizeHandler={true}
                 style={{width: "100%", height: 180}}
-                onClick={function(e, d) {
+                onClick={function (e, _d) {
                     /*
                     Ideally, the click events could discern if a bar was clicked or the background
                     is clicked, but that data doesn't appear available. Therefore, we check to see

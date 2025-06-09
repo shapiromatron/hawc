@@ -88,13 +88,15 @@ class TestBioassay(PlaywrightTestCase):
         page.locator("text=Update").nth(2).click()
 
         expect(page).to_have_url(re.compile(r"/ani/dosing-regime/\d+/update/"))
-        page.locator("text=Add new representation").click()
-        page.locator("text=mg/kg/dµM Delete >> select").select_option("2")
+        expect(page.locator("text=Add new representation")).to_be_visible()
+        page.get_by_role("link", name="Add new representation").click()
+
+        page.locator("#dose-unit-1").select_option("2")
         page.locator("#dose_0").nth(1).fill("0")
         page.locator("#dose_1").nth(1).fill("10")
         page.locator("#dose_2").nth(1).fill("20")
         page.locator("#dose_3").nth(1).fill("30")
-        page.locator('input:has-text("Save")').click()
+        page.get_by_role("button", name="Save").click()
 
         expect(page).to_have_url(re.compile(r"/ani/animal-group/\d+/"))
         page.locator("text=Actions").click()

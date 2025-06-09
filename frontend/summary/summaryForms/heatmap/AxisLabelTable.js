@@ -90,7 +90,7 @@ class AxisLabelTable extends Component {
                     {hasItems ? (
                         <SortableList
                             items={row.items}
-                            onOrderChange={(id, oldIndex, newIndex) => {
+                            onOrderChange={(_id, oldIndex, newIndex) => {
                                 changeOrderArrayItems(key, index, oldIndex, newIndex);
                             }}
                         />

@@ -1,7 +1,7 @@
 import _ from "lodash";
 import h from "shared/utils/helpers";
 
-export const getColumnValues = function(dataset, column, delimiter) {
+export const getColumnValues = function (dataset, column, delimiter) {
     // Get column values for a column in a dataset.  Returns unique values, and removes
     // cases where multiple falsy-like values are represented.
     return _.chain(dataset)

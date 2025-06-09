@@ -12,7 +12,7 @@ const termUrlLookupMap = {
         "id-lookup-1": "/vocab/api/ehv/:id/endpoint-name-lookup/",
         "id-lookup-2": "/vocab/api/toxrefdb/:id/endpoint-name-lookup/",
     },
-    termUrlLookup = function(term, vocab) {
+    termUrlLookup = function (term, vocab) {
         return termUrlLookupMap[`${term}-${vocab}`];
     },
     textUrlLookup = {
