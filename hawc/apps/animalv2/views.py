@@ -263,17 +263,6 @@ class ExperimentChildViewSet(HtmxViewSet):
         return context
 
 
-class ExperimentFilterList(BaseFilterList):
-    template_name = "animalv2/experiment_list.html"
-    parent_model = Assessment
-    model = models.Experiment
-    filterset_class = filterset.ExperimentFilterSet
-    paginate_by = 50
-
-    def get_queryset(self):
-        return super().get_queryset()
-
-
 class ChemicalViewSet(ExperimentChildViewSet):
     model = models.Chemical
     form_class = forms.ChemicalForm

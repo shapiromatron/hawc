@@ -43,7 +43,6 @@ urlpatterns = [
         views.ExperimentDetail.as_view(),
         name="experiment_detail",
     ),
-    path("assessment/<int:pk>/", views.ExperimentFilterList.as_view(), name="experiment_list"),
     path(
         "experiment/<int:pk>/delete/",
         views.ExperimentDelete.as_view(),
