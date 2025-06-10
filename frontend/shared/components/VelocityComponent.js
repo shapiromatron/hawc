@@ -1,67 +1,50 @@
 import PropTypes from "prop-types";
-import React, {Component} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
-class VelocityComponent extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            animated: false,
-        };
-        this.elementRef = React.createRef();
-    }
+function VelocityComponent({animation, duration, easing, runOnMount, children}) {
+    const [animated, setAnimated] = useState(false);
+    const elementRef = useRef();
 
-    componentDidMount() {
-        if (this.props.runOnMount) {
+    useEffect(() => {
+        if (runOnMount) {
             // Use requestAnimationFrame to ensure the initial state is rendered before animation
             requestAnimationFrame(() => {
-                this.setState({animated: true});
+                setAnimated(true);
             });
         }
-    }
+    }, [runOnMount]);
 
-    componentDidUpdate(prevProps) {
-        // If runOnMount changes to true, start animation
-        if (!prevProps.runOnMount && this.props.runOnMount) {
-            this.setState({animated: true});
-        }
-    }
+    // Apply animation styles when animated
+    const animatedStyle = animated ? animation : {};
 
-    render() {
-        const {animation, duration, children} = this.props;
-        const {animated} = this.state;
-
-        // Apply animation styles when animated
-        const animatedStyle = animated ? animation : {};
-
-        // Create transition CSS for smooth animation
-        const transitionDuration = `${duration}ms`;
-        const transitionStyle = {
+    // Create transition CSS for smooth animation
+    const transitionDuration = `${duration}ms`,
+        transitionStyle = {
             transition: Object.keys(animation)
-                .map(prop => `${prop} ${transitionDuration} ease-out`)
+                .map(prop => `${prop} ${transitionDuration} ${easing}`)
                 .join(", "),
             ...animatedStyle,
         };
 
-        // Clone the child element and apply the animation styles
-        return React.cloneElement(React.Children.only(children), {
-            ref: this.elementRef,
-            style: {
-                ...children.props.style,
-                ...transitionStyle,
-            },
-        });
-    }
+    // Use a wrapper div instead of cloning the child element for better accessibility
+    return (
+        <div ref={elementRef} style={transitionStyle}>
+            {children}
+        </div>
+    );
 }
 
 VelocityComponent.propTypes = {
     animation: PropTypes.object.isRequired,
     duration: PropTypes.number,
+    easing: PropTypes.string,
     runOnMount: PropTypes.bool,
-    children: PropTypes.element.isRequired,
+    children: PropTypes.node.isRequired,
 };
 
 VelocityComponent.defaultProps = {
     duration: 1000,
+    easing: "ease-out",
     runOnMount: false,
 };
 
