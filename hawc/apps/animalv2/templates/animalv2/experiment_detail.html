@@ -8,6 +8,10 @@
         <span class="dropdown-header">Experiment editing</span>
         <a class="dropdown-item" href="{{object.get_update_url}}">Update</a>
         <a class="dropdown-item" href="{{object.get_delete_url}}">Delete</a>
+        {% if assessment.enable_observations and object.guideline %}
+          <span class="dropdown-header">Guideline Observations</span>
+          <a class="dropdown-item" href="{% url 'animalv2:observation-list' object.pk %}">View</a>
+        {% endif %}
       {% endactions %}
     {% endif %}
   </div>
