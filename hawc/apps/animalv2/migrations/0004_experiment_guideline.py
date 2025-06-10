@@ -1,16 +1,24 @@
+import django.db.models.deletion
 from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
     dependencies = [
         ("animalv2", "0003_add_ordering"),
+        ("vocab", "0010_load_guideline_profiles"),
     ]
 
     operations = [
         migrations.AddField(
             model_name="experiment",
             name="guideline",
-            field=models.CharField(blank=True, max_length=128, null=True),
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Guideline protocol used to describe this experiment.",
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="vocab.guideline",
+            ),
         ),
         migrations.CreateModel(
             name="Observation",

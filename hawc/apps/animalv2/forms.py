@@ -6,7 +6,7 @@ from django.urls import reverse
 from ..assessment.autocomplete import DSSToxAutocomplete
 from ..common.autocomplete import AutocompleteSelectWidget, AutocompleteTextWidget
 from ..common.forms import BaseFormHelper
-from ..vocab.models import GuidelineProfile
+from ..vocab.models import Guideline
 from . import autocomplete, constants, models
 
 
@@ -63,12 +63,13 @@ class ExperimentForm(ModelForm):
         if parent:
             self.instance.study = parent
 
+        if self.instance.study.assessment.enable_observations:
+            self.fields["guideline"].required = True
+            self.fields["guideline"].empty_label = None
+
         # change checkbox to select box
         self.fields["has_multiple_generations"].widget = forms.Select(
             choices=((True, "Yes"), (False, "No"))
-        )
-        self.fields["guideline"].widget = forms.Select(
-            choices=GuidelineProfile.objects.get_guideline_choices()  # TODO - fix
         )
 
     @property
@@ -101,6 +102,7 @@ class ExperimentForm(ModelForm):
 
         helper.form_id = "experiment-v2-form"
         helper.add_row("name", 3, "col-md-4")
+        helper.add_row("guideline_compliance", 2, "col-md-6")
         set_textarea_height(self.fields)
 
         return helper
