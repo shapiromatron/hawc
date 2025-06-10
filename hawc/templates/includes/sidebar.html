@@ -49,12 +49,6 @@
           </li>
         {% endif %}
 
-        {% if assessment.enable_observations %}
-          <li class="{{li_class}}">
-            <a class="{{a_class}}" href="{% url 'animalv2:experiment_list' assessment.pk %}">Observations</a>
-          </li>
-        {% endif %}
-
         {% if assessment.enable_downloads %}
           <li class="{{li_class}}">
             <a class="{{a_class}}" href="{% url 'assessment:downloads' assessment.pk %}">Downloads</a>
