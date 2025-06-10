@@ -1,6 +1,6 @@
 import pytest
 
-from hawc.apps.animalv2.models import Term
+from hawc.apps.vocab.models import Term
 
 
 @pytest.mark.django_db

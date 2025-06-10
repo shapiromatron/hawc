@@ -1,5 +1,3 @@
-import logging
-
 import pandas as pd
 from django.conf import settings
 from django.views.generic import TemplateView
@@ -7,8 +5,6 @@ from django.views.generic import TemplateView
 from ..common.crumbs import Breadcrumb
 from ..common.helper import WebappConfig, cacheable
 from . import models
-
-logger = logging.getLogger(__name__)
 
 
 class VocabBrowse(TemplateView):
