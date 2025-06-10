@@ -79,6 +79,6 @@ class ObservationStatus(TextChoices):
 
     NM = "NM", "NM"
     NR = "not required", "not required"
-    REC = "recommended", "recommended"
-    REQ = "required", "required"
-    TR = "triggered", "triggered"
+    RECOMMENDED = "recommended", "recommended"
+    REQUIRED = "required", "required"
+    TRIGGERED = "triggered", "triggered"

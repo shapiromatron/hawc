@@ -19,17 +19,11 @@ class ObservationFilterSet(BaseFilterSet):
     )
     tested_status = df.ChoiceFilter(
         empty_label="- Tested Status -",
-        choices=[
-            (True, True),
-            (False, False),
-        ],
+        choices=[(True, True), (False, False)],
     )
     reported_status = df.ChoiceFilter(
         empty_label="- Reported Status -",
-        choices=[
-            (True, True),
-            (False, False),
-        ],
+        choices=[(True, True), (False, False)],
     )
     order_by = ObservationOrderingFilter(
         label="Ordering",
@@ -48,35 +42,36 @@ class ObservationFilterSet(BaseFilterSet):
         main_field = "endpoint_target"
         appended_fields = ["tested_status", "reported_status", "order_by"]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def filter(self, items: list[models.Observation]) -> list[models.Observation]:
+        # custom method that acts on a list, not a QuerySet; mirrors parent implementation
+        if self.is_bound:
+            self.errors  # noqa: B018 - this is not a noop; checks for validation errors
+            items = self._filter(items)
+        return items
 
-    def filter(self, observations):
-        tested_status = self.request.GET.get("tested_status")
-        reported_status = self.request.GET.get("reported_status")
-        endpoint_target = self.request.GET.get("endpoint_target")
-        order_by = self.request.GET.get("order_by", "-system")
-        descending = order_by.startswith("-")
+    def _filter(self, items):
+        # filter
+        for name, value in self.form.cleaned_data.items():
+            if not value:
+                continue
+            if name == "tested_status":
+                status = False if value == "False" else True
+                items = [item for item in items if item.tested_status == status]
+            elif name == "reported_status":
+                status = False if value == "False" else True
+                items = [item for item in items if item.reported_status == status]
+            elif name == "endpoint_target":
+                items = [item for item in items if value in item.endpoint.name]
 
-        if tested_status:
-            status = False if tested_status == "False" else True
-            observations = [item for item in observations if item.tested_status == status]
-        if reported_status:
-            status = False if reported_status == "False" else True
-            observations = [item for item in observations if item.reported_status == status]
-        if endpoint_target:
-            observations = [item for item in observations if item.endpoint.name == endpoint_target]
-
-        key_functions = {
+        # sort
+        ordering = self.form.cleaned_data.get("order_by", ["system"])[0]
+        descending = "-" in ordering
+        sort_by = ordering.replace("-", "")
+        sort_key_functions = {
             "effect subtype": lambda x: x.endpoint.name,
             "effect": lambda x: x.endpoint.parent.name,
             "system": lambda x: x.endpoint.parent.parent.name,
         }
+        items = sorted(items, key=sort_key_functions[sort_by], reverse=descending)
 
-        # set a default order
-        if order_by not in key_functions.keys():
-            order_by = "system"
-            order_by = order_by.replace("-", "")
-
-        observations = sorted(observations, key=key_functions[order_by], reverse=descending)
-        return observations
+        return items

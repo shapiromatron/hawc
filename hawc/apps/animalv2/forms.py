@@ -6,7 +6,6 @@ from django.urls import reverse
 from ..assessment.autocomplete import DSSToxAutocomplete
 from ..common.autocomplete import AutocompleteSelectWidget, AutocompleteTextWidget
 from ..common.forms import BaseFormHelper
-from ..vocab.models import Guideline
 from . import autocomplete, constants, models
 
 

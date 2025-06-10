@@ -10,6 +10,7 @@ _successful_post = {
     "design": "AA",
     "has_multiple_generations": False,
     "guideline_compliance": "test compliance",
+    "guideline": 1,
     "comments": "<p>test comments</p>",
 }
 

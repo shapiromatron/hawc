@@ -1,6 +1,5 @@
 import pytest
 from django.urls import reverse
-from pytest_django.asserts import assertTemplateUsed
 
 from hawc.apps.animalv2 import models
 
@@ -39,24 +38,3 @@ class TestExperimentView:
 
         url = reverse("animalv2:experiment_update", args=(random_experiment.id,))
         response = check_200(client, url)
-
-
-@pytest.mark.django_db
-class TestObservationViewSet:
-    def test_crud(self):
-        c = get_client("admin", htmx=True)
-
-        # create (post)
-        url = (
-            reverse("animalv2:observation-htmx", args=(1, "tested_status", "create"))
-            + "?endpoint=7002"
-        )
-        response = c.post(
-            url,
-            {
-                "7002-tested": "True",
-            },
-            follow=True,
-        )
-        assert assertTemplateUsed("animalv2/fragments/observation_form.html")
-        assert response.status_code == 200

@@ -20200,7 +20200,7 @@
     design: AA
     has_multiple_generations: false
     guideline_compliance: test compliance
-    guideline: 90-day Oral Toxicity in Rodents
+    guideline: 1
     comments: <p>test comments</p>
     created: 2024-01-20 21:12:17.714337+00:00
     last_updated: 2024-01-21 20:38:10.024296+00:00
