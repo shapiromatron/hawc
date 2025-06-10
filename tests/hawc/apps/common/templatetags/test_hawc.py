@@ -1,6 +1,14 @@
 import pytest
 
-from hawc.apps.common.templatetags.hawc import e_notation, hastext
+from hawc.apps.assessment.models import Assessment
+from hawc.apps.common.templatetags.hawc import admin_url, e_notation, hastext
+
+
+@pytest.mark.django_db
+def test_admin_url():
+    assessment = Assessment.objects.get(id=1)
+    url = admin_url(assessment)
+    assert url == "/admin/assessment/assessment/1/change/"
 
 
 class TestHasText:
