@@ -1513,6 +1513,24 @@
     deprecated_on: null
     created_on: 2020-08-12 14:11:50.023861+00:00
     last_updated: 2020-08-12 14:11:50.023879+00:00
+- model: vocab.guideline
+  pk: 1
+  fields:
+    number: abc-number
+    name: abc-name
+    profile_name: abc-profile
+    description: abc-test
+    created_on: 2020-08-12 14:11:50.023861+00:00
+    last_updated: 2020-08-12 14:11:50.023879+00:00
+- model: vocab.guideline
+  pk: 2
+  fields:
+    number: def-number
+    name: def-name
+    profile_name: def-profile
+    description: def-test
+    created_on: 2020-08-12 14:11:50.023861+00:00
+    last_updated: 2020-08-12 14:11:50.023879+00:00
 - model: vocab.guidelineprofile
   pk: 1
   fields:

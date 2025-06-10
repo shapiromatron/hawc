@@ -1,6 +1,5 @@
 import pandas as pd
 from django.db import models
-from django.urls import reverse
 from reversion import revisions as reversion
 
 from ..myuser.models import HAWCUser

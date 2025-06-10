@@ -1,7 +1,7 @@
 import pytest
 
 from hawc.apps.vocab.constants import VocabularyNamespace
-from hawc.apps.vocab.models import Entity, GuidelineProfile, Term
+from hawc.apps.vocab.models import Entity, Term
 
 
 @pytest.mark.django_db

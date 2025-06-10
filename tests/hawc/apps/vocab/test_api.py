@@ -237,22 +237,3 @@ class TestTermViewSet:
         assert terms[0].id == response.json()[0]["id"] and terms[0].uid == response.json()[0]["uid"]
         # deprecated_on has been set on term 2
         assert terms[1].id == response.json()[1]["id"] and terms[1].deprecated_on is not None
-
-
-@pytest.mark.django_db
-class TestGuidelineProfileViewSet:
-    def test_export(self):
-        client = APIClient()
-        assert client.login(username="admin@hawcproject.org", password="pw") is True
-        url = (
-            reverse("vocab:api:guideline_profile-export", args=["90-day Oral Toxicity in Rodents"])
-            + "?format=csv"
-        )
-
-        resp = client.get(url)
-        assert resp.status_code == 200
-        data = resp.content.decode().split("\n")
-        assert len(data) >= 2
-        assert (
-            data[0] == "id,guideline_id,endpoint_id,obs_status,description,created_on,last_updated"
-        )
