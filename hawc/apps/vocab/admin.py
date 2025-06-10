@@ -29,3 +29,17 @@ class TermAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+@admin.register(models.Guideline)
+class GuidelineAdmin(admin.ModelAdmin):
+    list_display = ("id", "number", "name", "profile_name", "description")
+
+
+@admin.register(models.GuidelineProfile)
+class GuidelineProfileAdmin(admin.ModelAdmin):
+    list_display = ("id", "guideline", "endpoint_id", "obs_status", "description")
+    list_filter = ("guideline", "obs_status")
+    list_select_related = ("guideline", "endpoint")
+    search_fields = ("endpoint__name",)
+    raw_id_fields = ("endpoint",)

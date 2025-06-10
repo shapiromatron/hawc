@@ -1,0 +1,49 @@
+import django.db.models.deletion
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+    dependencies = [
+        ("animalv2", "0003_add_ordering"),
+        ("vocab", "0010_load_guideline_profiles"),
+    ]
+
+    operations = [
+        migrations.AddField(
+            model_name="experiment",
+            name="guideline",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Guideline protocol used to describe this experiment.",
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                to="vocab.guideline",
+            ),
+        ),
+        migrations.CreateModel(
+            name="Observation",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+                    ),
+                ),
+                (
+                    "experiment",
+                    models.ForeignKey(on_delete=models.deletion.CASCADE, to="animalv2.experiment"),
+                ),
+                (
+                    "endpoint",
+                    models.ForeignKey(on_delete=models.deletion.PROTECT, to="vocab.term"),
+                ),
+                ("tested_status", models.BooleanField(default=False)),
+                ("reported_status", models.BooleanField(default=False)),
+                ("created_on", models.DateTimeField(auto_now_add=True)),
+                ("last_updated", models.DateTimeField(auto_now=True)),
+            ],
+            options={
+                "ordering": ("id",),
+            },
+        ),
+    ]

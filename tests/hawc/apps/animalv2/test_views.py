@@ -11,6 +11,7 @@ def test_get_200(db_keys):
     client = get_client("team")
     urls = [
         reverse("animalv2:studylevelvalues", args=(db_keys.study_working,)),
+        reverse("animalv2:observation-list", args=(1,)),
     ]
     for url in urls:
         check_200(client, url)

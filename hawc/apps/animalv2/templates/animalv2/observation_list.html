@@ -1,0 +1,80 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+  <div class="d-flex">
+    <h2>Observations</h2>
+  </div>
+  <div>
+    <p>
+      The Observation module allows for distinction between missing (not tested) and negative (tested with no effect seen) endpoints for studies that adhere to a guideline. A table of observed endpoints is populated with tested statuses based on the “Study Type” selection from <i>{{ guideline }}</i>. The tested status is derived from whether the endpoint is required, recommended, triggered, not required, or mentioned by the study’s most closely related OCSPP Health Effects 870 Series guideline or guideline profile developed for studies from theNational Toxicology Program (NTP). By default, “Tested Status = Yes” indicates observations are required by the guideline, whereas all others will show as “Tested Status = No”, and all observations are initially assumed “Reported Status = No”. When the curator enters the module, endpoints that have extracted effects data within the experiment will automatically get set as ““Reported Status = Yes”. For the remaining observations, curators will manually change these selections according to the details provided in the document. Updating to “Reported Status = Yes” should be done when the document indicates whether the effect was measured or not, regardless of whether the reported results indicated positive effects or not. Typically, only endpoints showing positive effects are reported. Only observations with changes from default statuses will be saved.
+    </p>
+    <a href="#observation-help-text" data-toggle="collapse">Expand overview</a>
+    <div id="observation-help-text" class="collapse">
+      {% include "animalv2/fragments/observation_help_text.html" %}
+    </div>
+  </div>
+  {% include 'common/inline_filter_form.html' %}
+
+  <table class="table table-sm table-striped">
+    {% bs4_colgroup "20,20,30,10,10,10" %}
+    <thead>
+      <tr>
+        <th class="popovers" data-title="System" data-html="true"
+            data-content="
+                          <p>The health effect category/biological system an endpoint/outcome or group of
+                          related endpoints/outcomes within a health effect category. 'System' maps
+                          to 'endpoint_category' in ToxRefDB as the broadest descriptive term for an endpoint.
+                          Possible endpoint categories include: systemic, developmental, reproductive, and cholinesterase.
+                          </p>">System {% icon "fa-question-circle" %}
+        </th>
+        <th class="popovers" data-title="Effect" data-html="true"
+            data-content="
+                          <p>A group of related outcomes considered as a health effect category and/or unit of analysis
+                          typically considered together during evidence synthesis. 'Effect' maps to 'endpoint_type' in
+                          ToxRefDB as a subcategory for endpoint_category, which is more descriptive for a particular
+                          endpoint (e.g. pathology gross, clinical chemistry, reproductive performance, etc.)
+                          </p>">Effect {% icon "fa-question-circle" %}
+        </th>
+        <th class="popovers" data-title="Effect Subtype" data-html="true"
+            data-content="
+                          <p>An outcome or measurement within an effect. 'Effect_subtype' maps to 'Endpoint_target' in
+                          ToxRefDB indicating where or how the sample was collected to supply data for a particular
+                          endpoint. Typically describes an organ/tissue or metabolite/protein measured.
+                          </p>">Effect Subtype {% icon "fa-question-circle" %}
+        </th>
+        <th>Default</th>
+        <th class="popovers" data-title="Tested Status" data-html="true"
+            data-content="
+                          <p>Tested status indicates whether or not the outcome is required by corresponding guideline.
+                          </p>">Tested Status {% icon "fa-question-circle" %}
+        </th>
+        <th class="popovers" data-title="Reported Status" data-html="true"
+            data-content="
+                          <p>Reported status indicates whether or not the observation was reported within the corresponding experiment.
+                          </p>">Reported Status {% icon "fa-question-circle" %}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for object in object_list %}
+        {% include "animalv2/fragments/observation_row.html" with experiment=experiment %}
+      {% empty %}
+        <tr>
+          <td colspan="100%">
+            <i>Observations have not been populated for this study yet: no guideline has been selected</i>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}
+
+{% block extrajs %}
+  {{ config|json_script:"config" }}
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $(".popovers").popover({"trigger":"hover"});
+    });
+  </script>
+{% endblock %}

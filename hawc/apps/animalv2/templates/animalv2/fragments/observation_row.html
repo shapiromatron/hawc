@@ -1,0 +1,8 @@
+<tr class="observation-row">
+  <td>{{ object.endpoint.parent.parent.name }}</td>
+  <td>{{ object.endpoint.parent.name }}</td>
+  <td>{{ object.endpoint.name }}</td>
+  <td>{{object.id|yesno:'-,✔'}}</td>
+  <td>{{object.tested_status|yesno:'✔,𐄂,?'}}</td>
+  <td>{{object.reported_status|yesno:'✔,𐄂,?'}}</td>
+</tr>

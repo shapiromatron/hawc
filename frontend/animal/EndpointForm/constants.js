@@ -62,14 +62,14 @@ const termUrlLookupMap = {
             endpoint_name_parent: "effect_subtype_term_id",
         },
         helpText: {
-            system_popup: `The health effect category/biological system an endpoint/outcome or group of related endpoints/outcomes within a health effect category. "Multi-system" is an option for widespread effects. If the Endpoint is measured in Blood, Urine, or biological media other than the affected system, extract the media term in the Effect Subtype field.`,
+            system_popup: `The health effect category/biological system an endpoint/outcome or group of related endpoints/outcomes within a health effect category. 'System' maps to 'endpoint_category' in ToxRefDB as the broadest descriptive term for an endpoint. Possible endpoint categories include: systemic, developmental, reproductive, and cholinesterase.`,
             system: `The health effect category/biological system an endpoint/outcome or group of related endpoints/outcomes within a health effect category. Please use a controlled vocabulary term if possible.`,
-            effect_popup: `A group of related outcomes considered as a health effect category and/or unit of analysis typically considered together during evidence synthesis.`,
+            effect_popup: `A group of related outcomes considered as a health effect category and/or unit of analysis typically considered together during evidence synthesis. 'Effect' maps to 'endpoint_type' in ToxRefDB as a subcategory for endpoint_category, which is more descriptive for a particular endpoint (e.g. pathology gross, clinical chemistry, reproductive performance, etc.`,
             effect: `Related outcomes (e.g., unit of analysis) considered together during evidence synthesis. Please use a controlled vocabulary term if possible.`,
-            effect_subtype_popup: `An outcome or measurement within an effect.`,
+            effect_subtype_popup: `An outcome or measurement within an effect. 'Effect_subtype' maps to 'Endpoint_target' in ToxRefDB indicating where or how the sample was collected to supply data for a particular endpoint. Typically describes an organ/tissue or metabolite/protein measured.`,
             effect_subtype: `Please use a controlled vocabulary term if possible.`,
             endpoint_name_popup: `An observable or measurable biological change used as an index of a potential health effect of an exposure. Endpoint may also be referred to as effect, outcome, or event. Search for the best match based on the author reported term. Use the field "Diagnostic (as reported)" to capture as reported by study authors. If no existing term matches, deselect use EHV for endpoint and enter the name as reported. Do not include units. If an endpoint is a repeated measure, indicate the time in parentheses, [e.g., running wheel activity (6 wk)], using the abbreviated format: seconds = sec, minutes = min, hours = h, days = d, weeks = wk, months = mon, years = y.`,
-            endpoint_name: `An observable or measurable biological change used as an index of a potential health effect of an exposure. Endpoint may also be referred to as effect or outcome. For a searchable list of ToxRefDB Vocabulary terms, see the <a href="/vocab/toxrefdb/">ToxRefDB.</a> Enter the term ID and all relationships to this term will automatically populate. Please use a controlled vocabulary term if possible.`,
+            endpoint_name: `An observable or measurable biological change used as an index of a potential health effect of an exposure. 'Endpoint_name' maps to 'Effect_desc' in ToxRefDB, detailing a specific condition associated with an endpoint_target (e.g. dysplasia, atrophy, necrosis, etc.`,
         },
     },
     defaultHelpText = {

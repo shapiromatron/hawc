@@ -6,15 +6,6 @@ from hawc.apps.vocab.models import Entity, Term
 
 @pytest.mark.django_db
 class TestTerm:
-    def test_attributes(self):
-        term = Term.objects.get(id=1)
-        assert str(term) == "EHV::system::Cardiovascular"
-        assert term.get_admin_edit_url() == "/admin/vocab/term/1/change/"
-
-        term = Term.objects.get(id=7002)
-        assert str(term) == "ToxRefDB::effect_subtype::eye"
-        assert term.get_admin_edit_url() == "/admin/vocab/term/7002/change/"
-
     def test_inheritance(self):
         # ehv
         term = Term.objects.get(id=5)

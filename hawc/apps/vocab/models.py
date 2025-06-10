@@ -1,6 +1,5 @@
 import pandas as pd
 from django.db import models
-from django.urls import reverse
 from reversion import revisions as reversion
 
 from ..myuser.models import HAWCUser
@@ -31,9 +30,6 @@ class Term(models.Model):
     @property
     def deprecated(self) -> bool:
         return self.deprecated_on is not None
-
-    def get_admin_edit_url(self) -> str:
-        return reverse("admin:vocab_term_change", args=(self.id,))
 
     @classmethod
     def vocab_dataframe(cls, namespace: constants.VocabularyNamespace) -> pd.DataFrame:
@@ -202,6 +198,42 @@ class EntityTermRelation(models.Model):
         return f"{self.term} -> {self.entity}"
 
 
+class Guideline(models.Model):
+    """A guideline is a collection of profiles that define how to observe endpoints in a study.
+
+    For more information, see Series 870 - Health Effects Test Guidelines
+    https://www.epa.gov/test-guidelines-pesticides-and-toxic-substances/series-870-health-effects-test-guidelines
+    """
+
+    id = models.PositiveIntegerField(primary_key=True)
+    number = models.CharField(max_length=16)
+    name = models.CharField(max_length=64)
+    profile_name = models.CharField(max_length=32, unique=True)
+    description = models.TextField(blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
+
+    def __str__(self) -> str:
+        return f"[{self.id}] {self.number} - {self.profile_name}"
+
+
+class GuidelineProfile(models.Model):
+    guideline = models.ForeignKey(Guideline, on_delete=models.CASCADE, related_name="profiles")
+    endpoint = models.ForeignKey("Term", on_delete=models.CASCADE, blank=True, null=True)
+    obs_status = models.CharField(choices=constants.ObservationStatus, null=True)
+    description = models.TextField(blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("guideline_id", "id")
+
+
 reversion.register(Term)
 reversion.register(Entity)
 reversion.register(EntityTermRelation)
+reversion.register(Guideline)
+reversion.register(GuidelineProfile)

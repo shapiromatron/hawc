@@ -1,4 +1,4 @@
-from django.db.models import IntegerChoices
+from django.db.models import IntegerChoices, TextChoices
 from django.urls import reverse
 
 
@@ -70,3 +70,15 @@ class Ontology(IntegerChoices):
     """
 
     umls = 1, "UMLS"
+
+
+class ObservationStatus(TextChoices):
+    """
+    Guideline profile observation status
+    """
+
+    NM = "NM", "NM"
+    NR = "not required", "not required"
+    RECOMMENDED = "recommended", "recommended"
+    REQUIRED = "required", "required"
+    TRIGGERED = "triggered", "triggered"

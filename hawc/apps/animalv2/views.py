@@ -4,12 +4,14 @@ from django.forms import BaseForm, modelformset_factory
 from django.http import HttpRequest
 from django.shortcuts import render
 
+from ..assessment.constants import AssessmentViewPermissions
 from ..common.forms import FormsetGenericFormHelper
 from ..common.htmx import HtmxViewSet, Item, action, can_edit, can_view
 from ..common.views import (
     BaseCreate,
     BaseDelete,
     BaseDetail,
+    BaseFilterList,
     BaseList,
     BaseUpdate,
     FormsetConfiguration,
@@ -17,7 +19,7 @@ from ..common.views import (
 )
 from ..mgmt.views import EnsureExtractionStartedMixin
 from ..study.models import Study
-from . import forms, models
+from . import filterset, forms, models
 
 # TODO - make sure HTML views efficiently query database, HTMX views lower priority
 
@@ -386,3 +388,27 @@ class StudyLevelValueViewSet(HtmxViewSet):
         form = forms.StudyLevelValueForm(data=None, instance=request.item.object)
         context = self.get_context_data(form=form)
         return render(request, self.detail_fragment, context)
+
+
+class ObservationList(BaseFilterList):
+    parent_model = models.Experiment
+    model = models.Observation
+    filterset_class = filterset.ObservationFilterSet
+    template_name = "animalv2/observation_list.html"
+    paginate_by = None
+    assessment_permission = AssessmentViewPermissions.TEAM_MEMBER_EDITABLE
+
+    def get_queryset(self) -> list[models.Observation]:
+        # This custom queryset method returns both instances save din the db and dynamically
+        # created instances; thus the handling logic is slightly different han a conventional
+        # filter list which relies exclusively on database queries
+        if self.parent.guideline is None:
+            return super().get_queryset().none()
+        self._filterset = self.filterset_class(
+            data=self.request.GET,
+            queryset=self.model.objects.none(),
+            request=self.request,
+            form_kwargs=self.get_filterset_form_kwargs(),
+        )
+        observations = self.model.generate_observations(self.parent)
+        return self._filterset.filter(observations)

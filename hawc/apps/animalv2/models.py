@@ -1,3 +1,5 @@
+from typing import Self
+
 import reversion
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -5,7 +7,8 @@ from django.urls import reverse
 
 from ..assessment.models import DSSTox, EffectTag
 from ..common.models import clone_name
-from ..vocab.models import Term
+from ..vocab.constants import ObservationStatus
+from ..vocab.models import Guideline, GuidelineProfile, Term
 from . import constants, managers
 
 
@@ -30,6 +33,13 @@ class Experiment(models.Model):
         max_length=128,
         blank=True,
         help_text="""Description of any compliance methods used (i.e. use of EPA OECD, NTP, or other guidelines; conducted under GLP guideline conditions, non-GLP but consistent with guideline study, etc.). This field response should match any description used in study evaluation in the reporting quality domain, e.g., GLP study (OECD guidelines 414 and 412, 1981 versions). If not reported, then use state \"not reported.\"""",
+    )
+    guideline = models.ForeignKey(
+        Guideline,
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+        help_text="""Guideline protocol used to describe this experiment.""",
     )
     comments = models.TextField(
         blank=True,
@@ -578,6 +588,90 @@ class StudyLevelValue(models.Model):
         return reverse("animalv2:studylevelvalues-htmx", args=[self.pk, "delete"])
 
 
+class Observation(models.Model):
+    objects = managers.ObservationManager()
+
+    experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE)
+    endpoint = models.ForeignKey(
+        Term, on_delete=models.PROTECT
+    )  # TODO - should this save guideline profile instead?
+    tested_status = models.BooleanField(default=False)
+    reported_status = models.BooleanField(default=False)
+    created_on = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("id",)
+
+    def __str__(self) -> str:
+        return f"{self.experiment}:{self.endpoint}"
+
+    def get_assessment(self):
+        return self.experiment.get_assessment()
+
+    @classmethod
+    def default(
+        cls, experiment: Experiment, profile: GuidelineProfile, reported: bool = False
+    ) -> Self:
+        # Return a instance of the observation based on the profile
+        reported_status = False
+        tested_status = False
+        if reported or profile.obs_status == ObservationStatus.REQUIRED:
+            reported_status = True
+            tested_status = True
+        elif profile.obs_status in (ObservationStatus.RECOMMENDED, ObservationStatus.TRIGGERED):
+            reported_status = True
+            tested_status = False
+        return cls(
+            experiment=experiment,
+            endpoint=profile.endpoint,
+            tested_status=tested_status,
+            reported_status=reported_status,
+        )
+
+    @classmethod
+    def generate_observations(cls, experiment: Experiment) -> list[Self]:
+        """Given an experiment, return all observations"""
+        observations = []
+
+        # if no guideline; no observations required
+        if experiment.guideline_id is None:
+            return observations
+
+        # get guideline profile instances
+        profiles = GuidelineProfile.objects.filter(guideline=experiment.guideline)
+
+        # get all extracted experimental endpoints
+        endpoints = Endpoint.objects.filter(
+            experiment=experiment, effect_subtype_term_id__in=profiles.values_list("endpoint")
+        )
+        endpoint_dict = {e.effect_subtype_term_id: e for e in endpoints}
+
+        # add saved observations
+        # TODO select related for parents b/c of the filtering in filterset
+        #   (can this be improved to separate view from model logic?)
+        saved_observations = cls.objects.filter(experiment=experiment).select_related(
+            "endpoint__parent__parent__parent"
+        )
+        saved_observations_dict = {el.endpoint_id: el for el in saved_observations}
+
+        # generate observations for all profiles
+        # TODO select related for parents b/c of the filtering in filterset
+        #   (can this be improved to separate view from model logic?)
+        for profile in profiles.select_related("endpoint__parent__parent__parent"):
+            observation = saved_observations_dict.get(profile.endpoint_id)
+            matched_endpoint = endpoint_dict.get(profile.endpoint_id)
+
+            # generate and append unsaved observations
+            if observation is None:
+                observation = cls.default(experiment, profile, matched_endpoint is not None)
+
+            observation.endpoint_object = matched_endpoint
+            observations.append(observation)
+
+        return observations
+
+
 reversion.register(Experiment)
 reversion.register(Chemical)
 reversion.register(AnimalGroup)
@@ -589,3 +683,4 @@ reversion.register(DataExtraction)
 reversion.register(DoseResponseGroupLevelData)
 reversion.register(DoseResponseAnimalLevelData)
 reversion.register(StudyLevelValue)
+reversion.register(Observation)

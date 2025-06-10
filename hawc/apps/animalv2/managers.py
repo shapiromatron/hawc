@@ -39,3 +39,7 @@ class DoseResponseGroupLevelDataManager(BaseManager):
 
 class DoseResponseAnimalLevelDataManager(BaseManager):
     assessment_relation = "data_extraction__experiment__study__assessment"
+
+
+class ObservationManager(BaseManager):
+    assessment_relation = "experiment__study_assessment"

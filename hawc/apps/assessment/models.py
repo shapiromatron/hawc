@@ -258,6 +258,10 @@ class Assessment(models.Model):
         default=True,
         help_text="Show the downloads link on the assessment sidebar.",
     )
+    enable_observations = models.BooleanField(
+        default=False,
+        help_text="Observations can be used to identify negative effects in animal bioassay studies. The project must use the Toxicity Reference Database Vocabulary to use Observations.",
+    )
     conflicts_of_interest = models.TextField(
         blank=True,
         help_text="Describe any conflicts of interest by the assessment-team.",

@@ -87,3 +87,10 @@ class TestAnimalV2Models:
         for Model in [models.DoseResponseAnimalLevelData]:
             item = Model.objects.first()
             assert item.get_study().id == 1
+
+
+@pytest.mark.django_db
+class TestObservation:
+    def test_attributes(self):
+        observation = models.Observation.objects.get(id=1)
+        assert str(observation) == "Test Experiment:ToxRefDB::effect_subtype::eye"

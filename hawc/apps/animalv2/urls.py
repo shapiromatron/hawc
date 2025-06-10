@@ -95,4 +95,10 @@ urlpatterns = [
         views.StudyLevelValueViewSet.as_view(),
         name="studylevelvalues-htmx",
     ),
+    # Observations
+    path(
+        "experiment/<int:pk>/observations/",
+        views.ObservationList.as_view(),
+        name="observation-list",
+    ),
 ]
