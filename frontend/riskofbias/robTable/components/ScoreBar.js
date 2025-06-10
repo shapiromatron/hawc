@@ -2,8 +2,8 @@ import "./ScoreBar.css";
 
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import VelocityComponent from "shared/components/VelocityComponent";
 import h from "shared/utils/helpers";
-import {VelocityComponent} from "velocity-react";
 
 import {
     BIAS_DIRECTION_SIMPLE,
