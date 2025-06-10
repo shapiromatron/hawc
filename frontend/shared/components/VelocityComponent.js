@@ -15,10 +15,8 @@ function VelocityComponent({animation, duration, easing, runOnMount, children}) 
     }, [runOnMount]);
 
     // Apply animation styles when animated
-    const animatedStyle = animated ? animation : {};
-
-    // Create transition CSS for smooth animation
-    const transitionDuration = `${duration}ms`,
+    const animatedStyle = animated ? animation : {},
+        transitionDuration = `${duration}ms`,
         transitionStyle = {
             transition: Object.keys(animation)
                 .map(prop => `${prop} ${transitionDuration} ${easing}`)
@@ -26,12 +24,15 @@ function VelocityComponent({animation, duration, easing, runOnMount, children}) 
             ...animatedStyle,
         };
 
-    // Use a wrapper div instead of cloning the child element for better accessibility
-    return (
-        <div ref={elementRef} style={transitionStyle}>
-            {children}
-        </div>
-    );
+    // Clone the child element and apply the animation styles
+    // This preserves the original element's props and accessibility attributes
+    return React.cloneElement(React.Children.only(children), {
+        ref: elementRef,
+        style: {
+            ...children.props.style,
+            ...transitionStyle,
+        },
+    });
 }
 
 VelocityComponent.propTypes = {
@@ -39,7 +40,7 @@ VelocityComponent.propTypes = {
     duration: PropTypes.number,
     easing: PropTypes.string,
     runOnMount: PropTypes.bool,
-    children: PropTypes.node.isRequired,
+    children: PropTypes.element.isRequired,
 };
 
 VelocityComponent.defaultProps = {
