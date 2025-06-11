@@ -3,7 +3,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
 
-let getColWidths = function(numBmrs) {
+let getColWidths = function (numBmrs) {
         switch (numBmrs) {
             case 1:
                 return {
@@ -31,11 +31,8 @@ let getColWidths = function(numBmrs) {
                 };
         }
     },
-    binModels = function(models) {
-        return _.chain(models)
-            .groupBy("model_index")
-            .values()
-            .value();
+    binModels = function (models) {
+        return _.chain(models).groupBy("model_index").values().value();
     };
 
 class OutputTable extends React.Component {

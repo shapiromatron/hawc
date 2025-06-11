@@ -14,7 +14,7 @@ class SmartTagModal {
 
         m.find("#id_resource")
             .off("change")
-            .change(function() {
+            .change(function () {
                 let v = $(this).val(),
                     show,
                     hides = [
@@ -37,9 +37,7 @@ class SmartTagModal {
             })
             .trigger("change");
 
-        m.find(".smartTagSave")
-            .off("click")
-            .click(this.tryToSave.bind(this));
+        m.find(".smartTagSave").off("click").click(this.tryToSave.bind(this));
 
         m.on("shown.bs.modal", () => m.find("input").val(""));
 

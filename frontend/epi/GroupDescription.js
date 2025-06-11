@@ -5,7 +5,7 @@ class GroupDescription {
         this.data = data;
     }
 
-    build_tr(footnotes) {
+    build_tr(_footnotes) {
         var d = this.data,
             mean = "-",
             variance = "-",

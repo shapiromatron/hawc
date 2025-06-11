@@ -5,7 +5,7 @@ import {createRoot} from "react-dom/client";
 import App from "./App";
 import Store from "./store";
 
-export default function(el, config) {
+export default function (el, config) {
     const store = new Store(config);
 
     const root = createRoot(el);

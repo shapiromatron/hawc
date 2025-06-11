@@ -1,5 +1,5 @@
-import DssToxDetailTable from "assessment/components/DssToxDetailTable";
 import DssTox from "assessment/DssTox";
+import DssToxDetailTable from "assessment/components/DssToxDetailTable";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {createRoot} from "react-dom/client";
@@ -37,7 +37,7 @@ DssToxTabs.propTypes = {
     objects: PropTypes.arrayOf(PropTypes.object),
 };
 
-const renderDssToxTabs = function(el, objects) {
+const renderDssToxTabs = function (el, objects) {
     const substances = objects.map(d => new DssTox(d));
     const root = createRoot(el);
     root.render(<DssToxTabs objects={substances} />);

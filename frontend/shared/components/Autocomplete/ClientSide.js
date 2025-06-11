@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import Autosuggest from "react-autosuggest";
-import {createRoot} from "react-dom/client";
+import ReactDOM from "react-dom";
 import h from "shared/utils/helpers";
 
 import {theme} from "./constants";
@@ -42,7 +42,7 @@ class ClientSideAutosuggest extends Component {
                     className: "form-control",
                     name,
                     value,
-                    onChange: (event, {newValue}) => {
+                    onChange: (_event, {newValue}) => {
                         this.setState({value: newValue});
                     },
                 }}
@@ -57,9 +57,8 @@ ClientSideAutosuggest.propTypes = {
     options: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
-const renderClientSideAutosuggest = function(el, name, value, options) {
-    const root = createRoot(el);
-    root.render(<ClientSideAutosuggest name={name} value={value} options={options} />);
+const renderClientSideAutosuggest = function (el, name, value, options) {
+    ReactDOM.render(<ClientSideAutosuggest name={name} value={value} options={options} />, el);
 };
 
 export {ClientSideAutosuggest, renderClientSideAutosuggest};

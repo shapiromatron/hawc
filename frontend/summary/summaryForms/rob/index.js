@@ -7,7 +7,7 @@ import $ from "$";
 import {createRobStore} from "../stores";
 import App from "./App";
 
-const robFormAppStartup = function(el, config, djangoForm) {
+const robFormAppStartup = function (el, config, djangoForm) {
     const store = createRobStore(config, djangoForm);
     const root = createRoot(el);
     root.render(

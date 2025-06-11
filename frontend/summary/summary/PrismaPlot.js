@@ -11,7 +11,7 @@ import h from "shared/utils/helpers";
 const NAMESPACE = "http://www.w3.org/2000/svg",
     WORKSPACE_START_X = 20,
     WORKSPACE_START_Y = 20,
-    getGroup = function(id) {
+    getGroup = function (id) {
         let group = document.getElementById(id);
         if (!group) {
             return undefined;
@@ -35,7 +35,7 @@ const NAMESPACE = "http://www.w3.org/2000/svg",
             children,
         };
     },
-    updateNodeTextAttributes = function(node, attr = {}) {
+    updateNodeTextAttributes = function (node, attr = {}) {
         // update attributes to all text elements within a node
         node = getGroup(node.id);
         for (let text of node.text) {
@@ -44,14 +44,14 @@ const NAMESPACE = "http://www.w3.org/2000/svg",
             }
         }
     },
-    makeGroupTextVisible = function(node) {
+    makeGroupTextVisible = function (node) {
         for (let child of node.children) {
             child = getGroup(child.id);
             makeGroupTextVisible(child);
         }
         updateNodeTextAttributes(node, {display: "inline"});
     },
-    nodeOnClick = function(e, plot, refs) {
+    nodeOnClick = function (e, plot, refs) {
         e.stopPropagation();
 
         const {store} = plot,
@@ -65,7 +65,7 @@ const NAMESPACE = "http://www.w3.org/2000/svg",
             .then(resp => resp.text())
             .then(html => (detailEl.innerHTML = html));
     },
-    connectPoints = function(svg, id, xy1, xy2, arrowhead = true, styling = {}) {
+    connectPoints = function (svg, id, xy1, xy2, arrowhead = true, styling = {}) {
         let arrowType = "arrow" + styling["arrow-type"],
             arrow = d3Arrow[arrowType]().id(id);
         if (arrowhead) {
@@ -388,7 +388,7 @@ class PrismaPlot {
             return;
         }
 
-        _.each(col.items, (item, i) => {
+        _.each(col.items, (item, _i) => {
             let blockStyle = {},
                 subblockId = item.key,
                 subblockText = `• ${item.label}: ${item.value}`;
@@ -560,10 +560,7 @@ class PrismaPlot {
             return;
         }
         const bbs = sections.map(section =>
-                d3
-                    .select(document.getElementById(section.key))
-                    .node()
-                    .getBBox()
+                d3.select(document.getElementById(section.key)).node().getBBox()
             ),
             vPadding = Math.max(sections.length - 1, 0) * this.STYLE_DEFAULT["spacing-vertical"];
         this.w = _.max(bbs.map(bb => bb.width));

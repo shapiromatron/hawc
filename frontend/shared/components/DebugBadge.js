@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 
-const DebugBadge = function({text}) {
+const DebugBadge = function ({text}) {
     if (window.localStorage.getItem("hawc-debug-badge") != "true") {
         return null;
     }

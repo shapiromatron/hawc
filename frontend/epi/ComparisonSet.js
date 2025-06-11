@@ -11,7 +11,7 @@ import Group from "./Group";
 class ComparisonSet {
     constructor(data) {
         this.data = data;
-        this.groups = _.map(this.data.groups, function(d) {
+        this.groups = _.map(this.data.groups, function (d) {
             return new Group(d);
         });
         if (this.data.exposure) this.exposure = new Exposure(this.data.exposure);
@@ -30,7 +30,7 @@ class ComparisonSet {
     }
 
     static displayAsModal(id) {
-        ComparisonSet.get_object(id, function(d) {
+        ComparisonSet.get_object(id, function (d) {
             d.displayAsModal();
         });
     }
@@ -52,11 +52,7 @@ class ComparisonSet {
                 .append("<h3>Groups</h3>")
                 .append(this.build_groups_table());
 
-        modal
-            .addHeader(title)
-            .addBody($content)
-            .addFooter("")
-            .show({maxWidth: 1000});
+        modal.addHeader(title).addBody($content).addFooter("").show({maxWidth: 1000});
     }
 
     build_breadcrumbs() {
@@ -112,7 +108,7 @@ class ComparisonSet {
 
         tbl.setColGroup(colgroups);
 
-        _.each(this.groups, function(d) {
+        _.each(this.groups, function (d) {
             tbl.addRow(d.build_tr());
         });
 

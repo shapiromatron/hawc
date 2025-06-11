@@ -35,7 +35,7 @@ class _DataPivot_settings_refline {
             .append($("<td>").append(this.content.value_field))
             .append($("<td>").append(this.content.line_style))
             .append(movement_td)
-            .on("change", "input,select", function() {
+            .on("change", "input,select", function () {
                 self.data_push();
             });
 
@@ -86,7 +86,7 @@ class _DataPivot_settings_refrect {
             .append($("<td></td>").append(this.content.x2_field))
             .append($("<td></td>").append(this.content.rectangle_style))
             .append(movement_td)
-            .on("change", "input,select", function() {
+            .on("change", "input,select", function () {
                 self.data_push();
             });
 
@@ -128,7 +128,7 @@ class _DataPivot_settings_label {
             .append($("<td>").append(this.content.text))
             .append($("<td>").append(this.content.style))
             .append(movement_td)
-            .on("change", "input,select", function() {
+            .on("change", "input,select", function () {
                 self.data_push();
             });
 
@@ -157,7 +157,7 @@ class _DataPivot_settings_filters {
         this.data_pivot = data_pivot;
         this.values = values;
 
-        var get_quantifier_options = function() {
+        var get_quantifier_options = function () {
             return (
                 '<option value="gt">&gt;</option>' +
                 '<option value="gte">≥</option>' +
@@ -191,7 +191,7 @@ class _DataPivot_settings_filters {
             .on("change blur", "input,select", () => this.data_push());
 
         var content = this.content,
-            enable_autocomplete = function() {
+            enable_autocomplete = function () {
                 var field = content.field_name.find("option:selected").val(),
                     values = Array.from(new Set(data_pivot.data.map(v => v[field])).values()),
                     initialValue = valueTd.find("input").val() || valueTd.data("initialValue");
@@ -220,7 +220,7 @@ class _DataPivot_settings_filters {
 }
 
 class _DataPivot_settings_spacers {
-    constructor(data_pivot, values, index) {
+    constructor(data_pivot, values, _index) {
         var self = this,
             movement_td = DataPivot.build_movement_td(data_pivot.settings.spacers, this, {
                 showSort: false,
@@ -248,7 +248,7 @@ class _DataPivot_settings_spacers {
             .append($("<td>").append(this.content.line_style))
             .append($("<td>").append(this.content.extra_space))
             .append(movement_td)
-            .on("change", "input,select", function() {
+            .on("change", "input,select", function () {
                 self.data_push();
             });
 
@@ -295,12 +295,8 @@ class _DataPivot_settings_description {
         };
 
         var header_input = this.content.header_name;
-        this.content.field_name.on("change", function() {
-            header_input.val(
-                $(this)
-                    .find("option:selected")
-                    .val()
-            );
+        this.content.field_name.on("change", function () {
+            header_input.val($(this).find("option:selected").val());
         });
 
         this.tr = $("<tr>")
@@ -359,12 +355,12 @@ class _DataPivot_settings_calculated {
         this.data_pivot = data_pivot;
         this.values = values;
 
-        const checkFormula = function() {
+        const checkFormula = function () {
             const el = $(this);
             try {
                 parse(el.val(), {getValue: () => null});
                 el.removeClass("is-invalid");
-            } catch (err) {
+            } catch (_err) {
                 el.addClass("is-invalid");
             }
         };
@@ -432,12 +428,8 @@ class _DataPivot_settings_pointdata {
         };
 
         var header_input = this.content.header_name;
-        this.content.field_name.on("change", function() {
-            header_input.val(
-                $(this)
-                    .find("option:selected")
-                    .val()
-            );
+        this.content.field_name.on("change", function () {
+            header_input.val($(this).find("option:selected").val());
         });
 
         this.tr = $("<tr>")
@@ -446,7 +438,7 @@ class _DataPivot_settings_pointdata {
             .append($("<td>").append(this.content.marker_style))
             .append($("<td>").append(this.conditional_formatter.status))
             .append($("<td>").append(this.content.dpe))
-            .on("change", "input,select", function() {
+            .on("change", "input,select", function () {
                 //update self
                 self.data_push();
                 // update legend
@@ -525,12 +517,8 @@ class _DataPivot_settings_linedata {
         };
 
         var header_input = this.content.header_name;
-        this.content.low_field_name.on("change", function() {
-            header_input.val(
-                $(this)
-                    .find("option:selected")
-                    .val()
-            );
+        this.content.low_field_name.on("change", function () {
+            header_input.val($(this).find("option:selected").val());
         });
 
         this.tr = $("<tr>")
@@ -545,7 +533,7 @@ class _DataPivot_settings_linedata {
             .append($("<td>").append(this.content.header_name))
             .append($("<td>").append(this.content.marker_style))
             .append($("<td>").append(this.conditional_formatter.status))
-            .on("change", "input,select", function() {
+            .on("change", "input,select", function () {
                 self.data_push();
 
                 // update legend
@@ -689,10 +677,10 @@ class _DataPivot_settings_general {
         this.content.font_style.find(`option[value="${values.font_style}"]`).prop("selected", true);
         this.update_merge_until();
 
-        var build_tr = function(name, content) {
+        var build_tr = function (name, content) {
             return $("<tr>")
                 .append($(`<th>${name}</th>`), $("<td>").append(content))
-                .on("change", "input,select", function() {
+                .on("change", "input,select", function () {
                     self.data_push();
                 });
         };
@@ -726,13 +714,10 @@ class _DataPivot_settings_general {
             build_tr("Plot border color", this.content.plot_border_color),
         ];
 
-        var toggle_display = function(src, targets, reverse = false) {
+        var toggle_display = function (src, targets, reverse = false) {
             const show = reverse ? !src.prop("checked") : src.prop("checked");
             targets.forEach(target => {
-                target
-                    .parent()
-                    .parent()
-                    .toggle(show);
+                target.parent().parent().toggle(show);
             });
         };
 
@@ -996,10 +981,10 @@ class _DataPivot_settings_barchart {
     }
 }
 
-let buildHeaderTr = function(lst) {
+let buildHeaderTr = function (lst) {
         return $("<tr>").html(lst.map(v => `<th>${v}</th>`).join());
     },
-    buildColGroup = function(widths) {
+    buildColGroup = function (widths) {
         return $("<colgroup>").html(widths.map(width => `<col width=${width}></col>`).join(""));
     };
 

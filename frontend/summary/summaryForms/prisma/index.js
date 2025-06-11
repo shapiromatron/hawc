@@ -7,7 +7,7 @@ import $ from "$";
 import {createPrismaStore} from "../stores";
 import App from "./App";
 
-const prismaFormAppStartup = function(el, config, djangoForm) {
+const prismaFormAppStartup = function (el, config, djangoForm) {
     const store = createPrismaStore(config, djangoForm);
     const root = createRoot(el);
     root.render(

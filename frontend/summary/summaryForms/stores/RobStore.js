@@ -2,7 +2,7 @@ import _ from "lodash";
 import {action, computed, observable} from "mobx";
 import h from "shared/utils/helpers";
 
-const _getDefaultSettings = function(visual_type, metrics) {
+const _getDefaultSettings = function (visual_type, metrics) {
     if (visual_type === 2) {
         return {
             title: "",
@@ -90,7 +90,7 @@ class RobStore {
         include ? set.delete(id) : set.add(id);
         this.settings.excluded_score_ids = Array.from(set);
     }
-    @action setFromJsonSettings(settings, firstTime) {
+    @action setFromJsonSettings(settings, _firstTime) {
         this.settings = settings;
     }
     @computed get settingsHash() {

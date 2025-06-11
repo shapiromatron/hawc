@@ -7,9 +7,9 @@ import AutoSuggest from "react-autosuggest";
 import h from "shared/utils/helpers";
 
 import {
-    boldPatternText,
     DEBOUNCE_MS,
     DEFAULT_MIN_SEARCH_LENGTH,
+    boldPatternText,
     theme,
 } from "./Autocomplete/constants";
 
@@ -78,7 +78,7 @@ class AutocompleteTerm extends Component {
                 onSuggestionsClearRequested={() => this.setState({suggestions: []})}
                 onSuggestionSelected={(_, {suggestion}) => onChange(suggestion.id, suggestion.name)}
                 getSuggestionValue={suggestion => suggestion.name}
-                shouldRenderSuggestions={shouldRenderSuggestions => true}
+                shouldRenderSuggestions={_shouldRenderSuggestions => true}
                 renderSuggestion={suggestion => {
                     return (
                         <span
@@ -93,7 +93,7 @@ class AutocompleteTerm extends Component {
                     value: currentText,
                     suggestions,
                     placeholder: placeholder || "",
-                    onChange: (event, {newValue}) => {
+                    onChange: (_event, {newValue}) => {
                         if (newValue === "") {
                             // reset value if empty
                             onChange(null, newValue);

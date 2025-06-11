@@ -2,7 +2,7 @@ import _ from "lodash";
 
 import {ff} from "./formatters";
 
-const getLabel = function(value, items) {
+const getLabel = function (value, items) {
         for (let index = 0; index < items.length; index++) {
             const item = items[index];
             if (item.id === value) {
@@ -11,7 +11,7 @@ const getLabel = function(value, items) {
         }
         return `Unknown -> ${value}`;
     },
-    bmrLabel = function(dtype, bmr_type, bmr_value) {
+    bmrLabel = function (dtype, bmr_type, bmr_value) {
         const key = `${dtype}-${bmr_type}`;
         switch (key) {
             case "D-0":
@@ -28,8 +28,8 @@ const getLabel = function(value, items) {
                 return `${dtype} - ${bmr_value} + ${bmr_type} (TODO)`;
         }
     },
-    doseDropOptions = function(dtype, endpoint) {
-        const getNumModelableDoses = function(groups) {
+    doseDropOptions = function (dtype, endpoint) {
+        const getNumModelableDoses = function (groups) {
             return groups.filter(group => {
                 let values;
                 switch (dtype) {
@@ -56,7 +56,7 @@ const getLabel = function(value, items) {
 
         return options;
     },
-    addDoseUnitsToModels = function(outputs, dose_units_id) {
+    addDoseUnitsToModels = function (outputs, dose_units_id) {
         // modify models to include dose units at root level; necessary for plotting with current
         // abstractions. In the future this should be revised to no longer be necessary
         if (outputs && outputs.models) {
@@ -66,7 +66,7 @@ const getLabel = function(value, items) {
             });
         }
     },
-    getModelFromIndex = function(model_index, models) {
+    getModelFromIndex = function (model_index, models) {
         // return output model content or null, based on model index. If value is -1, return
         // null; this is the default case when no model is selected.
         return model_index >= 0 ? models[model_index] : null;
@@ -83,7 +83,7 @@ const getLabel = function(value, items) {
         }
         throw new Error("Bad Hex");
     },
-    getBmdDiamond = function(name, bmd, bmdl, bmdu, bmd_y, hexColor) {
+    getBmdDiamond = function (name, bmd, bmdl, bmdu, bmd_y, hexColor) {
         const hasBmd = bmd > 0;
 
         // prettier-ignore
@@ -118,7 +118,7 @@ const getLabel = function(value, items) {
             };
         }
     },
-    getPlotlyDrCurve = function(model, hexColor) {
+    getPlotlyDrCurve = function (model, hexColor) {
         // https://plotly.com/python/marker-style/
         // https://plotly.com/javascript/reference/scatter/
         const data = [

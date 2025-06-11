@@ -159,7 +159,7 @@ class TagTreeViz extends D3Plot {
                 .x(d => d.y)
                 .y(d => d.x),
             self = this,
-            buildVizDatasetNode = function(nestedTag) {
+            buildVizDatasetNode = function (nestedTag) {
                 return {
                     id: nestedTag.data.pk,
                     name: nestedTag.data.name,
@@ -183,22 +183,18 @@ class TagTreeViz extends D3Plot {
                     d._children = null;
                 }
             },
-            toggleAll = function(d) {
+            toggleAll = function (d) {
                 if (d.children) {
                     d.children.forEach(toggleAll);
                 }
                 toggle(d);
             },
-            fetch_references = function(tag) {
+            fetch_references = function (tag) {
                 const url = `/lit/assessment/${tag.assessment_id}/references/?tag_id=${tag.data.pk}`,
                     title = `<h3>References tagged: <a class="refTag mb-0" href="${url}">${tag.data.name}</a></h3>`,
                     div = $("<div>");
 
-                self.modal
-                    .addHeader(title)
-                    .addBody(div)
-                    .addFooter("")
-                    .show({maxWidth: 1200});
+                self.modal.addHeader(title).addBody(div).addFooter("").show({maxWidth: 1200});
 
                 tag.renderPaginatedReferenceList(
                     div.get(0),
@@ -207,7 +203,7 @@ class TagTreeViz extends D3Plot {
                     self.stateStore.options.pruned_tags
                 );
             },
-            update = function(event, source) {
+            update = function (event, source) {
                 var duration = event && event.altKey ? 5000 : 500,
                     t = d3.transition().duration(duration);
 
@@ -229,7 +225,7 @@ class TagTreeViz extends D3Plot {
                     .append("svg:g")
                     .attr("class", "tagnode")
                     .attr("transform", () => `translate(${source.y0},${source.x0})`)
-                    .on("click", function(event, d) {
+                    .on("click", function (event, d) {
                         if (event.ctrlKey || event.metaKey) {
                             fetch_references(d.data.nestedTag);
                         } else {
@@ -239,7 +235,7 @@ class TagTreeViz extends D3Plot {
                     })
                     .call(
                         HAWCUtils.updateDragLocationTransform(
-                            function(x, y) {
+                            function (x, y) {
                                 var p = d3.select(this),
                                     id = p.data()[0].data.id;
                                 store.updateDragLocation(id, x, y);
@@ -263,7 +259,7 @@ class TagTreeViz extends D3Plot {
                     .attr("text-anchor", "middle")
                     .text(d => d.data.name)
                     .style("fill-opacity", 1e-6)
-                    .each(function() {
+                    .each(function () {
                         HAWCUtils.wrapText(this, 170);
                     });
 
@@ -295,17 +291,14 @@ class TagTreeViz extends D3Plot {
                     .attr("r", d => radius_scale(d.data.numReferencesDeep))
                     .style("fill", d => (d.data.hasChildren ? "lightsteelblue" : "white"));
 
-                nodeUpdate
-                    .selectAll("text")
-                    .transition(t)
-                    .style("fill-opacity", 1);
+                nodeUpdate.selectAll("text").transition(t).style("fill-opacity", 1);
 
                 // Transition exiting nodes to the parent's new position.
                 var nodeExit = node
                     .exit()
                     .transition()
                     .duration(duration)
-                    .attr("transform", d => `translate(${source.y},${source.x})`)
+                    .attr("transform", _d => `translate(${source.y},${source.x})`)
                     .remove();
 
                 nodeExit.select("circle").attr("r", 1e-6);
@@ -321,7 +314,7 @@ class TagTreeViz extends D3Plot {
                 link.enter()
                     .insert("svg:path", "g")
                     .attr("class", "tagslink")
-                    .attr("d", function(d) {
+                    .attr("d", function (_d) {
                         self.check_svg_fit(source.y0);
                         var o = {x: source.x0, y: source.y0};
                         return diagonal({source: o, target: o});
@@ -331,15 +324,13 @@ class TagTreeViz extends D3Plot {
                     .attr("d", diagonal);
 
                 // Transition links to their new position.
-                link.transition()
-                    .duration(duration)
-                    .attr("d", diagonal);
+                link.transition().duration(duration).attr("d", diagonal);
 
                 // Transition exiting nodes to the parent's new position.
                 link.exit()
                     .transition()
                     .duration(duration)
-                    .attr("d", function(d) {
+                    .attr("d", function (_d) {
                         self.check_svg_fit(source.y);
                         var o = {x: source.x, y: source.y};
                         return diagonal({source: o, target: o});
@@ -403,7 +394,7 @@ class TagTreeViz extends D3Plot {
             .enter()
             .append("circle")
             .attr("cx", 10)
-            .attr("cy", (d, i) => 10 + i * 25)
+            .attr("cy", (_d, i) => 10 + i * 25)
             .attr("r", 10)
             .style("fill", d => d.fill);
 
@@ -414,7 +405,7 @@ class TagTreeViz extends D3Plot {
             .enter()
             .append("text")
             .attr("x", 25)
-            .attr("y", (d, i) => 10 + i * 25)
+            .attr("y", (_d, i) => 10 + i * 25)
             .attr("dy", "3.5px")
             .text(d => d.text);
 

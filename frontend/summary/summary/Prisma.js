@@ -8,11 +8,11 @@ import h from "shared/utils/helpers";
 
 import $ from "$";
 
+import PrismaPlot from "./PrismaPlot";
 import {handleVisualError} from "./common";
 import PrismaDatastore from "./prisma/PrismaDatastore";
-import PrismaPlot from "./PrismaPlot";
 
-const startupPrismaAppRender = function(el, settings, data, config, asComponent = false) {
+const startupPrismaAppRender = function (el, settings, data, config, asComponent = false) {
         if (_.isUndefined(data)) {
             if (asComponent == true) {
                 console.error("Cannot return asComponent if we have to fetch data");
@@ -24,7 +24,7 @@ const startupPrismaAppRender = function(el, settings, data, config, asComponent 
             return start(el, settings, data, config, asComponent);
         }
     },
-    start = function(el, settings, data, config, asComponent) {
+    start = function (el, settings, data, config, asComponent) {
         const store = new PrismaDatastore(settings, data, config);
         if (asComponent) {
             return <PrismaComponent store={store} config={config} />;

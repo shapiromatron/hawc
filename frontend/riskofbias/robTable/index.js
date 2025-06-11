@@ -5,7 +5,7 @@ import {createRoot} from "react-dom/client";
 import Root from "./containers/Root";
 import RobTableStore from "./store";
 
-export default function(el, config) {
+export default function (el, config) {
     const store = new RobTableStore(config);
     const root = createRoot(el);
     root.render(

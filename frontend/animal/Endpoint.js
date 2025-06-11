@@ -5,8 +5,8 @@ import BaseTable from "shared/utils/BaseTable";
 import DescriptiveTable from "shared/utils/DescriptiveTable";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
-import h from "shared/utils/helpers";
 import Observee from "shared/utils/Observee";
+import h from "shared/utils/helpers";
 import Study from "study/Study";
 
 import $ from "$";
@@ -168,7 +168,7 @@ class Endpoint extends Observee {
         // return the appropriate dose of interest
         try {
             return h.ff(this.data.groups[this.data[name]].dose);
-        } catch (err) {
+        } catch (_err) {
             return "-";
         }
     }
@@ -254,13 +254,13 @@ class Endpoint extends Observee {
     build_details_table(div) {
         var self = this,
             tbl = new DescriptiveTable(),
-            critical_dose = function(type) {
+            critical_dose = function (type) {
                 if (self.data[type] < 0) return;
                 var span = $("<span>");
                 new EndpointCriticalDose(self, span, type);
                 return span;
             },
-            bmd_response = function(type, showURL) {
+            bmd_response = function (type, showURL) {
                 if (self.data.bmds.length === 0) {
                     return;
                 }
@@ -268,7 +268,7 @@ class Endpoint extends Observee {
                 new BMDResult(self, el, type, showURL);
                 return el;
             },
-            getTaglist = function(tags, assessment_id) {
+            getTaglist = function (tags, assessment_id) {
                 if (tags.length === 0) {
                     return false;
                 }
@@ -285,7 +285,7 @@ class Endpoint extends Observee {
 
                 return div;
             },
-            isMultigenerational = function(experimentType) {
+            isMultigenerational = function (experimentType) {
                 return ["Rp", "1r", "2r", "Dv", "Ot"].includes(experimentType);
             };
 
@@ -399,7 +399,7 @@ class Endpoint extends Observee {
             } else if (this.data.data_type == "D") {
                 return this._dichotomous_percent_change_incidence(this.data.groups[index]);
             }
-        } catch (err) {
+        } catch (_err) {
             return "-";
         }
     }
@@ -464,11 +464,7 @@ class Endpoint extends Observee {
         this.build_general_notes($notes);
         modal.getModal().on("shown.bs.modal", () => this.renderPlot($plot, {showBmd: true}));
 
-        modal
-            .addHeader(title)
-            .addBody($content)
-            .addFooter("")
-            .show({maxWidth: 1200});
+        modal.addHeader(title).addBody($content).addFooter("").show({maxWidth: 1200});
     }
 
     hasEGdata() {

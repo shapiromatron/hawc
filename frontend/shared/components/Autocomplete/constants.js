@@ -13,7 +13,7 @@ const DEFAULT_MIN_SEARCH_LENGTH = 3,
         sectionContainer: "autocomplete__section-container",
         sectionTitle: "autocomplete__section-title",
     },
-    boldPatternText = function(text, pattern) {
+    boldPatternText = function (text, pattern) {
         const regex = new RegExp(h.escapeRegexString(pattern), "gi");
         return text.replace(regex, match => `<b>${match}</b>`);
     };

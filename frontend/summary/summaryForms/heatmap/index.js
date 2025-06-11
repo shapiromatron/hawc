@@ -7,7 +7,7 @@ import $ from "$";
 import {createExploratoryHeatmapStore} from "../stores";
 import App from "./App";
 
-const exploratoryHeatmapFormAppStartup = function(el, config, djangoForm) {
+const exploratoryHeatmapFormAppStartup = function (el, config, djangoForm) {
     const store = createExploratoryHeatmapStore(config, djangoForm);
     store.subclass.getDatasetOptions();
     const root = createRoot(el);

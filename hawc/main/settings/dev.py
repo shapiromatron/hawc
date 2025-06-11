@@ -1,6 +1,7 @@
 # flake8: noqa
 
 from .base import *
+import os
 
 DEBUG = True
 
@@ -51,6 +52,8 @@ LOGGING["loggers"]["hawc"]["handlers"] = ["console"]
 COMPRESS_ENABLED = False
 
 HAWC_FEATURES.ENABLE_DOCS_LINK = True
+
+os.environ.setdefault("DJANGO_RUNSERVER_HIDE_WARNING", "true")
 
 try:
     # load local settings from `local.py` if they exist

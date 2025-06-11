@@ -2,8 +2,8 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
-import {defaultHelpText} from "../constants";
 import TermSelector from "../TermSelector";
+import {defaultHelpText} from "../constants";
 
 @inject("store")
 @observer

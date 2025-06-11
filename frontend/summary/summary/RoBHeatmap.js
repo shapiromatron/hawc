@@ -9,8 +9,8 @@ import Study from "study/Study";
 import $ from "$";
 
 import BaseVisual from "./BaseVisual";
-import {addLabelAction, addLabelIndicators} from "./common";
 import RoBHeatmapPlot from "./RoBHeatmapPlot";
+import {addLabelAction, addLabelIndicators} from "./common";
 
 class RoBHeatmap extends BaseVisual {
     static transformData(data) {
@@ -81,7 +81,7 @@ class RoBHeatmap extends BaseVisual {
             $plotDiv = $("<div>"),
             modal = new HAWCModal();
 
-        modal.getModal().on("shown.bs.modal", function() {
+        modal.getModal().on("shown.bs.modal", function () {
             new RoBHeatmapPlot(self, data, options).render($plotDiv);
             caption.renderAndEnable();
         });

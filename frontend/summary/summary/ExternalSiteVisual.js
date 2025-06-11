@@ -5,9 +5,9 @@ import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 
 import BaseVisual from "./BaseVisual";
+import TableauDashboard from "./TableauDashboard";
 import {addLabelAction, addLabelIndicators} from "./common";
 import {TABLEAU_HOSTNAME} from "./constants";
-import TableauDashboard from "./TableauDashboard";
 
 class ExternalWebsite extends BaseVisual {
     constructor(data) {

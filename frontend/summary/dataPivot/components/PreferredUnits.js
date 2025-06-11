@@ -76,7 +76,7 @@ class PreferredUnits extends Component {
                         className="btn btn-block btn-secondary"
                         type="button"
                         title="Add selected units to preferred-list"
-                        onClick={e => {
+                        onClick={_e => {
                             const selected = h.selectedOptions(this.available.current);
                             store.add(selected.values);
                         }}>
@@ -87,7 +87,7 @@ class PreferredUnits extends Component {
                         className="btn btn-block btn-secondary"
                         type="button"
                         title="Remove selected units from preferred-list"
-                        onClick={e => {
+                        onClick={_e => {
                             const selected = h.selectedOptions(this.selected.current);
                             store.remove(selected.values);
                         }}>
@@ -113,7 +113,7 @@ class PreferredUnits extends Component {
                         className="btn btn-block btn-secondary"
                         type="button"
                         title="Move selected units higher in preference"
-                        onClick={e => {
+                        onClick={_e => {
                             const selected = h.selectedOptions(this.selected.current);
                             store.moveUp(selected.indexes);
                         }}>
@@ -123,7 +123,7 @@ class PreferredUnits extends Component {
                         className="btn btn-block btn-secondary"
                         type="button"
                         title="Move selected units lower in preference"
-                        onClick={e => {
+                        onClick={_e => {
                             const selected = h.selectedOptions(this.selected.current);
                             store.moveDown(selected.indexes);
                         }}>

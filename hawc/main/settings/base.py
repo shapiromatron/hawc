@@ -113,7 +113,6 @@ INSTALLED_APPS = (
     "treebeard",
     "crispy_forms",
     "crispy_bootstrap4",
-    # "webpack_loader",
     "django_vite",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",

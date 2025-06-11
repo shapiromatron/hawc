@@ -53,7 +53,7 @@ class IVExperiment {
     }
 
     build_details_table() {
-        var getControlText = function(bool, str) {
+        var getControlText = function (bool, str) {
                 var txt = HAWCUtils.booleanCheckbox(bool);
                 if (bool && str) txt = str;
                 return txt;
@@ -92,7 +92,7 @@ class IVExperiment {
             ul.append("<li><i>No endpoints available.</i></li>");
         }
 
-        this.endpoints.forEach(function(d) {
+        this.endpoints.forEach(function (d) {
             ul.append($("<li>").html(d.build_hyperlink()));
         });
 

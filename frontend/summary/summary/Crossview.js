@@ -4,9 +4,9 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 
 import $ from "$";
 
-import {addLabelIndicators} from "./common";
 import CrossviewPlot from "./CrossviewPlot";
 import EndpointAggregation from "./EndpointAggregation";
+import {addLabelIndicators} from "./common";
 
 class Crossview extends EndpointAggregation {
     displayAsPage($el, options) {
@@ -47,7 +47,7 @@ class Crossview extends EndpointAggregation {
             $plotDiv = $("<div>"),
             modal = new HAWCModal();
 
-        modal.getModal().on("shown.bs.modal", function() {
+        modal.getModal().on("shown.bs.modal", function () {
             new CrossviewPlot(self, data, options).render($plotDiv);
             caption.renderAndEnable();
         });

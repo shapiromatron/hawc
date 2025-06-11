@@ -4,7 +4,7 @@
 import _ from "lodash";
 
 const BMDS_BLANK_VALUE = -9999;
-const ff = function(value) {
+const ff = function (value) {
         // ff = float format
         if (value === 0) {
             return value.toString();
@@ -18,7 +18,7 @@ const ff = function(value) {
             return value.toExponential(2);
         }
     },
-    parameterFormatter = function(value) {
+    parameterFormatter = function (value) {
         if (value === 0) {
             return value.toString();
         } else if (value == BMDS_BLANK_VALUE || !_.isFinite(value)) {
@@ -29,7 +29,7 @@ const ff = function(value) {
             return value.toPrecision(4);
         }
     },
-    fractionalFormatter = function(value) {
+    fractionalFormatter = function (value) {
         // Expected values between 0 and 1
         if (value == BMDS_BLANK_VALUE || !_.isFinite(value) || value < 0) {
             return "-";
