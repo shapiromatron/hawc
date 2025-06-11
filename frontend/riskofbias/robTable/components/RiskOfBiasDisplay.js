@@ -1,7 +1,7 @@
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
-import {createRoot} from "react-dom/client";
+import ReactDOM from "react-dom";
 import DomainDisplay from "riskofbias/robTable/components/DomainDisplay";
 
 const RiskOfBiasDisplay = props => {
@@ -29,8 +29,7 @@ RiskOfBiasDisplay.propTypes = {
 };
 
 export function renderRiskOfBiasDisplay(data, element) {
-    const root = createRoot(element);
-    root.render(<RiskOfBiasDisplay active={data.scores} config={data.config} />);
+    ReactDOM.render(<RiskOfBiasDisplay active={data.scores} config={data.config} />, element);
 }
 
 export default RiskOfBiasDisplay;

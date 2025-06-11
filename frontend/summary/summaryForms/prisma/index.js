@@ -1,19 +1,18 @@
+import $ from "$";
 import {Provider} from "mobx-react";
 import React from "react";
-import {createRoot} from "react-dom/client";
-
-import $ from "$";
+import ReactDOM from "react-dom";
 
 import {createPrismaStore} from "../stores";
 import App from "./App";
 
 const prismaFormAppStartup = function (el, config, djangoForm) {
     const store = createPrismaStore(config, djangoForm);
-    const root = createRoot(el);
-    root.render(
+    ReactDOM.render(
         <Provider store={store}>
             <App />
-        </Provider>
+        </Provider>,
+        el
     );
     $(el).fadeIn();
 };

@@ -1,7 +1,7 @@
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {createRoot} from "react-dom/client";
+import ReactDOM from "react-dom";
 import Plot from "react-plotly.js";
 
 class ResizableDiv extends Component {
@@ -77,8 +77,7 @@ PlotlyFigure.defaultProps = {
 const renderPlotlyFigure = function (el, config, resizable = false) {
     el.innerHTML = "";
     try {
-        const root = createRoot(el);
-        root.render(<PlotlyFigure {...config} resizable={resizable} />);
+        ReactDOM.render(<PlotlyFigure {...config} resizable={resizable} />, el);
     } catch (error) {
         el.innerHTML = '<span class="text-danger">An error occurred</span>';
         console.error(error);

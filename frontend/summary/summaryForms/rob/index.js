@@ -1,19 +1,18 @@
+import $ from "$";
 import {Provider} from "mobx-react";
 import React from "react";
-import {createRoot} from "react-dom/client";
-
-import $ from "$";
+import ReactDOM from "react-dom";
 
 import {createRobStore} from "../stores";
 import App from "./App";
 
 const robFormAppStartup = function (el, config, djangoForm) {
     const store = createRobStore(config, djangoForm);
-    const root = createRoot(el);
-    root.render(
+    ReactDOM.render(
         <Provider store={store}>
             <App />
-        </Provider>
+        </Provider>,
+        el
     );
     $(el).fadeIn();
 };

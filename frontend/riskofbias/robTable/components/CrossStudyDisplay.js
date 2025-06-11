@@ -1,8 +1,7 @@
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
-import {createRoot} from "react-dom/client";
-
+import ReactDOM from "react-dom";
 import MetricHeader from "../../components/MetricDescription";
 import MetricScores from "./MetricScores";
 
@@ -68,8 +67,7 @@ CrossStudyDisplay.propTypes = {
 };
 
 export function renderCrossStudyDisplay(scores, element) {
-    const root = createRoot(element);
-    root.render(<CrossStudyDisplay scores={scores} />);
+    ReactDOM.render(<CrossStudyDisplay scores={scores} />, element);
 }
 
 export default CrossStudyDisplay;

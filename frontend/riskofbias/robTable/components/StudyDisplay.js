@@ -1,8 +1,7 @@
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {createRoot} from "react-dom/client";
-
+import ReactDOM from "react-dom";
 import AggregateGraph from "./AggregateGraph";
 import RiskOfBiasDisplay from "./RiskOfBiasDisplay";
 import ShowAll from "./ShowAll";
@@ -88,7 +87,6 @@ StudyDisplay.propTypes = {
 };
 
 export function renderStudyDisplay(data, element) {
-    const root = createRoot(element);
-    root.render(<StudyDisplay riskofbias={data} config={data.config} />);
+    ReactDOM.render(<StudyDisplay riskofbias={data} config={data.config} />, element);
 }
 export default StudyDisplay;

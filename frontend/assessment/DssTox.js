@@ -1,6 +1,5 @@
 import React from "react";
-import {createRoot} from "react-dom/client";
-
+import ReactDOM from "react-dom";
 import DssToxDetailTable from "./components/DssToxDetailTable";
 
 class DssTox {
@@ -9,8 +8,7 @@ class DssTox {
     }
 
     renderChemicalDetails(el, showHeader) {
-        const root = createRoot(el);
-        root.render(<DssToxDetailTable object={this} showHeader={showHeader} />);
+        ReactDOM.render(<DssToxDetailTable object={this} showHeader={showHeader} />, el);
     }
 
     verbose_link() {

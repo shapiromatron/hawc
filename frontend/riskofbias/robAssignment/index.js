@@ -1,16 +1,15 @@
 import {Provider} from "mobx-react";
 import React from "react";
-import {createRoot} from "react-dom/client";
-
+import ReactDOM from "react-dom";
 import Root from "./components/Root";
 import RobAssignmentStore from "./store";
 
 export default function (el, config) {
     const store = new RobAssignmentStore(config);
-    const root = createRoot(el);
-    root.render(
+    ReactDOM.render(
         <Provider store={store}>
             <Root />
-        </Provider>
+        </Provider>,
+        el
     );
 }
