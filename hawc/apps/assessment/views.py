@@ -23,7 +23,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.generic import DetailView, FormView, ListView, TemplateView, View
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 
 from ...services.utils.rasterize import get_styles_svg_definition
 from ..common.crumbs import Breadcrumb
@@ -44,6 +44,7 @@ from ..common.views import (
     create_object_log,
     get_referrer,
 )
+from ..lit.models import TrainedModel
 from ..materialized.models import refresh_all_mvs
 from ..mgmt.analytics.overall import compute_object_counts
 from ..summary import models as summary_models
@@ -1141,3 +1142,97 @@ class LabelItem(HtmxView):
             oob=True,
         )
         return render(request, "assessment/fragments/label_indicators.html", context)
+
+
+class TrainedModelFormMixin:
+    template_name = "assessment/trained_model_create.html"
+    success_message = "Trained Model created."
+
+    def get(self, request, **kwargs):
+        self.object = self.get_object() if "pk" in kwargs else None
+        context = {
+            "trained_model_form": forms.TrainedModelForm(
+                prefix="trained-model", instance=self.object
+            ),
+            "trained_model_version_form": forms.TrainedModelVersionForm(
+                prefix="trained-model-version"
+            ),
+            "trained_vectorizer_form": forms.TrainedVectorizerForm(prefix="trained-vectorizer"),
+        }
+        return self.render_to_response(context)
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
+
+    @transaction.atomic
+    def post(self, request, **kwargs):
+        self.object = self.get_object() if "pk" in kwargs else None
+        trained_model_form = forms.TrainedModelForm(
+            request.POST, instance=self.object, prefix="trained-model"
+        )
+        trained_model_version_form = forms.TrainedModelVersionForm(
+            request.POST, request.FILES, prefix="trained-model-version"
+        )
+        trained_vectorizer_form = forms.TrainedVectorizerForm(
+            request.POST, request.FILES, prefix="trained-vectorizer"
+        )
+
+        if trained_model_form.is_valid() and trained_vectorizer_form.is_valid():
+            vectorizer = trained_vectorizer_form.save()
+            trained_model = trained_model_form.save()
+
+            data = request.POST.copy()
+            data["trained-model-version-vectorizer"] = vectorizer
+
+            trained_model_version_form = forms.TrainedModelVersionForm(
+                data, request.FILES, prefix="trained-model-version"
+            )
+            if trained_model_version_form.is_valid():
+                model_version = trained_model_version_form.save(commit=False)
+            model_version.trained_model = trained_model
+            model_version.vectorizer = vectorizer
+            model_version.version = trained_model.versions.count() + 1
+            model_version.save()
+            return self.form_valid(trained_model_form)
+        elif trained_model_form.is_valid() and trained_model_version_form.is_valid():
+            trained_model = trained_model_form.save()
+            model_version = trained_model_version_form.save(commit=False)
+            model_version.trained_model = trained_model
+            model_version.version = trained_model.versions.count() + 1
+            model_version.save()
+            return self.form_valid(trained_model_form)
+        elif trained_model_form.is_valid() and self.object:
+            return self.form_valid(trained_model_form)
+
+        context = {
+            "trained_model_form": trained_model_form,
+            "trained_model_version_form": trained_model_version_form,
+            "trained_vectorizer_form": trained_vectorizer_form,
+        }
+        return self.render_to_response(context)
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class TrainedModelCreate(MessageMixin, LoginRequiredMixin, TrainedModelFormMixin, CreateView):
+    template_name = "assessment/trained_model_create.html"
+    success_message = "Trained Model created."
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class TrainedModelUpdate(MessageMixin, LoginRequiredMixin, TrainedModelFormMixin, UpdateView):
+    template_name = "assessment/trained_model_create.html"
+    success_message = "Trained Model update."
+    model = TrainedModel
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class TrainedModelDetail(LoginRequiredMixin, DetailView):
+    model = TrainedModel
+    template_name = "assessment/trained_model_detail.html"
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class TrainedModelList(LoginRequiredMixin, ListView):
+    model = TrainedModel
+    template_name = "assessment/trained_model_list.html"
+    paginate_by = 50
