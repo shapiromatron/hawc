@@ -28,6 +28,7 @@ uv.lock
 .ruff_cache/
 .venv/
 .vscode/
+.yarn
 /data/
 docs/site
 __pycache__/

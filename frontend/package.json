@@ -15,6 +15,7 @@
     "type": "git",
     "url": "https://github.com/shapiromatron/hawc.git"
   },
+  "packageManager": "yarn@4.9.2",
   "devDependencies": {
     "@babel/core": "^7.22.8",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
