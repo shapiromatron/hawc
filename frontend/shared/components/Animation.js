@@ -1,16 +1,16 @@
 import PropTypes from "prop-types";
 import React, {useEffect, useRef, useState} from "react";
 
-function VelocityComponent({animation, duration, easing, runOnMount, children}) {
+function Animation({animation, duration, easing, runAnimation, children}) {
     const [animated, setAnimated] = useState(false),
         elementRef = useRef();
 
     useEffect(() => {
-        if (runOnMount) {
-            // ensure initial state is rendered before animation
+        // ensure initial state is rendered before animation
+        if (runAnimation) {
             requestAnimationFrame(() => setAnimated(true));
         }
-    }, [runOnMount]);
+    }, [runAnimation]);
 
     // Apply animation styles when animated
     const animatedStyle = animated ? animation : {},
@@ -30,18 +30,18 @@ function VelocityComponent({animation, duration, easing, runOnMount, children}) 
     });
 }
 
-VelocityComponent.propTypes = {
+Animation.propTypes = {
     animation: PropTypes.object.isRequired,
     duration: PropTypes.number,
     easing: PropTypes.string,
-    runOnMount: PropTypes.bool,
+    runAnimation: PropTypes.bool,
     children: PropTypes.element.isRequired,
 };
 
-VelocityComponent.defaultProps = {
+Animation.defaultProps = {
     duration: 1000,
     easing: "ease-out",
-    runOnMount: false,
+    runAnimation: true,
 };
 
-export default VelocityComponent;
+export default Animation;

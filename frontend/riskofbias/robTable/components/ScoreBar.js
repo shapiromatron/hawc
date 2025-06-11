@@ -2,7 +2,7 @@ import "./ScoreBar.css";
 
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import VelocityComponent from "shared/components/VelocityComponent";
+import VelocityComponent from "shared/components/Animation";
 import h from "shared/utils/helpers";
 
 import {
@@ -33,10 +33,7 @@ class ScoreBar extends Component {
 
         return (
             <div className="score-bar">
-                <VelocityComponent
-                    animation={{opacity: 1, width: `${barWidth}%`}}
-                    runOnMount={true}
-                    duration={1000}>
+                <VelocityComponent animation={{opacity: 1, width: `${barWidth}%`}} duration={1000}>
                     {this.render_score_bar()}
                 </VelocityComponent>
                 <i>{description}</i>
