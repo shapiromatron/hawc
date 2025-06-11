@@ -68,7 +68,6 @@ export default defineConfig({
             },
         },
     },
-
     resolve: {
         alias: {
             animal: path.resolve(__dirname, "animal"),

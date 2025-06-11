@@ -2,15 +2,13 @@ import PropTypes from "prop-types";
 import React, {useEffect, useRef, useState} from "react";
 
 function VelocityComponent({animation, duration, easing, runOnMount, children}) {
-    const [animated, setAnimated] = useState(false);
-    const elementRef = useRef();
+    const [animated, setAnimated] = useState(false),
+        elementRef = useRef();
 
     useEffect(() => {
         if (runOnMount) {
-            // Use requestAnimationFrame to ensure the initial state is rendered before animation
-            requestAnimationFrame(() => {
-                setAnimated(true);
-            });
+            // ensure initial state is rendered before animation
+            requestAnimationFrame(() => setAnimated(true));
         }
     }, [runOnMount]);
 
@@ -24,14 +22,11 @@ function VelocityComponent({animation, duration, easing, runOnMount, children}) 
             ...animatedStyle,
         };
 
-    // Clone the child element and apply the animation styles
-    // This preserves the original element's props and accessibility attributes
+    // Clone child element and apply animation styles; this preserves the original
+    // element's props and accessibility attributes.
     return React.cloneElement(React.Children.only(children), {
         ref: elementRef,
-        style: {
-            ...children.props.style,
-            ...transitionStyle,
-        },
+        style: {...children.props.style, ...transitionStyle},
     });
 }
 
