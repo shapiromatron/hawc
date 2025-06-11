@@ -1,3 +1,4 @@
+import {render} from "@testing-library/react";
 import React from "react";
 import {describe, expect, it} from "vitest";
 
@@ -10,39 +11,57 @@ describe("VelocityComponent", function () {
         expect(VelocityComponent.defaultProps.runOnMount).toBe(false);
     });
 
-    it("accepts required animation prop and renders correctly", function () {
+    it("applies transition CSS styles when runOnMount is false", function () {
         const animation = {opacity: 1, width: "100%"};
-        const children = React.createElement("div", {}, "test");
+        const duration = 10;
+        const easing = "ease-in-out";
 
-        // Create a mock ref to test the component functionality
-        let _capturedProps = null;
-        const mockDiv = {
-            style: {},
-        };
+        const {container} = render(
+            <VelocityComponent
+                animation={animation}
+                duration={duration}
+                easing={easing}
+                runOnMount={false}>
+                <div data-testid="test-child">Test content</div>
+            </VelocityComponent>
+        );
 
-        // Mock React.createElement to capture the props passed to the wrapper div
-        const originalCreateElement = React.createElement;
-        React.createElement = (type, props, ...children) => {
-            if (type === "div" && props && props.style && props.style.transition) {
-                _capturedProps = props;
-                return mockDiv;
-            }
-            return originalCreateElement(type, props, ...children);
-        };
+        const child = container.querySelector('[data-testid="test-child"]');
 
-        try {
-            const component = React.createElement(VelocityComponent, {
-                animation,
-                duration: 10,
-                runOnMount: false,
-                children,
-            });
+        // Check that transition property is set with correct values
+        expect(child.style.transition).toBe("opacity 10ms ease-in-out, width 10ms ease-in-out");
 
-            // The component should render without errors
-            expect(component).toBeTruthy();
-        } finally {
-            React.createElement = originalCreateElement;
-        }
+        // When runOnMount is false, animation styles should not be applied initially
+        expect(child.style.opacity).toBe("");
+        expect(child.style.width).toBe("");
+    });
+
+    it("applies transition CSS styles and animation when runOnMount is true", async function () {
+        const animation = {opacity: 1, width: "100%"};
+        const duration = 10;
+        const easing = "ease-out";
+
+        const {container} = render(
+            <VelocityComponent
+                animation={animation}
+                duration={duration}
+                easing={easing}
+                runOnMount={true}>
+                <div data-testid="test-child">Test content</div>
+            </VelocityComponent>
+        );
+
+        const child = container.querySelector('[data-testid="test-child"]');
+
+        // Check that transition property is set with correct values
+        expect(child.style.transition).toBe("opacity 10ms ease-out, width 10ms ease-out");
+
+        // Wait for requestAnimationFrame to complete
+        await new Promise(resolve => requestAnimationFrame(resolve));
+
+        // When runOnMount is true, animation styles should be applied after requestAnimationFrame
+        expect(child.style.opacity).toBe("1");
+        expect(child.style.width).toBe("100%");
     });
 
     it("has proper propTypes defined", function () {
@@ -51,23 +70,5 @@ describe("VelocityComponent", function () {
         expect(VelocityComponent.propTypes.duration).toBeTruthy();
         expect(VelocityComponent.propTypes.easing).toBeTruthy();
         expect(VelocityComponent.propTypes.runOnMount).toBeTruthy();
-    });
-
-    it("demonstrates transition style generation with custom easing", function () {
-        // Test the transition style generation logic by creating component instance
-        const animation = {opacity: 1, width: "100%"};
-        const duration = 10;
-        const easing = "ease-in-out";
-
-        // We'll test the style logic by simulating the component's behavior
-        const expectedTransition = "opacity 10ms ease-in-out, width 10ms ease-in-out";
-
-        // The transition should include both properties with the specified duration and easing
-        const transitionParts = Object.keys(animation).map(
-            prop => `${prop} ${duration}ms ${easing}`
-        );
-        const actualTransition = transitionParts.join(", ");
-
-        expect(actualTransition).toBe(expectedTransition);
     });
 });
