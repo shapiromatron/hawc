@@ -34,6 +34,14 @@ def audit_url(object):
 
 
 @register.simple_tag
+def admin_url(instance):
+    content_type = ContentType.objects.get_for_model(instance.__class__)
+    return reverse(
+        f"admin:{content_type.app_label}_{content_type.model}_change", args=(instance.pk,)
+    )
+
+
+@register.simple_tag
 def optional_table_row(name: str, value: Any) -> str:
     if value is not None and value != "":
         return mark_safe(f"<tr><th>{name}</th><td>{value}</td></tr>")

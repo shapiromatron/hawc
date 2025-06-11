@@ -223,6 +223,7 @@ cmd = "npm --prefix ./frontend run format"
 
 [tool.poe.tasks.format-html]
 help = "Fix HTML formatting issues where possible"
+env = { PYTHONUTF8 = "1" }  # see https://github.com/rtts/djhtml/issues/122
 cmd = "djhtml --tabwidth 2 hawc/"
 
 [tool.poe.tasks.lint]
