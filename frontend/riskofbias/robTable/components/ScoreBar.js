@@ -2,8 +2,8 @@ import "./ScoreBar.css";
 
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import Animation from "shared/components/Animation";
 import h from "shared/utils/helpers";
-import {VelocityComponent} from "velocity-react";
 
 import {
     BIAS_DIRECTION_SIMPLE,
@@ -33,12 +33,9 @@ class ScoreBar extends Component {
 
         return (
             <div className="score-bar">
-                <VelocityComponent
-                    animation={{opacity: 1, width: `${barWidth}%`}}
-                    runOnMount={true}
-                    duration={1000}>
+                <Animation animation={{opacity: 1, width: `${barWidth}%`}} duration={1000}>
                     {this.render_score_bar()}
-                </VelocityComponent>
+                </Animation>
                 <i>{description}</i>
                 {direction == BIAS_DIRECTION_UNKNOWN ? null : direction_postfix}
             </div>
