@@ -2,7 +2,7 @@ import "./ScoreBar.css";
 
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import VelocityComponent from "shared/components/Animation";
+import Animation from "shared/components/Animation";
 import h from "shared/utils/helpers";
 
 import {
@@ -33,9 +33,9 @@ class ScoreBar extends Component {
 
         return (
             <div className="score-bar">
-                <VelocityComponent animation={{opacity: 1, width: `${barWidth}%`}} duration={1000}>
+                <Animation animation={{opacity: 1, width: `${barWidth}%`}} duration={1000}>
                     {this.render_score_bar()}
-                </VelocityComponent>
+                </Animation>
                 <i>{description}</i>
                 {direction == BIAS_DIRECTION_UNKNOWN ? null : direction_postfix}
             </div>
