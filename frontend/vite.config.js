@@ -46,6 +46,26 @@ export default defineConfig({
             input: {
                 main: "index.js",
             },
+            output: {
+                manualChunks: function manualChunks(id) {
+                    if (id.includes("node_modules")) {
+                        if (id.includes("plotly")) {
+                            return "plotly";
+                        } else if (id.includes("d3")) {
+                            return "d3";
+                        } else if (
+                            id.includes("react") ||
+                            id.includes("mobx") ||
+                            id.includes("quill")
+                        ) {
+                            return "ui";
+                        } else {
+                            return "vendor";
+                        }
+                    }
+                    return null;
+                },
+            },
         },
     },
     resolve: {
