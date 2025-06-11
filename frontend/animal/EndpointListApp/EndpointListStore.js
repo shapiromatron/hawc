@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, observable, toJS} from "mobx";
+import {action, computed, makeObservable, observable, toJS} from "mobx";
 import h from "shared/utils/helpers";
 
 const CRITICAL_VALUES = ["noel", "loel", "fel", "bmd", "bmdl"];
@@ -16,6 +16,7 @@ class EndpointListStore {
     @observable criticalValueOptions = null;
 
     constructor(config) {
+        makeObservable(this);
         this.config = config;
         this.getDataset();
     }

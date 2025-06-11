@@ -1,8 +1,9 @@
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 import h from "shared/utils/helpers";
 
 class BaseStore {
     constructor(rootStore, config) {
+        makeObservable(this);
         this.root = rootStore;
         this.config = config;
     }

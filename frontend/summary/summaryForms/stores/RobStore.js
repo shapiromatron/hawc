@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 import h from "shared/utils/helpers";
 
 const _getDefaultSettings = function (visual_type, metrics) {
@@ -49,6 +49,7 @@ const _getDefaultSettings = function (visual_type, metrics) {
 
 class RobStore {
     constructor(rootStore) {
+        makeObservable(this);
         this.root = rootStore;
         this.visual_type = this.root.base.config.visual_type;
         this.metrics = this.root.base.config.rob_config.metrics;

@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 import {NR_KEYS} from "riskofbias/constants";
 import h from "shared/utils/helpers";
 
@@ -7,6 +7,7 @@ import StudyRobStore from "../stores/StudyRobStore";
 
 class RobFormStore extends StudyRobStore {
     constructor(config) {
+        makeObservable(this);
         super();
         this.config = config;
     }

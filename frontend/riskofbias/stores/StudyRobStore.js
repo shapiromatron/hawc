@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 
 import {fetchRobSettings, fetchRobStudy, fetchStudy} from "../constants";
 

@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, observable, toJS} from "mobx";
+import {action, computed, makeObservable, observable, toJS} from "mobx";
 import h from "shared/utils/helpers";
 
 import {NULL_VALUE} from "../summary/constants";
@@ -27,6 +27,7 @@ class HeatmapTemplateStore {
     @observable countColumn = NULL_VALUE;
 
     constructor(config) {
+        makeObservable(this);
         this.config = config;
         const options = OPTIONS[config.data_class];
         this.dashboardOptions = _.values(options.DASHBOARDS);

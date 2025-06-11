@@ -1,4 +1,4 @@
-import {action, autorun, computed, observable} from "mobx";
+import {action, autorun, computed, makeObservable, observable} from "mobx";
 import h from "shared/utils/helpers";
 
 import $ from "$";
@@ -9,6 +9,7 @@ import {sortReferences} from "../constants";
 
 class Store {
     constructor(config) {
+        makeObservable(this);
         this.config = config;
         this.tagtree = new TagTree(config.tags[0], config.assessment_id, config.search_id);
         this.tagtree.add_references(config.references);

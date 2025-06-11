@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, autorun, computed, observable} from "mobx";
+import {action, autorun, computed, makeObservable, observable} from "mobx";
 import {
     deleteArrayElement,
     moveArrayElementDown,
@@ -40,6 +40,7 @@ class EvidenceProfileTableStore {
     @observable editTabIndex = 0;
 
     constructor(editMode, table, editRootStore) {
+        makeObservable(this);
         this.editMode = editMode;
         this.table = table;
         this.settings = table.content;

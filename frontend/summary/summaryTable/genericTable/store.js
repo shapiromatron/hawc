@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, autorun, computed, observable, toJS} from "mobx";
+import {action, autorun, computed, makeObservable, observable, toJS} from "mobx";
 import h from "shared/utils/helpers";
 
 const createCell = function (row, column) {
@@ -50,6 +50,7 @@ class GenericTableStore {
     @observable showColumnEdit = false;
 
     constructor(editMode, table, editRootStore) {
+        makeObservable(this);
         this.editMode = editMode;
         this.table = table;
         this.settings = table.content;

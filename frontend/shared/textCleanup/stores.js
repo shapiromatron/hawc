@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, observable, toJS} from "mobx";
+import {action, computed, makeObservable, observable, toJS} from "mobx";
 import h from "shared/utils/helpers";
 
 class TextCleanupStore {
@@ -15,6 +15,7 @@ class TextCleanupStore {
     @observable objects = null;
 
     constructor(config) {
+        makeObservable(this);
         this.config = config;
     }
 
@@ -132,6 +133,7 @@ class GroupStore {
     @observable editValue = "";
 
     constructor(rootStore, objects, model, fieldName) {
+        makeObservable(this);
         // non-observable
         this.rootStore = rootStore;
         this.model = model;

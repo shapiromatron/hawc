@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {computed} from "mobx";
+import {computed, makeObservable} from "mobx";
 
 import {hideScore} from "../constants";
 import StudyRobStore from "../stores/StudyRobStore";
