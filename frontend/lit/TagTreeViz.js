@@ -65,7 +65,6 @@ class VizState {
 
 class TagTreeViz extends D3Plot {
     constructor(tagtree, el, title, options) {
-        makeObservable(this);
         // Displays multiple-dose-response details on the same view and allows for
         // custom visualization of these plots
         super();

@@ -5,6 +5,11 @@ import {hideScore} from "../constants";
 import StudyRobStore from "../stores/StudyRobStore";
 
 class RobDonutStore extends StudyRobStore {
+    constructor() {
+        super();
+        makeObservable(this);
+    }
+
     @computed get final() {
         return _.find(this.study.riskofbiases, {
             final: true,

@@ -53,7 +53,6 @@ class ReferenceListStore {
 @observer
 class PaginatedReferenceList extends Component {
     constructor(props) {
-        makeObservable(this);
         super(props);
         this.store = new ReferenceListStore(props.settings);
     }

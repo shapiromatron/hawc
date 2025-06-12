@@ -7,8 +7,8 @@ import StudyRobStore from "../stores/StudyRobStore";
 
 class RobFormStore extends StudyRobStore {
     constructor(config) {
-        makeObservable(this);
         super();
+        makeObservable(this);
         this.config = config;
     }
 

@@ -8,6 +8,10 @@ class DescriptionStore {
     // A global toggle to show/hide metric descriptions
     @observable show = false;
     @action.bound toggle = () => (this.show = !this.show);
+
+    constructor() {
+        makeObservable(this);
+    }
 }
 
 // singleton store; shared across all components

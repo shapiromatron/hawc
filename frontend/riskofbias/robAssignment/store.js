@@ -9,8 +9,8 @@ class RobAssignmentStore extends StudyRobStore {
     @observable error = false;
 
     constructor(config) {
-        makeObservable(this);
         super();
+        makeObservable(this);
         this.config = config;
         this.studies = config.studies;
         _.unset(config, "studies");

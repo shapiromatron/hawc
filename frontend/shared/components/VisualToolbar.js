@@ -47,7 +47,6 @@ class ToolbarStore {
 @observer
 class VisualToolbar extends Component {
     constructor(props) {
-        makeObservable(this);
         super(props);
         this.store = new ToolbarStore(props.svg, props.nativeSize);
     }

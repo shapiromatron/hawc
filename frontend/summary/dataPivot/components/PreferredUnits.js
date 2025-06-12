@@ -50,7 +50,6 @@ class Store {
 @observer
 class PreferredUnits extends Component {
     constructor(props) {
-        makeObservable(this);
         super(props);
         this.available = React.createRef();
         this.selected = React.createRef();

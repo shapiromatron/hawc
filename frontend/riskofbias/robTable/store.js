@@ -13,8 +13,8 @@ class RobTableStore extends StudyRobStore {
     @observable final = null;
 
     constructor(config) {
-        makeObservable(this);
         super();
+        makeObservable(this);
         this.config = config;
     }
 
