@@ -7,7 +7,6 @@ import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import Hero from "shared/utils/Hero";
 import {getReferenceTagListUrl} from "shared/utils/urls";
-
 import $ from "$";
 
 class Study {

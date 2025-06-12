@@ -2,7 +2,6 @@ import * as d3 from "d3";
 import _ from "lodash";
 import slugify from "slugify";
 import Tablesort from "tablesort";
-
 import $ from "$";
 
 import Hero from "./Hero";

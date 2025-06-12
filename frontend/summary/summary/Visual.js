@@ -1,5 +1,4 @@
 import HAWCUtils from "shared/utils/HAWCUtils";
-
 import $ from "$";
 
 import Crossview from "./Crossview";

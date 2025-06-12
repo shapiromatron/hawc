@@ -19,11 +19,11 @@ class ModelOptionModal extends BaseModal {
         return defaults;
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.model) {
+    componentDidUpdate(prevProps) {
+        if (prevProps.model !== this.props.model && this.props.model) {
             var props = Object.assign(
-                this._getDefaults(nextProps.model),
-                nextProps.model.overrides
+                this._getDefaults(this.props.model),
+                this.props.model.overrides
             );
             this.setState(props);
         }

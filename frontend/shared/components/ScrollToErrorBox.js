@@ -1,11 +1,10 @@
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import h from "shared/utils/helpers";
 
 class ScrollToErrorBox extends Component {
     componentDidUpdate() {
-        h.maybeScrollIntoView(this);
+        // TODO - implement - removed w/ React upgrade to v19
     }
 
     render() {

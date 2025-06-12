@@ -2,7 +2,6 @@ import Endpoint from "animal/Endpoint";
 import Study from "study/Study";
 import DataPivot from "summary/dataPivot/DataPivot";
 import Visual from "summary/summary/Visual";
-
 import $ from "$";
 
 class SmartTagModal {

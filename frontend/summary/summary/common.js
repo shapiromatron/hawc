@@ -2,7 +2,6 @@ import * as d3 from "d3";
 import _ from "lodash";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import textures from "textures";
-
 import $ from "$";
 
 const Patterns = {

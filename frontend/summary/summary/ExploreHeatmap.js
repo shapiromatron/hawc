@@ -8,7 +8,6 @@ import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
-
 import $ from "$";
 
 import BaseVisual from "./BaseVisual";
@@ -18,6 +17,7 @@ import {NULL_VALUE} from "./constants";
 import DatasetTable from "./heatmap/DatasetTable";
 import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 import HeatmapDatastore from "./heatmap/HeatmapDatastore";
+
 
 const startupHeatmapAppRender = function (el, settings, datastore, options) {
     const store = new HeatmapDatastore(settings, datastore, options);

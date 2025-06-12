@@ -5,7 +5,6 @@ import React, {Component} from "react";
 import ReactDOM from "react-dom";
 import Loading from "shared/components/Loading";
 import h from "shared/utils/helpers";
-
 import $ from "$";
 
 import PrismaPlot from "./PrismaPlot";

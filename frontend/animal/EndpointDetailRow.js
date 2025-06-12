@@ -1,5 +1,4 @@
 import h from "shared/utils/helpers";
-
 import $ from "$";
 
 class EndpointDetailRow {

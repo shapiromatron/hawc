@@ -53,12 +53,12 @@ class OutputFigure extends React.Component {
         }
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        if (nextProps.hoverModel !== this.props.hoverModel) {
-            this.renderHoverLine(nextProps.hoverModel);
+    componentDidUpdate(prevProps) {
+        if (prevProps.hoverModel !== this.props.hoverModel) {
+            this.renderHoverLine(this.props.hoverModel);
         }
-        if (nextProps.selectedModel !== this.props.selectedModel) {
-            this.renderSelectedLine(nextProps.selectedModel);
+        if (prevProps.selectedModel !== this.props.selectedModel) {
+            this.renderSelectedLine(this.props.selectedModel);
         }
     }
 

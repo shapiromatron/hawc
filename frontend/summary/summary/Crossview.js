@@ -1,7 +1,6 @@
 import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
-
 import $ from "$";
 
 import CrossviewPlot from "./CrossviewPlot";

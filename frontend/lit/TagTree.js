@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-
 import NestedTag from "./NestedTag";
 import TagTreeComponent from "./components/TagTree";
 

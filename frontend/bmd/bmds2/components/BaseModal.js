@@ -1,5 +1,4 @@
 import React from "react";
-
 import $ from "$";
 
 class BaseModal extends React.Component {

@@ -5,7 +5,6 @@ import BaseTable from "shared/utils/BaseTable";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
-
 import $ from "$";
 
 import BaseVisual from "./BaseVisual";

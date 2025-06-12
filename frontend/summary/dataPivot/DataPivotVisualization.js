@@ -5,7 +5,6 @@ import {parse as queryParse} from "shared/parsers/query";
 import D3Plot from "shared/utils/D3Plot";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
-
 import $ from "$";
 
 import {getAction, showAsModal} from "../interactivity/actions";

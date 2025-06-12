@@ -31,8 +31,14 @@ class Recommendation extends React.Component {
         return d;
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        this.setState(this.updateState(nextProps));
+    componentDidUpdate(prevProps) {
+        if (
+            prevProps.selectedModelId !== this.props.selectedModelId ||
+            prevProps.selectedModelNotes !== this.props.selectedModelNotes ||
+            prevProps.models !== this.props.models
+        ) {
+            this.setState(this.updateState(this.props));
+        }
     }
 
     render() {

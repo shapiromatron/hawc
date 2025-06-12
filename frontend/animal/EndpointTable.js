@@ -1,7 +1,6 @@
 import _ from "lodash";
 import TableFootnotes from "shared/utils/TableFootnotes";
 import h from "shared/utils/helpers";
-
 import $ from "$";
 
 class EndpointTable {

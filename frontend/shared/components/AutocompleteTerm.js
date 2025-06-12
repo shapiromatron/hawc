@@ -24,11 +24,16 @@ class AutocompleteTerm extends Component {
         };
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        this.setState({
-            currentText: nextProps.currentText,
-            currentId: nextProps.currentId,
-        });
+    componentDidUpdate(prevProps) {
+        if (
+            prevProps.currentText !== this.props.currentText ||
+            prevProps.currentId !== this.props.currentId
+        ) {
+            this.setState({
+                currentText: this.props.currentText,
+                currentId: this.props.currentId,
+            });
+        }
     }
 
     onSuggestionsFetchRequested({value}) {

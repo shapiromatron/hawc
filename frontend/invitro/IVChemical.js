@@ -2,7 +2,6 @@ import DssTox from "assessment/DssTox";
 import DescriptiveTable from "shared/utils/DescriptiveTable";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
-
 import $ from "$";
 
 class IVChemical {
