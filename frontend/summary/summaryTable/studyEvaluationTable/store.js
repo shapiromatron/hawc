@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, autorun, computed, observable} from "mobx";
+import {action, autorun, computed, makeObservable, observable} from "mobx";
 import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderRiskOfBiasDisplay} from "riskofbias/robTable/components/RiskOfBiasDisplay";
 import HAWCModal from "shared/utils/HAWCModal";
@@ -37,6 +37,7 @@ class StudyEvaluationTableStore {
     }
 
     constructor(editMode, table, editRootStore) {
+        makeObservable(this);
         this.editMode = editMode;
         this.table = table;
         this.settings = table.content;

@@ -1,8 +1,9 @@
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 import h from "shared/utils/helpers";
 
 class RobMetricsStore {
     constructor(config) {
+        makeObservable(this);
         this.config = config;
     }
 

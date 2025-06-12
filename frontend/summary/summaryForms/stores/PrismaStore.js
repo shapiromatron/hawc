@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 import {deleteArrayElement} from "shared/components/EditableRowData";
 import h from "shared/utils/helpers";
 import {NULL_VALUE} from "summary/summary/constants";
@@ -102,6 +102,7 @@ const _getDefaultSettings = function () {
 
 class PrismaStore {
     constructor(rootStore) {
+        makeObservable(this);
         this.root = rootStore;
         this.getDataset();
     }

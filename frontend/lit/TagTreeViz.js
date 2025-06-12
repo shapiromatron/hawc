@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import {action, computed, observable, toJS} from "mobx";
+import {action, computed, makeObservable, observable, toJS} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -40,6 +40,7 @@ class VizState {
     @observable nodeOffsets = {};
 
     constructor(options) {
+        makeObservable(this);
         this.options = options;
     }
     @computed

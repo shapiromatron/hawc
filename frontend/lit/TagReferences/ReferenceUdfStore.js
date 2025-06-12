@@ -1,6 +1,6 @@
 import $ from "jquery";
 import _ from "lodash";
-import {action, autorun, computed, observable} from "mobx";
+import {action, autorun, computed, makeObservable, observable} from "mobx";
 
 const renderTagForm = function (tagId, referenceId, tagNames, udf) {
     return `<div class='box-shadow rounded mt-3 mb-4'>
@@ -27,6 +27,7 @@ class UdfStore {
     @observable errors = null;
 
     constructor(parent) {
+        makeObservable(this);
         this.parent = parent;
         this.config = parent.config;
 

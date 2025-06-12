@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, observable, toJS} from "mobx";
+import {action, computed, makeObservable, observable, toJS} from "mobx";
 
 import $ from "$";
 
@@ -17,6 +17,7 @@ import {
 
 class Bmd3Store {
     constructor(config) {
+        makeObservable(this);
         this.config = config;
     }
     @observable endpoint = null;

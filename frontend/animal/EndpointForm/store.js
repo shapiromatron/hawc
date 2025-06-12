@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 import h from "shared/utils/helpers";
 
 import {termUrlLookup} from "./constants";
@@ -11,6 +11,7 @@ class EndpointFormStore {
     @observable useControlledVocabulary = null;
 
     constructor(config) {
+        makeObservable(this);
         this.config = config;
         this.setUseControlledVocabulary();
     }

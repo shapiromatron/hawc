@@ -1,10 +1,11 @@
 import * as d3 from "d3";
-import {action, computed, observable, toJS} from "mobx";
+import {action, computed, makeObservable, observable, toJS} from "mobx";
 
 class VocabBrowseStore {
     @observable query = "";
 
     constructor(config) {
+        makeObservable(this);
         this.config = config;
         this.dataset = d3.csvParse(config.data, (d, i) => {
             // make numbers in data numeric if possible

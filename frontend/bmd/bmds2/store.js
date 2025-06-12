@@ -1,7 +1,7 @@
 import Endpoint from "animal/Endpoint";
 import {applyRecommendationLogic} from "bmd/common/recommendationLogic";
 import _ from "lodash";
-import {action, autorun, computed, observable} from "mobx";
+import {action, autorun, computed, makeObservable, observable} from "mobx";
 
 import h from "/shared/utils/helpers";
 
@@ -9,6 +9,7 @@ import {BMR_MODAL_ID, OPTION_MODAL_ID, OUTPUT_MODAL_ID} from "./constants";
 
 class Bmd2Store {
     constructor(config) {
+        makeObservable(this);
         this.config = config;
     }
 

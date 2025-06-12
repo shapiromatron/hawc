@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, observable, toJS} from "mobx";
+import {action, makeObservable, observable, toJS} from "mobx";
 import {
     deleteArrayElement,
     moveArrayElementDown,
@@ -10,6 +10,7 @@ import {NULL_CASE, OrderChoices} from "./shared";
 
 class SortStore {
     constructor(rootStore) {
+        makeObservable(this);
         this.rootStore = rootStore;
         this.settings = this.rootStore.dp.settings.sorts;
     }
@@ -83,6 +84,7 @@ class SortStore {
 
 class Store {
     constructor(dp) {
+        makeObservable(this);
         this.dp = dp;
         this.sortStore = new SortStore(this);
     }

@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, observable, toJS} from "mobx";
+import {action, computed, makeObservable, observable, toJS} from "mobx";
 import {
     deleteArrayElement,
     moveArrayElementDown,
@@ -31,6 +31,7 @@ let createDefaultAxisItem = function () {
 
 class ExploratoryHeatmapStore {
     constructor(rootStore) {
+        makeObservable(this);
         this.root = rootStore;
     }
 

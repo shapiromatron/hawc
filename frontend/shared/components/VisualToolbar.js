@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
-import {action, observable} from "mobx";
+import {action, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -17,6 +17,7 @@ class ToolbarStore {
     @observable isFitted = false;
 
     constructor(svg, nativeSize) {
+        makeObservable(this);
         this.d3svg = d3.select(svg);
         this.showResizeButton = _.isObject(nativeSize);
         this.nativeSize = nativeSize;

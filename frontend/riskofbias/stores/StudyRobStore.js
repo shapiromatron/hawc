@@ -1,9 +1,13 @@
 import _ from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 
 import {fetchRobSettings, fetchRobStudy, fetchStudy} from "../constants";
 
 class StudyRobStore {
+    constructor() {
+        makeObservable(this);
+    }
+
     @observable settings = null;
     @observable study = null;
     @observable activeRobs = null;

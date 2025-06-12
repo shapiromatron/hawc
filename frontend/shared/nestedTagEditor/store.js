@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, observable} from "mobx";
+import {action, makeObservable, observable} from "mobx";
 import h from "shared/utils/helpers";
 
 import {NO_PARENT} from "./constants";
@@ -11,6 +11,7 @@ class TagEditorStore {
     @observable tagCounts = false;
 
     constructor(config) {
+        makeObservable(this);
         this.config = config;
         this.tagReferences =
             "references" in config

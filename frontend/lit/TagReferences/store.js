@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, observable, toJS} from "mobx";
+import {action, computed, makeObservable, observable, toJS} from "mobx";
 import h from "shared/utils/helpers";
 
 import Reference from "../Reference";
@@ -19,6 +19,7 @@ class Store {
     @observable showInstructionsModal = false;
 
     constructor(config) {
+        makeObservable(this);
         this.config = config;
         this.tagtree = new TagTree(config.tags[0]);
         this.references = Reference.array(config.refs, this.tagtree, false);

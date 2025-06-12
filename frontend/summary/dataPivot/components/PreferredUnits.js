@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, autorun, computed, observable} from "mobx";
+import {action, autorun, computed, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -10,6 +10,7 @@ import $ from "$";
 
 class Store {
     constructor(config, formField) {
+        makeObservable(this);
         this.options = config.preferred_units;
         this.selected = config.preferred_units_initial
             ? (this.selected = config.preferred_units_initial.map(selected => {

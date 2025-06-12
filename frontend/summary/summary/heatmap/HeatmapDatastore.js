@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
-import {action, computed, observable, toJS} from "mobx";
+import {action, computed, makeObservable, observable, toJS} from "mobx";
 import HAWCModal from "shared/utils/HAWCModal";
 import h from "shared/utils/helpers";
 
@@ -23,6 +23,7 @@ class HeatmapDatastore {
     @observable tableDataFilters = new Set();
 
     constructor(settings, dataset) {
+        makeObservable(this);
         // basic initialization, enough for bound checking
         this.settings = settings;
         this.dataset = applyRowFilters(
