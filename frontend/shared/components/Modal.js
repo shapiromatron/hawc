@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import React from "react";
-
 import $ from "$";
 
 class Modal extends React.Component {

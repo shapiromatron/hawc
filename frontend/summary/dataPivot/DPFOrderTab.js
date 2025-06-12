@@ -1,9 +1,9 @@
 import _ from "lodash";
-
 import $ from "$";
+import {
 
 import {filterLogicHelpText, filterQueryHelpText} from "../summary/filters";
-import {
+
     _DataPivot_settings_filters,
     _DataPivot_settings_spacers,
     buildColGroup,

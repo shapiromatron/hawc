@@ -8,7 +8,6 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 import Observee from "shared/utils/Observee";
 import h from "shared/utils/helpers";
 import Study from "study/Study";
-
 import $ from "$";
 
 import AnimalGroup from "./AnimalGroup";

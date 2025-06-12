@@ -1,7 +1,5 @@
 import "react-tabs/style/react-tabs.css";
-
 import * as d3 from "d3";
-
 import $ from "$";
 
 import Quillify from "./utils/Quillify";

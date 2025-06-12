@@ -1,5 +1,4 @@
 import h from "shared/utils/helpers";
-
 import $ from "$";
 
 // Method for creating a table for descriptive information

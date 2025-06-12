@@ -1,5 +1,4 @@
 import _ from "lodash";
-
 import $ from "$";
 
 import Group from "./Group";

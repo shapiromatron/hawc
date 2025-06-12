@@ -1,8 +1,7 @@
+import $ from "$";
 import _ from "lodash";
 import BaseTable from "shared/utils/BaseTable";
 import DescriptiveTable from "shared/utils/DescriptiveTable";
-
-import $ from "$";
 
 import GroupDescription from "./GroupDescription";
 

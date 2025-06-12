@@ -1,5 +1,4 @@
 import _ from "lodash";
-
 import $ from "$";
 
 import {EXPOSURE_BIOMONITORING} from "./constants";

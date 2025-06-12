@@ -2,10 +2,10 @@ import * as d3 from "d3";
 import _ from "lodash";
 import D3Plot from "shared/utils/D3Plot";
 import h from "shared/utils/helpers";
-
 import $ from "$";
 
 import {
+
     BIAS_DIRECTION_SIMPLE,
     BIAS_DIRECTION_VERBOSE,
     getMultiScoreDisplaySettings,

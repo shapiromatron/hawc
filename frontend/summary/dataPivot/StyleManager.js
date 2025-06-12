@@ -1,5 +1,4 @@
 import HAWCModal from "shared/utils/HAWCModal";
-
 import $ from "$";
 
 import StyleViewer from "./StyleViewer";

@@ -1,6 +1,5 @@
 import {action, autorun, computed, observable} from "mobx";
 import h from "shared/utils/helpers";
-
 import $ from "$";
 
 import Reference from "../Reference";

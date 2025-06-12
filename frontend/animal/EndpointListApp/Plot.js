@@ -7,7 +7,6 @@ import PropTypes from "prop-types";
 import React from "react";
 import bindTooltip from "shared/components/Tooltip";
 import h from "shared/utils/helpers";
-
 import $ from "$";
 
 import Tooltip from "./Tooltip";
