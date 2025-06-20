@@ -2,8 +2,19 @@ from django.db import models
 
 
 class ExperimentDesign(models.TextChoices):
-    AA = "AA", "TODO A"
-    BB = "BB", "TODO B"
+    AC = "Ac", "Acute (<24 hr)"
+    ST = "St", "Short-term (1-30 days)"
+    SB = "Sb", "Subchronic (30-90 days)"
+    CH = "Ch", "Chronic (>90 days)"
+    CA = "Ca", "Cancer"
+    ME = "Me", "Mechanistic"
+    RP = "Rp", "Reproductive"
+    R1 = "1r", "1-generation reproductive"
+    R2 = "2r", "2-generation reproductive"
+    DV = "Dv", "Developmental"
+    PB = "Pb", "Pubertal"
+    OT = "Ot", "Other"
+    NR = "NR", "Not-reported"
 
 
 class Sex(models.TextChoices):
@@ -16,6 +27,7 @@ class Sex(models.TextChoices):
 class Generation(models.TextChoices):
     NA = "", "N/A (not generational-study)"
     P0 = "P0", "Parent-generation (P0)"
+    F0 = "F0", "First-generation (F0)"
     F1 = "F1", "First-generation (F1)"
     F2 = "F2", "Second-generation (F2)"
     F3 = "F3", "Third-generation (F3)"
