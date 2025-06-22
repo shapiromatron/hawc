@@ -1,0 +1,48 @@
+{% extends 'assessment-rooted.html' %}
+
+{% load bs4 %}
+{% block content %}
+  <div class="d-flex">
+    <h2>Resolved duplicates</h2>
+    {% if obj_perms.edit %}
+      {% actions %}
+        <a class="dropdown-item" href="{% url 'lit:duplicate-resolution' assessment.pk %}">Duplicate resolution</a>
+      {% endactions %}
+    {% endif %}
+  </div>
+  {% include 'common/inline_filter_form.html' %}
+  {% for object in object_list %}
+    <div class="card {% if forloop.first %} mb-4 {% else %} my-4 {% endif %}">
+      <div class="card-body">
+        <div class="mb-2">
+          <h3 class="d-inline-block"><span class="badge {% if object.resolution == resolution_state.RESOLVED %}badge-success{% else %}badge-secondary{% endif %}">{{object.get_resolution_display}}</span></h3><span class="text-muted font-italic"> {{object.last_updated}} by {{object.resolving_user}}</span>
+        </div>
+        {% if object.resolution == resolution_state.RESOLVED %}
+          <div class="mb-2">
+            <h3>Primary</h3>
+            <div class="border p-1">
+              {% include 'lit/_reference_with_tags.html' with ref=object.primary %}
+            </div>
+          </div>
+        {% endif %}
+        <div>
+          <h3>Candidates</h3>
+          <div class="d-flex flex-row flex-wrap">
+            {% for candidate in object.candidates.all %}
+              <div class="col-sm border p-1">
+                {% include 'lit/_reference_with_tags.html' with ref=candidate %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% if object.notes %}
+          <div class="mt-2">
+            <h3>Notes</h3>
+            <div class="border p-1">{{object.notes}}</div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+  {% include "includes/paginator.html" with plural_object_name="duplicate groups" %}
+{% endblock content %}
