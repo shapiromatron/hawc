@@ -163,5 +163,33 @@ class DynamicFormWidget(Widget):
         js = ["js/udf.js"]
 
 
+class NewDynamicFormWidget(DynamicFormWidget):
+    """Dynamic form widget that uses name instead of prefix."""
+
+    def get_context(self, name, value, attrs):
+        if value is not None and not isinstance(value, dict):
+            value = json.loads(value)
+        if value:
+            value = {f"{name}-{k}": v for k, v in value.items()}
+        formatted_value = self.form_class(data=value, prefix=name)
+        return {
+            "widget": {
+                "name": name,
+                "is_hidden": self.is_hidden,
+                "required": self.is_required,
+                "value": formatted_value,
+                "attrs": self.build_attrs(self.attrs, attrs),
+                "template_name": self.template_name,
+            },
+        }
+
+    def value_from_datadict(self, data, files, name):
+        """Parse value from POST request."""
+        self.form_kwargs.pop("prefix", None)
+        form = self.form_class(data=data, prefix=name, **self.form_kwargs)
+        form.full_clean()
+        return form.cleaned_data
+
+
 class ColorInput(TextInput):
     input_type = "color"
