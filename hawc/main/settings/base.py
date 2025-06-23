@@ -86,6 +86,7 @@ MIDDLEWARE = (
     "django.middleware.security.SecurityMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
     "hawc.apps.common.middleware.MicrosoftOfficeLinkMiddleware",
+    "hawc.apps.common.middleware.ActivateTimezoneMiddleware",
     "hawc.apps.common.middleware.RequestLogMiddleware",
     "hawc.apps.common.middleware.ThreadLocalMiddleware",
 )

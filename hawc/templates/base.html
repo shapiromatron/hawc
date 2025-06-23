@@ -100,6 +100,9 @@
     <script type="text/javascript" src="{% static 'vendor/jquery/3.7.0/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/bootstrap/4.6.2/js/bootstrap.bundle.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'vendor/htmx/2.0.3/htmx.min.js' %}"></script>
+    <script>
+      document.cookie = `timezone=${Intl.DateTimeFormat().resolvedOptions().timeZone}; path=/`;
+    </script>
     {% vite_hmr_client %}
     {% vite_asset 'index.js' %}
     {% if form %}{{ form.media }}{% endif %}

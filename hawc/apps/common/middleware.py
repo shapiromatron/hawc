@@ -2,8 +2,10 @@ import logging
 import re
 import threading
 from urllib.parse import urlparse
+from zoneinfo import ZoneInfo
 
 from django.http import HttpRequest, HttpResponse
+from django.utils import timezone
 from django.utils.http import is_same_domain
 
 logger = logging.getLogger("hawc.request")
@@ -110,4 +112,20 @@ class ThreadLocalMiddleware:
 
     def __call__(self, request: HttpRequest):
         _local_thread.request = request
+        return self.get_response(request)
+
+
+class ActivateTimezoneMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request: HttpRequest):
+        tz = request.COOKIES.get("timezone")
+        if tz:
+            try:
+                timezone.activate(ZoneInfo(tz))
+            except Exception:
+                timezone.deactivate()
+        else:
+            timezone.deactivate()
         return self.get_response(request)
