@@ -7,7 +7,7 @@ from hawc.apps.animalv2.models import Experiment
 
 _successful_post = {
     "name": "exp name",
-    "design": "AA",
+    "design": "Ac",
     "has_multiple_generations": False,
     "guideline_compliance": "test compliance",
     "guideline": 1,

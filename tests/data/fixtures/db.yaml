@@ -20197,7 +20197,7 @@
   fields:
     study: 1
     name: Test Experiment
-    design: AA
+    design: Ac
     has_multiple_generations: false
     guideline_compliance: test compliance
     guideline: 1
@@ -20209,7 +20209,7 @@
   fields:
     study: 1
     name: Test Experiment Two
-    design: AA
+    design: Ac
     has_multiple_generations: false
     guideline_compliance: test compliance
     comments: <p>test comments</p>
