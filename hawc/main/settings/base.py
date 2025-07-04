@@ -239,7 +239,7 @@ if USE_S3_STORAGE:
     AWS_QUERYSTRING_AUTH = os.getenv("AWS_QUERYSTRING_AUTH", "False").lower() == "true"
     AWS_S3_FILE_OVERWRITE = os.getenv("AWS_S3_FILE_OVERWRITE", "True").lower() == "true"
     AWS_DEFAULT_ACL = os.getenv("AWS_DEFAULT_ACL", "public-read")
-    
+
     # Static files with S3
     STATICFILES_STORAGE = "storages.backends.s3boto3.S3StaticStorage"
     AWS_LOCATION_STATIC = "static"
@@ -251,8 +251,8 @@ if USE_S3_STORAGE:
             STATIC_URL = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/static/"
         else:
             STATIC_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/"
-    
-    # Media files with S3  
+
+    # Media files with S3
     DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
     AWS_LOCATION_MEDIA = "media"
     if AWS_S3_CUSTOM_DOMAIN:
@@ -263,7 +263,7 @@ if USE_S3_STORAGE:
             MEDIA_URL = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/media/"
         else:
             MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/"
-    
+
 else:
     # Default filesystem storage (backward compatibility)
     STATIC_URL = "/static/"
