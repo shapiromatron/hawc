@@ -55,7 +55,7 @@ class TestStorageSettings:
         # Should use S3 storage
         assert base.USE_S3_STORAGE is True
         assert base.AWS_ACCESS_KEY_ID == "test-key"
-        assert base.AWS_SECRET_ACCESS_KEY == "test-secret"
+        assert base.AWS_SECRET_ACCESS_KEY == "test-secret"  # noqa: S105
         assert base.AWS_STORAGE_BUCKET_NAME == "test-bucket"
         assert base.AWS_S3_REGION_NAME == "us-west-2"
 
@@ -173,25 +173,3 @@ class TestStorageSettings:
         assert "static" in str(base.STATICFILES_DIRS[0])
         assert "django.contrib.staticfiles.finders.FileSystemFinder" in base.STATICFILES_FINDERS
         assert "django.contrib.staticfiles.finders.AppDirectoriesFinder" in base.STATICFILES_FINDERS
-
-
-class TestStorageImports:
-    """Test that django-storages can be imported when configured."""
-
-    @mock.patch.dict(
-        os.environ, {"HAWC_USE_S3_STORAGE": "true", "AWS_STORAGE_BUCKET_NAME": "test-bucket"}
-    )
-    def test_storages_import_available(self):
-        """Test that storages module is available when S3 is configured."""
-        # This test verifies that django-storages is available
-        # In a real environment, this would fail if django-storages wasn't installed
-        try:
-            import storages.backends.s3boto3
-
-            storages_available = True
-        except ImportError:
-            storages_available = False
-
-        # For now, we'll just check that the import path is valid
-        # In production, this should always be True
-        assert isinstance(storages_available, bool)
