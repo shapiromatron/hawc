@@ -114,6 +114,7 @@ INSTALLED_APPS = (
     "crispy_forms",
     "crispy_bootstrap4",
     "django_vite",
+    "storages",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -227,45 +228,60 @@ DISABLED_LOGIN_HOSTS = os.getenv("HAWC_DISABLED_LOGIN_HOSTS", "").split("|")
 USE_S3_STORAGE = os.getenv("HAWC_USE_S3_STORAGE", "False").lower() == "true"
 
 if USE_S3_STORAGE:
-    # S3 Storage configuration
-    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
-    AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
-    AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "us-east-1")
-    AWS_S3_CUSTOM_DOMAIN = os.getenv("AWS_S3_CUSTOM_DOMAIN")
-    AWS_S3_ENDPOINT_URL = os.getenv("AWS_S3_ENDPOINT_URL")
-    AWS_S3_USE_SSL = os.getenv("AWS_S3_USE_SSL", "True").lower() == "true"
-    AWS_S3_VERIFY = os.getenv("AWS_S3_VERIFY", "True").lower() == "true"
-    AWS_QUERYSTRING_AUTH = os.getenv("AWS_QUERYSTRING_AUTH", "False").lower() == "true"
-    AWS_S3_FILE_OVERWRITE = os.getenv("AWS_S3_FILE_OVERWRITE", "True").lower() == "true"
-    AWS_DEFAULT_ACL = os.getenv("AWS_DEFAULT_ACL", "public-read")
+    storage_options = {
+        "access_key": os.getenv("AWS_ACCESS_KEY_ID"),
+        "secret_key": os.getenv("AWS_SECRET_ACCESS_KEY"),
+        "bucket_name": os.getenv("AWS_STORAGE_BUCKET_NAME"),
+        "default_acl": os.getenv("AWS_DEFAULT_ACL", "public-read"),
+        "querystring_auth": os.getenv("AWS_QUERYSTRING_AUTH", "False").lower() == "true",
+        "custom_domain": os.getenv(
+            "AWS_S3_CUSTOM_DOMAIN", f"{os.getenv('AWS_STORAGE_BUCKET_NAME')}.s3.amazonaws.com"
+        ),
+        "region_name": os.getenv("AWS_S3_REGION_NAME", "us-east-1"),
+        "use_ssl": os.getenv("AWS_S3_USE_SSL", "True").lower() == "true",
+        "verify": os.getenv("AWS_S3_VERIFY", "True").lower() == "true",
+        "file_overwrite": os.getenv("AWS_S3_FILE_OVERWRITE", "True").lower() == "true",
+    }
 
-    # Static files with S3
-    STATICFILES_STORAGE = "storages.backends.s3boto3.S3StaticStorage"
-    AWS_LOCATION_STATIC = "static"
-    if AWS_S3_CUSTOM_DOMAIN:
-        STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
-    else:
-        if AWS_S3_ENDPOINT_URL:
-            # For S3-compatible services like MinIO
-            STATIC_URL = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/static/"
-        else:
-            STATIC_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/"
-
-    # Media files with S3
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-    AWS_LOCATION_MEDIA = "media"
-    if AWS_S3_CUSTOM_DOMAIN:
-        MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
-    else:
-        if AWS_S3_ENDPOINT_URL:
-            # For S3-compatible services like MinIO
-            MEDIA_URL = f"{AWS_S3_ENDPOINT_URL}/{AWS_STORAGE_BUCKET_NAME}/media/"
-        else:
-            MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/"
-
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+            "OPTIONS": {
+                **storage_options,
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+            "OPTIONS": {
+                **storage_options,
+            },
+        },
+        "private": {
+            "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+            "OPTIONS": {
+                **storage_options,
+                "default_acl": "private",
+            },
+        },
+    }
+    STATIC_URL = f"https://{storage_options['custom_domain']}/static/"
+    STATIC_ROOT = f"https://{storage_options['custom_domain']}/public/static/"
+    MEDIA_URL = f"https://{storage_options['custom_domain']}/media/"
+    MEDIA_ROOT = f"https://{storage_options['custom_domain']}/public/media/"
 else:
-    # Default filesystem storage (backward compatibility)
+    # Default local filesystem storage
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+        "private": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+            "location": str(PRIVATE_DATA_ROOT),
+        },
+    }
     STATIC_URL = "/static/"
     STATIC_ROOT = str(PUBLIC_DATA_ROOT / "static")
     MEDIA_URL = "/media/"
