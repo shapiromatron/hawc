@@ -78,6 +78,7 @@ dev = [
   "django-extensions~=4.1",
   # tests
   "coverage~=7.8.2",
+  "moto~=5.1.8",
   "pytest~=8.3.5",
   "pytest-django~=4.11.1",
   "vcrpy==7.0.0",
