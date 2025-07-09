@@ -256,4 +256,3 @@ class S3StorageFunctionalTest(TestCase):
             self.assertIn(saved_name, url)
 
             default_storage.delete(saved_name)
-

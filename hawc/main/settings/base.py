@@ -266,8 +266,8 @@ if USE_S3_STORAGE:
         },
     }
     if storage_options["endpoint_url"]:
-        STATIC_URL = f"{storage_options["endpoint_url"]}/{storage_options["bucket_name"]}/static/"
-        MEDIA_URL = f"{storage_options["endpoint_url"]}/{storage_options["bucket_name"]}/media/"
+        STATIC_URL = f"{storage_options['endpoint_url']}/{storage_options['bucket_name']}/static/"
+        MEDIA_URL = f"{storage_options['endpoint_url']}/{storage_options['bucket_name']}/media/"
     else:
         STATIC_URL = f"https://{storage_options['custom_domain']}/static/"
         MEDIA_URL = f"https://{storage_options['custom_domain']}/media/"
@@ -284,7 +284,7 @@ else:
             "BACKEND": "django.core.files.storage.FileSystemStorage",
             "OPTIONS": {
                 "location": str(PRIVATE_DATA_ROOT),
-            }
+            },
         },
     }
     STATIC_URL = "/static/"
