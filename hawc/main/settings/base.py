@@ -241,6 +241,7 @@ if USE_S3_STORAGE:
         "use_ssl": os.getenv("AWS_S3_USE_SSL", "True").lower() == "true",
         "verify": os.getenv("AWS_S3_VERIFY", "True").lower() == "true",
         "file_overwrite": os.getenv("AWS_S3_FILE_OVERWRITE", "True").lower() == "true",
+        "endpoint_url": os.getenv("AWS_S3_ENDPOINT_URL"),
     }
 
     STORAGES = {
@@ -264,10 +265,12 @@ if USE_S3_STORAGE:
             },
         },
     }
-    STATIC_URL = f"https://{storage_options['custom_domain']}/static/"
-    STATIC_ROOT = f"https://{storage_options['custom_domain']}/public/static/"
-    MEDIA_URL = f"https://{storage_options['custom_domain']}/media/"
-    MEDIA_ROOT = f"https://{storage_options['custom_domain']}/public/media/"
+    if storage_options["endpoint_url"]:
+        STATIC_URL = f"{storage_options["endpoint_url"]}/{storage_options["bucket_name"]}/static/"
+        MEDIA_URL = f"{storage_options["endpoint_url"]}/{storage_options["bucket_name"]}/media/"
+    else:
+        STATIC_URL = f"https://{storage_options['custom_domain']}/static/"
+        MEDIA_URL = f"https://{storage_options['custom_domain']}/media/"
 else:
     # Default local filesystem storage
     STORAGES = {
@@ -279,14 +282,17 @@ else:
         },
         "private": {
             "BACKEND": "django.core.files.storage.FileSystemStorage",
-            "location": str(PRIVATE_DATA_ROOT),
+            "OPTIONS": {
+                "location": str(PRIVATE_DATA_ROOT),
+            }
         },
     }
     STATIC_URL = "/static/"
-    STATIC_ROOT = str(PUBLIC_DATA_ROOT / "static")
     MEDIA_URL = "/media/"
-    MEDIA_ROOT = str(PUBLIC_DATA_ROOT / "media")
-    FILE_UPLOAD_PERMISSIONS = 0o755
+
+STATIC_ROOT = str(PUBLIC_DATA_ROOT / "static")
+MEDIA_ROOT = str(PUBLIC_DATA_ROOT / "media")
+FILE_UPLOAD_PERMISSIONS = 0o755
 
 # Static files common configuration
 STATICFILES_DIRS = (str(PROJECT_PATH / "static"),)
