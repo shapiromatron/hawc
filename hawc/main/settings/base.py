@@ -114,6 +114,7 @@ INSTALLED_APPS = (
     "crispy_forms",
     "crispy_bootstrap4",
     "django_vite",
+    "storages",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -223,19 +224,82 @@ LOGIN_REDIRECT_URL = reverse_lazy("portal")
 LOGOUT_REDIRECT_URL = os.getenv("HAWC_LOGOUT_REDIRECT", reverse_lazy("home"))
 DISABLED_LOGIN_HOSTS = os.getenv("HAWC_DISABLED_LOGIN_HOSTS", "").split("|")
 
-# Static files
-STATIC_URL = "/static/"
+# Storage configuration
+USE_S3_STORAGE = os.getenv("HAWC_USE_S3_STORAGE", "False").lower() == "true"
+
+if USE_S3_STORAGE:
+    storage_options = {
+        "access_key": os.getenv("AWS_ACCESS_KEY_ID"),
+        "secret_key": os.getenv("AWS_SECRET_ACCESS_KEY"),
+        "bucket_name": os.getenv("AWS_STORAGE_BUCKET_NAME"),
+        "default_acl": os.getenv("AWS_DEFAULT_ACL", "public-read"),
+        "querystring_auth": os.getenv("AWS_QUERYSTRING_AUTH", "False").lower() == "true",
+        "custom_domain": os.getenv(
+            "AWS_S3_CUSTOM_DOMAIN", f"{os.getenv('AWS_STORAGE_BUCKET_NAME')}.s3.amazonaws.com"
+        ),
+        "region_name": os.getenv("AWS_S3_REGION_NAME", "us-east-1"),
+        "use_ssl": os.getenv("AWS_S3_USE_SSL", "True").lower() == "true",
+        "verify": os.getenv("AWS_S3_VERIFY", "True").lower() == "true",
+        "file_overwrite": os.getenv("AWS_S3_FILE_OVERWRITE", "True").lower() == "true",
+        "endpoint_url": os.getenv("AWS_S3_ENDPOINT_URL"),
+    }
+
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+            "OPTIONS": {
+                **storage_options,
+            },
+        },
+        "staticfiles": {
+            "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+            "OPTIONS": {
+                **storage_options,
+            },
+        },
+        "private": {
+            "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+            "OPTIONS": {
+                **storage_options,
+                "default_acl": "private",
+            },
+        },
+    }
+    if storage_options["endpoint_url"]:
+        STATIC_URL = f"{storage_options['endpoint_url']}/{storage_options['bucket_name']}/static/"
+        MEDIA_URL = f"{storage_options['endpoint_url']}/{storage_options['bucket_name']}/media/"
+    else:
+        STATIC_URL = f"https://{storage_options['custom_domain']}/static/"
+        MEDIA_URL = f"https://{storage_options['custom_domain']}/media/"
+else:
+    # Default local filesystem storage
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+        "private": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+            "OPTIONS": {
+                "location": str(PRIVATE_DATA_ROOT),
+            },
+        },
+    }
+    STATIC_URL = "/static/"
+    MEDIA_URL = "/media/"
+
 STATIC_ROOT = str(PUBLIC_DATA_ROOT / "static")
+MEDIA_ROOT = str(PUBLIC_DATA_ROOT / "media")
+FILE_UPLOAD_PERMISSIONS = 0o755
+
+# Static files common configuration
 STATICFILES_DIRS = (str(PROJECT_PATH / "static"),)
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
-
-# Media files
-MEDIA_URL = "/media/"
-MEDIA_ROOT = str(PUBLIC_DATA_ROOT / "media")
-FILE_UPLOAD_PERMISSIONS = 0o755
 
 # Wagtail setup
 WAGTAIL_SITE_NAME = "HAWC"
