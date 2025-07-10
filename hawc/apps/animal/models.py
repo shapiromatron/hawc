@@ -972,7 +972,7 @@ class ConfidenceIntervalsMixin:
         if variance_type == constants.VarianceType.SD:
             return variance
         elif variance_type == constants.VarianceType.SE and variance is not None and n is not None:
-            return variance * math.sqrt(n)
+            return round(variance * math.sqrt(n), 4)
         else:
             return None
 
