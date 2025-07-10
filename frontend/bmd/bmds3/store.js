@@ -15,6 +15,8 @@ import {
     getPlotlyDrCurve,
 } from "./utils";
 
+const MAX_OPTION_SETS = 6;
+
 class Bmd3Store {
     constructor(config) {
         makeObservable(this);
@@ -31,11 +33,11 @@ class Bmd3Store {
             .then(response => response.json())
             .then(data => {
                 this.session = data;
-                this.settings = data.inputs.settings;
+                this.inputs = data.inputs;
                 this.endpoint = new Endpoint(data.endpoint);
-                this.endpoint.doseUnits.activate(data.inputs.settings.dose_units_id);
+                this.endpoint.doseUnits.activate(data.inputs.dose_units_id);
                 this.inputOptions = data.input_options;
-                addDoseUnitsToModels(data.outputs, data.inputs.settings.dose_units_id);
+                addDoseUnitsToModels(data.outputs, data.inputs.dose_units_id);
                 this.date_executed = data.date_executed;
                 this.outputs = data.outputs;
                 this.errors = data.errors;
@@ -48,7 +50,7 @@ class Bmd3Store {
     }
 
     // INPUT SETTINGS
-    @observable settings = null;
+    @observable inputs = null;
     @observable inputOptions = null;
     @computed get doseUnitChoices() {
         return this.endpoint.doseUnits.units.map(units => {
@@ -65,43 +67,53 @@ class Bmd3Store {
         return doseDropOptions(this.inputOptions.dtype, this.endpoint);
     }
     @computed get isContinuous() {
-        return this.inputOptions.dtype === "C";
-    }
-    @computed get isDichotomous() {
-        return this.inputOptions.dtype === "D";
+        return this.inputs.dtype === "C";
     }
     @computed get doseUnitsText() {
-        return getLabel(this.settings.dose_units_id, this.doseUnitChoices);
+        return getLabel(this.inputs.dose_units_id, this.doseUnitChoices);
     }
     @computed get varianceModelText() {
+        // TODO revisit
         return _.isNumber(this.settings.variance_model)
             ? getLabel(this.settings.variance_model, this.varianceModelChoices)
             : "";
     }
     @computed get bmrText() {
+        // TODO revisit
         return bmrLabel(this.inputOptions.dtype, this.settings.bmr_type, this.settings.bmr_value);
     }
     @computed get bmrTypeLabel() {
+        // TODO revisit
         return _.find(this.inputOptions.bmr_types, d => d.id === this.settings.bmr_type).label;
     }
     @computed get distributionType() {
+        // TODO revisit
         return _.find(this.inputOptions.dist_types, d => d.id === this.settings.variance_model)
             .label;
     }
     @action.bound changeSetting(key, value) {
-        this.settings[key] = value;
+        _.set(this.inputs, key, value);
         if (key === "dose_units_id") {
             this.endpoint.doseUnits.activate(value);
         }
     }
+    @action.bound createSettingsRow() {
+        if (this.inputs.settings.length >= MAX_OPTION_SETS) {
+            return;
+        }
+        const lastRow = this.inputs.settings[this.inputs.settings.length - 1],
+            lastRowClone = _.cloneDeep(lastRow);
+        this.inputs.settings.push(lastRowClone);
+    }
     @computed get dosesArray() {
+        // TODO revisit
         const e = this.endpoint,
-            doseUnitsId = this.settings.dose_units_id,
+            doseUnitsId = this.inputs.dose_units_id,
             doses = e.data.animal_group.dosing_regime.doses.filter(
                 d => d.dose_units.id === doseUnitsId
             ),
             nDoses = doses.length,
-            doses_dropped = this.settings.num_doses_dropped;
+            doses_dropped = 0;
         return doses.map((d, i) => {
             if (i + 1 > nDoses - doses_dropped) {
                 return `${d.dose} (dropped)`;
@@ -161,7 +173,7 @@ class Bmd3Store {
                 inputs: {
                     version: 2,
                     dtype: this.inputOptions.dtype,
-                    settings: toJS(this.settings),
+                    inputs: toJS(this.inputs),
                 },
             },
             opts = h.fetchPost(this.config.csrf, payload, "PATCH");
@@ -185,7 +197,7 @@ class Bmd3Store {
                     .then(response => response.json())
                     .then(data => {
                         if (data.is_finished) {
-                            addDoseUnitsToModels(data.outputs, this.settings.dose_units_id);
+                            addDoseUnitsToModels(data.outputs, this.inputs.dose_units_id);
                             this.date_executed = data.date_executed;
                             this.outputs = data.outputs;
                             this.errors = data.errors;

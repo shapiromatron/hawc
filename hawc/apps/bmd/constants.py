@@ -34,12 +34,11 @@ class ContinuousDistTypeChoices(IntegerChoices):
 
 
 class DichotomousInputSettings(BaseModel):
-    dose_units_id: int
     num_doses_dropped: Annotated[int, Field(ge=0)] = 0
     bmr_type: pybmds.DichotomousRiskType = pybmds.DichotomousRiskType.ExtraRisk
     bmr_value: Annotated[float, Field(gt=0)] = 0.1
 
-    def add_models(self, session):
+    def add_models(self, session: pybmds.Session):
         settings = {"bmr_type": self.bmr_type, "bmr": self.bmr_value}
         session.add_model(
             Models.DichotomousHill,
@@ -88,13 +87,12 @@ class DichotomousInputSettings(BaseModel):
 
 
 class ContinuousInputSettings(BaseModel):
-    dose_units_id: int
     num_doses_dropped: Annotated[int, Field(ge=0)] = 0
     bmr_type: pybmds.ContinuousRiskType = pybmds.ContinuousRiskType.StandardDeviation
     bmr_value: Annotated[float, Field(gt=0)] = 1
     variance_model: pybmds.ContinuousDistType = pybmds.ContinuousDistType.normal
 
-    def add_models(self, session):
+    def add_models(self, session: pybmds.Session):
         settings = {
             "bmr_type": self.bmr_type,
             "bmr": self.bmr_value,
@@ -133,7 +131,10 @@ class ContinuousInputSettings(BaseModel):
 class BmdInputSettings(BaseModel):
     version: Literal[2] = 2
     dtype: Dtype
-    settings: DichotomousInputSettings | ContinuousInputSettings
+    dose_units_id: int
+    settings: Annotated[
+        list[DichotomousInputSettings | ContinuousInputSettings], Field(min_length=1)
+    ]
 
     def add_models(self, session):
         self.settings.add_models(session)
@@ -144,12 +145,14 @@ class BmdInputSettings(BaseModel):
         if endpoint.data_type in [DataType.DICHOTOMOUS, DataType.DICHOTOMOUS_CANCER]:
             return cls(
                 dtype=Dtype.DICHOTOMOUS,
-                settings=DichotomousInputSettings(dose_units_id=dose_units_id),
+                dose_units_id=dose_units_id,
+                settings=[DichotomousInputSettings()],
             )
         elif endpoint.data_type in [DataType.CONTINUOUS]:
             return cls(
                 dtype=Dtype.CONTINUOUS,
-                settings=ContinuousInputSettings(dose_units_id=dose_units_id),
+                dose_units_id=dose_units_id,
+                settings=[ContinuousInputSettings()],
             )
         else:
             raise ValueError(f"Cannot create default for {endpoint.data_type}")
