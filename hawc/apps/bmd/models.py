@@ -90,7 +90,7 @@ class Session(models.Model):
 
     def execute(self):
         settings = self.get_settings()
-        session = None
+        sessions = []
         try:
             session = bmd_interface.build_and_execute(self.endpoint, settings)
         except Exception:  # pragma: no cover

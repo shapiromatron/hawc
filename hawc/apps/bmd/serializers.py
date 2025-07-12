@@ -101,7 +101,7 @@ class SessionBmdUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def save_and_execute(self):
-        self.instance.dose_units_id = self.validated_data["inputs"]["settings"]["dose_units_id"]
+        self.instance.dose_units_id = self.validated_data["inputs"]["dose_units_id"]
         self.instance.inputs = self.validated_data["inputs"]
         self.instance.reset_execution()
         self.instance.save()

@@ -170,11 +170,7 @@ class Bmd3Store {
         const url = this.config.session_url,
             payload = {
                 action: "execute",
-                inputs: {
-                    version: 2,
-                    dtype: this.inputOptions.dtype,
-                    inputs: toJS(this.inputs),
-                },
+                inputs: toJS(this.inputs),
             },
             opts = h.fetchPost(this.config.csrf, payload, "PATCH");
 
