@@ -249,7 +249,7 @@ WAGTAIL_ENABLE_UPDATE_CHECK = False
 WAGTAIL_ALLOW_UNICODE_SLUGS = False
 
 # Logging configuration
-DEFAULT_EXCEPTION_REPORTER = "hawc.apps.common.exception.ExceptionReporter"
+DEFAULT_EXCEPTION_REPORTER = "hawc.apps.common.exceptions.ExceptionReporter"
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": True,
