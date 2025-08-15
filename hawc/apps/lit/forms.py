@@ -820,3 +820,59 @@ class VennForm(forms.Form):
                     )
                 )
         return sets
+
+
+class ModelPredictionRunForm(forms.ModelForm):
+    class Meta:
+        model = models.ModelPredictionRun
+        fields = ["workflow", "model_version", "prediction_class", "notes"]
+
+    def __init__(self, *args, **kwargs):
+        assessment = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        workflows = models.Workflow.objects.filter(assessment=assessment)
+        self.fields["workflow"].queryset = workflows
+        self.assessment = assessment
+        self.fields["notes"].widget.attrs["rows"] = 2
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(
+            self, cancel_url=reverse("lit:overview", args=(self.assessment.pk,))
+        )
+        helper.add_row("workflow", 3, classes="col-md-4")
+        return helper
+
+
+class ModelPredictionTaggingForm(forms.Form):
+    tags = forms.ModelMultipleChoiceField(
+        queryset=models.ReferenceFilterTag.objects.all(),
+        help_text="Select tag(s) to apply.",
+    )
+    threshold = forms.FloatField(
+        max_value=1,
+        min_value=0,
+        required=True,
+        label="Score Threshold",
+        widget=forms.NumberInput(attrs={"placeholder": "E.g., 0.7"}),
+        help_text="Select a score threshold. All references at or above this threshold will have the tag(s) applied.",
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.assessment = kwargs.pop("assessment")
+        super().__init__(*args, **kwargs)
+        tags = models.ReferenceFilterTag.get_assessment_qs(self.assessment.id)
+        self.fields["tags"].queryset = tags
+        self.fields["tags"].label_from_instance = lambda tag: tag.get_nested_name()
+        self.fields["tags"].widget.attrs["size"] = 4
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        # helper.form_tag = False
+        helper.layout = cfl.Layout(
+            "tags",
+            "threshold",
+            cfl.Submit("save", "Apply Tags"),
+        )
+        return helper
