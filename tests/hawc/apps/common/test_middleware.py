@@ -2,8 +2,13 @@ import pytest
 from django.http import HttpRequest, HttpResponse
 from django.test import TestCase
 from django.test.client import Client, RequestFactory
+from django.utils import timezone
 
-from hawc.apps.common.middleware import CsrfRefererCheckMiddleware, MicrosoftOfficeLinkMiddleware
+from hawc.apps.common.middleware import (
+    ActivateTimezoneMiddleware,
+    CsrfRefererCheckMiddleware,
+    MicrosoftOfficeLinkMiddleware,
+)
 
 
 class MicrosoftOfficeLinkMiddlewareTests(TestCase):
@@ -110,3 +115,31 @@ class TestCsrfRefererCheckMiddleware:
 
         resp = client.get("/", HTTP_REFERER=self.EXTERNAL_URL)
         assert resp.content == CsrfRefererCheckMiddleware.REFRESH
+
+
+class TestActivateTimezoneMiddleware:
+    def _send_request(self, timezone: str | None):
+        rf = RequestFactory()
+        middleware = ActivateTimezoneMiddleware(lambda request: HttpResponse(b"ok"))
+        request = rf.get("/")
+        if timezone:
+            request.COOKIES["timezone"] = timezone
+        return middleware(request)
+
+    def test_success(self):
+        resp = self._send_request("Asia/Bangkok")
+        assert resp.getvalue() == b"ok"
+        assert timezone.get_current_timezone_name() == "Asia/Bangkok"
+        timezone.deactivate()
+
+    def test_invalid(self, settings):
+        resp = self._send_request("Bad/Timezone")
+        assert resp.getvalue() == b"ok"
+        assert timezone.get_current_timezone_name() == settings.TIME_ZONE
+        timezone.deactivate()
+
+    def test_no_timezone(self, settings):
+        resp = self._send_request(None)
+        assert resp.getvalue() == b"ok"
+        assert timezone.get_current_timezone_name() == settings.TIME_ZONE
+        timezone.deactivate()
