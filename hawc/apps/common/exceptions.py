@@ -12,5 +12,5 @@ class ExceptionReporter(BaseExceptionReporter):
 
     def get_traceback_data(self):
         context = super().get_traceback_data()
-        context["settings"] = {"values": "removed from report"}
+        context["settings"] = {"message": "Settings removed for security and readability"}
         return context
