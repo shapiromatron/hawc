@@ -545,7 +545,10 @@ class DRPlot extends D3Plot {
         if (this.legend_left) {
             legend_settings.box_l = this.legend_left;
         } else {
-            const isIncreasing = this.values[0].y < this.values[this.values.length - 1].y;
+            let isIncreasing = true;
+            if (Array.isArray(this.values) && this.values.length > 0) {
+                isIncreasing = this.values[0].y < this.values[this.values.length - 1].y;
+            }
             legend_settings.box_l = isIncreasing ? 10 : this.w - 80;
         }
 
