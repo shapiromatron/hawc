@@ -1,7 +1,7 @@
+import $ from "$";
 import * as d3 from "d3";
 import D3Plot from "shared/utils/D3Plot";
 import HAWCUtils from "shared/utils/HAWCUtils";
-import $ from "$";
 
 import {applyStyles} from "../summary/common";
 

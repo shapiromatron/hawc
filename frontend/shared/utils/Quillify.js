@@ -1,9 +1,9 @@
+import $ from "$";
 import Quill from "quill";
 import SmartInline from "shared/smartTags/QuillSmartInline";
 import SmartTag from "shared/smartTags/QuillSmartTag";
 import SmartTagModal from "shared/smartTags/QuillSmartTagModal";
 import SmartTagContainer from "shared/smartTags/SmartTagContainer";
-import $ from "$";
 
 import "quill/dist/quill.snow.css";
 

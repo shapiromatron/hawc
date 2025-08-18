@@ -1,5 +1,5 @@
-import h from "shared/utils/helpers";
 import $ from "$";
+import h from "shared/utils/helpers";
 
 // Method for creating a table for descriptive information
 class DescriptiveTable {

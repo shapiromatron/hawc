@@ -1,5 +1,5 @@
-import _ from "lodash";
 import $ from "$";
+import _ from "lodash";
 
 // Dynamic formset to add and remove forms via JS
 class DynamicFormset {

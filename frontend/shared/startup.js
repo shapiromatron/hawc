@@ -1,6 +1,6 @@
 import "react-tabs/style/react-tabs.css";
-import * as d3 from "d3";
 import $ from "$";
+import * as d3 from "d3";
 
 import Quillify from "./utils/Quillify";
 import checkSession from "./utils/checkSession";

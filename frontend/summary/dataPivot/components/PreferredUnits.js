@@ -1,3 +1,4 @@
+import $ from "$";
 import _ from "lodash";
 import {action, autorun, computed, observable} from "mobx";
 import {observer} from "mobx-react";
@@ -5,7 +6,6 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import ReactDOM from "react-dom";
 import h from "shared/utils/helpers";
-import $ from "$";
 
 class Store {
     constructor(config, formField) {

@@ -1,3 +1,4 @@
+import $ from "$";
 import * as d3 from "d3";
 import _ from "lodash";
 import React from "react";
@@ -6,7 +7,6 @@ import DataTable from "shared/components/DataTable";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
-import $ from "$";
 
 import {getInteractivityOptions} from "../interactivity/actions";
 import {handleVisualError} from "../summary/common";
@@ -21,7 +21,6 @@ import DataPivotVisualization from "./DataPivotVisualization";
 import StyleManager from "./StyleManager";
 import ColumnSelectManager from "./components/ColumnNameSelect";
 import Store from "./store";
-
 
 class DataPivot {
     constructor(data, settings, dom_bindings, title, url) {

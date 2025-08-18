@@ -1,6 +1,6 @@
+import $ from "$";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import $ from "$";
 
 const enablePopovers = $el => {
         $el.popover({

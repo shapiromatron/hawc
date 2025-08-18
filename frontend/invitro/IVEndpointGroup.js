@@ -1,5 +1,5 @@
-import h from "shared/utils/helpers";
 import $ from "$";
+import h from "shared/utils/helpers";
 
 class IVEndpointGroup {
     constructor(data) {

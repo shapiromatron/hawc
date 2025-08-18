@@ -1,7 +1,6 @@
 import $ from "$";
 
 import {
-
     _DataPivot_settings_label,
     _DataPivot_settings_refline,
     _DataPivot_settings_refrect,

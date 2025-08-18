@@ -1,6 +1,6 @@
+import $ from "$";
 import * as d3 from "d3";
 import HAWCUtils from "shared/utils/HAWCUtils";
-import $ from "$";
 
 import {applyStyles} from "../summary/common";
 import {StyleLine, StyleRectangle, StyleSymbol} from "./Styles";

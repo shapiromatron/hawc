@@ -1,3 +1,4 @@
+import $ from "$";
 import _ from "lodash";
 import Aggregation from "riskofbias/Aggregation";
 import {mutateRobSettings, mutateRobStudies} from "riskofbias/study";
@@ -5,7 +6,6 @@ import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import Study from "study/Study";
-import $ from "$";
 
 import BaseVisual from "./BaseVisual";
 import RoBHeatmapPlot from "./RoBHeatmapPlot";

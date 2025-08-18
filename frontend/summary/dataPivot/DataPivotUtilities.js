@@ -1,6 +1,6 @@
+import $ from "$";
 import {renderClientSideAutosuggest} from "shared/components/Autocomplete";
 import {parse} from "shared/parsers/format";
-import $ from "$";
 
 import {_DataPivot_settings_conditionalFormat} from "./ConditionalFormat";
 import DataPivot from "./DataPivot";
