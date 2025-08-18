@@ -4,6 +4,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
 import ReactDOM from "react-dom";
+
 import DomainCell from "./DomainCell";
 
 const AggregateGraph = props => {

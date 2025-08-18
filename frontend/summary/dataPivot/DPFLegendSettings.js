@@ -1,6 +1,7 @@
-import $ from "$";
 import * as d3 from "d3";
 import HAWCModal from "shared/utils/HAWCModal";
+
+import $ from "$";
 
 import DataPivot from "./DataPivot";
 import DataPivotLegend from "./DataPivotLegend";

@@ -1,6 +1,7 @@
-import $ from "$";
 import PropTypes from "prop-types";
 import React from "react";
+
+import $ from "$";
 
 import * as types from "../constants";
 import BaseModal from "./BaseModal";

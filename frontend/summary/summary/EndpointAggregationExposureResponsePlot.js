@@ -1,7 +1,8 @@
-import $ from "$";
 import * as d3 from "d3";
 import _ from "lodash";
 import h from "shared/utils/helpers";
+
+import $ from "$";
 
 import D3Visualization from "./D3Visualization";
 

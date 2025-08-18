@@ -1,8 +1,9 @@
-import $ from "$";
 import * as d3 from "d3";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
+
+import $ from "$";
 
 import {addOuterTag} from "./_helpers";
 

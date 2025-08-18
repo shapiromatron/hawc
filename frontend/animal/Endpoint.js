@@ -1,4 +1,3 @@
-import $ from "$";
 import BmdLine from "bmd/common/BmdLine";
 import * as d3 from "d3";
 import _ from "lodash";
@@ -9,6 +8,8 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 import Observee from "shared/utils/Observee";
 import h from "shared/utils/helpers";
 import Study from "study/Study";
+
+import $ from "$";
 
 import AnimalGroup from "./AnimalGroup";
 import BMDResult from "./BMDResult";

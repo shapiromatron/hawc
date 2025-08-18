@@ -1,6 +1,7 @@
-import $ from "$";
 import SmartTagEditor from "shared/smartTags/SmartTagEditor";
 import HAWCUtils from "shared/utils/HAWCUtils";
+
+import $ from "$";
 
 import renderPreferredUnits from "../dataPivot/components/PreferredUnits";
 import crossviewStartup from "./crossview";

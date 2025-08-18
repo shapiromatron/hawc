@@ -1,5 +1,6 @@
-import $ from "$";
 import HAWCUtils from "shared/utils/HAWCUtils";
+
+import $ from "$";
 
 import Crossview from "./Crossview";
 import EndpointAggregation from "./EndpointAggregation";

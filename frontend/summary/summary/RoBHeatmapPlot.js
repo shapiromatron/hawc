@@ -1,7 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
 import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
-
 import {
     BIAS_DIRECTION_COMPACT,
     BIAS_DIRECTION_DOWN,

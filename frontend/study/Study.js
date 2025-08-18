@@ -1,4 +1,3 @@
-import $ from "$";
 import _ from "lodash";
 import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderStudyDisplay} from "riskofbias/robTable/components/StudyDisplay";
@@ -8,6 +7,8 @@ import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import Hero from "shared/utils/Hero";
 import {getReferenceTagListUrl} from "shared/utils/urls";
+
+import $ from "$";
 
 class Study {
     constructor(data) {

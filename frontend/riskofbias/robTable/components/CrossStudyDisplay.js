@@ -2,6 +2,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
 import ReactDOM from "react-dom";
+
 import MetricHeader from "../../components/MetricDescription";
 import MetricScores from "./MetricScores";
 

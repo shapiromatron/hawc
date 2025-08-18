@@ -1,6 +1,7 @@
-import $ from "$";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+
+import $ from "$";
 
 class PopoverTextSpan extends Component {
     constructor(props) {

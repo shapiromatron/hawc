@@ -1,5 +1,6 @@
-import $ from "$";
 import h from "shared/utils/helpers";
+
+import $ from "$";
 
 class EndpointDetailRow {
     constructor(endpoint, div, hide_level, options) {

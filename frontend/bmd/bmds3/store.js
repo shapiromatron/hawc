@@ -1,6 +1,7 @@
-import $ from "$";
 import _ from "lodash";
 import {action, computed, observable, toJS} from "mobx";
+
+import $ from "$";
 
 import Endpoint from "../../animal/Endpoint";
 import h from "../../shared/utils/helpers";

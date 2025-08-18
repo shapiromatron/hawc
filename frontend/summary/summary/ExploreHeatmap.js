@@ -1,4 +1,3 @@
-import $ from "$";
 import {Provider, inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -9,6 +8,8 @@ import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
 import h from "shared/utils/helpers";
+
+import $ from "$";
 
 import BaseVisual from "./BaseVisual";
 import ExploreHeatmapPlot from "./ExploreHeatmapPlot";

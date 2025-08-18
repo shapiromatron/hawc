@@ -1,5 +1,6 @@
-import $ from "$";
 import HAWCModal from "shared/utils/HAWCModal";
+
+import $ from "$";
 
 import StyleViewer from "./StyleViewer";
 import {StyleLine, StyleRectangle, StyleSymbol, StyleText} from "./Styles";

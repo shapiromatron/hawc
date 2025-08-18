@@ -1,5 +1,6 @@
-import $ from "$";
 import _ from "lodash";
+
+import $ from "$";
 
 import {filterLogicHelpText, filterQueryHelpText} from "../summary/filters";
 import {

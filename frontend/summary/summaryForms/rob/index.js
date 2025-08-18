@@ -1,7 +1,8 @@
-import $ from "$";
 import {Provider} from "mobx-react";
 import React from "react";
 import ReactDOM from "react-dom";
+
+import $ from "$";
 
 import {createRobStore} from "../stores";
 import App from "./App";
