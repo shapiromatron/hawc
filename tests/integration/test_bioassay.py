@@ -67,6 +67,7 @@ class TestBioassay(PlaywrightTestCase):
         page.locator('select[name="species"]').select_option("1")
         page.locator('select[name="sex"]').select_option("M")
         page.locator('select[name="route_of_exposure"]').select_option("OR")
+        page.locator("#dose-unit-0").select_option("1")
         page.locator("#dose_0").fill("0")
         page.locator("#dose_1").fill("50")
         page.locator("#dose_2").fill("150")
