@@ -19,15 +19,20 @@ const store = new DescriptionStore();
 
 @observer
 class MetricToggle extends Component {
+    constructor(props) {
+        super(props);
+        this.node = React.createRef();
+    }
     render() {
         return (
             <button
                 type="button"
                 title="Show/hide description"
                 className="float-right btn btn-sm btn-light"
+                ref={this.node}
                 onClick={() => {
                     store.toggle();
-                    h.maybeScrollIntoView(this, {yOffset: -50, animate: true});
+                    h.maybeScrollIntoView(this.node.current);
                 }}>
                 <i className={store.show ? "fa fa-fw fa-compress" : "fa fa-fw fa-expand"}></i>
                 &nbsp;{store.show ? "Hide details" : "Show details"}
