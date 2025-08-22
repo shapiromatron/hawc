@@ -348,6 +348,11 @@ const helpers = {
         history.pushState(null, null, "?" + queryParams.toString());
     },
     nullString: "<null>",
+    maybeScrollIntoView(node) {
+        if (node) {
+            node.scrollIntoView({behavior: "smooth", block: "start"});
+        }
+    },
     groupNest(values, ...keys) {
         // performs d3.group and transforms it into the old d3.nest structure
         function groupToNest(group, depth) {

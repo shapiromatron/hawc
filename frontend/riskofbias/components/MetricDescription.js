@@ -2,6 +2,7 @@ import {action, observable} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+import h from "shared/utils/helpers";
 
 class DescriptionStore {
     // A global toggle to show/hide metric descriptions
@@ -14,13 +15,21 @@ const store = new DescriptionStore();
 
 @observer
 class MetricToggle extends Component {
+    constructor(props) {
+        super(props);
+        this.node = React.createRef();
+    }
     render() {
         return (
             <button
                 type="button"
                 title="Show/hide description"
                 className="float-right btn btn-sm btn-light"
-                onClick={() => store.toggle()}>
+                ref={this.node}
+                onClick={() => {
+                    store.toggle();
+                    h.maybeScrollIntoView(this.node.current);
+                }}>
                 <i className={store.show ? "fa fa-fw fa-compress" : "fa fa-fw fa-expand"}></i>
                 &nbsp;{store.show ? "Hide details" : "Show details"}
             </button>
