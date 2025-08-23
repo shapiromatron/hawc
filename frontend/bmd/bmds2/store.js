@@ -37,23 +37,16 @@ class Bmd2Store {
     // actions
 
     // fetch-settings
-    @action.bound fetchEndpoint(_id) {
-        const url = `/ani/api/endpoint/${this.config.endpoint_id}/`;
-        fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(json => {
+    @action.bound fetchData() {
+        const endpointUrl = `/ani/api/endpoint/${this.config.endpoint_id}/`,
+            sessionUrl = this.config.session_url,
+            setEndpointData = json => {
                 const endpoint = new Endpoint(json);
                 this.dataType = endpoint.data.data_type;
                 // do endpoint last; this triggers other side effects
                 this.endpoint = endpoint;
-            })
-            .catch(ex => console.error("Endpoint parsing failed", ex));
-    }
-    @action.bound fetchSessionSettings(callback) {
-        const url = this.config.session_url;
-        fetch(url, h.fetchGet)
-            .then(response => response.json())
-            .then(settings => {
+            },
+            setSessionData = settings => {
                 // add key-prop to each values dict for parameter
                 _.each(settings.model_options, d => _.each(d.defaults, (v, k) => (v.key = k)));
 
@@ -87,15 +80,21 @@ class Bmd2Store {
                 } else {
                     this._resetSelectedModel();
                 }
-
-                // do session last; this triggers other side effects
                 this.session = settings;
+            };
 
-                if (callback) {
-                    callback();
-                }
+        Promise.all([
+            fetch(endpointUrl, h.fetchGet).then(response => response.json()),
+            fetch(sessionUrl, h.fetchGet).then(response => response.json()),
+        ])
+            .then(([endpointData, sessionData]) => {
+                setEndpointData(endpointData);
+                setSessionData(sessionData);
+                this.applyRecommendationLogic();
             })
-            .catch(ex => console.error("Endpoint parsing failed", ex));
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
     }
     @action.bound _resetSelectedModel() {
         this.selectedModelId = null;
@@ -107,11 +106,6 @@ class Bmd2Store {
         }
         this.isReady = true;
     }
-    autoApplyRecommendationLogic = autorun(() => {
-        if (this.hasSession && this.hasEndpoint) {
-            this.applyRecommendationLogic();
-        }
-    });
 
     // ui settings
     @action.bound showModal(name) {
