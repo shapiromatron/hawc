@@ -12,7 +12,8 @@ import TabContainer from "./TabContainer";
 class Root extends React.Component {
     componentDidMount() {
         const {store} = this.props;
-        store.fetchData();
+        store.fetchEndpoint();
+        store.fetchSessionSettings();
     }
     render() {
         const {store} = this.props;
