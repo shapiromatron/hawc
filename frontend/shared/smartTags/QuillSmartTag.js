@@ -1,6 +1,6 @@
 import Quill from "quill";
 
-let Inline = Quill.imports["blots/inline"];
+const Inline = Quill.import("blots/inline");
 
 class SmartTag extends Inline {
     static create(value) {

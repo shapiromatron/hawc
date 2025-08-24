@@ -78,10 +78,9 @@ export default function () {
             hideSmartTagButtons(q);
         }
 
-        q.pasteHTML(textarea.val());
+        q.clipboard.dangerouslyPasteHTML(textarea.val());
         q.on("text-change", function (_delta, _oldDelta, _source) {
-            let content = $(editor).find(".ql-editor").html();
-            textarea.val(content);
+            textarea.val(q.getSemanticHTML());
         });
         textarea.data("_quill", q);
 

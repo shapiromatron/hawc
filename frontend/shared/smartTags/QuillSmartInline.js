@@ -1,6 +1,6 @@
 import Quill from "quill";
 
-let Block = Quill.imports["blots/block"];
+const Block = Quill.import("blots/block");
 
 class SmartInline extends Block {
     static create(value) {
