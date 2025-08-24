@@ -7,6 +7,7 @@ import $ from "$";
 import Quillify from "./utils/Quillify";
 import checkSession from "./utils/checkSession";
 import tryWebAppStartup from "./utils/tryWebAppStartup";
+import {configure} from "mobx";
 
 $.fn.quillify = Quillify;
 
@@ -83,6 +84,11 @@ const setupAjax = document => {
                 errorBanner.removeAttribute("hidden");
             }
         });
+    },
+    configureMobx = function () {
+        configure({
+            enforceActions: "never",
+        });
     };
 
 $(document).ready(() => {
@@ -91,4 +97,5 @@ $(document).ready(() => {
     checkSession();
     debugStartup();
     setupHtmx();
+    configureMobx();
 });
