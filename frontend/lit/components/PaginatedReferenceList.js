@@ -1,4 +1,4 @@
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -15,6 +15,7 @@ class ReferenceListStore {
     @observable formattedReferences = null;
 
     constructor(settings) {
+        makeObservable(this);
         this.settings = settings;
     }
 

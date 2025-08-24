@@ -1,4 +1,4 @@
-import {action, observable} from "mobx";
+import {action, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
@@ -8,6 +8,10 @@ class DescriptionStore {
     // A global toggle to show/hide metric descriptions
     @observable show = false;
     @action.bound toggle = () => (this.show = !this.show);
+
+    constructor() {
+        makeObservable(this);
+    }
 }
 
 // singleton store; shared across all components

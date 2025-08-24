@@ -1,6 +1,6 @@
 import Endpoint from "animal/Endpoint";
 import _ from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 import {
     deleteArrayElement,
     moveArrayElementDown,
@@ -108,6 +108,7 @@ const _getDefaultSettings = function () {
 
 class CrossviewStore {
     constructor(rootStore) {
+        makeObservable(this);
         this.root = rootStore;
     }
     @observable settings = null;

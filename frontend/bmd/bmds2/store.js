@@ -1,7 +1,7 @@
 import Endpoint from "animal/Endpoint";
 import {applyRecommendationLogic} from "bmd/common/recommendationLogic";
 import _ from "lodash";
-import {action, autorun, computed, observable} from "mobx";
+import {action, autorun, computed, makeObservable, observable} from "mobx";
 
 import h from "/shared/utils/helpers";
 
@@ -9,7 +9,13 @@ import {BMR_MODAL_ID, OPTION_MODAL_ID, OUTPUT_MODAL_ID} from "./constants";
 
 class Bmd2Store {
     constructor(config) {
+        makeObservable(this);
         this.config = config;
+        autorun(() => {
+            if (this.hasSession && this.hasEndpoint) {
+                this.applyRecommendationLogic();
+            }
+        });
     }
 
     @observable hasExecuted = false;
@@ -40,61 +46,56 @@ class Bmd2Store {
         const url = `/ani/api/endpoint/${this.config.endpoint_id}/`;
         fetch(url, h.fetchGet)
             .then(response => response.json())
-            .then(json => {
-                const endpoint = new Endpoint(json);
-                this.dataType = endpoint.data.data_type;
-                // do endpoint last; this triggers other side effects
-                this.endpoint = endpoint;
-            })
+            .then(this.updateEndpoint)
             .catch(ex => console.error("Endpoint parsing failed", ex));
     }
-    @action.bound fetchSessionSettings(callback) {
+    @action.bound updateEndpoint(json) {
+        const endpoint = new Endpoint(json);
+        this.dataType = endpoint.data.data_type;
+        this.endpoint = endpoint;
+    }
+    @action.bound fetchSessionSettings() {
         const url = this.config.session_url;
         fetch(url, h.fetchGet)
             .then(response => response.json())
-            .then(settings => {
-                // add key-prop to each values dict for parameter
-                _.each(settings.model_options, d => _.each(d.defaults, (v, k) => (v.key = k)));
-
-                // create model-settings
-                // 1) only get the first bmr instance of the model
-                // 2) add defaults based on the model name
-                const modelSettingsMap = _.keyBy(settings.model_options, "name");
-                settings.outputs.models.forEach(d => {
-                    d.defaults = modelSettingsMap[d.name].defaults;
-                    d.dose_units = settings.dose_units;
-                });
-
-                const modelSettings = _.chain(settings.outputs.models)
-                    .filter(d => d.bmr_index === 0)
-                    .map(d => h.deepCopy(d))
-                    .value();
-
-                // set store features
-                this.models = settings.outputs.models;
-                this.modelSettings = modelSettings;
-                this.bmrs = settings.inputs.bmrs;
-                this.doseUnits = settings.dose_units;
-                this.allModelOptions = settings.model_options;
-                this.allBmrOptions = _.keyBy(settings.bmr_options, "type");
-                this.logic = settings.logic;
-                this.hasExecuted = settings.is_finished;
-
-                if (settings.selected) {
-                    this.selectedModelId = settings.selected.model_id;
-                    this.selectedModelNotes = settings.selected.notes;
-                } else {
-                    this._resetSelectedModel();
-                }
-
-                // do session last; this triggers other side effects
-                this.session = settings;
-
-                if (callback) {
-                    callback();
-                }
-            })
+            .then(this.updateSessionSettings)
             .catch(ex => console.error("Endpoint parsing failed", ex));
+    }
+    @action.bound updateSessionSettings(settings) {
+        // add key-prop to each values dict for parameter
+        _.each(settings.model_options, d => _.each(d.defaults, (v, k) => (v.key = k)));
+
+        // create model-settings
+        // 1) only get the first bmr instance of the model
+        // 2) add defaults based on the model name
+        const modelSettingsMap = _.keyBy(settings.model_options, "name");
+        settings.outputs.models.forEach(d => {
+            d.defaults = modelSettingsMap[d.name].defaults;
+            d.dose_units = settings.dose_units;
+        });
+
+        const modelSettings = _.chain(settings.outputs.models)
+            .filter(d => d.bmr_index === 0)
+            .map(d => h.deepCopy(d))
+            .value();
+
+        // set store features
+        this.models = settings.outputs.models;
+        this.modelSettings = modelSettings;
+        this.bmrs = settings.inputs.bmrs;
+        this.doseUnits = settings.dose_units;
+        this.allModelOptions = settings.model_options;
+        this.allBmrOptions = _.keyBy(settings.bmr_options, "type");
+        this.logic = settings.logic;
+        this.hasExecuted = settings.is_finished;
+
+        if (settings.selected) {
+            this.selectedModelId = settings.selected.model_id;
+            this.selectedModelNotes = settings.selected.notes;
+        } else {
+            this._resetSelectedModel();
+        }
+        this.session = settings;
     }
     @action.bound _resetSelectedModel() {
         this.selectedModelId = null;
@@ -106,11 +107,6 @@ class Bmd2Store {
         }
         this.isReady = true;
     }
-    autoApplyRecommendationLogic = autorun(() => {
-        if (this.hasSession && this.hasEndpoint) {
-            this.applyRecommendationLogic();
-        }
-    });
 
     // ui settings
     @action.bound showModal(name) {

@@ -3,10 +3,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import Main from "./containers/Main";
-import createStore from "./store";
+import RobCleanupStore from "./store";
 
 export default function (el, config) {
-    const store = createStore(config);
+    const store = new RobCleanupStore(config);
     ReactDOM.render(
         <Provider store={store}>
             <Main />

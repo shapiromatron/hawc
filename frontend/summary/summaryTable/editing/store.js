@@ -1,5 +1,5 @@
 import _ from "lodash";
-import {action, computed, observable} from "mobx";
+import {action, computed, makeObservable, observable} from "mobx";
 import h from "shared/utils/helpers";
 
 import {getTableStore} from "../lookups";
@@ -9,6 +9,7 @@ class SummaryTableEditStore {
     @observable formErrors = {};
 
     constructor(config) {
+        makeObservable(this);
         let tableObject = _.cloneDeep(config.initial);
         tableObject.content = JSON.stringify(tableObject.content);
 

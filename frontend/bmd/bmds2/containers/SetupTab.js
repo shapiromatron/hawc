@@ -2,6 +2,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
 
+import {toJS} from "mobx";
 import BMROptionTable from "../components/BMROptionTable";
 import DoseResponse from "../components/DoseResponse";
 import ModelOptionTable from "../components/ModelOptionTable";
@@ -20,12 +21,12 @@ class SetupTab extends React.Component {
                     <ModelOptionTable
                         dataType={store.dataType}
                         handleModalDisplay={modelIndex => store.showOptionModal(modelIndex)}
-                        models={store.modelSettings.toJS()}
+                        models={toJS(store.modelSettings)}
                         allOptions={store.allModelOptions}
                     />
                     <BMROptionTable
                         handleModalDisplay={bmrIndex => store.showBmrModal(bmrIndex)}
-                        bmrs={store.bmrs.toJS()}
+                        bmrs={toJS(store.bmrs)}
                     />
                 </div>
             </>

@@ -4,6 +4,7 @@ import * as d3 from "d3";
 
 import $ from "$";
 
+import {configure} from "mobx";
 import Quillify from "./utils/Quillify";
 import checkSession from "./utils/checkSession";
 import tryWebAppStartup from "./utils/tryWebAppStartup";
@@ -83,6 +84,11 @@ const setupAjax = document => {
                 errorBanner.removeAttribute("hidden");
             }
         });
+    },
+    configureMobx = function () {
+        configure({
+            enforceActions: "never",
+        });
     };
 
 $(document).ready(() => {
@@ -91,4 +97,5 @@ $(document).ready(() => {
     checkSession();
     debugStartup();
     setupHtmx();
+    configureMobx();
 });
