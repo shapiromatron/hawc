@@ -3,10 +3,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import Root from "./containers/Root";
-import createStore from "./store";
+import Bmd2Store from "./store";
 
 export default function (el, config) {
-    const store = createStore(config);
+    const store = new Bmd2Store(config);
     ReactDOM.render(
         <Provider store={store}>
             <Root />

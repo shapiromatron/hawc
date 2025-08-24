@@ -11,6 +11,11 @@ class Bmd2Store {
     constructor(config) {
         makeObservable(this);
         this.config = config;
+        autorun(() => {
+            if (this.hasSession && this.hasEndpoint) {
+                this.applyRecommendationLogic();
+            }
+        });
     }
 
     @observable hasExecuted = false;
@@ -150,14 +155,4 @@ class Bmd2Store {
     }
 }
 
-const createStore = config => {
-    const store = new Bmd2Store(config);
-    autorun(() => {
-        if (store.hasSession && store.hasEndpoint) {
-            store.applyRecommendationLogic();
-        }
-    });
-    return store;
-};
-
-export default createStore;
+export default Bmd2Store;

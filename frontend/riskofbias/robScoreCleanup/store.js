@@ -8,6 +8,16 @@ class RobCleanupStore {
     constructor(config) {
         makeObservable(this);
         this.config = config;
+        // whenever visible scores change, reset selected items
+        autorun(() => {
+            const newScoreHash = this.visibleStudyScores
+                .map(score => score.id.toString())
+                .join("-");
+            if (this.visibleScoreHash !== newScoreHash) {
+                this.clearSelectedStudyScores();
+                this.setVisibleScoreHash(newScoreHash);
+            }
+        });
     }
 
     // content
@@ -210,19 +220,4 @@ class RobCleanupStore {
     }
 }
 
-const createStore = function (config) {
-    const store = new RobCleanupStore(config);
-
-    autorun(() => {
-        // whenever visible scores change, reset selected items
-        const newScoreHash = store.visibleStudyScores.map(score => score.id.toString()).join("-");
-        if (store.visibleScoreHash !== newScoreHash) {
-            store.clearSelectedStudyScores();
-            store.setVisibleScoreHash(newScoreHash);
-        }
-    });
-
-    return store;
-};
-
-export default createStore;
+export default RobCleanupStore;
