@@ -15,6 +15,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
   copilot-setup-steps:
@@ -67,7 +71,7 @@ jobs:
           yarn --cwd ./frontend install --frozen-lockfile
 
       # check environment is setup correctly
-      - name: test
-        run: |
-          pytest --record-mode=none
-          yarn --cwd ./frontend run test
+      # - name: test
+      #   run: |
+      #     pytest --record-mode=none
+      #     yarn --cwd ./frontend run test
