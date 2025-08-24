@@ -4,10 +4,10 @@ import * as d3 from "d3";
 
 import $ from "$";
 
+import {configure} from "mobx";
 import Quillify from "./utils/Quillify";
 import checkSession from "./utils/checkSession";
 import tryWebAppStartup from "./utils/tryWebAppStartup";
-import {configure} from "mobx";
 
 $.fn.quillify = Quillify;
 
