@@ -1,0 +1,77 @@
+# https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/customize-the-agent-environment
+name: "Copilot Setup Steps"
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  schedule:
+    - cron: "14 3 1 */1 *" # At 03:14 on the 1st of every month
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: hawc
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: hawc
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+        - 5432:5432
+      redis:
+        image: redis:6-alpine
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+        - 6379:6379
+
+    env:
+      DJANGO_DB_NAME: hawc
+      DJANGO_DB_USER: hawc
+      DJANGO_DB_PW: password
+      DJANGO_DB_HOST: localhost
+      DJANGO_CACHE_LOCATION: redis://localhost:6379/0
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "yarn"
+          cache-dependency-path: "frontend/yarn.lock"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          cache-dependency-glob: "**/pyproject.toml"
+      - name: install
+        run: |
+          uv pip install --system -e ".[dev,docs]"
+          uv pip install --system -e client
+      - name: install
+        run: |
+          yarn --cwd ./frontend install --frozen-lockfile
+
+      # check environment is setup correctly
+      # - name: test
+      #   run: |
+      #     pytest --record-mode=none
+      #     yarn --cwd ./frontend run test
