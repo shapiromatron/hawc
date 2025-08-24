@@ -3,6 +3,8 @@ import Quill from "quill";
 const Inline = Quill.import("blots/inline");
 
 class SmartTag extends Inline {
+    static blotName = "smartTag";
+    static tagName = "SPAN";
     static create(value) {
         let el = document.createElement("SPAN");
         el.setAttribute("class", "smart-tag active");
@@ -21,8 +23,12 @@ class SmartTag extends Inline {
             type: domNode.dataset.type,
         };
     }
-}
-SmartTag.blotName = "smartTag";
-SmartTag.tagName = "SPAN";
 
-export default SmartTag;
+    format(name, value) {
+        this.domNode.setAttribute("data-pk", value);
+        this.domNode.setAttribute("data-type", value);
+        super.format(name, value);
+    }
+}
+
+Quill.register(SmartTag, true);

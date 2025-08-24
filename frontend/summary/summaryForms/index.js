@@ -27,8 +27,8 @@ const startup = (config, djangoForm, el) => {
     // connect prefilters
     $("input[data-pf]").each(HAWCUtils.bindCheckboxToPrefilter);
 
-    // enable Quill for captoin
-    new SmartTagEditor($("#id_caption"), {submitEl: "#visualForm", takeFocusEl: "#id_title"});
+    // enable Quill for caption
+    new SmartTagEditor($("#id_caption"), {submitEl: "#visualForm"});
 
     // make title update the slug value (create only)
     if (config.isCreate) {

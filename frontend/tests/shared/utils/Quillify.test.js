@@ -145,13 +145,6 @@ describe("Quillify functionality", () => {
     it("should create Quill instance with custom toolbar including smart tag buttons", async () => {
         const Quill = (await import("quill")).default;
 
-        // Register the blots first
-        const SmartTag = (await import("shared/smartTags/QuillSmartTag")).default;
-        const SmartInline = (await import("shared/smartTags/QuillSmartInline")).default;
-
-        Quill.register(SmartTag, true);
-        Quill.register(SmartInline, true);
-
         const editorDiv = document.createElement("div");
         document.body.appendChild(editorDiv);
 

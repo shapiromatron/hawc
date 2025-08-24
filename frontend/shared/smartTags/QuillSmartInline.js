@@ -3,6 +3,8 @@ import Quill from "quill";
 const Block = Quill.import("blots/block");
 
 class SmartInline extends Block {
+    static blotName = "smartInline";
+    static tagName = "DIV";
     static create(value) {
         let el = document.createElement("DIV");
         el.setAttribute("class", "smart-tag active");
@@ -21,8 +23,12 @@ class SmartInline extends Block {
             type: domNode.dataset.type,
         };
     }
-}
-SmartInline.blotName = "smartInline";
-SmartInline.tagName = "DIV";
 
-export default SmartInline;
+    format(name, value) {
+        this.domNode.setAttribute("data-pk", value);
+        this.domNode.setAttribute("data-type", value);
+        super.format(name, value);
+    }
+}
+
+Quill.register(SmartInline, true);
