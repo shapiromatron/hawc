@@ -12,6 +12,9 @@ on:
   schedule:
     - cron: "14 3 1 */1 *" # At 03:14 on the 1st of every month
 
+permissions:
+  contents: read
+
 jobs:
   # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
   copilot-setup-steps:
