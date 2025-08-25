@@ -84,12 +84,7 @@ export default defineConfig({
             shared: path.resolve(__dirname, "shared"),
             study: path.resolve(__dirname, "study"),
             summary: path.resolve(__dirname, "summary"),
-            // React 18 compatibility; resolve CommonJS to ESM
-            "react/cjs/react.production.min": "react",
-            "react/cjs/react.development": "react",
         },
-        // Prioritize ESM modules for React 18 compatibility
-        conditions: ["import", "module", "browser", "default"],
     },
     server: {
         port: 8050,
