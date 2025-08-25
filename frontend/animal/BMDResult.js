@@ -2,6 +2,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
 import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import h from "shared/utils/helpers";
 
 import EndpointCriticalDose from "./EndpointCriticalDose";
@@ -55,7 +56,8 @@ BmdResultComponent.propTypes = {
 
 class BMDResult extends EndpointCriticalDose {
     update() {
-        ReactDOM.render(<BmdResultComponent endpoint={this.endpoint} />, this.span[0]);
+        const root = createRoot(this.span[0]);
+        root.render(<BmdResultComponent endpoint={this.endpoint} />);
     }
 }
 

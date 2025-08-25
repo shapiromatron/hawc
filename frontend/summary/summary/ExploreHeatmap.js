@@ -2,6 +2,7 @@ import {Provider, inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import Alert from "shared/components/Alert";
 import Loading from "shared/components/Loading";
 import SmartTagContainer from "shared/smartTags/SmartTagContainer";
@@ -25,11 +26,11 @@ const startupHeatmapAppRender = function (el, settings, datastore, options) {
         if (store.withinRenderableBounds) {
             store.initialize();
         }
-        ReactDOM.render(
+        const root = createRoot(el);
+        root.render(
             <Provider store={store}>
                 <ExploreHeatmapComponent options={options} />
-            </Provider>,
-            el
+            </Provider>
         );
     } catch (err) {
         handleVisualError(err, $(el));

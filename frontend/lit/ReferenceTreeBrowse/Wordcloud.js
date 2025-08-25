@@ -5,6 +5,7 @@ import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import Loading from "shared/components/Loading";
 import VisualToolbar from "shared/components/VisualToolbar";
 
@@ -98,7 +99,8 @@ const padding = 0,
 
         $(el).empty().append(svg.node()).append(toolbarNode);
 
-        ReactDOM.render(<VisualToolbar svg={svg.node()} />, toolbarNode.get(0));
+        const root = createRoot(1);
+        root.render(<VisualToolbar svg={svg.node()} />, toolbarNode.get(0));
     };
 
 @observer
@@ -118,7 +120,7 @@ class Wordcloud extends Component {
         setTimeout(this.updatePlot, 1);
     }
     componentDidUpdate() {
-        setTimeout(this.updatePlot, 1);
+        setTimeout(this.updatePlot);
     }
     render() {
         const {references} = this.props;

@@ -3,6 +3,7 @@ import * as d3Arrow from "d3-arrow";
 import _ from "lodash";
 import React from "react";
 import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import VisualToolbar from "shared/components/VisualToolbar";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
@@ -420,7 +421,8 @@ class PrismaPlot {
             .attr("preserveAspectRatio", "xMidYMin meet")
             .attr("viewBox", `0 0 ${nativeSize.width} ${nativeSize.height}`);
 
-        ReactDOM.render(<VisualToolbar svg={this.svg} nativeSize={nativeSize} />, div[0]);
+        const root = createRoot(div[0]);
+        root.render(<VisualToolbar svg={this.svg} nativeSize={nativeSize} />);
     }
 
     buildRootSvg() {

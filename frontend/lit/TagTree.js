@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 
 import NestedTag from "./NestedTag";
 import TagTreeComponent from "./components/TagTree";
@@ -82,7 +83,8 @@ class TagTree {
     }
 
     render(el, options) {
-        ReactDOM.render(<TagTreeComponent tagtree={this} {...options} />, el);
+        const root = createRoot(el);
+        root.render(<TagTreeComponent tagtree={this} {...options} />);
     }
 
     choices() {

@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import _ from "lodash";
 import React from "react";
 import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import DataTable from "shared/components/DataTable";
 import HAWCModal from "shared/utils/HAWCModal";
 import HAWCUtils from "shared/utils/HAWCUtils";
@@ -228,7 +229,8 @@ class DataPivot {
     }
 
     build_data_table() {
-        ReactDOM.render(<DataTable dataset={this.data} />, this.$data_div[0]);
+        const root = createRoot(this.$data_div[0]);
+        root.render(<DataTable dataset={this.data} />);
     }
 
     addOnRenderedCallback(cb) {

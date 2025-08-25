@@ -4,6 +4,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
 import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 
 import DomainCell from "./DomainCell";
 
@@ -28,10 +29,8 @@ const AggregateGraph = props => {
 };
 
 export function renderAggregateGraph(data, element) {
-    ReactDOM.render(
-        <AggregateGraph domains={data.domains} handleClick={data.handleClick} />,
-        element
-    );
+    const root = createRoot(element);
+    root.render(<AggregateGraph domains={data.domains} handleClick={data.handleClick} />);
 }
 
 AggregateGraph.propTypes = {
