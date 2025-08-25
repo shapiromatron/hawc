@@ -1,6 +1,5 @@
 import _ from "lodash";
 import React, {Component} from "react";
-import ReactDOM from "react-dom";
 import {createRoot} from "react-dom/client";
 
 import {NULL_VALUE} from "../summary/constants";

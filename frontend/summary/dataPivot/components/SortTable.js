@@ -2,7 +2,6 @@ import _ from "lodash";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import ReactDOM from "react-dom";
 import {createRoot} from "react-dom/client";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import RadioInput from "shared/components/RadioInput";

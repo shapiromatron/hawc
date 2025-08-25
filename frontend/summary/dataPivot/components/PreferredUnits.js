@@ -3,7 +3,6 @@ import {action, autorun, computed, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import ReactDOM from "react-dom";
 import {createRoot} from "react-dom/client";
 import h from "shared/utils/helpers";
 

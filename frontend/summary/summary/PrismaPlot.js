@@ -2,7 +2,6 @@ import * as d3 from "d3";
 import * as d3Arrow from "d3-arrow";
 import _ from "lodash";
 import React from "react";
-import ReactDOM from "react-dom";
 import {createRoot} from "react-dom/client";
 import VisualToolbar from "shared/components/VisualToolbar";
 import HAWCModal from "shared/utils/HAWCModal";

@@ -1,5 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import {createRoot} from "react-dom/client";
 import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 import HAWCModal from "shared/utils/HAWCModal";

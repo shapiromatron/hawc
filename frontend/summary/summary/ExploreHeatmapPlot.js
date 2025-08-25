@@ -2,7 +2,6 @@ import * as d3 from "d3";
 import _ from "lodash";
 import {autorun} from "mobx";
 import React from "react";
-import ReactDOM from "react-dom";
 import {createRoot} from "react-dom/client";
 import bindTooltip from "shared/components/Tooltip";
 import VisualToolbar from "shared/components/VisualToolbar";
