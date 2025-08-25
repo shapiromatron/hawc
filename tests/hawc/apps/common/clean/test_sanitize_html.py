@@ -1,5 +1,7 @@
 """Test HTML cleanup."""
 
+import pytest
+
 from hawc.apps.common.clean.sanitize_html import clean_html
 
 
@@ -77,3 +79,14 @@ class TestEscapeAbstract:
         <mark class="foo"></mark>
         """
         )
+
+    @pytest.mark.parametrize(
+        "html",
+        [
+            '<span class="smart-tag active" data-pk="1" data-type="study">Inline</span>',
+            '<div class="smart-tag active" data-pk="1" data-type="study">Modal</div>',
+        ],
+    )
+    def test_smart_tag(self, html):
+        # Confirm custom smart-tag fields are properly sanitized.
+        assert clean_html(html) == html

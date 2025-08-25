@@ -1,15 +1,12 @@
 import "quill/dist/quill.snow.css";
 
 import Quill from "quill";
-import SmartInline from "shared/smartTags/QuillSmartInline";
-import SmartTag from "shared/smartTags/QuillSmartTag";
+import "shared/smartTags/QuillSmartInline";
+import "shared/smartTags/QuillSmartTag";
 import SmartTagModal from "shared/smartTags/QuillSmartTagModal";
 import SmartTagContainer from "shared/smartTags/SmartTagContainer";
 
 import $ from "$";
-
-Quill.register(SmartTag, true);
-Quill.register(SmartInline, true);
 
 const toolbarOptions = {
         container: [
@@ -50,26 +47,15 @@ const toolbarOptions = {
         var tb = q.getModule("toolbar");
         $(tb.container).find(".ql-smartTag").hide();
         $(tb.container).find(".ql-smartInline").hide();
-    };
-
-export default function () {
-    let focusedItem = $(":focus"),
-        modal = $("#smartTagModal"),
-        showHawcTools = modal.length === 1;
-
-    this.each(function () {
+    },
+    createEditor = function (el, showHawcTools) {
         let editor = document.createElement("div"),
-            textarea = $(this),
+            textarea = $(el),
             q;
 
         textarea.hide().before(editor);
 
-        q = new Quill(editor, {
-            modules: {
-                toolbar: toolbarOptions,
-            },
-            theme: "snow",
-        });
+        q = new Quill(editor, {modules: {toolbar: toolbarOptions}, theme: "snow"});
 
         if (showHawcTools) {
             q.stc = new SmartTagContainer($(q.container).find(".ql-editor"));
@@ -78,18 +64,27 @@ export default function () {
             hideSmartTagButtons(q);
         }
 
-        q.pasteHTML(textarea.val());
+        q.clipboard.dangerouslyPasteHTML(textarea.val());
         q.on("text-change", function (_delta, _oldDelta, _source) {
-            let content = $(editor).find(".ql-editor").html();
-            textarea.val(content);
+            textarea.val(q.getSemanticHTML());
         });
         textarea.data("_quill", q);
 
         if (q.stc) {
             q.stc.enableModals();
         }
+    };
+
+export default function () {
+    const focusedItem = $(":focus"),
+        modal = $("#smartTagModal"),
+        showHawcTools = modal.length === 1;
+
+    this.each(function () {
+        createEditor(this, showHawcTools);
     });
 
     // restore original focus
     $(focusedItem).focus();
 }
+export {toolbarOptions};

@@ -31,9 +31,9 @@ valid_html_tags = {
 valid_html_attrs = {
     "*": {"style"},
     "a": {"class", "href"},
-    "span": {"class"},
+    "span": {"class", "data-pk", "data-type"},  # Quill SmartTag (data-pk, data-type)
     "mark": {"class"},
-    "div": {"class"},
+    "div": {"class", "data-pk", "data-type"},  # Quill SmartTagInline (data-pk, data-type)
 }
 
 valid_css_properties = {"color", "background-color"}

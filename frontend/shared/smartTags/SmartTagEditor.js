@@ -5,10 +5,6 @@ import SmartTagContainer from "./SmartTagContainer";
 class SmartTagEditor extends SmartTagContainer {
     constructor($el, options) {
         $el.quillify();
-        if (options.takeFocusEl) {
-            // quill can steal focus; take focus back to selected item
-            $(options.takeFocusEl).focus();
-        }
         super(...arguments);
         if (this.options.submitEl) {
             $(options.submitEl).submit(this.prepareSubmission.bind(this));
