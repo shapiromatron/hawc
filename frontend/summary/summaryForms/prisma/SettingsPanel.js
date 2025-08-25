@@ -12,7 +12,9 @@ class SettingsPanel extends Component {
     render() {
         const {store} = this.props;
         return (
-            <Tabs selectedIndex={store.subclass.activeTab} onSelect={store.subclass.changeActiveTab}>
+            <Tabs
+                selectedIndex={store.subclass.activeTab}
+                onSelect={store.subclass.changeActiveTab}>
                 <TabList>
                     <Tab>Flowchart</Tab>
                     <Tab>Styling</Tab>
