@@ -84,7 +84,12 @@ export default defineConfig({
             shared: path.resolve(__dirname, "shared"),
             study: path.resolve(__dirname, "study"),
             summary: path.resolve(__dirname, "summary"),
+            // Fix React 18 CommonJS module resolution
+            "react/cjs/react.production.min": "react",
+            "react/cjs/react.development": "react",
         },
+        // Fix React 18 CommonJS module resolution
+        conditions: ["import", "module", "browser", "default"],
     },
     server: {
         port: 8050,
