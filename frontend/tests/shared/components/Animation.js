@@ -1,5 +1,6 @@
 import {render} from "@testing-library/react";
 import React from "react";
+import {act} from "react";
 import {describe, expect, it} from "vitest";
 
 import Animation from "../../../shared/components/Animation";
@@ -26,7 +27,7 @@ describe("Animation", function () {
         expect(child.style.transition).toBe("opacity 10ms ease-out, width 10ms ease-out");
 
         // Wait for requestAnimationFrame to complete
-        await new Promise(resolve => requestAnimationFrame(resolve));
+        await act(async () => await new Promise(resolve => requestAnimationFrame(resolve)));
 
         // Check styles exist after after animation
         expect(child.style.opacity).toBe("1");

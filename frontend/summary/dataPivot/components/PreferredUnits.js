@@ -3,7 +3,7 @@ import {action, autorun, computed, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import h from "shared/utils/helpers";
 
 import $ from "$";
@@ -142,6 +142,7 @@ PreferredUnits.propTypes = {
 export default (formField, config) => {
     const container = $("<div>").insertBefore(formField),
         store = new Store(config, formField);
-    ReactDOM.render(<PreferredUnits store={store} />, container[0]);
+    const root = createRoot(container[0]);
+    root.render(<PreferredUnits store={store} />);
     $(formField).hide();
 };

@@ -94,7 +94,13 @@ export default defineConfig({
         hmr: true,
     },
     optimizeDeps: {
-        include: ["react", "react-dom", "react/jsx-runtime", "react/jsx-dev-runtime"],
+        include: [
+            "react",
+            "react-dom",
+            "react/jsx-runtime",
+            "react/jsx-dev-runtime",
+            "react-dom/client",
+        ],
         esbuildOptions: {
             loader: {
                 ".js": "jsx",

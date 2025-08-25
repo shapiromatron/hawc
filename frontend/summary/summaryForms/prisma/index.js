@@ -1,6 +1,6 @@
 import {Provider} from "mobx-react";
 import React from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 
 import $ from "$";
 
@@ -9,11 +9,11 @@ import App from "./App";
 
 const prismaFormAppStartup = function (el, config, djangoForm) {
     const store = createPrismaStore(config, djangoForm);
-    ReactDOM.render(
+    const root = createRoot(el);
+    root.render(
         <Provider store={store}>
             <App />
-        </Provider>,
-        el
+        </Provider>
     );
     $(el).fadeIn();
 };

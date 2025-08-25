@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import _ from "lodash";
 import {autorun} from "mobx";
 import React from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import bindTooltip from "shared/components/Tooltip";
 import VisualToolbar from "shared/components/VisualToolbar";
 import HAWCModal from "shared/utils/HAWCModal";
@@ -773,7 +773,8 @@ class ExploreHeatmapPlot {
             .attr("preserveAspectRatio", "xMidYMin meet")
             .attr("viewBox", `0 ${yOffset} ${nativeSize.width} ${nativeSize.height}`);
 
-        ReactDOM.render(<VisualToolbar svg={this.svg} nativeSize={nativeSize} />, div[0]);
+        const root = createRoot(div[0]);
+        root.render(<VisualToolbar svg={this.svg} nativeSize={nativeSize} />);
     }
 }
 

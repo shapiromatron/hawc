@@ -1,4 +1,5 @@
 import $ from "jquery";
+import "datatables.net";
 import PropTypes from "prop-types";
 import React, {createRef, useEffect, useState} from "react";
 import Loading from "shared/components/Loading";
@@ -18,7 +19,6 @@ const DataTableWrapper = ({children, className, data, columns}) => {
         console.error("Invalid props passed to DataTableWrapper");
     }
 
-    $.DataTable = require("datatables.net");
     useEffect(() => {
         const table = $(ref.current.firstElementChild).DataTable(dtProps);
         setLoading(false);

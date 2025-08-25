@@ -2,7 +2,7 @@ import _ from "lodash";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import Loading from "shared/components/Loading";
 import h from "shared/utils/helpers";
 
@@ -30,7 +30,8 @@ const startupPrismaAppRender = function (el, settings, data, config, asComponent
             return <PrismaComponent store={store} config={config} />;
         }
         try {
-            ReactDOM.render(<PrismaComponent store={store} config={config} />, el);
+            const root = createRoot(el);
+            root.render(<PrismaComponent store={store} config={config} />);
         } catch (err) {
             handleVisualError(err, $(el));
         }

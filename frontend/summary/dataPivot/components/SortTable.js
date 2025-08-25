@@ -2,7 +2,7 @@ import _ from "lodash";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import ReactDOM from "react-dom";
+import {createRoot} from "react-dom/client";
 import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
 import RadioInput from "shared/components/RadioInput";
 import SelectInput from "shared/components/SelectInput";
@@ -95,6 +95,7 @@ SortingTable.propTypes = {
 
 export default (tab, dp) => {
     const div = document.createElement("div");
-    ReactDOM.render(<SortingTable dp={dp} />, div);
+    const root = createRoot(div);
+    root.render(<SortingTable dp={dp} />);
     tab.append(div);
 };
