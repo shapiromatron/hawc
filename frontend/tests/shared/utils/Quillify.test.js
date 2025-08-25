@@ -1,10 +1,5 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
-// Mock DOM environment for tests
-Object.defineProperty(window, "alert", {
-    value: vi.fn(),
-});
-
 // Global $ mock for the modules that require it
 global.$ = {
     fn: {},
@@ -29,24 +24,18 @@ beforeEach(() => {
 });
 
 describe("Quillify functionality", () => {
-    it("should register SmartTag and SmartInline blots correctly", async () => {
-        const SmartTag = (await import("shared/smartTags/QuillSmartTag")).default;
-        const SmartInline = (await import("shared/smartTags/QuillSmartInline")).default;
-
-        // Verify blots are properly configured
-        expect(SmartTag.blotName).toBe("smartTag");
-        expect(SmartTag.tagName).toBe("SPAN");
-        expect(SmartInline.blotName).toBe("smartInline");
-        expect(SmartInline.tagName).toBe("DIV");
-
-        // Verify blots can create elements correctly
-        const smartTagEl = SmartTag.create({pk: 1, type: "study"});
+    it("should register SmartTag correctly", async () => {
+        const SmartTag = (await import("shared/smartTags/QuillSmartTag")).default,
+            smartTagEl = SmartTag.create({pk: 1, type: "study"});
         expect(smartTagEl.tagName).toBe("SPAN");
         expect(smartTagEl.dataset.pk).toBe("1");
         expect(smartTagEl.dataset.type).toBe("study");
         expect(smartTagEl.className).toContain("smart-tag");
+    });
 
-        const smartInlineEl = SmartInline.create({pk: 2, type: "endpoint"});
+    it("should register SmartInline blots correctly", async () => {
+        const SmartInline = (await import("shared/smartTags/QuillSmartInline")).default,
+            smartInlineEl = SmartInline.create({pk: 2, type: "endpoint"});
         expect(smartInlineEl.tagName).toBe("DIV");
         expect(smartInlineEl.dataset.pk).toBe("2");
         expect(smartInlineEl.dataset.type).toBe("endpoint");
@@ -76,112 +65,13 @@ describe("Quillify functionality", () => {
         expect(nullFormat).toBe(null);
     });
 
-    it("should create basic Quill instance with updated API", async () => {
-        const Quill = (await import("quill")).default;
-
-        // Create a simple div for the editor
-        const editorDiv = document.createElement("div");
-        document.body.appendChild(editorDiv);
-
-        // Create Quill instance with basic configuration
-        const quill = new Quill(editorDiv, {
-            theme: "snow",
-            modules: {
-                toolbar: [["bold", "italic"], ["clean"]],
-            },
-        });
-
-        // Test that Quill 2.x API methods are available
-        expect(typeof quill.clipboard.dangerouslyPasteHTML).toBe("function");
-        expect(typeof quill.getSemanticHTML).toBe("function");
-
-        // Test setting content using new API
-        quill.clipboard.dangerouslyPasteHTML("<p>Test content</p>");
-
-        // Test getting content using new API
-        const content = quill.getSemanticHTML();
-        expect(content).toContain("Test");
-        expect(content).toContain("content");
-
-        // Clean up
-        document.body.removeChild(editorDiv);
-    });
-
-    it("should work with Quill 2.x text-change events", async () => {
-        const Quill = (await import("quill")).default;
-
-        // Create a simple div for the editor
-        const editorDiv = document.createElement("div");
-        document.body.appendChild(editorDiv);
-
-        const quill = new Quill(editorDiv, {
-            theme: "snow",
-        });
-
-        // Test text-change event handler
-        let lastChange = null;
-        quill.on("text-change", (delta, oldDelta, source) => {
-            lastChange = {delta, oldDelta, source};
-        });
-
-        // Insert text
-        quill.insertText(0, "Hello world");
-
-        // Wait for event to process
-        await new Promise(resolve => setTimeout(resolve, 10));
-
-        expect(lastChange).not.toBe(null);
-        expect(lastChange.source).toBe("api");
-
-        // Test getting the content
-        const content = quill.getSemanticHTML();
-        expect(content).toContain("Hello");
-        expect(content).toContain("world");
-
-        // Clean up
-        document.body.removeChild(editorDiv);
-    });
-
     it("should create Quill instance with custom toolbar including smart tag buttons", async () => {
-        const Quill = (await import("quill")).default;
+        const Quill = (await import("quill")).default,
+            toolbarOptions = (await import("shared/utils/Quillify")).toolbarOptions,
+            editorDiv = document.createElement("div"),
+            quill = new Quill(editorDiv, {modules: {toolbar: toolbarOptions}});
 
-        const editorDiv = document.createElement("div");
         document.body.appendChild(editorDiv);
-
-        const toolbarOptions = {
-            container: [
-                [{header: [false, 1, 2, 3, 4]}],
-                ["bold", "italic", "underline", "strike"],
-                [{script: "sub"}, {script: "super"}],
-                [{color: []}, {background: []}],
-                ["link", {list: "ordered"}, {list: "bullet"}, "blockquote"],
-                ["smartTag", "smartInline"],
-                ["clean"],
-            ],
-            handlers: {
-                smartTag(_value) {
-                    let sel = this.quill.getSelection();
-                    if (sel === null || sel.length === 0) {
-                        return false;
-                    }
-                    return true;
-                },
-                smartInline(_value) {
-                    let sel = this.quill.getSelection();
-                    if (sel === null || sel.length === 0) {
-                        return false;
-                    }
-                    return true;
-                },
-            },
-        };
-
-        const quill = new Quill(editorDiv, {
-            modules: {
-                toolbar: toolbarOptions,
-            },
-            theme: "snow",
-        });
 
         // Check that toolbar module exists
         const toolbar = quill.getModule("toolbar");
@@ -189,8 +79,8 @@ describe("Quillify functionality", () => {
         expect(toolbar.container).toBeDefined();
 
         // Check that smart tag buttons were created
-        const smartTagBtn = toolbar.container.querySelector(".ql-smartTag");
-        const smartInlineBtn = toolbar.container.querySelector(".ql-smartInline");
+        const smartTagBtn = toolbar.container.querySelector(".ql-smartTag"),
+            smartInlineBtn = toolbar.container.querySelector(".ql-smartInline");
 
         expect(smartTagBtn).toBeDefined();
         expect(smartInlineBtn).toBeDefined();

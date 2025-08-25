@@ -32,3 +32,5 @@ class SmartInline extends Block {
 }
 
 Quill.register(SmartInline, true);
+
+export default SmartInline;

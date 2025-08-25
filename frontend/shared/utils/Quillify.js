@@ -47,26 +47,15 @@ const toolbarOptions = {
         var tb = q.getModule("toolbar");
         $(tb.container).find(".ql-smartTag").hide();
         $(tb.container).find(".ql-smartInline").hide();
-    };
-
-export default function () {
-    let focusedItem = $(":focus"),
-        modal = $("#smartTagModal"),
-        showHawcTools = modal.length === 1;
-
-    this.each(function () {
+    },
+    createEditor = function (el, showHawcTools) {
         let editor = document.createElement("div"),
-            textarea = $(this),
+            textarea = $(el),
             q;
 
         textarea.hide().before(editor);
 
-        q = new Quill(editor, {
-            modules: {
-                toolbar: toolbarOptions,
-            },
-            theme: "snow",
-        });
+        q = new Quill(editor, {modules: {toolbar: toolbarOptions}, theme: "snow"});
 
         if (showHawcTools) {
             q.stc = new SmartTagContainer($(q.container).find(".ql-editor"));
@@ -84,8 +73,18 @@ export default function () {
         if (q.stc) {
             q.stc.enableModals();
         }
+    };
+
+export default function () {
+    const focusedItem = $(":focus"),
+        modal = $("#smartTagModal"),
+        showHawcTools = modal.length === 1;
+
+    this.each(function () {
+        createEditor(this, showHawcTools);
     });
 
     // restore original focus
     $(focusedItem).focus();
 }
+export {toolbarOptions};

@@ -32,3 +32,5 @@ class SmartTag extends Inline {
 }
 
 Quill.register(SmartTag, true);
+
+export default SmartTag;
