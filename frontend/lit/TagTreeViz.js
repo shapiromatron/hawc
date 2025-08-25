@@ -119,8 +119,8 @@ class TagTreeViz extends D3Plot {
     }
 
     build_options() {
-        const root = createRoot(dim.width + 2 * buff);
-        root.render(<VizOptions viz={this} store={this.stateStore} />, this.options_div.get(0));
+        const root = createRoot(this.options_div.get(0));
+        root.render(<VizOptions viz={this} store={this.stateStore} />);
     }
 
     set_defaults() {
@@ -417,7 +417,7 @@ class TagTreeViz extends D3Plot {
             .attr("x", -buff)
             .attr("y", -buff)
             .attr("height", dim.height + 2 * buff)
-            .attr("width");
+            .attr("width", dim.width + 2 * buff);
     }
 }
 

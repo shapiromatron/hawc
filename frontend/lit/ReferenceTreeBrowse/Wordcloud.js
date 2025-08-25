@@ -98,8 +98,8 @@ const padding = 0,
 
         $(el).empty().append(svg.node()).append(toolbarNode);
 
-        const root = createRoot(1);
-        root.render(<VisualToolbar svg={svg.node()} />, toolbarNode.get(0));
+        const root = createRoot(toolbarNode.get(0));
+        root.render(<VisualToolbar svg={svg.node()} />);
     };
 
 @observer
@@ -119,7 +119,7 @@ class Wordcloud extends Component {
         setTimeout(this.updatePlot, 1);
     }
     componentDidUpdate() {
-        setTimeout(this.updatePlot);
+        setTimeout(this.updatePlot, 1);
     }
     render() {
         const {references} = this.props;
