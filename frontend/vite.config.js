@@ -70,7 +70,6 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            // Application module aliases
             animal: path.resolve(__dirname, "animal"),
             assessment: path.resolve(__dirname, "assessment"),
             bmd: path.resolve(__dirname, "bmd"),
@@ -85,7 +84,7 @@ export default defineConfig({
             shared: path.resolve(__dirname, "shared"),
             study: path.resolve(__dirname, "study"),
             summary: path.resolve(__dirname, "summary"),
-            // React 18 compatibility: resolve legacy CommonJS paths to ESM
+            // React 18 compatibility; resolve CommonJS to ESM
             "react/cjs/react.production.min": "react",
             "react/cjs/react.development": "react",
         },
@@ -101,11 +100,11 @@ export default defineConfig({
     },
     optimizeDeps: {
         include: [
-            "react", 
-            "react-dom", 
-            "react/jsx-runtime", 
+            "react",
+            "react-dom",
+            "react/jsx-runtime",
             "react/jsx-dev-runtime",
-            "react-dom/client"
+            "react-dom/client",
         ],
         esbuildOptions: {
             loader: {
