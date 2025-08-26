@@ -3457,17 +3457,19 @@ minimist@^1.2.5, minimist@^1.2.6, minimist@^1.2.8:
   resolved "https://registry.yarnpkg.com/minipass/-/minipass-7.1.2.tgz#93a9626ce5e5e66bd4db86849e7515e92340a707"
   integrity sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==
 
-mobx-react-lite@^3.4.0:
-  version "3.4.3"
-  resolved "https://registry.yarnpkg.com/mobx-react-lite/-/mobx-react-lite-3.4.3.tgz#3a4c22c30bfaa8b1b2aa48d12b2ba811c0947ab7"
-  integrity sha512-NkJREyFTSUXR772Qaai51BnE1voWx56LOL80xG7qkZr6vo8vEaLF3sz1JNUVh+rxmUzxYaqOhfuxTfqUh0FXUg==
-
-mobx-react@^7.6.0:
-  version "7.6.0"
-  resolved "https://registry.yarnpkg.com/mobx-react/-/mobx-react-7.6.0.tgz#ebf0456728a9bd2e5c24fdcf9b36e285a222a7d6"
-  integrity sha512-+HQUNuh7AoQ9ZnU6c4rvbiVVl+wEkb9WqYsVDzGLng+Dqj1XntHu79PvEWKtSMoMj67vFp/ZPXcElosuJO8ckA==
+mobx-react-lite@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/mobx-react-lite/-/mobx-react-lite-4.1.0.tgz#6a03ed2d94150848213cfebd7d172e123528a972"
+  integrity sha512-QEP10dpHHBeQNv1pks3WnHRCem2Zp636lq54M2nKO2Sarr13pL4u6diQXf65yzXUn0mkk18SyIDCm9UOJYTi1w==
   dependencies:
-    mobx-react-lite "^3.4.0"
+    use-sync-external-store "^1.4.0"
+
+mobx-react@9.2.0:
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/mobx-react/-/mobx-react-9.2.0.tgz#c1e4d1ed406f6664d9de0787c948bac3a7ed5893"
+  integrity sha512-dkGWCx+S0/1mfiuFfHRH8D9cplmwhxOV5CkXMp38u6rQGG2Pv3FWYztS0M7ncR6TyPRQKaTG/pnitInoYE9Vrw==
+  dependencies:
+    mobx-react-lite "^4.1.0"
 
 mobx@6.13.7:
   version "6.13.7"
@@ -4786,6 +4788,11 @@ update-diff@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/update-diff/-/update-diff-1.1.0.tgz#f510182d81ee819fb82c3a6b22b62bbdeda7808f"
   integrity sha512-rCiBPiHxZwT4+sBhEbChzpO5hYHjm91kScWgdHf4Qeafs6Ba7MBl+d9GlGv72bcTZQO0sLmtQS1pHSWoCLtN/A==
+
+use-sync-external-store@^1.4.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.5.0.tgz#55122e2a3edd2a6c106174c27485e0fd59bcfca0"
+  integrity sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==
 
 util-deprecate@^1.0.2, util-deprecate@~1.0.1:
   version "1.0.2"
