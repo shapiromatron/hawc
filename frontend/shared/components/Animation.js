@@ -1,7 +1,13 @@
 import PropTypes from "prop-types";
 import React, {useEffect, useRef, useState} from "react";
 
-function Animation({animation, duration, easing, runAnimation, children}) {
+function Animation({
+    animation,
+    duration = 1000,
+    easing = "ease-out",
+    runAnimation = true,
+    children,
+}) {
     const [animated, setAnimated] = useState(false),
         elementRef = useRef();
 
@@ -36,12 +42,6 @@ Animation.propTypes = {
     easing: PropTypes.string,
     runAnimation: PropTypes.bool,
     children: PropTypes.element.isRequired,
-};
-
-Animation.defaultProps = {
-    duration: 1000,
-    easing: "ease-out",
-    runAnimation: true,
 };
 
 export default Animation;
