@@ -8,6 +8,7 @@ router.register(r"assessment", api.LiteratureAssessmentViewSet, basename="assess
 router.register(r"reference", api.ReferenceViewSet, basename="reference")
 router.register(r"search", api.SearchViewSet, basename="search")
 router.register(r"tags", api.ReferenceFilterTagViewSet, basename="tags")
+router.register(r"duplicate", api.DuplicateViewSet, basename="duplicate")
 
 app_name = "lit"
 urlpatterns = [
@@ -163,4 +164,19 @@ urlpatterns = [
         name="workflow-htmx",
     ),
     path("api/", include((router.urls, "api"))),
+    path(
+        "assessment/<int:pk>/duplicate-resolution/",
+        views.DuplicateResolution.as_view(),
+        name="duplicate-resolution",
+    ),
+    path(
+        "assessment/<int:pk>/resolved-duplicates/",
+        views.ResolvedDuplicates.as_view(),
+        name="resolved-duplicates",
+    ),
+    path(
+        "assessment/<int:pk>/identify-duplicates/",
+        views.IdentifyDuplicates.as_view(),
+        name="identify-duplicates",
+    ),
 ]
