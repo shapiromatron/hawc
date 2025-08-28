@@ -11,7 +11,7 @@ from django.contrib.postgres.aggregates import StringAgg
 from django.contrib.postgres.search import SearchQuery
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.files.storage import FileSystemStorage
+from django.core.files.storage import Storage, storages
 from django.db import IntegrityError, connection, models, router, transaction
 from django.db.models import Case, CharField, Choices, Q, QuerySet, TextField, URLField, Value, When
 from django.db.models.functions import Coalesce, Concat
@@ -22,12 +22,11 @@ from treebeard.mp_tree import MP_Node
 from . import forms, validators
 from .flavors import help_text as help_text_flavors
 
-_private_storage = FileSystemStorage(location=str(settings.PRIVATE_DATA_ROOT))
 logger = logging.getLogger(__name__)
 
 
-def get_private_data_storage() -> FileSystemStorage:
-    return _private_storage
+def get_private_data_storage() -> Storage:
+    return storages["private"]
 
 
 class BaseManager(models.Manager):
