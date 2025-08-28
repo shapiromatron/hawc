@@ -66,7 +66,7 @@ jobs:
         if [ "$RUNNER_OS" == "Linux" ]; then
           export "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib"
         fi
-        coverage run -m pytest --record-mode=none
+        coverage run -m pytest -v --block-network --allowed-hosts=127.0.0.1,::1 --record-mode=none
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
         coverage report --format=markdown -i >> $GITHUB_STEP_SUMMARY || true
         coverage html -d coverage -i
@@ -162,13 +162,13 @@ jobs:
       id: test
       continue-on-error: true
       run: |
-        uv run py.test -sv tests/integration/
+        uv run py.test -v --block-network --allowed-hosts=127.0.0.1,::1 tests/integration/
     - name: run integration tests (retry)
       if: steps.test.outcome=='failure'
       id: retry
       continue-on-error: true
       run: |
-        uv run py.test -sv --lf tests/integration/
+        uv run py.test -v --block-network --allowed-hosts=127.0.0.1,::1 --lf tests/integration/
     - name: set status
       if: always()
       run: |
