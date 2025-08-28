@@ -28,6 +28,7 @@ from ..common.forms import (
 )
 from ..common.helper import new_window_a
 from ..common.widgets import DateCheckboxInput
+from ..lit.models import TrainedModel, TrainedModelVersion, TrainedVectorizer
 from ..myuser.autocomplete import UserAutocomplete
 from ..study.autocomplete import StudyAutocomplete
 from ..vocab.constants import VocabularyNamespace
@@ -964,3 +965,78 @@ class LabelItemForm(forms.Form):
                 for label_id in creates
             ]
             models.LabeledItem.objects.bulk_create(labels)
+
+
+class TrainedModelForm(forms.ModelForm):
+    class Meta:
+        model = TrainedModel
+        fields = ["name", "description", "published"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["description"].widget.attrs["rows"] = 1
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("name"),
+                cfl.Column("description"),
+                cfl.Column("published"),
+            )
+        )
+        return helper
+
+
+class TrainedModelVersionForm(forms.ModelForm):
+    new_vectorizer = forms.BooleanField(
+        required=False,
+        label="New Vectorizer",
+    )
+
+    class Meta:
+        model = TrainedModelVersion
+        fields = ["model", "description", "vectorizer", "new_vectorizer"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["description"].widget.attrs["rows"] = 1
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("model"),
+                cfl.Column("description"),
+                cfl.Column("vectorizer"),
+                cfl.Column("new_vectorizer"),
+            )
+        )
+        return helper
+
+
+class TrainedVectorizerForm(forms.ModelForm):
+    class Meta:
+        model = TrainedVectorizer
+        fields = ["name", "description", "vectorizer"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["description"].widget.attrs["rows"] = 1
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.layout = cfl.Layout(
+            cfl.Row(
+                cfl.Column("name"),
+                cfl.Column("description"),
+                cfl.Column("vectorizer"),
+            )
+        )
+        return helper
