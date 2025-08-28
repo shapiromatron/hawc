@@ -168,7 +168,7 @@ jobs:
       id: retry
       continue-on-error: true
       run: |
-        uv run py.test -v --block-network --allowed-hosts=127.0.0.1,::1 tests/integration/ --lf
+        uv run py.test -v --block-network --allowed-hosts=127.0.0.1,::1 --lf tests/integration/
     - name: set status
       if: always()
       run: |
