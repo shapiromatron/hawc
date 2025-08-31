@@ -69,7 +69,7 @@ class Session(models.Model):
         inputs = constants.BmdInputSettings.create_default(endpoint)
         return cls.objects.create(
             endpoint_id=endpoint.id,
-            dose_units_id=inputs.dose_units_id,
+            dose_units_id=inputs.settings.dose_units_id,
             version=version,
             inputs=inputs.model_dump(),
             selected=constants.SelectedModel().model_dump(by_alias=True),
