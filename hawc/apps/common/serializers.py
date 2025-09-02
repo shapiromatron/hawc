@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Any, TypeVar
+from typing import Any
 
 import jsonschema
 from django.core.exceptions import ObjectDoesNotExist
@@ -17,10 +17,8 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from .helper import get_id_from_choices
 
-T = TypeVar("T", bound=BaseModel)
 
-
-def validate_pydantic(pydantic_class: type[T], field: str | None, data: Any) -> T:
+def validate_pydantic[T: BaseModel](pydantic_class: type[T], field: str | None, data: Any) -> T:
     """Validation helper to validate a field to a pydantic model.
 
     Args:
