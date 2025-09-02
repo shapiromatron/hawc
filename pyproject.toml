@@ -19,77 +19,77 @@ requires-python = ">=3.13"
 # see https://peps.python.org/pep-0440/#version-specifiers
 dependencies = [
   # web application
-  "Django~=5.2.1",
+  "Django~=5.2.5",
   "django-crispy-forms==2.4",
-  "crispy-bootstrap4==2024.10",
+  "crispy-bootstrap4==2025.6",
   "django-filter==24.3",
-  "django-redis==5.4.0",
+  "django-redis==6.0.0",
   "django-reversion==5.1.0",
   "django-autocomplete-light==3.12.1",
   "django-taggit==6.1.0",
   "django-treebeard==4.7.1",
-  "djangorestframework==3.16.0",
+  "djangorestframework==3.16.1",
   "django-vite==3.1.0",
-  "uritemplate==4.1.1",
+  "uritemplate==4.2.0",
   "inflection==0.5.1",
   "pyyaml==6.0.2",
   "gunicorn==23.0.0",
-  "wagtail~=7.0.0",
-  "wagtail-draftail-anchors==0.6.0",
+  "wagtail~=7.1.1",
+  "wagtail-draftail-anchors==0.6.2",
   # tasks
-  "celery==5.5.2",
+  "celery==5.5.3",
   "billiard==4.2.1",
-  "kombu==5.5.3",
+  "kombu==5.5.4",
   # utilities
-  "jsonschema==4.24.0",
-  "lxml~=5.4.0",
+  "jsonschema==4.25.1",
+  "lxml~=6.0.1",
   "psycopg2-binary==2.9.10",
-  "redis==6.2.0",
-  "requests==2.32.4",
-  "pydantic~=2.11.5",
-  "nh3~=0.2.21",
+  "redis==6.4.0",
+  "requests~=2.32.5",
+  "pydantic~=2.11.7",
+  "nh3~=0.3.0",
   "tinycss2==1.4.0",
   # computational
-  "numpy~=2.2.6",
-  "pandas==2.2.3",
+  "numpy~=2.3.2",
+  "pandas==2.3.2",
   "openpyxl==3.1.5",
   "jinja2~=3.1.6",
-  "plotly==6.1.2",
-  "scipy~=1.15.3",
+  "plotly==6.3.0",
+  "scipy~=1.16.1",
   "pybmds==25.1",
   # exports
   "rispy==0.10.0",
-  "python-docx==1.1.2",
+  "python-docx==1.2.0",
 ]
 
 [project.optional-dependencies]
 dev = [
   # build
   "flit==3.12.0",  # make sure to sync w/ [build-system]
-  "poethepoet~=0.34.0",
+  "poethepoet~=0.37.0",
   # lint and formatting tools
-  "ruff==0.11.11",  # make sure to sync w/ pre-commit
-  "djhtml==3.0.8",  # make sure to sync w/ pre-commit
-  "pre-commit==4.2.0",
+  "ruff==0.12.11",  # make sure to sync w/ pre-commit
+  "djhtml==3.0.9",  # make sure to sync w/ pre-commit
+  "pre-commit==4.3.0",
   # django development
-  "django-debug-toolbar~=5.2.0",
+  "django-debug-toolbar~=6.0.0",
   "django-browser-reload~=1.18.0",
   "django-extensions~=4.1",
   # tests
-  "coverage~=7.8.2",
-  "pytest~=8.3.5",
+  "coverage~=7.10.6",
+  "pytest~=8.4.1",
   "pytest-django~=4.11.1",
   "vcrpy==7.0.0",
   "pytest-recording==0.13.4",
-  "playwright~=1.52.0",
+  "playwright~=1.55.0",
   "pytest-playwright~=0.7.0",
 ]
 docs = [
   "mkdocs-material~=9.6.14",
 ]
 prod = [
-  "django-anymail==13.0",
-  "sentry_sdk~=2.29.1",
+  "django-anymail~=13.0.1",
+  "sentry_sdk~=2.35.2",
 ]
 
 [project.scripts]

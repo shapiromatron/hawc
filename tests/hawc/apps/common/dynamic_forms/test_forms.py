@@ -33,7 +33,7 @@ class TestDynamicForm:
                             <input type="radio" class="custom-control-input" name="yesno" value="no" id="id_yesno_1">
                             <label class="custom-control-label" for="id_yesno_1">No</label>
                         </div>
-                        <small id="hint_id_yesno" class="form-text text-muted">Help text</small>
+                        <small id="id_yesno_helptext" class="form-text text-muted">Help text</small>
                     </div>
                 </div>
             </div>
