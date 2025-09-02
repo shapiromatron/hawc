@@ -97,6 +97,9 @@ class DataType(models.TextChoices):
     DICHOTOMOUS_CANCER = "DC", "Dichotomous Cancer"
     NR = "NR", "Not reported"
 
+    def can_be_bmd_modelled(self):
+        return self in {self.CONTINUOUS, self.DICHOTOMOUS, self.DICHOTOMOUS_CANCER}
+
 
 class Monotonicity(models.IntegerChoices):
     NR = 8, "--"

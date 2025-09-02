@@ -858,7 +858,11 @@ class Endpoint(BaseEndpoint):
 
     @property
     def bmd_modeling_possible(self):
-        return self.dose_response_available and self.groups.count() >= 3
+        return (
+            self.dose_response_available
+            and constants.DataType(self.data_type).can_be_bmd_modelled()
+            and self.groups.count() >= 3
+        )
 
     def get_doses_json(self, json_encode=True):
         """

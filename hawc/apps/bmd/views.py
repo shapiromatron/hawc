@@ -5,6 +5,7 @@ from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
 from django.views.generic import RedirectView
 
+from ..animal.constants import DataType
 from ..animal.models import Endpoint
 from ..assessment.constants import AssessmentViewPermissions
 from ..common.helper import WebappConfig
@@ -18,6 +19,8 @@ class SessionCreate(RedirectView):
         self.object = get_object_or_404(Endpoint, pk=kwargs["pk"])
         if not self.object.assessment.user_can_edit_object(self.request.user):
             raise PermissionDenied()
+        if not DataType(self.object.data_type).can_be_bmd_modelled():
+            raise BadRequest("Data type cannot be BMD modelled")
         obj = models.Session.create_new(self.object)
         return obj.get_update_url()
 
