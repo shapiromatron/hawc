@@ -53,6 +53,7 @@ def _get_session_config(self, context, is_editing: bool = False) -> WebappConfig
             edit=is_editing,
             session_url=self.object.get_api_url(),
             csrf=get_token(self.request) if is_editing else None,
+            is_staff=self.request.user.is_staff,
         ),
     )
 

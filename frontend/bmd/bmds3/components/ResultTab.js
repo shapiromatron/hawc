@@ -216,6 +216,14 @@ class ResultTab extends React.Component {
                                 icon="fa-exclamation-triangle"
                                 message="An error occurred. Please contact HAWC developers if this continues to occur."
                             />
+                            {store.config.is_staff &&
+                            store.session.errors &&
+                            store.session.errors.traceback ? (
+                                <div className="alert alert-warning mt-2">
+                                    <p>Staff-Only</p>
+                                    <pre>{store.session.errors.traceback}</pre>
+                                </div>
+                            ) : null}
                         </div>
                     </div>
                 </div>
