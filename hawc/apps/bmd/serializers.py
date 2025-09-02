@@ -9,10 +9,13 @@ class SessionBmd2Serializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         ret = super().to_representation(instance)
         defaults = constants.bmds2_defaults()
+        data_type = instance.endpoint.data_type
+        if data_type == "DC":
+            data_type = "D"
         ret.update(
             logic=defaults["logic"],
-            model_options=defaults["model_options"][instance.endpoint.data_type],
-            bmr_options=defaults["bmr_options"][instance.endpoint.data_type],
+            model_options=defaults["model_options"][data_type],
+            bmr_options=defaults["bmr_options"][data_type],
         )
         return ret
 
