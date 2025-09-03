@@ -19,7 +19,7 @@ requires-python = ">=3.13"
 # see https://peps.python.org/pep-0440/#version-specifiers
 dependencies = [
   # web application
-  "Django~=5.2.5",
+  "Django~=5.2.6",
   "django-crispy-forms==2.4",
   "crispy-bootstrap4==2025.6",
   "django-filter==24.3",
