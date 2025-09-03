@@ -7,7 +7,7 @@ from datetime import timedelta
 from io import BytesIO
 from itertools import chain
 from math import inf
-from typing import Any, NamedTuple, TypeVar
+from typing import Any, NamedTuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -560,10 +560,7 @@ class PydanticToDjangoError:
             raise ValidationError({self.field: self.msg} if self.include_field else self.msg)
 
 
-T = TypeVar("T")
-
-
-def cacheable(
+def cacheable[T](
     callable: Callable[..., T], cache_key: str, flush: bool = False, cache_duration: int = -1, **kw
 ) -> T:
     """Get the result from cache or call method to recreate and cache.
