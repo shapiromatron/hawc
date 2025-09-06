@@ -30,7 +30,7 @@ COPY ./dist /app/build/dist
 WORKDIR /app/build
 
 RUN python -m pip install -U pip --root-user-action=ignore && \
-    python -m pip install "$(ls dist/hawc-*.whl | head -1)[prod]" --no-cache-dir && \
+    python -m pip install "$(ls -t dist/hawc-*.whl | head -1)[prod]" --no-cache-dir && \
     mkdir -p /app/logs && \
     python -m pip uninstall -y pip setuptools && \
     rm -rf /app/build && \
