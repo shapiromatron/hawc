@@ -1082,10 +1082,9 @@ class LabelItem(HtmxView):
         self.object_id = self.kwargs.get("object_id")
 
         try:
-            self.content_object = ContentType.objects.get_for_id(
-                self.content_type
-            ).get_object_for_this_type(pk=self.object_id)
-        except ObjectDoesNotExist as err:
+            content_type = ContentType.objects.get_for_id(self.content_type)
+            self.content_object = content_type.get_object_for_this_type(pk=self.object_id)
+        except (AttributeError, ObjectDoesNotExist) as err:
             raise Http404() from err
 
         try:
