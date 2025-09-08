@@ -29,6 +29,12 @@ class SearchType(models.TextChoices):
     IMPORT = "i", "Import"
 
 
+class DuplicateResolution(models.IntegerChoices):
+    UNRESOLVED = 0, "Unresolved"
+    RESOLVED = 1, "Primary identified"  # TODO: change to "primary identified"
+    FALSE_POSITIVE = 2, "False positive"
+
+
 # generalized/adapted from https://www.crossref.org/blog/dois-and-matching-regular-expressions/
 DOI_EXACT = re.compile(r"^10\.\d{4,9}/[^\s]+$")
 DOI_EXTRACT = re.compile(r"10\.\d{4,9}/[^\s]+")
