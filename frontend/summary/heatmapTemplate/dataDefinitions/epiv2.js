@@ -13,7 +13,7 @@ const ESD = {
         PMID: defineProps("PMID", "PubMed ID", "PMID"),
         HERO: defineProps("HERO", "HERO ID", "HERO ID"),
         DOI: defineProps("DOI", "DOI", "DOI"),
-        shortCitation: defineProps("shortCitation", "Study citation", "short_citation"),
+        shortCitation: defineProps("shortCitation", "Study Citation", "short_citation"),
         fullCitation: defineProps("fullCitation", "Full Citation", "full_citation"),
         studyDesign: defineProps("studyDesign", "Study Design", "study_design"),
         designSummary: defineProps("designSummary", "Design Summary", "design_summary"),
@@ -34,9 +34,9 @@ const ESD = {
             "exposure_biomonitoring_matrix"
         ),
         exposureRoute: defineProps("exposureRoute", "Exposure Route", "exposure_route"),
-        outcomeSystem: defineProps("outcomeSystem", "Systems", "outcome_system"),
-        outcomeEffect: defineProps("outcomeEffect", "Effects", "outcome_effect"),
-        outcomeEndpoint: defineProps("outcomeEndpoint", "Endpoints", "outcome_endpoint"),
+        outcomeSystem: defineProps("outcomeSystem", "System", "outcome_system"),
+        outcomeEffect: defineProps("outcomeEffect", "Effect", "outcome_effect"),
+        outcomeEndpoint: defineProps("outcomeEndpoint", "Endpoint", "outcome_endpoint"),
     },
     ESDv2Settings = {
         AXIS_OPTIONS: {
@@ -58,7 +58,7 @@ const ESD = {
             outcomeSystemEffect: defineMultiAxis(
                 [ESD.outcomeSystem, ESD.outcomeEffect],
                 "outcomeSystemEffect",
-                "Outcome system & effect",
+                "Outcome System & Effect",
                 {delimiter: "|"}
             ),
         },

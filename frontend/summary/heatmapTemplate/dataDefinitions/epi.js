@@ -10,22 +10,22 @@ import {
 // ESD = epi study design
 const ESD = {
         studyId: defineProps("studyId", "Study ID", "study id"),
-        studyCitation: defineProps("studyCitation", "Study citation", "study citation"),
-        studyIdentifier: defineProps("studyIdentifier", "Study identifier", "study identifier"),
-        studyEval: defineProps("studyEval", "Overall study evaluation", "overall study evaluation"),
-        studyDesign: defineProps("studyDesign", "Study design", "study design"),
+        studyCitation: defineProps("studyCitation", "Study Citation", "study citation"),
+        studyIdentifier: defineProps("studyIdentifier", "Study Identifier", "study identifier"),
+        studyEval: defineProps("studyEval", "Overall Study Evaluation", "overall study evaluation"),
+        studyDesign: defineProps("studyDesign", "Human Study Design", "study design"),
         studyPopulationSource: defineProps(
             "studyPopulationSource",
-            "Study population source",
+            "Study Population Source",
             "study population source"
         ),
-        exposureName: defineProps("exposureName", "Exposure name", "exposure name"),
-        exposureRoute: defineProps("exposureRoute", "Exposure route", "exposure route"),
-        exposureMeasure: defineProps("exposureMeasure", "Exposure measure", "exposure measure"),
-        exposureMetric: defineProps("exposureMetric", "Exposure metric", "exposure metric"),
-        system: defineProps("system", "System", "system"),
-        effect: defineProps("effect", "Effect", "effect"),
-        effectSubtype: defineProps("effectSubtype", "Effect subtype", "effect subtype"),
+        exposureName: defineProps("exposureName", "Exposure Name", "exposure name"),
+        exposureRoute: defineProps("exposureRoute", "Exposure Route", "exposure route"),
+        exposureMeasure: defineProps("exposureMeasure", "Exposure", "exposure measure"),
+        exposureMetric: defineProps("exposureMetric", "Exposure Metric", "exposure metric"),
+        system: defineProps("system", "Health System", "system"),
+        effect: defineProps("effect", "Outcome", "effect"),
+        effectSubtype: defineProps("effectSubtype", "Outcome Subtype", "effect subtype"),
     },
     ESDSettings = {
         AXIS_OPTIONS: {
@@ -36,7 +36,7 @@ const ESD = {
             exposureMeasureMetric: defineMultiAxis(
                 [ESD.exposureMeasure, ESD.exposureMetric],
                 "exposureMeasureMetric",
-                "Exposure measurement & metric",
+                "Exposure Measurement & Metric",
                 {delimiter: "|"}
             ),
             studyCitation: defineAxis(ESD.studyCitation),
@@ -48,7 +48,7 @@ const ESD = {
             systemEffect: defineMultiAxis(
                 [ESD.system, ESD.effect],
                 "systemEffect",
-                "System & Effect",
+                "Health System & Outcome",
                 {delimiter: "|"}
             ),
         },
@@ -82,7 +82,7 @@ const ESD = {
 ESDSettings.DASHBOARDS = [
     {
         id: "study design vs. system & effect",
-        label: "study design vs. system & effect",
+        label: "Health System & Outcome vs. Human Study Design",
         upperColor: COLORS.blue,
         x_axis: ESDSettings.AXIS_OPTIONS.studyDesign.id,
         y_axis: ESDSettings.AXIS_OPTIONS.systemEffect.id,
@@ -103,7 +103,7 @@ ESDSettings.DASHBOARDS = [
     },
     {
         id: "exposure measure vs. system & effect",
-        label: "exposure measure vs. system & effect",
+        label: "Health System & Outcome vs. Exposure",
         upperColor: COLORS.red,
         x_axis: ESDSettings.AXIS_OPTIONS.exposureMeasure.id,
         y_axis: ESDSettings.AXIS_OPTIONS.systemEffect.id,
@@ -125,7 +125,7 @@ ESDSettings.DASHBOARDS = [
     },
     {
         id: "exposure route vs. system & effect",
-        label: "exposure route vs. system & effect",
+        label: "Health System & Outcome vs. Exposure Route",
         upperColor: COLORS.purple,
         x_axis: ESDSettings.AXIS_OPTIONS.exposureRoute.id,
         y_axis: ESDSettings.AXIS_OPTIONS.systemEffect.id,
@@ -148,7 +148,7 @@ ESDSettings.DASHBOARDS = [
     },
     {
         id: "epi-sd-study-pop-source-vs-system-effect",
-        label: "study population source vs. system & effect",
+        label: "Health System & Outcome vs. Study Population Source",
         upperColor: COLORS.orange,
         x_axis: ESDSettings.AXIS_OPTIONS.studyPopulationSource.id,
         y_axis: ESDSettings.AXIS_OPTIONS.systemEffect.id,
@@ -170,7 +170,7 @@ ESDSettings.DASHBOARDS = [
     },
     {
         id: "system vs. citation",
-        label: "system vs. citation",
+        label: "Study Citation vs. Health System",
         upperColor: COLORS.green,
         x_axis: ESDSettings.AXIS_OPTIONS.system.id,
         y_axis: ESDSettings.AXIS_OPTIONS.studyCitation.id,
@@ -193,7 +193,7 @@ ESDSettings.DASHBOARDS = [
     },
     {
         id: "system & effect vs. citation",
-        label: "system & effect vs. citation",
+        label: "Study Citation vs. Health System & Effect",
         upperColor: COLORS.red,
         x_axis: ESDSettings.AXIS_OPTIONS.systemEffect.id,
         y_axis: ESDSettings.AXIS_OPTIONS.studyCitation.id,
@@ -219,9 +219,9 @@ ESDSettings.DASHBOARDS = [
 // ER = epi results
 const ER = {
         studyId: defineProps("studyId", "Study ID", "study id"),
-        studyCitation: defineProps("studyCitation", "Study citation", "study citation"),
-        studyIdentifier: defineProps("studyIdentifier", "Study identifier", "study identifier"),
-        studyEval: defineProps("studyEval", "Overall study evaluation", "overall study evaluation"),
+        studyCitation: defineProps("studyCitation", "Study Citation", "study citation"),
+        studyIdentifier: defineProps("studyIdentifier", "Study Identifier", "study identifier"),
+        studyEval: defineProps("studyEval", "Overall Study Evaluation", "overall study evaluation"),
         studyPopulationId: defineProps(
             "studyPopulationId",
             "Study Population ID",
@@ -229,33 +229,33 @@ const ER = {
         ),
         studyPopulationName: defineProps(
             "studyPopulationName",
-            "Study population name",
+            "Study Population",
             "study population name"
         ),
         studyPopulationSource: defineProps(
             "studyPopulationSource",
-            "Study population source",
+            "Study Population Source",
             "study population source"
         ),
-        studyDesign: defineProps("studyDesign", "Study design", "study design"),
-        comparisonSetId: defineProps("comparisonSetId", "comparison set ID", "comparison set id"),
+        studyDesign: defineProps("studyDesign", "Study Design", "study design"),
+        comparisonSetId: defineProps("comparisonSetId", "Comparison Set ID", "comparison set id"),
         comparisonSetName: defineProps(
             "comparisonSetName",
-            "Comparison set name",
+            "Comparison Set",
             "comparison set name"
         ),
         exposureId: defineProps("exposureId", "Exposure ID", "exposure id"),
-        exposureName: defineProps("exposureName", "Exposure name", "exposure name"),
-        exposureRoute: defineProps("exposureRoute", "Exposure route", "exposure route"),
-        exposureMeasure: defineProps("exposureMeasure", "Exposure measure", "exposure measure"),
-        exposureMetric: defineProps("exposureMetric", "Exposure metric", "exposure metric"),
+        exposureName: defineProps("exposureName", "Exposure", "exposure name"),
+        exposureRoute: defineProps("exposureRoute", "Exposure Route", "exposure route"),
+        exposureMeasure: defineProps("exposureMeasure", "Exposure Measure", "exposure measure"),
+        exposureMetric: defineProps("exposureMetric", "Exposure Metric", "exposure metric"),
         outcomeId: defineProps("outcomeId", "Outcome ID", "outcome id"),
-        outcomeName: defineProps("outcomeName", "Outcome name", "outcome name"),
-        system: defineProps("system", "System", "system"),
-        effect: defineProps("effect", "Effect", "effect"),
-        effectSubtype: defineProps("effectSubtype", "Effect subtype", "effect subtype"),
+        outcomeName: defineProps("outcomeName", "Outcome", "outcome name"),
+        system: defineProps("system", "Health System", "system"),
+        effect: defineProps("effect", "Outcome", "effect"),
+        effectSubtype: defineProps("effectSubtype", "Outcome Subtype", "effect subtype"),
         resultId: defineProps("resultId", "Result ID", "result id"),
-        resultName: defineProps("resultName", "Result name", "result name"),
+        resultName: defineProps("resultName", "Result", "result name"),
     },
     ERSettings = {
         AXIS_OPTIONS: {
@@ -268,14 +268,14 @@ const ER = {
             exposureMeasureMetric: defineMultiAxis(
                 [ER.exposureMeasure, ER.exposureMetric],
                 "exposureMeasureMetric",
-                "Exposure Measure & Metric"
+                "Exposure & Metric"
             ),
             exposureMeasure: defineAxis(ER.exposureMeasure),
             exposureMetric: defineAxis(ER.exposureMetric),
             systemEffect: defineMultiAxis(
                 [ER.system, ER.effect],
                 "systemEffect",
-                "System & Effect"
+                "Health System & Outcome"
             ),
             system: defineAxis(ER.system),
             effect: defineAxis(ER.effect),
@@ -320,7 +320,7 @@ const ER = {
 ERSettings.DASHBOARDS = [
     {
         id: "study design vs. system & effect",
-        label: "study design vs. system & effect",
+        label: "Health System & Outcome vs. Human Study Design",
         upperColor: COLORS.blue,
         x_axis: ERSettings.AXIS_OPTIONS.studyDesign.id,
         y_axis: ERSettings.AXIS_OPTIONS.systemEffect.id,
@@ -342,7 +342,7 @@ ERSettings.DASHBOARDS = [
     },
     {
         id: "exposure measure & metric vs. system & effect",
-        label: "exposure measure & metric vs. system & effect",
+        label: "Health System & Outcome vs. Exposure & Exposure Metric",
         upperColor: COLORS.orange,
         x_axis: ERSettings.AXIS_OPTIONS.exposureMeasureMetric.id,
         y_axis: ERSettings.AXIS_OPTIONS.systemEffect.id,
@@ -363,7 +363,7 @@ ERSettings.DASHBOARDS = [
     },
     {
         id: "exposure route vs. system & effect",
-        label: "exposure route vs. system & effect",
+        label: "Health System & Outcome vs. Exposure Route",
         upperColor: COLORS.green,
         x_axis: ERSettings.AXIS_OPTIONS.exposureRoute.id,
         y_axis: ERSettings.AXIS_OPTIONS.systemEffect.id,
@@ -385,7 +385,7 @@ ERSettings.DASHBOARDS = [
     },
     {
         id: "study population source vs. system & effect",
-        label: "study population source vs. system & effect",
+        label: "Health System & Outcome vs. Study Population",
         upperColor: COLORS.red,
         x_axis: ERSettings.AXIS_OPTIONS.studyPopulationSource.id,
         y_axis: ERSettings.AXIS_OPTIONS.systemEffect.id,
@@ -407,7 +407,7 @@ ERSettings.DASHBOARDS = [
     },
     {
         id: "system vs. citation",
-        label: "system vs. citation",
+        label: "Study Citation vs. Health System",
         upperColor: COLORS.purple,
         x_axis: ERSettings.AXIS_OPTIONS.system.id,
         y_axis: ERSettings.AXIS_OPTIONS.studyCitation.id,
@@ -429,7 +429,7 @@ ERSettings.DASHBOARDS = [
     },
     {
         id: "effect vs. citation",
-        label: "effect vs. citation",
+        label: "Study Citation vs. Outcome",
         upperColor: COLORS.black,
         x_axis: ERSettings.AXIS_OPTIONS.effect.id,
         y_axis: ERSettings.AXIS_OPTIONS.studyCitation.id,
