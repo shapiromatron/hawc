@@ -33,9 +33,12 @@ const BSD = {
             experimentType: defineAxis(BSD.experimentType, {delimiter: "|"}),
             routeOfExposure: defineAxis(BSD.routeOfExposure, {delimiter: "|"}),
             experimentChemical: defineAxis(BSD.experimentChemical, {delimiter: "|"}),
-            speciesSex: defineMultiAxis([BSD.species, BSD.sex], "speciesSex", "Animal Model (Species & Sex)", {
-                delimiter: "|",
-            }),
+            speciesSex: defineMultiAxis(
+                [BSD.species, BSD.sex],
+                "speciesSex",
+                "Animal Model (Species & Sex)",
+                {delimiter: "|"}
+            ),
             speciesStrain: defineMultiAxis(
                 [BSD.species, BSD.strain],
                 "speciesStrain",
@@ -228,7 +231,11 @@ const BE = {
         AXIS_OPTIONS: {
             studyCitation: defineAxis(BE.studyCitation),
             studyEval: defineAxis(BE.studyEval),
-            speciesSex: defineMultiAxis([BE.species, BE.sex], "speciesSex", "Animal Model (Species & Sex)"),
+            speciesSex: defineMultiAxis(
+                [BE.species, BE.sex],
+                "speciesSex",
+                "Animal Model (Species & Sex)"
+            ),
             experimentType: defineAxis(BE.experimentType),
             chemical: defineAxis(BE.chemical),
             routeOfExposure: defineAxis(BE.routeOfExposure),
@@ -408,11 +415,19 @@ const BED = {
         AXIS_OPTIONS: {
             studyCitation: defineAxis(BED.studyCitation),
             studyEval: defineAxis(BED.studyEval),
-            speciesSex: defineMultiAxis([BED.species, BED.sex], "speciesSex", "Animal Model (Species & Sex)"),
+            speciesSex: defineMultiAxis(
+                [BED.species, BED.sex],
+                "speciesSex",
+                "Animal Model (Species & Sex)"
+            ),
             experimentType: defineAxis(BED.experimentType),
             system: defineAxis(BED.system),
             organ: defineAxis(BED.organ),
-            systemOrgan: defineMultiAxis([BED.system, BED.organ], "systemOrgan", "Health System & Organ"),
+            systemOrgan: defineMultiAxis(
+                [BED.system, BED.organ],
+                "systemOrgan",
+                "Health System & Organ"
+            ),
             experimentTypeSystem: defineMultiAxis(
                 [BED.experimentType, BED.system],
                 "experimentTypeSystem",
