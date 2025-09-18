@@ -58,26 +58,27 @@ Client tutorials for common operations are below:
 
 ### Changelog
 
-#### [2025-1](https://pypi.org/project/hawc-client/2025.1/) (TBD)
+#### [2025.1](https://pypi.org/project/hawc-client/2025.1/) (TBD)
 
 * Add `unpublished` parameter to bmd dataset download
 * Remove data pivot API endpoints; all behaviors can be accomplished using the visual API
+* Publish package on PyPI using GitHub Actions
 
-#### [2024-4](https://pypi.org/project/hawc-client/2024.4/) (January 2025)
+#### [2024.4](https://pypi.org/project/hawc-client/2024.4/) (January 2025)
 
 * Added assessment team member API endpoint to retrieve assessments a user is a member of
 * Added literature tag API {create, update, delete, move} to modify tags
 
-#### [2024-3](https://pypi.org/project/hawc-client/2024.3/) (October 2024)
+#### [2024.3](https://pypi.org/project/hawc-client/2024.3/) (October 2024)
 
 * Update data pivot and visual output formats to return JSON
 * Add a new BMDS Export to return dose-response data
 
-#### [2024-2](https://pypi.org/project/hawc-client/2024.2/) (July 2024)
+#### [2024.2](https://pypi.org/project/hawc-client/2024.2/) (July 2024)
 
 * Minor documentation and docstring updates
 
-#### [2024-1](https://pypi.org/project/hawc-client/2024.1/) (February 2024)
+#### [2024.1](https://pypi.org/project/hawc-client/2024.1/) (February 2024)
 
 * Add new interactive client for downloading visual and data pivots images
 * Updated study evaluation/risk of bias APIs
@@ -86,20 +87,20 @@ Client tutorials for common operations are below:
 * Add APIs to modify Visuals and Data Pivots
 * Add APIs to modify Assessments, Assessment Values, and Assessment Details
 
-#### [2023-2](https://pypi.org/project/hawc-client/2023.2/) (April 2023)
+#### [2023.2](https://pypi.org/project/hawc-client/2023.2/) (April 2023)
 
 * Add new `login` parameter to `client.set_authentication_token`, and returns  boolean instead of a dict.
     - If `login` is False (default), a token based API session is created. This is consistent with previous behavior.
     - If `login` is True, a django cookie-based session is set instead of a token-based API session. This may be used if using the client to browse the website, however CSRF tokens will be required for API and form requests.
 * Added ``client.lit.reference_user_tags`` - retrieves all user tag for all references for an assessment.
 
-#### [2023-1](https://pypi.org/project/hawc-client/2023.1/) (January 2023)
+#### [2023.1](https://pypi.org/project/hawc-client/2023.1/) (January 2023)
 
 * Added ``client.riskofbias.compare_metrics`` - align metrics when copying across assessments via fuzzy text matching
 * Added ``client.summary.datapivot_list`` - retrieve all data pivots for an assessment
 * Added ``client.summary.table_list`` - retrieve all tables for an assessment
 
-#### [2022-7](https://pypi.org/project/hawc-client/2022.7/) (July 2022)
+#### [2022.7](https://pypi.org/project/hawc-client/2022.7/) (July 2022)
 
 * Added ``client.study.studies`` to return dataframe of studies for an assessment
 * Added new parameter, ``invert``, to the ``client.animal.endpoints``

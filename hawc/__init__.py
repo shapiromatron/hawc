@@ -3,7 +3,7 @@
 import os
 import sys
 
-__version__ = "2024.4"
+__version__ = "2025.1rc1"
 
 
 def manage():

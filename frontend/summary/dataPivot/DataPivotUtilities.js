@@ -215,7 +215,10 @@ class _DataPivot_settings_filters {
     data_push() {
         this.values.field_name = this.content.field_name.find("option:selected").val();
         this.values.quantifier = this.content.quantifier.find("option:selected").val();
-        this.values.value = this.content.valueTd.find("input").val();
+        const input = this.content.valueTd.find("input");
+        if (input.get(0)) {
+            this.values.value = input.val();
+        }
     }
 }
 

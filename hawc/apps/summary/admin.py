@@ -22,6 +22,7 @@ class VisualAdmin(admin.ModelAdmin):
     search_fields = ("assessment__name", "title")
     raw_id_fields = ("endpoints",)
     show_facets = admin.ShowFacets.ALWAYS
+    readonly_fields = ("dp_id", "dp_slug")
 
     @admin.display(description="URL")
     def show_url(self, obj):
