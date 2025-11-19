@@ -28,7 +28,7 @@ from ...services.nih import pubmed
 from ...services.utils import ris
 from ...services.utils.doi import get_doi_from_identifier, try_get_doi
 from ..assessment.models import Log
-from ..common.helper import SerializerHelper, tryParseInt
+from ..common.helper import SerializerHelper, try_parse_list_ints, tryParseInt
 from ..common.models import (
     AssessmentRootMixin,
     CustomURLField,
@@ -278,9 +278,9 @@ class Search(models.Model):
             raise Exception("Search functionality disabled")
 
     @property
-    def import_ids(self):
-        # convert from string->set->list to remove repeat ids
-        return list(set(v.strip() for v in self.search_string_text.split(",")))
+    def import_ids(self) -> list[int]:
+        ids = try_parse_list_ints(self.search_string_text)
+        return sorted(map(int, ids))
 
     @transaction.atomic
     def run_new_import(self, content=None):
@@ -296,7 +296,7 @@ class Search(models.Model):
             ValueError: If any error occurs
         """
         if self.source == constants.ReferenceDatabase.PUBMED:
-            ids = [int(id) for id in self.import_ids]
+            ids = self.import_ids
             if content is None:
                 # fetch content if not provided
                 content = Identifiers.objects.validate_pubmed_ids(ids)
@@ -304,7 +304,7 @@ class Search(models.Model):
             identifiers = Identifiers.objects.pubmed(ids)
             Reference.objects.get_pubmed_references(self, identifiers)
         elif self.source == constants.ReferenceDatabase.HERO:
-            ids = [int(id) for id in self.import_ids]
+            ids = self.import_ids
             if content is None:
                 # fetch content if not provided
                 content = Identifiers.objects.validate_hero_ids(ids)
