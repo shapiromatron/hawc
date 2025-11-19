@@ -280,7 +280,7 @@ class Search(models.Model):
     @property
     def import_ids(self) -> list[int]:
         ids = try_parse_list_ints(self.search_string_text)
-        return sorted(map(int, ids))
+        return sorted(set(ids))
 
     @transaction.atomic
     def run_new_import(self, content=None):
