@@ -953,7 +953,7 @@ class Reference(models.Model):
 
                 form = binding.form_instance(prefix=udf_tag_id, data=udf)
                 if form.is_valid():
-                    obj, created = TagUDFContent.objects.update_or_create(
+                    obj, _created = TagUDFContent.objects.update_or_create(
                         reference_id=self.id,
                         tag_binding_id=binding.id,
                         defaults={"content": form.cleaned_data},

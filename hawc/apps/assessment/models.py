@@ -963,7 +963,7 @@ class TimeSpentEditing(models.Model):
 
     @classmethod
     def add_time_spent(cls, cache_name, object_id, assessment_id, content_type_id):
-        time_spent, created = cls.objects.get_or_create(
+        time_spent, _created = cls.objects.get_or_create(
             content_type_id=content_type_id,
             object_id=object_id,
             assessment_id=assessment_id,

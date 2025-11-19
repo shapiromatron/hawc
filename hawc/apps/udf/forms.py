@@ -246,7 +246,7 @@ class UDFModelFormMixin:
     def save(self, commit=True):
         instance = super().save(commit=commit)
         if commit and "udf" in self.changed_data:
-            obj, created = models.ModelUDFContent.objects.update_or_create(
+            obj, _created = models.ModelUDFContent.objects.update_or_create(
                 defaults=dict(content=self.cleaned_data["udf"]),
                 model_binding=self.model_binding,
                 content_type=self.model_binding.content_type,

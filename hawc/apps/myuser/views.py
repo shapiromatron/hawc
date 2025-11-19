@@ -111,7 +111,7 @@ class ProfileDetail(LoginRequiredMixin, DetailView):
     model = models.UserProfile
 
     def get_object(self, **kwargs):
-        obj, created = models.UserProfile.objects.get_or_create(user=self.request.user)
+        obj, _created = models.UserProfile.objects.get_or_create(user=self.request.user)
         return obj
 
     def get_context_data(self, **kwargs):
@@ -127,7 +127,7 @@ class ProfileUpdate(LoginRequiredMixin, MessageMixin, UpdateView):
     success_message = "Profile settings changed."
 
     def get_object(self, **kwargs):
-        obj, created = models.UserProfile.objects.get_or_create(user=self.request.user)
+        obj, _created = models.UserProfile.objects.get_or_create(user=self.request.user)
         return obj
 
     def get_success_url(self):
