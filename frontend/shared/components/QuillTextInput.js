@@ -3,8 +3,8 @@ import React, {Component} from "react";
 import ReactQuill from "react-quill";
 
 import HelpText from "./HelpText";
-import LabelInput from "./LabelInput";
 import {errorsDiv, inputClass} from "./inputs";
+import LabelInput from "./LabelInput";
 
 class QuillTextInput extends Component {
     renderField(fieldId) {

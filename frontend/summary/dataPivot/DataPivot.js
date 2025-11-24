@@ -11,16 +11,16 @@ import $ from "$";
 
 import {getInteractivityOptions} from "../interactivity/actions";
 import {handleVisualError} from "../summary/common";
+import ColumnSelectManager from "./components/ColumnNameSelect";
+import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
+import DataPivotVisualization from "./DataPivotVisualization";
 import build_data_tab from "./DPFDataTab";
 import build_description_tab from "./DPFDescriptionTab";
 import build_settings_general_tab from "./DPFGeneralSettingsTab";
 import build_ordering_tab from "./DPFOrderTab";
 import build_reference_tab from "./DPFReferenceTab";
 import build_styles_tab from "./DPFStyleTab";
-import DataPivotDefaultSettings from "./DataPivotDefaultSettings";
-import DataPivotVisualization from "./DataPivotVisualization";
 import StyleManager from "./StyleManager";
-import ColumnSelectManager from "./components/ColumnNameSelect";
 import Store from "./store";
 
 class DataPivot {

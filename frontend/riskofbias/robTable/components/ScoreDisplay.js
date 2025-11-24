@@ -4,7 +4,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 
-import {OVERRIDE_SCORE_LABEL_MAPPING, hideScore} from "../../constants";
+import {hideScore, OVERRIDE_SCORE_LABEL_MAPPING} from "../../constants";
 import ScoreBar from "./ScoreBar";
 
 @inject("store")

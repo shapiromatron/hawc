@@ -5,8 +5,8 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 import $ from "$";
 
 import CrossviewPlot from "./CrossviewPlot";
-import EndpointAggregation from "./EndpointAggregation";
 import {addLabelIndicators} from "./common";
+import EndpointAggregation from "./EndpointAggregation";
 
 class Crossview extends EndpointAggregation {
     displayAsPage($el, options) {

@@ -7,9 +7,9 @@ import AutoSuggest from "react-autosuggest";
 import h from "shared/utils/helpers";
 
 import {
+    boldPatternText,
     DEBOUNCE_MS,
     DEFAULT_MIN_SEARCH_LENGTH,
-    boldPatternText,
     theme,
 } from "./Autocomplete/constants";
 

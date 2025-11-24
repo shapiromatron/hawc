@@ -4,6 +4,9 @@ import {createRoot} from "react-dom/client";
 
 import BulkTagReferencesMain from "./BulkTagReferences/Main";
 import BulkTagReferencesMainStore from "./BulkTagReferences/store";
+import ReferenceComponent from "./components/Reference";
+import ReferenceTable from "./components/ReferenceTable";
+import Venn from "./components/Venn";
 import Reference from "./Reference";
 import ReferenceTreeMain from "./ReferenceTreeBrowse/Main";
 import ReferenceTreeMainStore from "./ReferenceTreeBrowse/store";
@@ -11,9 +14,6 @@ import TagReferencesMain from "./TagReferences/Main";
 import TagReferencesMainStore from "./TagReferences/store";
 import TagTree from "./TagTree";
 import TagTreeViz from "./TagTreeViz";
-import ReferenceComponent from "./components/Reference";
-import ReferenceTable from "./components/ReferenceTable";
-import Venn from "./components/Venn";
 
 export default {
     TagTree,

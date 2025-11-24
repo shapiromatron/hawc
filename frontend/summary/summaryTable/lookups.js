@@ -1,14 +1,14 @@
 import {TableType} from "./constants";
 import EvidenceProfileForm from "./evidenceProfileTable/Form";
-import EvidenceProfileTable from "./evidenceProfileTable/Table";
 import EvidenceProfileTableStore from "./evidenceProfileTable/store.js";
+import EvidenceProfileTable from "./evidenceProfileTable/Table";
+import GenericTableStore from "./genericTable/store.js";
 import GenericTable from "./genericTable/Table";
 import GenericTableForm from "./genericTable/TableForm";
-import GenericTableStore from "./genericTable/store.js";
 import StudyEvaluationData from "./studyEvaluationTable/DataForm";
+import StudyEvaluationTableStore from "./studyEvaluationTable/store.js";
 import StudyEvaluationTable from "./studyEvaluationTable/Table";
 import StudyEvaluationTableForm from "./studyEvaluationTable/TableForm";
-import StudyEvaluationTableStore from "./studyEvaluationTable/store.js";
 
 const tableStoreLookup = {
         [TableType.GENERIC]: GenericTableStore,

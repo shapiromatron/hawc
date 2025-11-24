@@ -2,8 +2,8 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
-import Hero from "shared/utils/Hero";
 import {markKeywords} from "shared/utils/_helpers";
+import Hero from "shared/utils/Hero";
 import h from "shared/utils/helpers";
 import {getReferenceTagListUrl} from "shared/utils/urls";
 
