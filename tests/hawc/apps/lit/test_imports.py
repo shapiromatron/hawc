@@ -75,7 +75,10 @@ class TestPubmed:
             "title": "pm search",
             "slug": "pm-search",
             "description": "search description",
-            "search_string": "1998 Longstreth health risks ozone depletion",
+            # query: 1998 Longstreth health risks ozone depletion
+            "search_string": (
+                "10357793, 20358181,6355494\n8998951\t3383337, 12209194, 6677511, 11995694, 1632818, 12215663, 3180084, 14727734, 23625783, 11246142, 10485824, 3709451, 2877511, 6143560, 3934796, 8761421"
+            ),
         }
 
         # get initial counts
@@ -87,10 +90,6 @@ class TestPubmed:
         initial_pubmed_ids = pmid_qs.count()
         doi_qs = models.Identifiers.objects.filter(database=constants.ReferenceDatabase.DOI)
         initial_doi_ids = doi_qs.count()
-
-        data["search_string"] = (
-            "10357793, 20358181, 6355494, 8998951, 3383337, 12209194, 6677511, 11995694, 1632818, 12215663, 3180084, 14727734, 23625783, 11246142, 10485824, 3709451, 2877511, 6143560, 3934796, 8761421"
-        )
 
         # check successful post
         url = reverse("lit:import_new", kwargs={"pk": assessment_pk})
