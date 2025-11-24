@@ -352,7 +352,7 @@ class GetOrCreateMixin:
         super().run_validators(value)
 
     def create(self, validated_data, *args, **kwargs):
-        instance, created = self.Meta.model.objects.get_or_create(**validated_data)
+        instance, _created = self.Meta.model.objects.get_or_create(**validated_data)
         return instance
 
 

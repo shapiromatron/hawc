@@ -1,12 +1,12 @@
 repos:
   - repo: https://github.com/rtts/djhtml
-    rev: 3.0.8
+    rev: 3.0.10
     hooks:
       - id: djhtml
         entry: djhtml --tabwidth 2
         files: ^hawc/
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.11.11
+    rev: v0.14.5
     hooks:
       # Run the linter.
       - id: ruff
