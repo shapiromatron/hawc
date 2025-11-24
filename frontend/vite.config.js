@@ -41,7 +41,7 @@ export default defineConfig({
     build: {
         outDir,
         emptyOutDir: true,
-        manifest: true,
+        manifest: "manifest.json",
         rollupOptions: {
             input: {
                 main: "index.js",
