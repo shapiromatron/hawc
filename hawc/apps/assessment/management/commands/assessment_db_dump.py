@@ -139,7 +139,7 @@ class Command(UnicodeCommand):
             stdout=subprocess.PIPE,
             shell=False,
         )
-        (out, err) = proc.communicate()
+        (out, _err) = proc.communicate()
         self.stdout.write(out)
 
     def write_schema_post_data(self):
@@ -151,7 +151,7 @@ class Command(UnicodeCommand):
             stdout=subprocess.PIPE,
             shell=False,
         )
-        (out, err) = proc.communicate()
+        (out, _err) = proc.communicate()
         self.stdout.write(out)
 
     def write_qs_data(self, qs, model, db_table):
