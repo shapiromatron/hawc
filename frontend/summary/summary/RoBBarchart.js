@@ -4,9 +4,9 @@ import HAWCUtils from "shared/utils/HAWCUtils";
 
 import $ from "$";
 
-import {addLabelIndicators} from "./common";
 import RoBBarchartPlot from "./RoBBarchartPlot";
 import RoBHeatmap from "./RoBHeatmap";
+import {addLabelIndicators} from "./common";
 
 class RoBBarchart extends RoBHeatmap {
     displayAsPage($el, options) {

@@ -10,7 +10,7 @@ import QuillTextInput from "shared/components/QuillTextInput";
 import SelectInput from "shared/components/SelectInput";
 import TextInput from "shared/components/TextInput";
 
-import {COL_ATTRIBUTE, colAttributeChoices, ROW_TYPE} from "./constants";
+import {COL_ATTRIBUTE, ROW_TYPE, colAttributeChoices} from "./constants";
 
 class EditButton extends Component {
     render() {

@@ -13,7 +13,7 @@ import {applyStyles} from "../summary/common";
 import DataPivot from "./DataPivot";
 import DataPivotLegend from "./DataPivotLegend";
 import {StyleLine, StyleRectangle, StyleSymbol, StyleText} from "./Styles";
-import {buildStyleMap, NULL_CASE, OrderChoices} from "./shared";
+import {NULL_CASE, OrderChoices, buildStyleMap} from "./shared";
 
 const EXTRA_BUFFER = 8; // extra buffer around plots to prevent boundary forest-plot points
 

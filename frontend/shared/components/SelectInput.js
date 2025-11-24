@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 
 import HelpText from "./HelpText";
-import {errorsDiv, inputClass} from "./inputs";
 import LabelInput from "./LabelInput";
+import {errorsDiv, inputClass} from "./inputs";
 
 class SelectInput extends Component {
     constructor(props) {

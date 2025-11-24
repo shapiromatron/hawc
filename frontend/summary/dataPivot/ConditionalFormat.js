@@ -7,7 +7,7 @@ import $ from "$";
 
 import DataPivot from "./DataPivot";
 import DataPivotVisualization from "./DataPivotVisualization";
-import {buildStyleMap, NULL_CASE} from "./shared";
+import {NULL_CASE, buildStyleMap} from "./shared";
 
 class _DataPivot_settings_conditionalFormat {
     constructor(parent, data, settings) {

@@ -8,8 +8,8 @@ import h from "shared/utils/helpers";
 
 import $ from "$";
 
-import {handleVisualError} from "./common";
 import PrismaPlot from "./PrismaPlot";
+import {handleVisualError} from "./common";
 import PrismaDatastore from "./prisma/PrismaDatastore";
 
 const startupPrismaAppRender = function (el, settings, data, config, asComponent = false) {

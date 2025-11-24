@@ -9,7 +9,6 @@ import $ from "$";
 
 import DRPlot from "./DRPlot";
 import Endpoint from "./Endpoint";
-
 class EditEndpoint {
     constructor(initialData) {
         this.initialData = initialData;

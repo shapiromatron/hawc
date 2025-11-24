@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
+import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {
     BIAS_DIRECTION_COMPACT,
     BIAS_DIRECTION_DOWN,
@@ -7,7 +8,6 @@ import {
     FOOTNOTES,
     getMultiScoreDisplaySettings,
 } from "riskofbias/constants";
-import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
 import {renderCrossStudyDisplay} from "riskofbias/robTable/components/CrossStudyDisplay";
 import {renderRiskOfBiasDisplay} from "riskofbias/robTable/components/RiskOfBiasDisplay";
 import HAWCModal from "shared/utils/HAWCModal";

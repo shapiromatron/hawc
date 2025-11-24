@@ -9,9 +9,9 @@ import h from "shared/utils/helpers";
 import $ from "$";
 
 import BaseVisual from "./BaseVisual";
-import {addLabelIndicators, handleVisualError} from "./common";
 import EndpointAggregationExposureResponsePlot from "./EndpointAggregationExposureResponsePlot";
 import EndpointAggregationForestPlot from "./EndpointAggregationForestPlot";
+import {addLabelIndicators, handleVisualError} from "./common";
 
 class EndpointAggregation extends BaseVisual {
     constructor(data) {

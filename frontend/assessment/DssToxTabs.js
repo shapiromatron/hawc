@@ -1,5 +1,5 @@
-import DssToxDetailTable from "assessment/components/DssToxDetailTable";
 import DssTox from "assessment/DssTox";
+import DssToxDetailTable from "assessment/components/DssToxDetailTable";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {createRoot} from "react-dom/client";
