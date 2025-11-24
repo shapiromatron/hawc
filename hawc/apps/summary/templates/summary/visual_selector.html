@@ -32,10 +32,10 @@
       <div id="detail-0" class="col-md-12" >
         <h3>Bioassay endpoint aggregation</h3>
         <div class="row">
-          <img alt="Image of a bioassay endpoint aggregation figure" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/aggregation1.png' %}">
+          <img alt="Image of a bioassay endpoint aggregation figure" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/aggregation1.png' %}">
         </div>
         <div class="row">
-          <img alt="Image of a bioassay endpoint aggregation figure" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/aggregation2.png' %}">
+          <img alt="Image of a bioassay endpoint aggregation figure" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/aggregation2.png' %}">
         </div>
         <p class="form-text text-muted">
           Select a subset of animal bioassay endpoints and present these using
@@ -47,7 +47,7 @@
       <div id="detail-1" class="col-md-12" >
         <h3>Bioassay endpoint crossview</h3>
         <div class="row">
-          <img alt="Image of a bioassay endpoint crossview figure" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/crossview.png' %}">
+          <img alt="Image of a bioassay endpoint crossview figure" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/crossview.png' %}">
         </div>
         <p class="form-text text-muted">
           All animal bioassay dose-response datasets available in a HAWC assessment
@@ -89,10 +89,10 @@
             <h3>Data Pivot (from query)</h3>
           </div>
           <div class="col-md-12">
-            <img alt="Image of a data pivot linechart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot.png' %}">
+            <img alt="Image of a data pivot linechart" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/data_pivot.png' %}">
           </div>
           <div class="col-md-12">
-            <img alt="Image of a data pivot barchart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot-barchart.png' %}">
+            <img alt="Image of a data pivot barchart" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/data_pivot-barchart.png' %}">
           </div>
           <div class="col-md-12">
             <p class='form-text text-muted'>Create a data-pivot based on querying information off the HAWC database for this assessment. Your settings will always be applied to this query; but it will contain the latest information from the database, so the visualization may change from time to time.</p>
@@ -105,10 +105,10 @@
             <h3>Data Pivot (from file)</h3>
           </div>
           <div class="col-md-12">
-            <img alt="Image of a data pivot linechart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot.png' %}">
+            <img alt="Image of a data pivot linechart" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/data_pivot.png' %}">
           </div>
           <div class="col-md-12">
-            <img alt="Image of a data pivot barchart" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/data_pivot-barchart.png' %}">
+            <img alt="Image of a data pivot barchart" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/data_pivot-barchart.png' %}">
           </div>
           <div class="col-md-12">
             <p class='form-text text-muted'>Create a data-pivot based on an uploaded Excel file of data. Your settings will always be applied to the uploaded dataset; therefore the visualization will be constant, but will not use the latest information from the HAWC database. However, if you <a href="{% url 'summary:dataset_interactivity' %}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);">design your dataset</a> appropriately, HAWC interactivity is available.</p>
@@ -127,7 +127,7 @@
         <h3>{{assessment.get_rob_name_display}} heatmap</h3>
         <div class="row">
           <img alt="Image of a study evaluation heatmap" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
-               src="{% static '/img/summary/rob-heatmap.svg' %}">
+               src="{% static 'img/summary/rob-heatmap.svg' %}">
         </div>
         <p class="form-text text-muted">
           A {{assessment.get_rob_name_display|lower}} heatmap, showing a subset of selected studies and
@@ -148,7 +148,7 @@
         <h3>{{assessment.get_rob_name_display}} barchart</h3>
         <div class="row">
           <img alt="Image of a study evaluation barchart" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
-               src="{% static '/img/summary/rob-barchart.svg' %}">
+               src="{% static 'img/summary/rob-barchart.svg' %}">
         </div>
         <p class="form-text text-muted">
           A {{assessment.get_rob_name_display|lower}} stacked barchart, showing the percent of studies with
@@ -158,7 +158,7 @@
       <div id="detail-4" class="col-md-12">
         <h3>Literature tagtree</h3>
         <div class="row">
-          <img alt="Image of a literature tagtree" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/ehp.1509912.g001.jpg' %}">
+          <img alt="Image of a literature tagtree" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/ehp.1509912.g001.jpg' %}">
         </div>
         <p class="form-text text-muted">
           A customizable dendrogram aka "tagtree" to display literature tags applied to references in a HAWC assessment.
@@ -167,7 +167,7 @@
       <div id="detail-5" class="col-md-12">
         <h3>Embedded external website</h3>
         <div class="row">
-          <img alt="Image of an embedded external website" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/external-tableau.png' %}">
+          <img alt="Image of an embedded external website" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/external-tableau.png' %}">
         </div>
         <p class="form-text text-muted">
           Embed an external website. The following websites can be linked to:
@@ -182,7 +182,7 @@
       <div id="detail-6" class="col-md-12">
         <h3>Exploratory heatmap</h3>
         <div class="row">
-          <img alt="Image of an exploratory data heatmap" class="col-md-10 col-md-offset-1" src="{% static '/img/summary/exploratory-heatmap.png' %}">
+          <img alt="Image of an exploratory data heatmap" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/exploratory-heatmap.png' %}">
         </div>
         <p class="form-text text-muted">
           A heatmap with customizable axes, filters, and interactivity to explore a dataset visually. The data presented
@@ -194,7 +194,7 @@
         <h3>Plotly visual</h3>
         <div class="row">
           <img alt="Image of a graph made using plotly" class="col-md-10 col-md-offset-1"
-               src="{% static '/img/summary/plotly-example.jpg' %}">
+               src="{% static 'img/summary/plotly-example.jpg' %}">
         </div>
         <p class="form-text text-muted">
           Create a {% external_url "https://plotly.com/" "Plotly" %} visual using Python or R, and then export the visual and display to JSON ({% external_url "https://github.com/plotly/plotly.R/issues/590#issuecomment-220864613" "R" %} or {% external_url "https://plotly.github.io/plotly.py-docs/generated/plotly.io.to_json.html" "Python" %}). Currently under development 🧪.
