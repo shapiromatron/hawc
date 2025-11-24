@@ -38,7 +38,7 @@
     "d3": "7.8.5",
     "d3-arrow": "^0.0.25",
     "d3-cloud": "^1.2.5",
-    "datatables.net": "^1.13.5",
+    "datatables.net": "^2.3.5",
     "lodash": "^4.17.21",
     "mobx": "^6.13.1",
     "mobx-react": "^7.6.0",
