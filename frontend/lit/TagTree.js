@@ -1,8 +1,8 @@
 import React from "react";
 import {createRoot} from "react-dom/client";
 
-import NestedTag from "./NestedTag";
 import TagTreeComponent from "./components/TagTree";
+import NestedTag from "./NestedTag";
 
 class TagTree {
     constructor(rootNode, assessment_id, search_id) {

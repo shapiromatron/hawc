@@ -1,6 +1,5 @@
 import {render} from "@testing-library/react";
-import React from "react";
-import {act} from "react";
+import React, {act} from "react";
 import {describe, expect, it} from "vitest";
 
 import Animation from "../../../shared/components/Animation";

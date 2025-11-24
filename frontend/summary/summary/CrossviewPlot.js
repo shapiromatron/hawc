@@ -6,8 +6,8 @@ import h from "shared/utils/helpers";
 
 import $ from "$";
 
-import D3Visualization from "./D3Visualization";
 import {applyStyles} from "./common";
+import D3Visualization from "./D3Visualization";
 import {DATA_FILTER_LOGIC_CUSTOM, filterFunction} from "./filters";
 
 class CrossviewPlot extends D3Visualization {

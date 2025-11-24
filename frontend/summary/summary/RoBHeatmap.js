@@ -9,8 +9,8 @@ import Study from "study/Study";
 import $ from "$";
 
 import BaseVisual from "./BaseVisual";
-import RoBHeatmapPlot from "./RoBHeatmapPlot";
 import {addLabelAction, addLabelIndicators} from "./common";
+import RoBHeatmapPlot from "./RoBHeatmapPlot";
 
 class RoBHeatmap extends BaseVisual {
     static transformData(data) {

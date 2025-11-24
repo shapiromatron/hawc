@@ -1,7 +1,7 @@
 import $ from "$";
 
-import LegendSettings from "./DPFLegendSettings";
 import {_DataPivot_settings_general} from "./DataPivotUtilities";
+import LegendSettings from "./DPFLegendSettings";
 
 let build_settings_general_tab = function (self) {
     var tab = $('<div class="tab-pane" id="data_pivot_settings_general">'),

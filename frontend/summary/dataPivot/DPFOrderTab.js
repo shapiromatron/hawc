@@ -3,6 +3,7 @@ import _ from "lodash";
 import $ from "$";
 
 import {filterLogicHelpText, filterQueryHelpText} from "../summary/filters";
+import buildSortingTable from "./components/SortTable";
 import {
     _DataPivot_settings_filters,
     _DataPivot_settings_spacers,
@@ -10,7 +11,6 @@ import {
     buildHeaderTr,
 } from "./DataPivotUtilities";
 import DataPivotVisualization from "./DataPivotVisualization";
-import buildSortingTable from "./components/SortTable";
 import {NULL_CASE} from "./shared";
 
 let buildFilterTable = function (tab, dp, handleTableChange) {

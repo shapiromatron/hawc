@@ -1,4 +1,4 @@
-import {Provider, inject, observer} from "mobx-react";
+import {inject, observer, Provider} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {createRoot} from "react-dom/client";
@@ -12,9 +12,9 @@ import h from "shared/utils/helpers";
 import $ from "$";
 
 import BaseVisual from "./BaseVisual";
-import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
 import {addLabelAction, addLabelIndicators, handleVisualError} from "./common";
 import {NULL_VALUE} from "./constants";
+import ExploreHeatmapPlot from "./ExploreHeatmapPlot";
 import DatasetTable from "./heatmap/DatasetTable";
 import FilterWidgetContainer from "./heatmap/FilterWidgetContainer";
 import HeatmapDatastore from "./heatmap/HeatmapDatastore";

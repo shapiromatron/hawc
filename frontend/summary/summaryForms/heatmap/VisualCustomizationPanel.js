@@ -9,10 +9,10 @@ import TextInput from "shared/components/TextInput";
 
 import ValueDisplaySelect from "../../summary/heatmap/ValueDisplaySelect";
 import AxisLabelTable from "./AxisLabelTable";
+import {MissingData, RefreshRequired} from "./common";
 import DetailTable from "./DetailTable";
 import FilterTable from "./FilterTable";
 import FilterWidgetTable from "./FilterWidgetTable";
-import {MissingData, RefreshRequired} from "./common";
 
 @inject("store")
 @observer
