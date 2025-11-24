@@ -1,8 +1,8 @@
+import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
 
-import {toJS} from "mobx";
 import BMROptionTable from "../components/BMROptionTable";
 import DoseResponse from "../components/DoseResponse";
 import ModelOptionTable from "../components/ModelOptionTable";

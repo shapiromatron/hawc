@@ -1,7 +1,7 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.7/schema.json",
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
-  "files": { "ignoreUnknown": false, "ignore": ["shared/parsers/*.js"] },
+  "files": { "ignoreUnknown": false, "includes": ["**", "!**/shared/parsers/**/*.js"]},
   "formatter": {
     "enabled": true,
     "useEditorconfig": true,
@@ -13,18 +13,18 @@
     "attributePosition": "auto",
     "bracketSpacing": true
   },
-  "organizeImports": { "enabled": true },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": false,
-      "a11y": { "noBlankTarget": "error" },
+      "a11y": {},
       "correctness": {
         "noChildrenProp": "error",
         "noUnusedVariables": "error",
         "useJsxKeyInIterable": "error"
       },
-      "security": { "noDangerouslySetInnerHtmlWithChildren": "error" },
+      "security": { "noDangerouslySetInnerHtmlWithChildren": "error", "noBlankTarget": "error"},
       "style": {
         "useBlockStatements": "off",
         "useSingleVarDeclarator": "off",
@@ -37,7 +37,7 @@
         "noSparseArray": "error"
       }
     },
-    "ignore": ["shared/parsers"]
+    "includes":["**","!**/shared/parsers"]
   },
   "json": {
     "formatter": {
