@@ -1,5 +1,3 @@
-version: '3'
-
 services:
 
     postgres:
@@ -11,9 +9,11 @@ services:
             - ./data/postgres/backups:/app/data/backups
         healthcheck:
             test: pg_isready -U $$POSTGRES_USER
-            interval: 30s
+            interval: 60s
             timeout: 5s
             retries: 3
+            start_period: 30s
+            start_interval: 5s
 
     redis:
         restart: always
@@ -22,24 +22,23 @@ services:
         env_file: .env
         healthcheck:
             test: redis-cli -a $$REDIS_PASSWORD ping
-            interval: 30s
+            interval: 60s
             timeout: 5s
             retries: 3
+            start_period: 30s
+            start_interval: 5s
 
     sync:
         restart: on-failure
         image: hawc_app
-        command:
-        - /bin/bash
-        - -exc
-        - |
-          set +xe
-          /app/bin/wait-for.sh redis:6379 -t 30 -q
-          /app/bin/wait-for.sh postgres:5432 -t 30 -q
-          /app/bin/sync.sh
+        command: /app/bin/sync.sh
         depends_on:
-            - postgres
-            - redis
+            postgres:
+                condition: service_healthy
+                restart: true
+            redis:
+                condition: service_healthy
+                restart: true
         env_file: .env
         volumes:
         - ./data/private:/app/private
@@ -48,81 +47,78 @@ services:
     web:
         restart: always
         image: hawc_app
-        command:
-        - /bin/bash
-        - -exc
-        - |
-          set +xe
-          /app/bin/wait-for.sh redis:6379 -t 30 -q
-          /app/bin/wait-for.sh postgres:5432 -t 30 -q
-          /app/bin/web.sh
+        command: /app/bin/web.sh
         depends_on:
-            - postgres
-            - redis
+            postgres:
+                condition: service_healthy
+                restart: true
+            redis:
+                condition: service_healthy
+                restart: true
         env_file: .env
         volumes:
             - ./data/private:/app/private
             - ./data/public:/app/public
+        healthcheck:
+            test: nc -z 0.0.0.0 5000
+            interval: 60s
+            timeout: 5s
+            retries: 3
+            start_period: 30s
+            start_interval: 5s
 
     workers:
         restart: always
         image: hawc_app
-        command:
-        - /bin/bash
-        - -exc
-        - |
-          set +xe
-          /app/bin/wait-for.sh redis:6379 -t 30 -q
-          /app/bin/wait-for.sh postgres:5432 -t 30 -q
-          /app/bin/workers.sh
+        command: /app/bin/workers.sh
         depends_on:
-            - postgres
-            - redis
+            postgres:
+                condition: service_healthy
+                restart: true
+            redis:
+                condition: service_healthy
+                restart: true
         env_file: .env
         volumes:
             - ./data/private:/app/private
             - ./data/public:/app/public
         healthcheck:
             test: celery --app=hawc.main.celery inspect ping -d celery@$$HOSTNAME --json
-            interval: 120s
-            timeout: 30s
+            interval: 60s
+            timeout: 10s
             retries: 3
+            start_period: 30s
+            start_interval: 5s
 
     cron:
         restart: always
         image: hawc_app
-        command:
-        - /bin/bash
-        - -exc
-        - |
-          set +xe
-          /app/bin/wait-for.sh redis:6379 -t 30 -q
-          /app/bin/wait-for.sh postgres:5432 -t 30 -q
-          /app/bin/cron.sh
+        command: /app/bin/cron.sh
         depends_on:
-            - postgres
-            - redis
+            postgres:
+                condition: service_healthy
+                restart: true
+            redis:
+                condition: service_healthy
+                restart: true
         env_file: .env
         volumes:
             - ./data/private:/app/private
             - ./data/public:/app/public
         healthcheck:
             test: celery --app=hawc.main.celery inspect ping  --json
-            interval: 120s
-            timeout: 30s
+            interval: 60s
+            timeout: 10s
             retries: 3
+            start_period: 30s
+            start_interval: 5s
 
     nginx:
         image: hawc_nginx
-        command:
-        - /bin/sh
-        - -c
-        - |
-          set +xe
-          /wait-for.sh web:5000 -t 300 -q
-          nginx -g "daemon off;"
         depends_on:
-            - web
+            web:
+                condition: service_healthy
+                restart: true
         ports:
             - "0.0.0.0:8000:8000"
         volumes:
