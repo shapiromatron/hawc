@@ -90,9 +90,7 @@ class TestIdentifierStudyForm:
         assessment = Assessment.objects.get(id=db_keys.assessment_working)
 
         # Test with missing db_type
-        form = forms.IdentifierStudyForm(
-            {"db_id": "12345"}, instance=None, parent=assessment
-        )
+        form = forms.IdentifierStudyForm({"db_id": "12345"}, instance=None, parent=assessment)
         assert form.is_valid() is False
 
         # Test with missing db_id
@@ -103,7 +101,6 @@ class TestIdentifierStudyForm:
 
     def test_clean_existing_study(self, db_keys):
         # Test validation when study with identifier already exists
-        assessment = Assessment.objects.get(id=db_keys.assessment_working)
         # Get an existing study with an identifier
         study_with_id = models.Study.objects.filter(identifiers__isnull=False).first()
         if study_with_id:

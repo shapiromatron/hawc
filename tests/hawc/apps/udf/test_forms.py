@@ -1,8 +1,6 @@
 import pytest
-from django.contrib.contenttypes.models import ContentType
 
 from hawc.apps.assessment.models import Assessment
-from hawc.apps.lit.models import ReferenceFilterTag
 from hawc.apps.udf import forms, models
 
 from ..test_utils import get_user
@@ -19,15 +17,15 @@ class TestUDFForm:
     def test_clean_name_validation(self, db_keys):
         # Test clean_name validation
         user = get_user("pm")
-        
+
         # Create a UDF first
-        udf1 = models.UserDefinedForm.objects.create(
+        models.UserDefinedForm.objects.create(
             creator=user,
             name="Test UDF",
             description="Test",
             schema={"fields": []},
         )
-        
+
         # Try to create another UDF with the same name
         data = {
             "name": "Test UDF",
@@ -96,8 +94,6 @@ class TestUDFModelFormMixin:
         # This is tested indirectly through forms that use it
         # For now, just verify the mixin exists
         from hawc.apps.study.forms import BaseStudyForm
-        from hawc.apps.study.models import Study
-        
-        study = Study.objects.get(id=db_keys.study_working)
+
         # Verify that the form has the mixin
-        assert hasattr(BaseStudyForm, 'set_udf_field')
+        assert hasattr(BaseStudyForm, "set_udf_field")

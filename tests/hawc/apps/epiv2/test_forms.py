@@ -136,7 +136,9 @@ class TestExposureForm:
         design = models.Design.objects.get(id=db_keys.epiv2_design)
         form = forms.ExposureForm(parent=design)
         assert form.fields["measurement_type"].widget.attrs["data-name"] == "measurement_type"
-        assert form.fields["biomonitoring_matrix"].widget.attrs["data-name"] == "biomonitoring_matrix"
+        assert (
+            form.fields["biomonitoring_matrix"].widget.attrs["data-name"] == "biomonitoring_matrix"
+        )
 
     def test_helper_property(self, db_keys):
         # Test helper property
