@@ -31,8 +31,12 @@ services:
         image: hawc_app
         command: /app/bin/sync.sh
         depends_on:
-            - postgres
-            - redis
+            postgres:
+                condition: service_healthy
+                restart: true
+            redis:
+                condition: service_healthy
+                restart: true
         env_file: .env
         volumes:
         - ./data/private:/app/private
@@ -43,8 +47,12 @@ services:
         image: hawc_app
         command: /app/bin/web.sh
         depends_on:
-            - postgres
-            - redis
+            postgres:
+                condition: service_healthy
+                restart: true
+            redis:
+                condition: service_healthy
+                restart: true
         env_file: .env
         volumes:
             - ./data/private:/app/private
@@ -55,8 +63,12 @@ services:
         image: hawc_app
         command: /app/bin/workers.sh
         depends_on:
-            - postgres
-            - redis
+            postgres:
+                condition: service_healthy
+                restart: true
+            redis:
+                condition: service_healthy
+                restart: true
         env_file: .env
         volumes:
             - ./data/private:/app/private
@@ -72,8 +84,12 @@ services:
         image: hawc_app
         command: /app/bin/cron.sh
         depends_on:
-            - postgres
-            - redis
+            postgres:
+                condition: service_healthy
+                restart: true
+            redis:
+                condition: service_healthy
+                restart: true
         env_file: .env
         volumes:
             - ./data/private:/app/private
@@ -87,7 +103,9 @@ services:
     nginx:
         image: hawc_nginx
         depends_on:
-            - web
+            web:
+                condition: service_healthy
+                restart: true
         ports:
             - "0.0.0.0:8000:8000"
         volumes:
