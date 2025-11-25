@@ -9,7 +9,6 @@ ENV PYTHONUNBUFFERED=1 \
 RUN groupadd -g 555 -r app && \
     useradd -u 555 -r -g app app
 
-COPY ./compose/app/wait-for.sh /app/bin/wait-for.sh
 COPY ./compose/app/sync.sh /app/bin/sync.sh
 COPY ./compose/app/web.sh /app/bin/web.sh
 COPY ./compose/app/workers.sh /app/bin/workers.sh

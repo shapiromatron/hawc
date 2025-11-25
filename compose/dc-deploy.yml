@@ -29,14 +29,7 @@ services:
     sync:
         restart: on-failure
         image: hawc_app
-        command:
-        - /bin/bash
-        - -exc
-        - |
-          set +xe
-          /app/bin/wait-for.sh redis:6379 -t 30 -q
-          /app/bin/wait-for.sh postgres:5432 -t 30 -q
-          /app/bin/sync.sh
+        command: /app/bin/sync.sh
         depends_on:
             - postgres
             - redis
@@ -48,14 +41,7 @@ services:
     web:
         restart: always
         image: hawc_app
-        command:
-        - /bin/bash
-        - -exc
-        - |
-          set +xe
-          /app/bin/wait-for.sh redis:6379 -t 30 -q
-          /app/bin/wait-for.sh postgres:5432 -t 30 -q
-          /app/bin/web.sh
+        command: /app/bin/web.sh
         depends_on:
             - postgres
             - redis
@@ -67,14 +53,7 @@ services:
     workers:
         restart: always
         image: hawc_app
-        command:
-        - /bin/bash
-        - -exc
-        - |
-          set +xe
-          /app/bin/wait-for.sh redis:6379 -t 30 -q
-          /app/bin/wait-for.sh postgres:5432 -t 30 -q
-          /app/bin/workers.sh
+        command: /app/bin/workers.sh
         depends_on:
             - postgres
             - redis
@@ -91,14 +70,7 @@ services:
     cron:
         restart: always
         image: hawc_app
-        command:
-        - /bin/bash
-        - -exc
-        - |
-          set +xe
-          /app/bin/wait-for.sh redis:6379 -t 30 -q
-          /app/bin/wait-for.sh postgres:5432 -t 30 -q
-          /app/bin/cron.sh
+        command: /app/bin/cron.sh
         depends_on:
             - postgres
             - redis
@@ -114,13 +86,6 @@ services:
 
     nginx:
         image: hawc_nginx
-        command:
-        - /bin/sh
-        - -c
-        - |
-          set +xe
-          /wait-for.sh web:5000 -t 300 -q
-          nginx -g "daemon off;"
         depends_on:
             - web
         ports:
