@@ -28,7 +28,7 @@
     "@types/react": "^18.3.27",
     "assert": "^2.0.0",
     "jsdom": "^27.2.0",
-    "peggy": "^4.0.2",
+    "peggy": "^5.0.6",
     "vite": "^7.2.4",
     "vite-plugin-externals": "^0.6.2",
     "vitest": "^4.0.13"
