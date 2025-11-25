@@ -11,9 +11,11 @@ services:
             - ./data/postgres/backups:/app/data/backups
         healthcheck:
             test: pg_isready -U $$POSTGRES_USER
-            interval: 30s
+            interval: 60s
             timeout: 5s
             retries: 3
+            start_period: 30s
+            start_interval: 5s
 
     redis:
         restart: always
@@ -22,9 +24,11 @@ services:
         env_file: .env
         healthcheck:
             test: redis-cli -a $$REDIS_PASSWORD ping
-            interval: 30s
+            interval: 60s
             timeout: 5s
             retries: 3
+            start_period: 30s
+            start_interval: 5s
 
     sync:
         restart: on-failure
@@ -57,6 +61,13 @@ services:
         volumes:
             - ./data/private:/app/private
             - ./data/public:/app/public
+        healthcheck:
+            test: nc -z 0.0.0.0 5000
+            interval: 60s
+            timeout: 5s
+            retries: 3
+            start_period: 30s
+            start_interval: 5s
 
     workers:
         restart: always
@@ -75,9 +86,11 @@ services:
             - ./data/public:/app/public
         healthcheck:
             test: celery --app=hawc.main.celery inspect ping -d celery@$$HOSTNAME --json
-            interval: 120s
-            timeout: 30s
+            interval: 60s
+            timeout: 10s
             retries: 3
+            start_period: 30s
+            start_interval: 5s
 
     cron:
         restart: always
@@ -96,9 +109,11 @@ services:
             - ./data/public:/app/public
         healthcheck:
             test: celery --app=hawc.main.celery inspect ping  --json
-            interval: 120s
-            timeout: 30s
+            interval: 60s
+            timeout: 10s
             retries: 3
+            start_period: 30s
+            start_interval: 5s
 
     nginx:
         image: hawc_nginx
