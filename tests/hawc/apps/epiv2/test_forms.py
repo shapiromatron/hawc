@@ -59,6 +59,13 @@ class TestExposureLevelForm:
         form = forms.ExposureLevelForm(data2, instance=instance)
         assert form.is_valid() is True
 
+    def test_helper_property(self):
+        # Test helper property
+        instance = models.ExposureLevel.objects.first()
+        form = forms.ExposureLevelForm(instance=instance)
+        helper = form.helper
+        assert helper is not None
+
 
 @pytest.mark.django_db
 class TestDataExtractionForm:
@@ -113,3 +120,47 @@ class TestDataExtractionForm:
         )
         form = forms.DataExtractionForm(data2, instance=instance)
         assert form.is_valid() is True
+
+    def test_helper_property(self):
+        # Test helper property
+        instance = models.DataExtraction.objects.first()
+        form = forms.DataExtractionForm(instance=instance)
+        helper = form.helper
+        assert helper is not None
+
+
+@pytest.mark.django_db
+class TestExposureForm:
+    def test_init_widget_attributes(self, db_keys):
+        # Test that widget attributes are set properly
+        design = models.Design.objects.get(id=db_keys.epiv2_design)
+        form = forms.ExposureForm(parent=design)
+        assert form.fields["measurement_type"].widget.attrs["data-name"] == "measurement_type"
+        assert form.fields["biomonitoring_matrix"].widget.attrs["data-name"] == "biomonitoring_matrix"
+
+    def test_helper_property(self, db_keys):
+        # Test helper property
+        design = models.Design.objects.get(id=db_keys.epiv2_design)
+        form = forms.ExposureForm(parent=design)
+        helper = form.helper
+        assert helper is not None
+
+
+@pytest.mark.django_db
+class TestAdjustmentFactorForm:
+    def test_helper_property(self, db_keys):
+        # Test helper property
+        design = models.Design.objects.get(id=db_keys.epiv2_design)
+        form = forms.AdjustmentFactorForm(parent=design)
+        helper = form.helper
+        assert helper is not None
+
+
+@pytest.mark.django_db
+class TestOutcomeForm:
+    def test_helper_property(self, db_keys):
+        # Test helper property
+        design = models.Design.objects.get(id=db_keys.epiv2_design)
+        form = forms.OutcomeForm(parent=design)
+        helper = form.helper
+        assert helper is not None
