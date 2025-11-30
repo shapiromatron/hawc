@@ -196,20 +196,3 @@ class TestHealthcheckViewSet:
         resp = client.get(url)
         assert resp.status_code == 200
         assert resp.json()["healthy"] is True
-
-    @pytest.mark.skipif(not has_redis(), reason="skip; redis cache required")
-    def test_worker_plot(self):
-        client = APIClient()
-        url = reverse("common:api:healthcheck-worker-plot")
-
-        # failure - not admin
-        resp = client.get(url)
-        assert resp.status_code == 403
-        assert client.login(username="pm@hawcproject.org", password="pw") is True
-        resp = client.get(url)
-        assert resp.status_code == 403
-
-        # success - admin
-        assert client.login(username="admin@hawcproject.org", password="pw") is True
-        resp = client.get(url)
-        assert resp.status_code == 200
