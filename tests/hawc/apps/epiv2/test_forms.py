@@ -2,6 +2,7 @@ from copy import deepcopy
 
 import pytest
 
+from hawc.apps.common.forms import BaseFormHelper
 from hawc.apps.epiv2 import constants, forms, models
 
 
@@ -63,7 +64,7 @@ class TestExposureLevelForm:
         instance = models.ExposureLevel.objects.first()
         form = forms.ExposureLevelForm(instance=instance)
         helper = form.helper
-        assert helper is not None
+        assert isinstance(helper, BaseFormHelper)
 
 
 @pytest.mark.django_db
@@ -124,7 +125,7 @@ class TestDataExtractionForm:
         instance = models.DataExtraction.objects.first()
         form = forms.DataExtractionForm(instance=instance)
         helper = form.helper
-        assert helper is not None
+        assert isinstance(helper, BaseFormHelper)
 
 
 @pytest.mark.django_db
@@ -141,7 +142,7 @@ class TestExposureForm:
         design = models.Design.objects.get(id=db_keys.epiv2_design)
         form = forms.ExposureForm(parent=design)
         helper = form.helper
-        assert helper is not None
+        assert isinstance(helper, BaseFormHelper)
 
 
 @pytest.mark.django_db
@@ -150,7 +151,7 @@ class TestAdjustmentFactorForm:
         design = models.Design.objects.get(id=db_keys.epiv2_design)
         form = forms.AdjustmentFactorForm(parent=design)
         helper = form.helper
-        assert helper is not None
+        assert isinstance(helper, BaseFormHelper)
 
 
 @pytest.mark.django_db
@@ -159,4 +160,4 @@ class TestOutcomeForm:
         design = models.Design.objects.get(id=db_keys.epiv2_design)
         form = forms.OutcomeForm(parent=design)
         helper = form.helper
-        assert helper is not None
+        assert isinstance(helper, BaseFormHelper)

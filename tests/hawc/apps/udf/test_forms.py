@@ -1,6 +1,7 @@
 import pytest
 
 from hawc.apps.assessment.models import Assessment
+from hawc.apps.common.forms import BaseFormHelper
 from hawc.apps.udf import forms, models
 
 from ..test_utils import get_user
@@ -46,7 +47,7 @@ class TestUDFForm:
         user = get_user("pm")
         form = forms.UDFForm(user=user)
         helper = form.helper
-        assert helper is not None
+        assert isinstance(helper, BaseFormHelper)
 
 
 @pytest.mark.django_db
@@ -64,7 +65,7 @@ class TestModelBindingForm:
         user = get_user("pm")
         form = forms.ModelBindingForm(parent=assessment, user=user)
         helper = form.helper
-        assert helper is not None
+        assert isinstance(helper, BaseFormHelper)
 
 
 @pytest.mark.django_db
@@ -82,4 +83,4 @@ class TestTagBindingForm:
         user = get_user("pm")
         form = forms.TagBindingForm(parent=assessment, user=user)
         helper = form.helper
-        assert helper is not None
+        assert isinstance(helper, BaseFormHelper)

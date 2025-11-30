@@ -1,5 +1,6 @@
 import pytest
 
+from hawc.apps.common.forms import BaseFormHelper
 from hawc.apps.eco import forms, models
 
 
@@ -9,7 +10,7 @@ class TestCauseForm:
         design = models.Design.objects.get(id=db_keys.eco_design)
         form = forms.CauseForm(parent=design)
         helper = form.helper
-        assert helper is not None
+        assert isinstance(helper, BaseFormHelper)
 
 
 @pytest.mark.django_db
@@ -18,7 +19,7 @@ class TestEffectForm:
         design = models.Design.objects.get(id=db_keys.eco_design)
         form = forms.EffectForm(parent=design)
         helper = form.helper
-        assert helper is not None
+        assert isinstance(helper, BaseFormHelper)
 
 
 @pytest.mark.django_db
@@ -27,7 +28,7 @@ class TestResultForm:
         design = models.Design.objects.get(id=db_keys.eco_design)
         form = forms.ResultForm(parent=design)
         helper = form.helper
-        assert helper is not None
+        assert isinstance(helper, BaseFormHelper)
 
     def test_clean(self, db_keys):
         design = models.Design.objects.get(id=db_keys.eco_design)

@@ -6,7 +6,7 @@ from django.urls import reverse
 from pytest_django.asserts import assertFormError, assertRedirects, assertTemplateUsed
 
 from hawc.apps.assessment.models import Assessment
-from hawc.apps.common.forms import ASSESSMENT_UNIQUE_MESSAGE
+from hawc.apps.common.forms import ASSESSMENT_UNIQUE_MESSAGE, BaseFormHelper
 from hawc.apps.lit.constants import ReferenceDatabase
 from hawc.apps.lit.models import Reference
 from hawc.apps.study import forms, models
@@ -129,7 +129,7 @@ class TestAttachmentForm:
         study = models.Study.objects.get(id=db_keys.study_working)
         form = forms.AttachmentForm(parent=study)
         helper = form.helper
-        assert helper is not None
+        assert isinstance(helper, BaseFormHelper)
 
 
 @pytest.mark.django_db
@@ -138,4 +138,4 @@ class TestNewStudyFromReferenceForm:
         reference = Reference.objects.get(id=db_keys.reference_linked)
         form = forms.NewStudyFromReferenceForm(parent=reference)
         helper = form.helper
-        assert helper is not None
+        assert isinstance(helper, BaseFormHelper)
