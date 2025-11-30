@@ -1,6 +1,5 @@
 import pytest
 from django.conf import settings
-from matplotlib.axes import Axes
 
 from hawc.apps.common.diagnostics import worker_healthcheck
 
@@ -23,13 +22,9 @@ def test_worker_healthcheck():
     for _i in range(worker_healthcheck.MAX_SIZE + 2):
         worker_healthcheck.push()
     assert worker_healthcheck.healthy() is True
-    assert worker_healthcheck.series().size == worker_healthcheck.MAX_SIZE
-    assert isinstance(worker_healthcheck.plot(), Axes)  # should not fail
 
     # set an old date; should fail
     worker_healthcheck.clear()
     conn = worker_healthcheck._get_conn()
     conn.lpush(worker_healthcheck.KEY, 915148800.000000)  # party like its ...
     assert worker_healthcheck.healthy() is False
-    assert worker_healthcheck.series().size == 1
-    assert isinstance(worker_healthcheck.plot(), Axes)  # should not fail

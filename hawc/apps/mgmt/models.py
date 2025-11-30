@@ -1,4 +1,3 @@
-import json
 import logging
 from collections import Counter
 from typing import Self
@@ -10,7 +9,7 @@ from django.utils import timezone
 from django.utils.timezone import now
 from plotly.graph_objs._figure import Figure
 
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.helper import SerializerHelper
 from ..study.models import Study
 from . import constants, managers
 
@@ -52,14 +51,6 @@ class Task(models.Model):
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
-
-    @staticmethod
-    def get_qs_json(queryset, json_encode=True):
-        tasks = [task.get_json(json_encode=False) for task in queryset]
-        if json_encode:
-            return json.dumps(tasks, cls=HAWCDjangoJSONEncoder)
-        else:
-            return tasks
 
     def save(self, *args, **kwargs):
         """Alter model business logic for timestamps and open/closed."""

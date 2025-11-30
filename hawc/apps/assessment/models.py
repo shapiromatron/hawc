@@ -1,4 +1,3 @@
-import json
 import logging
 import uuid
 from collections import namedtuple
@@ -27,13 +26,7 @@ from treebeard.mp_tree import MP_Node
 
 from ...services.epa.dsstox import DssSubstance
 from ..common.exceptions import AssessmentNotFound
-from ..common.helper import (
-    HAWCDjangoJSONEncoder,
-    SerializerHelper,
-    cacheable,
-    get_contrasting_text_color,
-    new_window_a,
-)
+from ..common.helper import SerializerHelper, cacheable, get_contrasting_text_color, new_window_a
 from ..common.models import AssessmentRootMixin, ColorField, get_private_data_storage
 from ..common.validators import FlatJSON, validate_hyperlink
 from ..materialized.models import refresh_all_mvs
@@ -863,17 +856,6 @@ class EffectTag(models.Model):
 
     def __str__(self):
         return self.name
-
-    def get_json(self, json_encode=False):
-        d = {}
-        fields = ("pk", "name")
-        for field in fields:
-            d[field] = getattr(self, field)
-
-        if json_encode:
-            return json.dumps(d, cls=HAWCDjangoJSONEncoder)
-        else:
-            return d
 
     @staticmethod
     def get_name_list(queryset):

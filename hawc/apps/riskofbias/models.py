@@ -1,4 +1,3 @@
-import json
 import logging
 from itertools import product
 from textwrap import dedent
@@ -14,7 +13,7 @@ from django.utils.html import strip_tags
 from reversion import revisions as reversion
 
 from ..assessment.models import Assessment
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.helper import SerializerHelper
 from ..myuser.models import HAWCUser
 from ..study.models import Study
 from . import constants, managers
@@ -222,14 +221,6 @@ class RiskOfBias(models.Model):
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
-
-    @staticmethod
-    def get_qs_json(queryset, json_encode=True):
-        robs = [rob.get_json(json_encode=False) for rob in queryset]
-        if json_encode:
-            return json.dumps(robs, cls=HAWCDjangoJSONEncoder)
-        else:
-            return robs
 
     def build_scores(self, assessment, study):
         scores = [

@@ -889,14 +889,6 @@ class Endpoint(BaseEndpoint):
             max_val = max(qs)
         return max_val
 
-    @staticmethod
-    def get_qs_json(queryset, json_encode=True):
-        endpoints = [e.get_json(json_encode=False) for e in queryset]
-        if json_encode:
-            return json.dumps(endpoints, cls=HAWCDjangoJSONEncoder)
-        else:
-            return endpoints
-
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
 

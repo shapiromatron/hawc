@@ -1,5 +1,3 @@
-import json
-
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -7,7 +5,7 @@ from reversion import revisions as reversion
 
 from ..animal.models import ConfidenceIntervalsMixin
 from ..assessment.models import BaseEndpoint, DSSTox
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.helper import SerializerHelper
 from ..common.models import AssessmentRootedTagTree
 from . import constants, managers
 
@@ -308,14 +306,6 @@ class IVEndpoint(BaseEndpoint):
 
     def get_json(self, json_encode=True):
         return SerializerHelper.get_serialized(self, json=json_encode)
-
-    @staticmethod
-    def get_qs_json(queryset, json_encode=True):
-        endpoints = [endpoint.get_json(json_encode=False) for endpoint in queryset]
-        if json_encode:
-            return json.dumps(endpoints, cls=HAWCDjangoJSONEncoder)
-        else:
-            return endpoints
 
     def get_absolute_url(self):
         return reverse("invitro:endpoint_detail", args=(self.id,))

@@ -3,10 +3,11 @@ from copy import deepcopy
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from rest_framework.test import APIClient
 
 from hawc.apps.assessment.models import Log
+from hawc.apps.common.renderers import BinaryXlsxDataFormat
 from hawc.apps.epiv2 import models
 from hawc.apps.study.models import Study
 
@@ -52,6 +53,16 @@ class TestEpiAssessmentViewSet:
         assert len(response.json()) == 1
         key = "api-epiv2-study-export-1.json"
         check_api_json_data(response.json(), key, rewrite_data_files)
+
+    def test_tabular_export(self):
+        url = reverse("epiv2:api:assessment-tabular-export", args=(1,))
+
+        # anon get 403
+        check_403(get_client(api=True), url)
+
+        # pm can get valid response
+        response = check_200(get_client("pm", api=True), url + "?unpublished=true")
+        assert isinstance(response.data, BinaryXlsxDataFormat)
 
 
 @pytest.mark.django_db
@@ -1269,3 +1280,24 @@ class TestDataExtractionViewSet:
             },
         )
         generic_test_scenarios(client, url, delete_scenarios)
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        reverse_lazy("epiv2:api:design-cleanup-list"),
+        reverse_lazy("epiv2:api:chemical-cleanup-list"),
+        reverse_lazy("epiv2:api:exposure-cleanup-list"),
+        reverse_lazy("epiv2:api:exposure-level-cleanup-list"),
+        reverse_lazy("epiv2:api:outcome-cleanup-list"),
+        reverse_lazy("epiv2:api:adjustment-factor-cleanup-list"),
+        reverse_lazy("epiv2:api:data-extraction-cleanup-list"),
+    ],
+)
+@pytest.mark.django_db
+def test_cleanup_views(url, db_keys):
+    client = get_client("pm", api=True)
+    query_params = f"?assessment_id={db_keys.assessment_working}"
+    resp = client.get(url + query_params)
+    assert resp.status_code == 200
+    assert len(resp.json()) > 0

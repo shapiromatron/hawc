@@ -1,11 +1,9 @@
-import json
-
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
 from reversion import revisions as reversion
 
-from ..common.helper import HAWCDjangoJSONEncoder, SerializerHelper
+from ..common.helper import SerializerHelper
 from ..epi.models import AdjustmentFactor, Criteria, ResultMetric
 from . import constants, managers
 
@@ -65,9 +63,6 @@ class MetaProtocol(models.Model):
 
     def get_absolute_url(self):
         return reverse("meta:protocol_detail", args=(self.pk,))
-
-    def get_json(self, json_encode=True):
-        return SerializerHelper.get_serialized(self, json=json_encode, from_cache=False)
 
     def get_study(self):
         return self.study
@@ -143,17 +138,6 @@ class MetaResult(models.Model):
     @classmethod
     def delete_caches(cls, pks):
         SerializerHelper.delete_caches(cls, pks)
-
-    def get_json(self, json_encode=True):
-        return SerializerHelper.get_serialized(self, json=json_encode)
-
-    @staticmethod
-    def get_qs_json(queryset, json_encode=True):
-        results = [result.get_json(json_encode=False) for result in queryset]
-        if json_encode:
-            return json.dumps(results, cls=HAWCDjangoJSONEncoder)
-        else:
-            return results
 
     def get_study(self):
         if self.protocol is not None:

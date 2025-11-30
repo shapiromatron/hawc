@@ -18523,6 +18523,19 @@
     notes: ''
     adjustment_factors:
     - 1
+- model: epimeta.singleresult
+  pk: 1
+  fields:
+    meta_result: 1
+    study: 5
+    exposure_name: exposure
+    weight: 1
+    n: 100
+    estimate: 2.5
+    lower_ci: 2.1
+    upper_ci: 3.1
+    ci_units: 0.95
+    notes: notes
 - model: summary.summarytable
   pk: 1
   fields:
