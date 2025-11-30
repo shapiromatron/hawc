@@ -3,14 +3,11 @@ import logging
 import re
 from collections import defaultdict
 from collections.abc import Callable, Iterable
-from datetime import timedelta
 from io import BytesIO
 from itertools import chain
 from math import inf
 from typing import Any, NamedTuple
 
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 from django.conf import settings
 from django.core.cache import cache
@@ -25,8 +22,6 @@ from django.utils.functional import lazy
 from django.utils.html import strip_tags
 from django.utils.http import urlencode
 from docx.document import Document
-from matplotlib.axes import Axes
-from matplotlib.dates import DateFormatter
 from pydantic import BaseModel as PydanticModel
 from pydantic import ValidationError as PydanticValidationError
 from rest_framework.renderers import JSONRenderer
@@ -449,49 +444,6 @@ def get_id_from_choices(items, lookup_value):
         raise ValueError(f"Found multiple matches when searching {items} for {lookup_value}")
     else:
         return matching_vals[0]
-
-
-def empty_mpl_figure(title: str = "No data available.") -> Axes:
-    """Create a matplotlib figure with no data"""
-    plt.figure(figsize=(3, 1))
-    plt.axis("off")
-    plt.suptitle(title)
-    return plt.gca()
-
-
-def event_plot(series: pd.Series) -> Axes:
-    """Return matplotlib event plot"""
-    plt.style.use("bmh")
-
-    if series.empty:
-        return empty_mpl_figure()
-
-    df = series.to_frame(name="timestamp")
-    df.loc[:, "event"] = 1 + (np.random.rand(df.size) - 0.5) / 5  # jitter
-    ax = df.plot.scatter(
-        x="timestamp",
-        y="event",
-        c="None",
-        edgecolors="blue",
-        alpha=1,
-        s=80,
-        figsize=(15, 5),
-        legend=False,
-        grid=True,
-    )
-
-    # set x axis
-    ax.xaxis.set_major_formatter(DateFormatter("%b %d %H:%M"))
-    buffer = ((series.max() - series.min()) / 30) + timedelta(seconds=1)
-    ax.set_xlim(left=series.min() - buffer, right=pd.Timestamp.utcnow() + buffer)
-    ax.set_xlabel("Timestamp (UTC)")
-
-    # set y axis
-    ax.set_ybound(0, 2)
-    ax.axes.get_yaxis().set_visible(False)
-
-    plt.tight_layout()
-    return ax
 
 
 def reverse_with_query(*args, query: dict, **kwargs):
