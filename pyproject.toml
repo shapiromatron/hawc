@@ -70,7 +70,7 @@ dev = [
   # lint and formatting tools
   "ruff==0.14.5",  # make sure to sync w/ pre-commit
   "djhtml==3.0.10",  # make sure to sync w/ pre-commit
-  "pre-commit==4.4.0",
+  "pre-commit==4.5.0",
   # django development
   "django-debug-toolbar~=6.1.0",
   "django-browser-reload~=1.21.0",
