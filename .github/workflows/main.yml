@@ -76,7 +76,7 @@ jobs:
         echo "# Lines of code report" >> $GITHUB_STEP_SUMMARY
         poe loc >> $GITHUB_STEP_SUMMARY
     - name: Upload Coverage Report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: coverage
         path: coverage
@@ -105,7 +105,7 @@ jobs:
       run: |
         yarn --cwd ./frontend run build
     - name: Upload js build
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: js
         path: hawc/static/bundles/
@@ -186,7 +186,7 @@ jobs:
         cd client && flit build --format wheel && cd ..
         cp client/dist/*.whl dist
     - name: Upload wheels
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: wheel
         path: dist/*.whl
