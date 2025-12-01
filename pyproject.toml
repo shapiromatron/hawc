@@ -68,7 +68,7 @@ dev = [
   "flit==3.12.0",  # make sure to sync w/ [build-system]
   "poethepoet~=0.37.0",
   # lint and formatting tools
-  "ruff==0.14.5",  # make sure to sync w/ pre-commit
+  "ruff==0.14.6",  # make sure to sync w/ pre-commit
   "djhtml==3.0.10",  # make sure to sync w/ pre-commit
   "pre-commit==4.4.0",
   # django development
