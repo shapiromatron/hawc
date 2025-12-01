@@ -8,6 +8,10 @@ updates:
       interval: monthly
     cooldown:
       default-days: 7
+    groups:
+      actions-deps:
+        patterns:
+          - "*"
 
   - package-ecosystem: npm
     directory: frontend
@@ -15,6 +19,10 @@ updates:
       interval: monthly
     cooldown:
       default-days: 7
+    groups:
+      js-deps:
+        patterns:
+          - "*"
 
   - package-ecosystem: github-actions
     directory: /
@@ -22,3 +30,7 @@ updates:
       interval: monthly
     cooldown:
       default-days: 7
+    groups:
+      py-deps:
+        patterns:
+          - "*"
