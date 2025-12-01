@@ -149,7 +149,7 @@ jobs:
       with:
         cache-dependency-glob: "**/pyproject.toml"
     - name: Download js build
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v6
       with:
         name: js
         path: hawc/static/bundles/
