@@ -9,7 +9,7 @@ updates:
     cooldown:
       default-days: 7
     groups:
-      actions-deps:
+      py-deps:
         patterns:
           - "*"
 
@@ -31,6 +31,6 @@ updates:
     cooldown:
       default-days: 7
     groups:
-      py-deps:
+      actions-deps:
         patterns:
           - "*"
