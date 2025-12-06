@@ -21,5 +21,13 @@ def test_openapi():
 
     # staff can access OpenAPI, non staff cannot
     url = reverse("openapi")
-    assert staff_client.get(url).status_code == 200
+    response = staff_client.get(url)
+    assert response.status_code == 200
     assert user_client.get(url).status_code == 403
+
+    # verify the response is a valid OpenAPI schema
+    schema = response.json()
+    assert "openapi" in schema
+    assert "info" in schema
+    assert "paths" in schema
+    assert schema["info"]["title"] == "HAWC API"
