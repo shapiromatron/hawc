@@ -6,6 +6,7 @@ from subprocess import CalledProcessError
 
 from django.urls import reverse_lazy
 
+from ... import __version__
 from ...constants import AuthProvider, FeatureFlags
 from ...services.utils.git import Commit
 
@@ -109,6 +110,7 @@ INSTALLED_APPS = (
     # External apps
     "rest_framework",
     "rest_framework.authtoken",
+    "drf_spectacular",
     "reversion",
     "taggit",
     "treebeard",
@@ -349,10 +351,20 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.AllowAny",),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "PAGE_SIZE": 50,
     "COERCE_DECIMAL_TO_STRING": False,
 }
 REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BULK-OPERATION"}
+
+# drf-spectacular settings
+SPECTACULAR_SETTINGS = {
+    "TITLE": "HAWC API",
+    "VERSION": __version__,
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SCHEMA_PATH_PREFIX": r"/api/",
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
+}
 
 # Django crispy-forms settings
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
