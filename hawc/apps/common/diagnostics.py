@@ -5,10 +5,8 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.mail import send_mail
 from django_redis import get_redis_connection
-from matplotlib.axes import Axes
 
-from ...main.celery import app
-from . import helper, tasks
+from . import tasks
 
 
 class IntentionalException(Exception):
@@ -101,18 +99,6 @@ class WorkerHealthcheck:
         conn = self._get_conn()
         data = conn.lrange(self.KEY, 0, -1)
         return pd.to_datetime(pd.Series(data, dtype=float), unit="s", utc=True)
-
-    def plot(self) -> Axes:
-        """Plot the current array of available timestamps"""
-        series = self.series()
-        return helper.event_plot(series)
-
-    def stats(self) -> dict:
-        inspect = app.control.inspect()
-        stats = dict(ping=inspect.ping())
-        if stats["ping"]:
-            stats.update(active=inspect.active(), stats=inspect.stats())
-        return stats
 
 
 worker_healthcheck = WorkerHealthcheck()

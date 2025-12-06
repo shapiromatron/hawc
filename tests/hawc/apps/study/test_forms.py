@@ -5,7 +5,11 @@ from django.test.client import Client
 from django.urls import reverse
 from pytest_django.asserts import assertFormError, assertRedirects, assertTemplateUsed
 
-from hawc.apps.common.forms import ASSESSMENT_UNIQUE_MESSAGE
+from hawc.apps.assessment.models import Assessment
+from hawc.apps.common.forms import ASSESSMENT_UNIQUE_MESSAGE, BaseFormHelper
+from hawc.apps.lit.constants import ReferenceDatabase
+from hawc.apps.lit.models import Reference
+from hawc.apps.study import forms, models
 
 
 @pytest.mark.django_db
@@ -47,3 +51,91 @@ def test_study_forms(db_keys):
     pk = re.findall(r"/study/(\d+)/$", response["location"])
     pk = int(pk[0])
     assertRedirects(response, reverse("study:detail", args=(pk,)))
+
+
+@pytest.mark.django_db
+class TestBaseStudyForm:
+    def test_init(self, db_keys):
+        # Test initialization with Assessment as parent
+        assessment = Assessment.objects.get(id=db_keys.assessment_working)
+        form = forms.BaseStudyForm(parent=assessment)
+        assert form.instance.assessment == assessment
+
+        # Test initialization with Reference as parent
+        reference = Reference.objects.get(id=db_keys.reference_linked)
+        form = forms.BaseStudyForm(parent=reference)
+        assert form.instance.assessment == reference.assessment
+        assert form.instance.reference_ptr == reference
+
+    def test_save_with_internal_communications(self, db_keys):
+        # Test saving with internal communications
+        study = models.Study.objects.get(id=db_keys.study_working)
+        data = {
+            "short_citation": "Test et al.",
+            "full_citation": "Test citation",
+            "bioassay": True,
+            "coi_reported": 0,
+            "internal_communications": "Test communications",
+        }
+        form = forms.StudyForm(data, instance=study)
+        assert form.is_valid()
+        saved_study = form.save()
+        assert saved_study.get_communications() == "Test communications"
+
+
+@pytest.mark.django_db
+class TestIdentifierStudyForm:
+    def test_clean(self, db_keys):
+        assessment = Assessment.objects.get(id=db_keys.assessment_working)
+
+        # Test with missing db_type
+        form = forms.IdentifierStudyForm({"db_id": "12345"}, instance=None, parent=assessment)
+        assert form.is_valid() is False
+        assert "db_type" in form.errors
+
+        # Test with missing db_id
+        form = forms.IdentifierStudyForm(
+            {"db_type": str(ReferenceDatabase.PUBMED.value)}, instance=None, parent=assessment
+        )
+        assert form.is_valid() is False
+        assert "db_id" in form.errors
+
+        # Test validation when study with identifier already exists
+        # Get an existing study with an identifier
+        study_with_id = models.Study.objects.filter(identifiers__isnull=False).first()
+        assert study_with_id is not None
+        identifier = study_with_id.identifiers.first()
+        assert identifier is not None
+        form = forms.IdentifierStudyForm(
+            {
+                "db_type": str(identifier.database),
+                "db_id": identifier.unique_id,
+            },
+            instance=None,
+            parent=study_with_id.assessment,
+        )
+        assert form.is_valid() is False
+        assert "db_id" in form.errors
+
+
+@pytest.mark.django_db
+class TestAttachmentForm:
+    def test_init(self, db_keys):
+        study = models.Study.objects.get(id=db_keys.study_working)
+        form = forms.AttachmentForm(parent=study)
+        assert form.instance.study == study
+
+    def test_helper(self, db_keys):
+        study = models.Study.objects.get(id=db_keys.study_working)
+        form = forms.AttachmentForm(parent=study)
+        helper = form.helper
+        assert isinstance(helper, BaseFormHelper)
+
+
+@pytest.mark.django_db
+class TestNewStudyFromReferenceForm:
+    def test_helper(self, db_keys):
+        reference = Reference.objects.get(id=db_keys.reference_linked)
+        form = forms.NewStudyFromReferenceForm(parent=reference)
+        helper = form.helper
+        assert isinstance(helper, BaseFormHelper)

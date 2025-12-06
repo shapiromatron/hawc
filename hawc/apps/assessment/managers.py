@@ -149,13 +149,6 @@ class DoseUnitManager(BaseManager):
             .distinct("pk")
         )
 
-    def get_animal_units_names(self, assessment):
-        """
-        Returns a list of the dose-units which are used in the selected
-        assessment for animal bioassay data.
-        """
-        return self.get_animal_units(assessment).values_list("name", flat=True)
-
     def get_iv_units(self, assessment_id: int):
         return (
             self.filter(ivexperiments__study__assessment=assessment_id)

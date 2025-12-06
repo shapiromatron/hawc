@@ -1,12 +1,10 @@
 import json
-from io import BytesIO, StringIO
+from io import BytesIO
 from typing import NamedTuple
 
-import matplotlib.pyplot as plt
 import pandas as pd
 from django.conf import settings
 from django.utils.text import slugify
-from matplotlib.axes import Axes
 from rest_framework import status
 from rest_framework.renderers import BaseRenderer, BrowsableAPIRenderer
 from rest_framework.response import Response
@@ -39,19 +37,6 @@ class DocxRenderer(BaseRenderer):
         response = renderer_context["response"]
         response["Content-Disposition"] = f"attachment; filename={data.filename}.docx"
         return file.getvalue()
-
-
-class SvgRenderer(BaseRenderer):
-    media_type = "image/svg+xml"
-    format = "svg"
-
-    def render(self, ax: Axes, accepted_media_type=None, renderer_context=None):
-        if isinstance(ax, dict):
-            return f'<svg xmlns="http://www.w3.org/2000/svg"><text y="15">{json.dumps(ax)}</text></svg>'
-        f = StringIO()
-        ax.figure.savefig(f, format="svg")
-        plt.close(ax.figure)
-        return f.getvalue()
 
 
 class PandasBaseRenderer(BaseRenderer):
