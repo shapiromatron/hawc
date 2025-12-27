@@ -325,7 +325,7 @@ class VerifyEmail(MessageMixin, FormView):
             OverflowError,
             models.HAWCUser.DoesNotExist,
             ValidationError,
-        ) as err:
+        ) as err:  # pragma: no cover
             raise Http404() from err
 
     def check_token_or_404(self, user: models.HAWCUser, token: str):

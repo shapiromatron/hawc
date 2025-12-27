@@ -137,3 +137,53 @@ def test_post_200():
         response = client.post(url, payload, follow=True)
         assert response.status_code == 200
         assertTemplateUsed(response, success_template)
+
+
+@pytest.mark.django_db
+class TestStudyCriteriaCreateView:
+    def test_view(self):
+        client = get_client("pm")
+        assessment_id = 1
+        url = reverse("epi:studycriteria_create", args=(assessment_id,))
+
+        response = client.get(url)
+        assert response.status_code == 200
+        assertTemplateUsed(response, "epi/criteria_form.html")
+
+        payload = {
+            "assessment": assessment_id,
+            "name": "Test Criteria",
+            "description": "Test description",
+        }
+        response = client.post(url, payload, follow=True)
+        assert response.status_code == 200
+        assert "window.close();" in response.text
+
+
+@pytest.mark.django_db
+class TestStudyPopulation:
+    def test_create_delete(self):
+        client = get_client("pm")
+        payload = dict(
+            study=5,
+            name="Example",
+            design="SE",
+            region="Tokyo",
+            participant_n=582,
+            comments="Descriptions",
+            countries=[1],
+        )
+        url = reverse("epi:sp_create", args=(1,))
+
+        # render GET view
+        response = client.get(url + "?initial=1")
+        assertTemplateUsed(response, "epi/studypopulation_form.html")
+
+        # confirm POST is successful
+        response = client.post(url, payload, follow=True)
+        assertTemplateUsed(response, "epi/studypopulation_detail.html")
+
+        # confirm delete successful
+        id = response.context["object"].id
+        url = reverse("epi:sp_delete", args=(id,))
+        assertTemplateUsed(client.post(url, follow=True), "study/study_detail.html")

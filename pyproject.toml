@@ -35,8 +35,8 @@ dependencies = [
   "inflection==0.5.1",
   "pyyaml==6.0.3",
   "gunicorn==23.0.0",
-  "wagtail~=7.1.1",
-  "wagtail-draftail-anchors==0.6.2",
+  "wagtail~=7.2.0",
+  "wagtail-draftail-anchors==0.7.0",
   # tasks
   "celery==5.5.3",
   "billiard==4.2.3",
@@ -45,11 +45,11 @@ dependencies = [
   "jsonschema==4.25.1",
   "lxml~=6.0.2",
   "psycopg2-binary==2.9.11",
-  "redis==7.0.1",
+  "redis==7.1.0",
   "requests~=2.32.5",
   "pydantic~=2.12.4",
   "nh3~=0.3.2",
-  "tinycss2==1.4.0",
+  "tinycss2==1.5.1",
   # computational
   "numpy~=2.3.5",
   "pandas==2.3.3",
@@ -67,18 +67,18 @@ dependencies = [
 dev = [
   # build
   "flit==3.12.0",  # make sure to sync w/ [build-system]
-  "poethepoet~=0.37.0",
+  "poethepoet~=0.38.0",
   # lint and formatting tools
-  "ruff==0.14.5",  # make sure to sync w/ pre-commit
+  "ruff==0.14.6",  # make sure to sync w/ pre-commit
   "djhtml==3.0.10",  # make sure to sync w/ pre-commit
-  "pre-commit==4.4.0",
+  "pre-commit==4.5.0",
   # django development
   "django-debug-toolbar~=6.1.0",
   "django-browser-reload~=1.21.0",
   "django-extensions~=4.1",
   # tests
   "coverage~=7.12.0",
-  "pytest~=8.4.2",
+  "pytest~=9.0.1",
   "pytest-django~=4.11.1",
   "vcrpy==7.0.0",
   "pytest-recording==0.13.4",
@@ -86,11 +86,11 @@ dev = [
   "pytest-playwright~=0.7.1",
 ]
 docs = [
-  "mkdocs-material~=9.6.14",
+  "mkdocs-material~=9.7.0",
 ]
 prod = [
   "django-anymail~=13.1",
-  "sentry_sdk~=2.45.0",
+  "sentry_sdk~=2.46.0",
 ]
 
 [project.scripts]

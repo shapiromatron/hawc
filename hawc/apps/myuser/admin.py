@@ -77,9 +77,6 @@ class HAWCUserAdmin(admin.ModelAdmin):
             reverse("user:set_password", kwargs={"pk": queryset.first().id})
         )
 
-    def save_model(self, request, obj, form, change):
-        form.save(commit=True)
-
     actions = (
         send_welcome_emails,
         send_email_verification_email,

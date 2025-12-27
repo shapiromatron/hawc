@@ -11,6 +11,7 @@ from pytest_django.asserts import assertTemplateUsed
 from hawc.apps.myuser import models
 from hawc.apps.myuser.forms import _accept_license_error
 from hawc.apps.myuser.views import ExternalAuth
+from hawc.constants import AuthProvider
 
 from ..test_utils import check_200, get_client
 
@@ -104,6 +105,22 @@ class UserCreationTests(TestCase):
 
 @pytest.mark.django_db
 class TestLoginView:
+    def test_dispatch(self, settings):
+        anon = get_client()
+        pm = get_client("pm")
+        url = reverse("user:login")
+
+        # if already logged in, go to portal
+        resp = pm.get(url)
+        assert url != resp.url
+        assert resp.url == reverse("portal")
+
+        # if external auth, redirect to external auth
+        settings.AUTH_PROVIDERS = {AuthProvider.external}
+        resp = anon.get(url)
+        assert url != resp.url
+        assert resp.url == reverse("user:external_auth")
+
     def test_create_account_link(self):
         # default case
         c = Client()

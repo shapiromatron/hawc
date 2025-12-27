@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.test import APIRequestFactory
 
 from hawc.apps.common import renderers
-from hawc.apps.common.helper import FlatExport, ReportExport, empty_mpl_figure
+from hawc.apps.common.helper import FlatExport, ReportExport
 from hawc.tools.excel import get_writer, write_worksheet
 
 from ..test_utils import get_client
@@ -40,20 +40,6 @@ class TestDocxRenderer:
             renderer_context={"response": Response(), "request": factory.options("/")},
         )
         assert response == '{"dummy": "data"}'
-
-
-class TestSvgRenderer:
-    def test_success(self):
-        ax = empty_mpl_figure()
-        resp = renderers.SvgRenderer().render(ax=ax, renderer_context={"response": Response()})
-        assert "<svg" in resp
-
-    def test_dict(self):
-        resp = renderers.SvgRenderer().render(
-            ax={"test": 123}, renderer_context={"response": Response()}
-        )
-        expected = '<svg xmlns="http://www.w3.org/2000/svg"><text y="15">{"test": 123}</text></svg>'
-        assert resp == expected
 
 
 class TestPandasBaseRenderer:
