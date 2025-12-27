@@ -361,8 +361,7 @@ REST_FRAMEWORK_EXTENSIONS = {"DEFAULT_BULK_OPERATION_HEADER_NAME": "X-CUSTOM-BUL
 SPECTACULAR_SETTINGS = {
     "TITLE": "HAWC API",
     "VERSION": __version__,
-    "SERVE_INCLUDE_SCHEMA": False,
-    "SCHEMA_PATH_PREFIX": r"/api/",
+    "SERVE_INCLUDE_SCHEMA": True,
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
 }
 

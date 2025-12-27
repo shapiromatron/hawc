@@ -20,7 +20,7 @@ def test_openapi():
     assert user_client.login(username=user.email, password="pw")
 
     # staff can access OpenAPI, non staff cannot
-    url = reverse("openapi")
+    url = reverse("openapi") + "?format=json"
     response = staff_client.get(url)
     assert response.status_code == 200
     assert user_client.get(url).status_code == 403
