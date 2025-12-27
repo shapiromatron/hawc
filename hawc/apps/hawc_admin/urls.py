@@ -4,14 +4,11 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path, reverse_lazy
 from django.views.generic import RedirectView
-from rest_framework import permissions
+from drf_spectacular.views import SpectacularAPIView
 from rest_framework.routers import SimpleRouter
-from rest_framework.schemas import get_schema_view
 from wagtail.admin import urls as wagtailadmin_urls
 
-from hawc import __version__
-
-from . import api, schema, views
+from . import api, views
 
 
 def get_admin_urlpatterns(open_api_patterns) -> list:
@@ -44,13 +41,7 @@ def get_admin_urlpatterns(open_api_patterns) -> list:
                 path(f"{admin_url}/api/swagger/", views.Swagger.as_view(), name="swagger"),
                 path(
                     f"{admin_url}/api/openapi/",
-                    get_schema_view(
-                        title="HAWC",
-                        version=__version__,
-                        patterns=open_api_patterns,
-                        permission_classes=(permissions.IsAdminUser,),
-                        generator_class=schema.CompleteSchemaGenerator,
-                    ),
+                    SpectacularAPIView.as_view(),
                     name="openapi",
                 ),
                 # dashboard
