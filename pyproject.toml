@@ -167,6 +167,9 @@ fail_under=92.0
 precision=1
 
 # --- --- --- --- --- --- --- --- --- --- TASKS --- --- --- --- --- --- --- --- --- ---
+[tool.poe.executor]
+type = "simple"
+
 [tool.poe.tasks.sync-dev]
 help = "Sync dev environment after code checkout"
 sequence = [
