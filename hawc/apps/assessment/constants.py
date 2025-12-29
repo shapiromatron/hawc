@@ -49,16 +49,6 @@ class RobName(models.IntegerChoices):
     SE = 1, "Study evaluation"
 
 
-class JobStatus(models.IntegerChoices):
-    PENDING = 1, "PENDING"
-    SUCCESS = 2, "SUCCESS"
-    FAILURE = 3, "FAILURE"
-
-
-class JobType(models.IntegerChoices):
-    TEST = 1, "TEST"
-
-
 class EpiVersion(models.IntegerChoices):
     V1 = 1, "v1"
     V2 = 2, "v2"
