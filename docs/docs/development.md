@@ -32,7 +32,7 @@ git clone https://github.com/shapiromatron/hawc.git
 
 # create virtual environment
 cd ~/dev/hawc
-uv venv --python=3.13
+uv venv --python=3.14
 
 # activate the environment
 source ./.venv/bin/activate
@@ -52,7 +52,7 @@ For Windows, using Anaconda or Miniconda is preferred for additional dependencie
 :: create a conda environment with our hard to get dependencies
 conda create --name hawc
 conda activate hawc
-conda install python=3.13 postgresql
+conda install python=3.14 postgresql
 conda install -c conda-forge nodejs
 conda install -c conda-forge yarn=1.22.19
 

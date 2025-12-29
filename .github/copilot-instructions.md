@@ -15,7 +15,7 @@ HAWC is a web-based platform for capturing, analyzing, and sharing data related 
 
 ## Libraries and Frameworks
 
-- **Backend:** Python 3.13, Django, uv (dependency management), flit (packaging)
+- **Backend:** Python 3.14, Django, uv (dependency management), flit (packaging)
 - **Frontend:** React, MobX, Yarn (dependency management), Vite (build tool)
 - **Testing:** Pytest, Coverage.py, Playwright (integration), Jest (JS unit tests)
 

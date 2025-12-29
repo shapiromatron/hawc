@@ -13,9 +13,9 @@ keywords = [
 ]
 classifiers = [
   "Intended Audience :: Science/Research",
-  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 # see https://peps.python.org/pep-0440/#version-specifiers
 dependencies = [
   # web application
