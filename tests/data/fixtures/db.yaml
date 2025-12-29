@@ -2047,29 +2047,6 @@
     notes: <p>Original version.</p>
     created: 2020-06-02 20:01:31.858209+00:00
     last_updated: 2020-06-02 20:01:31.858235+00:00
-- model: assessment.job
-  pk: 08ca9f23-5368-4ed6-9b18-29625add9aa8
-  fields:
-    assessment: null
-    status: 3
-    job: 1
-    kwargs:
-      fail: true
-    result:
-      error: FAILURE
-    created: 2020-08-27 20:35:38.870997+00:00
-    last_updated: 2020-08-27 20:35:38.913996+00:00
-- model: assessment.job
-  pk: 204faaa7-fdfa-4426-a09f-f0d1af9db33d
-  fields:
-    assessment: 1
-    status: 2
-    job: 1
-    kwargs: {}
-    result:
-      data: SUCCESS
-    created: 2020-08-27 20:35:12.682677+00:00
-    last_updated: 2020-08-27 20:35:12.818223+00:00
 - model: assessment.log
   pk: 1
   fields:

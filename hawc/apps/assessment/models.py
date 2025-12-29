@@ -1,7 +1,6 @@
 import logging
-import uuid
 from collections import namedtuple
-from typing import Any, Literal, NamedTuple
+from typing import Literal, NamedTuple
 
 import numpy as np
 import pandas as pd
@@ -32,7 +31,7 @@ from ..common.validators import FlatJSON, validate_hyperlink
 from ..materialized.models import refresh_all_mvs
 from ..myuser.models import HAWCUser
 from ..vocab.constants import VocabularyNamespace
-from . import constants, jobs, managers
+from . import constants, managers
 from .permissions import AssessmentPermissions
 from .tasks import add_time_spent
 
@@ -1128,70 +1127,6 @@ class DatasetRevision(models.Model):
         return df
 
 
-class Job(models.Model):
-    JOB_TO_FUNC = {
-        constants.JobType.TEST: jobs.test,
-    }
-
-    task_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    assessment = models.ForeignKey(
-        Assessment, blank=True, null=True, on_delete=models.CASCADE, related_name="jobs"
-    )
-    status = models.PositiveSmallIntegerField(
-        choices=constants.JobStatus, default=constants.JobStatus.PENDING, editable=False
-    )
-    job = models.PositiveSmallIntegerField(
-        choices=constants.JobType, default=constants.JobType.TEST
-    )
-
-    kwargs = models.JSONField(default=dict, blank=True, null=True)
-    result = models.JSONField(default=dict, editable=False)
-
-    created = models.DateTimeField(auto_now_add=True)
-    last_updated = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ("-created",)
-
-    def execute(self) -> Any:
-        """
-        Executes the job. Function and kwargs are determined
-        by the instance's "job" and "kwargs" properties, respectively.
-
-        Returns:
-            Any: Any data returned by the function call.
-            {"data" : <return_value>} MUST be JSON serializable.
-        """
-        func = self.JOB_TO_FUNC[self.job]
-        return func(**self.kwargs)
-
-    def set_success(self, data):
-        """
-        Sets the status of the job to SUCCESS and sets the
-        data as the job's result, in the format:
-            {"data" : <data>}
-
-        Args:
-            data (Any): Data to be saved as the job's result.
-            {"data" : <data>} MUST be JSON serializable.
-        """
-        self.result = {"data": data}
-        self.status = constants.JobStatus.SUCCESS
-
-    def set_failure(self, exception: Exception):
-        """
-        Sets the status of the job to FAILURE and sets the
-        exception as the job's result, in the format:
-            {"error" : <exception>}
-
-        Args:
-            exception (Exception): Exception to be saved as the job's result.
-            MUST have a built in string representation.
-        """
-        self.result = {"error": str(exception)}
-        self.status = constants.JobStatus.FAILURE
-
-
 class Communication(models.Model):
     message = models.TextField()
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
@@ -1437,7 +1372,6 @@ reversion.register(Strain)
 reversion.register(BaseEndpoint)
 reversion.register(Dataset)
 reversion.register(DatasetRevision)
-reversion.register(Job)
 reversion.register(Communication)
 reversion.register(Content)
 reversion.register(Label)

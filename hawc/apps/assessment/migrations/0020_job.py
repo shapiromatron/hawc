@@ -6,7 +6,15 @@ import django.contrib.postgres.fields.jsonb
 import django.db.models.deletion
 from django.db import migrations, models
 
-from hawc.apps.assessment.constants import JobStatus, JobType
+
+class JobStatus(models.IntegerChoices):
+    PENDING = 1, "PENDING"
+    SUCCESS = 2, "SUCCESS"
+    FAILURE = 3, "FAILURE"
+
+
+class JobType(models.IntegerChoices):
+    TEST = 1, "TEST"
 
 
 class Migration(migrations.Migration):
