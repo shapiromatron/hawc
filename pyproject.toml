@@ -1,9 +1,10 @@
 [project]
 name = "hawc"
+version = "2025.1"
+description = "A content management system for human health assessments."
 license = {file = "LICENSE"}
 authors = [{name = "Andy Shapiro", email = "shapiromatron@gmail.com"}]
 readme = "README.md"
-dynamic = ["version", "description"]
 keywords = [
   "data visualization",
   "epidemiology",
@@ -66,7 +67,6 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   # build
-  "flit==3.12.0",  # make sure to sync w/ [build-system]
   "poethepoet~=0.38.0",
   # lint and formatting tools
   "ruff==0.14.6",  # make sure to sync w/ pre-commit
@@ -103,15 +103,17 @@ Source = "https://github.com/shapiromatron/hawc"
 
 # --- --- --- --- --- --- --- --- --- --- BUILD --- --- --- --- --- --- --- --- --- ---
 [build-system]
-requires = ["flit_core~=3.12"]
-build-backend = "flit_core.buildapi"
+requires = ["uv_build>=0.9.18,<0.10.0"]
+build-backend = "uv_build"
 
-[tool.flit.sdist]
-include = [
+[tool.uv.build-backend]
+module-root = "."
+source-include = [
+  "hawc/**/*",
   "hawc/static/bundles/**/*",
   "hawc/gitcommit.json",
 ]
-exclude = [
+source-exclude = [
   ".github",
   "bin",
   "client",

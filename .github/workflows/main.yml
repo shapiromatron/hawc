@@ -179,11 +179,9 @@ jobs:
         fi
     - name: Build wheels
       run: |
-        # activate environment so we can build the client package too using flit
-        source .venv/bin/activate
         python manage.py set_git_commit
-        flit build --format wheel
-        cd client && flit build --format wheel && cd ..
+        uv build
+        cd client && uv build && cd ..
         cp client/dist/*.whl dist
     - name: Upload wheels
       uses: actions/upload-artifact@v5

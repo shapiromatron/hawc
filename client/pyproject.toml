@@ -1,8 +1,9 @@
 [project]
 name = "hawc-client"
+version = "2025.1"
+description = "A client for the Health Assessment Workspace Collaborative (HAWC)."
 license = {file = "LICENSE"}
 authors = [{name = "Andy Shapiro", email = "shapiromatron@gmail.com"}]
-dynamic = ["version", "description"]
 readme = "README.md"
 keywords = [
   "data visualization",
@@ -34,8 +35,11 @@ Changes = "https://hawc.readthedocs.io/latest/client/#changelog"
 "Source Code" = "https://github.com/shapiromatron/hawc"
 
 [build-system]
-requires = ["flit_core~=3.12"]
-build-backend = "flit_core.buildapi"
+requires = ["uv_build>=0.9.18,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = "."
 
 [tool.poe.tasks.build]
 help = "Build package"
