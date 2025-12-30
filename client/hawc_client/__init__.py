@@ -1,5 +1,7 @@
 """A client for the Health Assessment Workspace Collaborative (HAWC)."""
 
+from importlib.metadata import version
+
 from .animal import AnimalClient
 from .assessment import AssessmentClient
 from .client import BaseClient
@@ -16,7 +18,7 @@ from .study import StudyClient
 from .summary import SummaryClient
 from .vocab import VocabClient
 
-__version__ = "2025.1"
+__version__ = version("hawc_client")
 __all__ = ["BaseClient", "HawcClient", "HawcClientException", "HawcServerException"]
 
 
