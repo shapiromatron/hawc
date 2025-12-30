@@ -51,10 +51,10 @@ jobs:
         uv pip install -e ".[dev,docs]" -e client
     - name: lint-py
       run: |
-        poe lint-py
+        uv run poe lint-py
     - name: lint-html
       run: |
-        poe lint-html
+        uv run poe lint-html
     - name: test
       env:
         DJANGO_DB_NAME: hawc
@@ -75,7 +75,7 @@ jobs:
       run: |
         sudo apt-get install -y cloc
         echo "# Lines of code report" >> $GITHUB_STEP_SUMMARY
-        poe loc >> $GITHUB_STEP_SUMMARY
+        uv run poe loc >> $GITHUB_STEP_SUMMARY
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v5
       with:
@@ -180,9 +180,9 @@ jobs:
         fi
     - name: Build wheels
       run: |
-        python manage.py set_git_commit
-        uv build
-        cd client && uv build && cd ..
+        uv run python manage.py set_git_commit
+        uv run poe build
+        source .venv/bin/activate && cd client && poe build && cd ..
         cp client/dist/*.whl dist
     - name: Upload wheels
       uses: actions/upload-artifact@v5
