@@ -43,7 +43,7 @@ module-root = "."
 
 [tool.poe.tasks.build]
 help = "Build package"
-cmd = "uv build"
+cmd = "uv build --wheel --clear"
 
 [tool.poe.tasks.upload-testpypi]
 help = "Upload package to testpypi"

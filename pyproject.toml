@@ -67,7 +67,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   # build
-  "poethepoet~=0.38.0",
+  "poethepoet~=0.39.0",
   # lint and formatting tools
   "ruff==0.14.6",  # make sure to sync w/ pre-commit
   "djhtml==3.0.10",  # make sure to sync w/ pre-commit
@@ -114,15 +114,7 @@ source-include = [
   "hawc/gitcommit.json",
 ]
 source-exclude = [
-  ".github",
-  "bin",
-  "client",
-  "compose",
-  "docs",
-  "frontend",
-  "scripts",
-  "tests",
-  "vendor",
+  "hawc/main/settings/local.py",
 ]
 
 # --- --- --- --- --- --- --- --- --- --- FORMAT --- --- --- --- --- --- --- --- --- ---
@@ -170,7 +162,7 @@ precision=1
 
 # --- --- --- --- --- --- --- --- --- --- TASKS --- --- --- --- --- --- --- --- --- ---
 [tool.poe.executor]
-type = "simple"
+type = "virtualenv"
 
 [tool.poe.tasks.sync-dev]
 help = "Sync dev environment after code checkout"
@@ -256,7 +248,7 @@ help = "Build package"
 sequence = [
   {cmd = "npm --prefix ./frontend run build"},
   {cmd = "python manage.py set_git_commit"},
-  {cmd = "uv build"},
+  {cmd = "uv build --wheel --clear"},
 ]
 
 [tool.poe.tasks.coverage]
