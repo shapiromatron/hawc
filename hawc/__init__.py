@@ -2,8 +2,9 @@
 
 import os
 import sys
+from importlib.metadata import version
 
-__version__ = "2025.1"
+__version__ = version("hawc")
 
 
 def manage():

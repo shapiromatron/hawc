@@ -28,10 +28,11 @@ jobs:
           cache-dependency-glob: "**/pyproject.toml"
       - name: Install environment
         run: |
-          uv pip install --system -e ".[dev,docs]"
-          uv pip install --system -e client
+          uv venv --python=3.14
+          source .venv/bin/activate
+          uv pip install -e client
       - name: Build client
-        run: cd client && poe build
+        run: source .venv/bin/activate && cd client && poe build
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
