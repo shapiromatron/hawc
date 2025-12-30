@@ -189,23 +189,6 @@ On Windows; if you created the pgdata folder in %HOMEPATH%\dev, there's a short 
 poe startdb
 ```
 
-### Pre commit hooks
-
-There are number of code quality checks that standardize and format code to make sure that our source code is consistent regardless of the developer. These checks are automatically run when the code is submitted for review, and the linting checks must pass to have a valid review. However, this can be a surprise if you don't run the linters prior to pushning a commit.
-
-The development environment includes [pre-commit](https://pre-commit.com/) to automatically check linters and formatters prior to committing changes.  This would prevent you from pushing code that hadn't been run through the linters. To set up pre-commit, run the following command:
-
-```bash
-pre-commit install
-
-# run on all files to make sure it is installed correctly
-pre-commit run --all-files
-```
-
-!!! note
-
-    This is completely optional; you can use if you wish but it's not required.
-
 ## Local Settings
 
 ### Django settings inheritance
