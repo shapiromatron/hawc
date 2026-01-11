@@ -2,6 +2,14 @@ import sys
 
 from django.core.management.base import BaseCommand
 
+try:
+    from granian import Granian
+    from granian.constants import Interfaces
+
+    GRANIAN_AVAILABLE = True
+except ImportError:
+    GRANIAN_AVAILABLE = False
+
 
 class Command(BaseCommand):
     help = "Runs the web application using Granian"
@@ -58,10 +66,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        try:
-            from granian import Granian
-            from granian.constants import Interfaces
-        except ImportError:
+        if not GRANIAN_AVAILABLE:
             self.stderr.write(
                 self.style.ERROR("Granian is not installed. Install it with: pip install granian")
             )
