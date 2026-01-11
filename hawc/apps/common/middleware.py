@@ -104,7 +104,7 @@ class ThreadLocalMiddleware:
     """Allow fetching the current request and user from the current thread.
 
     Note that this may not be accurate given how the django WSGI application is deployed, but
-    should work fine using gunicorn and standard workers.
+    should work fine using granian and standard workers.
     """
 
     def __init__(self, get_response):
