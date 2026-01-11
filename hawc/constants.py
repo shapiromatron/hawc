@@ -18,7 +18,6 @@ class FeatureFlags(BaseModel):
     ANONYMOUS_ACCOUNT_CREATION: bool = True
     ENABLE_WIP_VISUALS: bool = False
     ENABLE_FILTER_DOWNLOADS: bool = False
-    ENABLE_DOCS_LINK: bool = False
     ENABLE_NEW_HERO: bool = False
 
     @classmethod

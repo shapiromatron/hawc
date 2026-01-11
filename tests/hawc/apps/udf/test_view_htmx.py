@@ -1,9 +1,12 @@
 import pytest
+from django.contrib.contenttypes.models import ContentType
 from django.test import Client
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
+from hawc.apps.animal.models import Endpoint
 from hawc.apps.lit.models import ReferenceFilterTag
+from hawc.apps.study.models import Study
 from hawc.apps.udf import constants, models
 
 
@@ -76,10 +79,11 @@ class TestBindings:
         udf_id = models.UserDefinedForm.objects.first().id
 
         # model binding create
+        content_type_id = ContentType.objects.get_for_model(Study).id
         url = reverse("udf:binding_create", args=[assessment_id, constants.BindingType.MODEL.value])
         inputs = {
             "model-new-form": udf_id,
-            "model-new-content_type": 87,
+            "model-new-content_type": content_type_id,
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "udf/fragments/udf_row.html")
@@ -89,6 +93,7 @@ class TestBindings:
         assert models.ModelBinding.objects.count() == initial_modelbinding_count + 1
 
         # model binding read
+        content_type_id = ContentType.objects.get_for_model(Endpoint).id
         url = reverse(
             "udf:binding_htmx", args=[constants.BindingType.MODEL.value, model_binding.id, "read"]
         )
@@ -103,7 +108,7 @@ class TestBindings:
         )
         inputs = {
             f"model-{model_binding.id}-form": udf_id,
-            f"model-{model_binding.id}-content_type": 91,
+            f"model-{model_binding.id}-content_type": content_type_id,
         }
         resp = client.post(url, data=inputs)
         assertTemplateUsed(resp, "udf/fragments/udf_row.html")
