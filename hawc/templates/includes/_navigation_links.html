@@ -11,9 +11,6 @@
     </li>
   {% endif %}
   {% if feature_flags.ENABLE_DOCS_LINK and user.is_authenticated %}
-    <li class="nav-item">
-      <a class="nav-link" href="{% url 'wagtail_serve' '' %}">Documentation</a>
-    </li>
   {% endif %}
   {% if user.is_authenticated %}
     <li class="nav-item dropdown">

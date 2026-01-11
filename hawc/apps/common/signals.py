@@ -3,8 +3,6 @@ from itertools import chain
 
 from django.db.models import signals as dsignals
 from django.dispatch import Signal
-from wagtail import signals as wts
-from wagtail.admin import signals as wtas
 
 
 @contextmanager
@@ -18,8 +16,6 @@ def ignore_signals():
         signal
         for signal in chain(
             dsignals.__dict__.values(),
-            wts.__dict__.values(),
-            wtas.__dict__.values(),
         )
         if isinstance(signal, Signal)
     ]

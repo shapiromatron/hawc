@@ -3,7 +3,6 @@ from django.http.response import HttpResponse
 from django.test import RequestFactory
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
-from wagtail.admin.views.account import AccountView, BaseSettingsPanel, NameEmailSettingsPanel
 
 from hawc.apps.myuser.models import HAWCUser
 

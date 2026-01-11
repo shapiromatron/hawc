@@ -36,8 +36,6 @@ dependencies = [
   "inflection==0.5.1",
   "pyyaml==6.0.3",
   "gunicorn==23.0.0",
-  "wagtail~=7.2.0",
-  "wagtail-draftail-anchors==0.7.0",
   # tasks
   "celery==5.6.2",
   "billiard==4.2.4",
