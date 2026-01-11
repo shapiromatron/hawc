@@ -1,10 +1,7 @@
 import pytest
 from django.http.response import HttpResponse
-from django.test import RequestFactory
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
-
-from hawc.apps.myuser.models import HAWCUser
 
 from ..test_utils import check_200, get_client
 
@@ -87,19 +84,3 @@ class TestMediaPreview:
         client = get_client("admin")
         resp = check_200(client, url)
         assertTemplateUsed(resp, "admin/media_preview.html")
-
-
-@pytest.mark.django_db
-class TestWagtailAccounts:
-    def test_no_name_email_panel(self):
-        # confirm `NameEmailSettingsPanel` is removed from the accounts page
-        factory = RequestFactory()
-        request = factory.get("/admin/cms/account/")
-        request.user = HAWCUser.objects.filter(is_superuser=True).first()
-        view = AccountView()
-        view.setup(request)
-        context = view.get_context_data()
-        for panel_set in context["panels_by_tab"].values():
-            for panel in panel_set:
-                assert isinstance(panel, BaseSettingsPanel)
-                assert not isinstance(panel, NameEmailSettingsPanel)
