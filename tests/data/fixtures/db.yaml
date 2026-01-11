@@ -2,104 +2,454 @@
   fields:
     domain: 127.0.0.1:8000
     name: localhost
-- model: auth.permission
+- model: contenttypes.contenttype
   fields:
-    name: Can access Wagtail admin
-    content_type:
-    - wagtailadmin
-    - admin
-    codename: access_admin
-- model: auth.permission
+    app_label: auth
+    model: permission
+- model: contenttypes.contenttype
   fields:
-    name: Lock/unlock pages you've locked
-    content_type:
-    - wagtailcore
-    - page
-    codename: lock_page
-- model: auth.permission
+    app_label: auth
+    model: group
+- model: contenttypes.contenttype
   fields:
-    name: Publish any page
-    content_type:
-    - wagtailcore
-    - page
-    codename: publish_page
-- model: auth.permission
+    app_label: contenttypes
+    model: contenttype
+- model: contenttypes.contenttype
   fields:
-    name: Unlock any page
-    content_type:
-    - wagtailcore
-    - page
-    codename: unlock_page
-- model: auth.permission
+    app_label: sessions
+    model: session
+- model: contenttypes.contenttype
   fields:
-    name: Can change page
-    content_type:
-    - wagtailcore
-    - page
-    codename: change_page
-- model: auth.permission
+    app_label: sites
+    model: site
+- model: contenttypes.contenttype
   fields:
-    name: Can add page
-    content_type:
-    - wagtailcore
-    - page
-    codename: add_page
-- model: auth.permission
+    app_label: admin
+    model: logentry
+- model: contenttypes.contenttype
   fields:
-    name: Can change document
-    content_type:
-    - wagtaildocs
-    - document
-    codename: change_document
-- model: auth.permission
+    app_label: authtoken
+    model: token
+- model: contenttypes.contenttype
   fields:
-    name: Can delete document
-    content_type:
-    - wagtaildocs
-    - document
-    codename: delete_document
-- model: auth.permission
+    app_label: authtoken
+    model: tokenproxy
+- model: contenttypes.contenttype
   fields:
-    name: Can choose document
-    content_type:
-    - wagtaildocs
-    - document
-    codename: choose_document
-- model: auth.permission
+    app_label: reversion
+    model: revision
+- model: contenttypes.contenttype
   fields:
-    name: Can add document
-    content_type:
-    - wagtaildocs
-    - document
-    codename: add_document
-- model: auth.permission
+    app_label: reversion
+    model: version
+- model: contenttypes.contenttype
   fields:
-    name: Can add image
-    content_type:
-    - wagtailimages
-    - image
-    codename: add_image
-- model: auth.permission
+    app_label: taggit
+    model: tag
+- model: contenttypes.contenttype
   fields:
-    name: Can change image
-    content_type:
-    - wagtailimages
-    - image
-    codename: change_image
-- model: auth.permission
+    app_label: taggit
+    model: taggeditem
+- model: contenttypes.contenttype
   fields:
-    name: Can delete image
-    content_type:
-    - wagtailimages
-    - image
-    codename: delete_image
-- model: auth.permission
+    app_label: myuser
+    model: hawcuser
+- model: contenttypes.contenttype
   fields:
-    name: Can choose image
-    content_type:
-    - wagtailimages
-    - image
-    codename: choose_image
+    app_label: myuser
+    model: userprofile
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: assessment
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: attachment
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: baseendpoint
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: effecttag
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: doseunits
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: species
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: strain
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: timespentediting
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: dataset
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: datasetrevision
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: dsstox
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: log
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: job
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: content
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: communication
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: assessmentvalue
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: assessmentdetail
+- model: contenttypes.contenttype
+  fields:
+    app_label: vocab
+    model: entity
+- model: contenttypes.contenttype
+  fields:
+    app_label: vocab
+    model: term
+- model: contenttypes.contenttype
+  fields:
+    app_label: vocab
+    model: entitytermrelation
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: identifiers
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: pubmedquery
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: reference
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: referencefiltertag
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: referencetags
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: search
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: literatureassessment
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: userreferencetag
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: userreferencetags
+- model: contenttypes.contenttype
+  fields:
+    app_label: riskofbias
+    model: riskofbias
+- model: contenttypes.contenttype
+  fields:
+    app_label: riskofbias
+    model: riskofbiasdomain
+- model: contenttypes.contenttype
+  fields:
+    app_label: riskofbias
+    model: riskofbiasmetric
+- model: contenttypes.contenttype
+  fields:
+    app_label: riskofbias
+    model: riskofbiasscore
+- model: contenttypes.contenttype
+  fields:
+    app_label: riskofbias
+    model: riskofbiasassessment
+- model: contenttypes.contenttype
+  fields:
+    app_label: riskofbias
+    model: riskofbiasscoreoverrideobject
+- model: contenttypes.contenttype
+  fields:
+    app_label: study
+    model: attachment
+- model: contenttypes.contenttype
+  fields:
+    app_label: study
+    model: study
+- model: contenttypes.contenttype
+  fields:
+    app_label: animal
+    model: animalgroup
+- model: contenttypes.contenttype
+  fields:
+    app_label: animal
+    model: dosegroup
+- model: contenttypes.contenttype
+  fields:
+    app_label: animal
+    model: dosingregime
+- model: contenttypes.contenttype
+  fields:
+    app_label: animal
+    model: endpoint
+- model: contenttypes.contenttype
+  fields:
+    app_label: animal
+    model: endpointgroup
+- model: contenttypes.contenttype
+  fields:
+    app_label: animal
+    model: experiment
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: nestedterm
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: state
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: vocab
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: effect
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: design
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: cause
+- model: contenttypes.contenttype
+  fields:
+    app_label: eco
+    model: result
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: adjustmentfactor
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: comparisonset
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: country
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: criteria
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: ethnicity
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: exposure
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: group
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: groupnumericaldescriptions
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: groupresult
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: outcome
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: result
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: resultadjustmentfactor
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: resultmetric
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: studypopulation
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: studypopulationcriteria
+- model: contenttypes.contenttype
+  fields:
+    app_label: epi
+    model: centraltendency
+- model: contenttypes.contenttype
+  fields:
+    app_label: epimeta
+    model: metaprotocol
+- model: contenttypes.contenttype
+  fields:
+    app_label: epimeta
+    model: metaresult
+- model: contenttypes.contenttype
+  fields:
+    app_label: epimeta
+    model: singleresult
+- model: contenttypes.contenttype
+  fields:
+    app_label: invitro
+    model: ivbenchmark
+- model: contenttypes.contenttype
+  fields:
+    app_label: invitro
+    model: ivcelltype
+- model: contenttypes.contenttype
+  fields:
+    app_label: invitro
+    model: ivchemical
+- model: contenttypes.contenttype
+  fields:
+    app_label: invitro
+    model: ivendpoint
+- model: contenttypes.contenttype
+  fields:
+    app_label: invitro
+    model: ivendpointcategory
+- model: contenttypes.contenttype
+  fields:
+    app_label: invitro
+    model: ivendpointgroup
+- model: contenttypes.contenttype
+  fields:
+    app_label: invitro
+    model: ivexperiment
+- model: contenttypes.contenttype
+  fields:
+    app_label: bmd
+    model: assessmentsettings
+- model: contenttypes.contenttype
+  fields:
+    app_label: bmd
+    model: session
+- model: contenttypes.contenttype
+  fields:
+    app_label: summary
+    model: visual
+- model: contenttypes.contenttype
+  fields:
+    app_label: summary
+    model: summarytable
+- model: contenttypes.contenttype
+  fields:
+    app_label: mgmt
+    model: task
+- model: contenttypes.contenttype
+  fields:
+    app_label: materialized
+    model: finalriskofbiasscore
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: adjustmentfactor
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: chemical
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: design
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: exposure
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: outcome
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: exposurelevel
+- model: contenttypes.contenttype
+  fields:
+    app_label: epiv2
+    model: dataextraction
+- model: contenttypes.contenttype
+  fields:
+    app_label: udf
+    model: userdefinedform
+- model: contenttypes.contenttype
+  fields:
+    app_label: udf
+    model: tagbinding
+- model: contenttypes.contenttype
+  fields:
+    app_label: udf
+    model: modelbinding
+- model: contenttypes.contenttype
+  fields:
+    app_label: docs
+    model: documentationpage
+- model: contenttypes.contenttype
+  fields:
+    app_label: docs
+    model: documentationpagetag
+- model: contenttypes.contenttype
+  fields:
+    app_label: lit
+    model: workflow
+- model: contenttypes.contenttype
+  fields:
+    app_label: udf
+    model: tagudfcontent
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: label
+- model: contenttypes.contenttype
+  fields:
+    app_label: assessment
+    model: labeleditem
 - model: auth.group
   fields:
     name: Moderators
