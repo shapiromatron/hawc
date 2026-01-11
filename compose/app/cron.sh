@@ -2,7 +2,5 @@
 
 set -xe
 
-exec /usr/local/bin/celery \
-    --app=hawc.main.celery \
-    beat \
-    --loglevel=INFO
+# Run the django-crontask scheduler
+exec python manage.py crontask

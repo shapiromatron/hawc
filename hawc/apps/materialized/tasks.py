@@ -1,8 +1,8 @@
-from celery import shared_task
+from django_tasks import task
 
 from . import models
 
 
-@shared_task
+@task
 def refresh_all_mvs(force: bool = False):
     models.refresh_all_mvs(force)

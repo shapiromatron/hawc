@@ -938,8 +938,10 @@ class TimeSpentEditing(models.Model):
         cache_name = cls.get_cache_name(url or request.path, request.session.session_key)
         content_type_id = ContentType.objects.get_for_model(obj).id
         # wait 10 seconds to make sure database is populated
-        add_time_spent.s(cache_name, obj.id, assessment_id, content_type_id).apply_async(
-            countdown=10
+        from datetime import timedelta
+
+        add_time_spent.enqueue(
+            cache_name, obj.id, assessment_id, content_type_id, run_after=timedelta(seconds=10)
         )
 
     @classmethod

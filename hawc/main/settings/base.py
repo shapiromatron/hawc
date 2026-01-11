@@ -130,6 +130,10 @@ INSTALLED_APPS = (
     "wagtail_draftail_anchors",
     "wagtail",
     "modelcluster",
+    # Task processing
+    "django_tasks",
+    "django_tasks.backends.database",
+    "crontask",
     # Custom apps
     "hawc.apps.common",
     "hawc.apps.myuser",
@@ -166,16 +170,16 @@ DATABASES = {
 }
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
-# Celery settings
-CELERY_BROKER_URL = os.getenv("DJANGO_BROKER_URL")
-CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
-CELERY_RESULT_BACKEND = os.getenv("DJANGO_CELERY_RESULT_BACKEND")
-CELERY_RESULT_EXPIRES = 60 * 60 * 5  # 5 hours
-CELERY_TASK_ACKS_LATE = True
-CELERY_TASK_SOFT_TIME_LIMIT = 660
-CELERY_TASK_TIME_LIMIT = 600
-CELERY_WORKER_MAX_TASKS_PER_CHILD = 10
-CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+# Task settings (django-tasks)
+TASKS = {
+    "default": {
+        "BACKEND": "django_tasks.backends.database.DatabaseBackend",
+    }
+}
+
+# Task timing settings
+TASK_SOFT_TIME_LIMIT = 660  # 11 minutes
+TASK_TIME_LIMIT = 600  # 10 minutes
 
 # Cache settings
 CACHES = {

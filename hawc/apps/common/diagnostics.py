@@ -22,9 +22,11 @@ def diagnostic_500(modeladmin, request, queryset):
     raise IntentionalException(message)
 
 
-def diagnostic_celery_task(modeladmin, request, queryset):
-    response = tasks.diagnostic_celery_task.delay(request.user.id).get()
-    message = f"Celery task executed successfully: {response}"
+def diagnostic_task_test(modeladmin, request, queryset):
+    result = tasks.diagnostic_task.enqueue(request.user.id)
+    # In django-tasks, we can't immediately get the result like celery's .get()
+    # The task will execute asynchronously
+    message = f"Task enqueued successfully with ID: {result.id}"
     modeladmin.message_user(request, message)
 
 
@@ -105,6 +107,6 @@ worker_healthcheck = WorkerHealthcheck()
 
 
 diagnostic_500.short_description = "Diagnostic server error (500)"
-diagnostic_celery_task.short_description = "Diagnostic celery task test"
+diagnostic_task_test.short_description = "Diagnostic task test"
 diagnostic_cache.short_description = "Diagnostic cache test"
 diagnostic_email.short_description = "Diagnostic email test"

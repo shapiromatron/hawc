@@ -2,7 +2,5 @@
 
 set -xe
 
-exec /usr/local/bin/celery \
-    --app=hawc.main.celery \
-    worker \
-    --loglevel=INFO
+# Run the django-tasks database worker
+exec python manage.py db_worker
