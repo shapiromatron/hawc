@@ -60,15 +60,6 @@
   <li class="{{li_class}}">
     <a class="{{a_class}}" href="{% url 'search' %}">Search</a>
   </li>
-  {% if feature_flags.ENABLE_DOCS_LINK and user.is_authenticated %}
-    {% if expand_docs %}
-      {% include 'docs/components/sidebar_docs_tree.html' %}
-    {% else %}
-      <li class="{{li_class}}">
-        <a class="{{a_class}}" href="{% url 'wagtail_serve' '' %}">Documentation</a>
-      </li>
-    {% endif %}
-  {% endif %}
 
   <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'about' %}">About</a></li>
   <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'resources' %}">Resources</a></li>

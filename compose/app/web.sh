@@ -2,13 +2,13 @@
 
 set -xe
 
-/usr/local/bin/gunicorn hawc.main.wsgi \
-    --bind 0.0.0.0:5000 \
-    --chdir=/app \
-    --timeout 300 \
+/usr/local/bin/granian \
+    --interface wsgi \
+    --host 0.0.0.0 \
+    --port 5000 \
     --workers 3 \
-    --log-level info \
-    --log-file - \
-    --max-requests 750 \
-    --max-requests-jitter 250 \
-    --capture-output
+    --workers-lifetime 3600 \
+    --respawn-interval 60 \
+    --access-log \
+    --respawn-failed-workers \
+    hawc.main.wsgi:application

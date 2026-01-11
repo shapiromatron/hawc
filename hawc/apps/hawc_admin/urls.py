@@ -6,7 +6,6 @@ from django.urls import include, path, reverse_lazy
 from django.views.generic import RedirectView
 from drf_spectacular.views import SpectacularAPIView
 from rest_framework.routers import SimpleRouter
-from wagtail.admin import urls as wagtailadmin_urls
 
 from . import api, views
 
@@ -52,9 +51,6 @@ def get_admin_urlpatterns(open_api_patterns) -> list:
                     views.MediaPreview.as_view(),
                     name="admin_media_preview",
                 ),
-                # wagtail cms
-                path(f"{admin_url}/cms/login/", login_view),
-                path(f"{admin_url}/cms/", include(wagtailadmin_urls)),
                 # site
                 path(f"{admin_url}/login/", login_view),
                 path(f"{admin_url}/", admin.site.urls),

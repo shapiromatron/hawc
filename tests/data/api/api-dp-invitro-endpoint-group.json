@@ -13,8 +13,8 @@
   "evidence_type": 2,
   "id": 22,
   "image": null,
-  "label_htmx": "/assessment/label-item/129/22/?action=label",
-  "label_indicators_htmx": "/assessment/label-item/129/22/?action=label_indicators",
+  "label_htmx": "/assessment/label-item/93/22/?action=label",
+  "label_indicators_htmx": "/assessment/label-item/93/22/?action=label_indicators",
   "last_updated": "2020-05-11T00:12:54.866957-04:00",
   "prefilters": {
     "export_style": 0,
