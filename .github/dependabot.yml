@@ -23,6 +23,15 @@ updates:
       js-deps:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "mobx-react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
@@ -34,3 +43,6 @@ updates:
       actions-deps:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "Django"
+        update-types: ["version-update:semver-major"]
