@@ -20,15 +20,15 @@ requires-python = ">=3.14"
 # see https://peps.python.org/pep-0440/#version-specifiers
 dependencies = [
   # web application
-  "Django~=5.2.9",
+  "Django~=6.0.0",
   "django-crispy-forms==2.5",
   "crispy-bootstrap4==2025.6",
   "django-filter==25.2",
   "django-redis==6.0.0",
-  "django-reversion==6.0.0",
+  "django-reversion==6.1.0",
   "django-autocomplete-light==3.12.1",
   "django-taggit==6.1.0",
-  "django-treebeard==4.7.1",
+  "django-treebeard==4.8.0",
   "djangorestframework==3.16.1",
   "drf-spectacular~=0.29.0",
   "django-vite==3.1.0",
@@ -39,9 +39,9 @@ dependencies = [
   "wagtail~=7.2.0",
   "wagtail-draftail-anchors==0.7.0",
   # tasks
-  "celery==5.5.3",
-  "billiard==4.2.3",
-  "kombu==5.5.4",
+  "celery==5.6.2",
+  "billiard==4.2.4",
+  "kombu==5.6.2",
   # utilities
   "jsonschema==4.25.1",
   "lxml~=6.0.2",
@@ -69,27 +69,27 @@ dev = [
   # build
   "poethepoet~=0.39.0",
   # lint and formatting tools
-  "ruff==0.14.6",
+  "ruff==0.14.10",
   "djhtml==3.0.10",
   # django development
   "django-debug-toolbar~=6.1.0",
   "django-browser-reload~=1.21.0",
   "django-extensions~=4.1",
   # tests
-  "coverage~=7.12.0",
+  "coverage~=7.13.1",
   "pytest~=9.0.1",
   "pytest-django~=4.11.1",
-  "vcrpy==7.0.0",
+  "vcrpy==8.1.0",
   "pytest-recording==0.13.4",
-  "playwright~=1.56.0",
+  "playwright~=1.57.0",
   "pytest-playwright~=0.7.1",
 ]
 docs = [
   "mkdocs-material~=9.7.0",
 ]
 prod = [
-  "django-anymail~=13.1",
-  "sentry_sdk~=2.46.0",
+  "django-anymail~=14.0",
+  "sentry_sdk~=2.48.0",
 ]
 
 [project.scripts]
