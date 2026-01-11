@@ -21,7 +21,7 @@ class TestBmd(PlaywrightTestCase):
         expect(page.get_by_role("heading", name="BMDS output summary")).to_be_visible()
 
         page.get_by_role("tab", name="Model recommendation and").click()
-        expect(page.get_by_role("cell", name="Recommendation")).to_be_visible()
+        expect(page.get_by_role("columnheader", name="Recommendation")).to_be_visible()
 
     def test_dichotomous_execution(self):
         page = self.page
@@ -40,7 +40,7 @@ class TestBmd(PlaywrightTestCase):
 
         # click a modal
         page.get_by_role("button", name="Hill").click()
-        expect(page.get_by_role("cell", name="Parameter Settings")).to_be_visible()
+        expect(page.get_by_role("columnheader", name="Parameter Settings")).to_be_visible()
         page.get_by_label("Close").click()
 
         # select a model
@@ -67,7 +67,7 @@ class TestBmd(PlaywrightTestCase):
 
         # click a modal
         page.get_by_role("button", name="Hill").click()
-        expect(page.get_by_role("cell", name="Parameter Settings")).to_be_visible()
+        expect(page.get_by_role("columnheader", name="Parameter Settings")).to_be_visible()
         page.get_by_label("Close").click()
 
         # select a model
