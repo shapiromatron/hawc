@@ -7,7 +7,6 @@ import logging
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 from django.conf import settings
-from django.core.management.base import BaseCommand
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +23,7 @@ def setup_scheduler():
 
     # Worker healthcheck - every 5 minutes
     scheduler.add_job(
-        common_tasks.worker_healthcheck,
+        common_tasks.worker_healthcheck.call,
         CronTrigger.from_crontab("*/5 * * * *"),
         id="worker_healthcheck",
         name="Worker Healthcheck",
@@ -33,7 +32,7 @@ def setup_scheduler():
 
     # Destroy old API tokens - every 10 minutes
     scheduler.add_job(
-        common_tasks.destroy_old_api_tokens,
+        common_tasks.destroy_old_api_tokens.call,
         CronTrigger.from_crontab("*/10 * * * *"),
         id="destroy_old_api_tokens",
         name="Destroy Old API Tokens",
@@ -42,7 +41,7 @@ def setup_scheduler():
 
     # Create initial revisions - daily at midnight
     scheduler.add_job(
-        common_tasks.create_initial_revisions,
+        common_tasks.create_initial_revisions.call,
         CronTrigger.from_crontab("0 0 * * *"),
         id="create_initial_revisions",
         name="Create Initial Revisions",
@@ -51,7 +50,7 @@ def setup_scheduler():
 
     # Update PubMed content - daily at midnight
     scheduler.add_job(
-        lit_tasks.fix_pubmed_without_content,
+        lit_tasks.fix_pubmed_without_content.call,
         CronTrigger.from_crontab("0 0 * * *"),
         id="fix_pubmed_without_content",
         name="Update PubMed Content",
@@ -60,7 +59,7 @@ def setup_scheduler():
 
     # Delete orphan relations - every 6 hours
     scheduler.add_job(
-        lambda: assessment_tasks.delete_orphan_relations(delete=False),
+        lambda: assessment_tasks.delete_orphan_relations.call(delete=False),
         CronTrigger.from_crontab("0 */6 * * *"),
         id="delete_orphan_relations",
         name="Delete Orphan Relations",
@@ -69,7 +68,7 @@ def setup_scheduler():
 
     # Check and refresh materialized views - every 5 minutes
     scheduler.add_job(
-        lambda: materialized_tasks.refresh_all_mvs(force=False),
+        lambda: materialized_tasks.refresh_all_mvs.call(force=False),
         CronTrigger.from_crontab("*/5 * * * *"),
         id="check_refresh_mvs",
         name="Check Refresh MVs",
@@ -78,7 +77,7 @@ def setup_scheduler():
 
     # Force refresh materialized views - daily at midnight
     scheduler.add_job(
-        lambda: materialized_tasks.refresh_all_mvs(force=True),
+        lambda: materialized_tasks.refresh_all_mvs.call(force=True),
         CronTrigger.from_crontab("0 0 * * *"),
         id="refresh_mvs",
         name="Refresh MVs",
