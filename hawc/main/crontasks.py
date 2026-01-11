@@ -1,6 +1,12 @@
 """
 Scheduled tasks using APScheduler.
 These are the periodic tasks that were previously managed by celery beat.
+
+TODO: Migrate to django-crontask when compatibility is resolved.
+Currently, django-crontask requires Django 6's native @task decorator, but Django 6 
+doesn't provide a database backend for tasks. The django-tasks library provides the 
+DatabaseBackend but uses a different Task class signature that's incompatible with 
+django-crontask. Using APScheduler as an interim solution.
 """
 import logging
 
