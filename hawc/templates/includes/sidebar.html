@@ -60,8 +60,6 @@
   <li class="{{li_class}}">
     <a class="{{a_class}}" href="{% url 'search' %}">Search</a>
   </li>
-  {% if feature_flags.ENABLE_DOCS_LINK and user.is_authenticated %}
-  {% endif %}
 
   <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'about' %}">About</a></li>
   <li class="{{li_class}}"><a class="{{a_class}}" href="{% url 'resources' %}">Resources</a></li>

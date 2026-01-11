@@ -8,9 +8,6 @@ from .dev import *
 
 DEBUG = True
 
-# enable feature flags for tests
-HAWC_FEATURES.ENABLE_DOCS_LINK = True
-
 # remove toolbar for integration tests
 INSTALLED_APPS = [app for app in INSTALLED_APPS if app != "debug_toolbar"]
 MIDDLEWARE = [middleware for middleware in MIDDLEWARE if "debug_toolbar" not in middleware]

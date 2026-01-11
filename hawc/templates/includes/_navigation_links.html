@@ -2,15 +2,13 @@
   <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
 </li>
 {% if not contact_only %}
-  {% if feature_flags.ENABLE_DOCS_LINK and not user.is_authenticated %}
+  {% if not user.is_authenticated %}
     <li class="nav-item">
       <a class="nav-link" href="{% url 'about' %}">About</a>
     </li>
     <li class="nav-item">
       <a class="nav-link" href="{% url 'resources' %}">Resources</a>
     </li>
-  {% endif %}
-  {% if feature_flags.ENABLE_DOCS_LINK and user.is_authenticated %}
   {% endif %}
   {% if user.is_authenticated %}
     <li class="nav-item dropdown">
