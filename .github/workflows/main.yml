@@ -74,7 +74,7 @@ jobs:
         echo "# Lines of code report" >> $GITHUB_STEP_SUMMARY
         uv run poe loc >> $GITHUB_STEP_SUMMARY
     - name: Upload Coverage Report
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: coverage
         path: coverage
@@ -103,7 +103,7 @@ jobs:
       run: |
         yarn --cwd ./frontend run build
     - name: Upload js build
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: js
         path: hawc/static/bundles/
@@ -147,7 +147,7 @@ jobs:
       with:
         cache-dependency-glob: "**/pyproject.toml"
     - name: Download js build
-      uses: actions/download-artifact@v6
+      uses: actions/download-artifact@v7
       with:
         name: js
         path: hawc/static/bundles/
