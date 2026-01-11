@@ -51,8 +51,6 @@ LOGGING["loggers"]["hawc"]["handlers"] = ["console"]
 
 COMPRESS_ENABLED = False
 
-HAWC_FEATURES.ENABLE_DOCS_LINK = True
-
 os.environ.setdefault("DJANGO_RUNSERVER_HIDE_WARNING", "true")
 
 try:
