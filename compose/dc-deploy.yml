@@ -106,7 +106,7 @@ services:
             - ./data/private:/app/private
             - ./data/public:/app/public
         healthcheck:
-            test: pgrep -f "manage.py crontask"
+            test: pgrep -f "manage.py run_scheduler"
             interval: 60s
             timeout: 10s
             retries: 3

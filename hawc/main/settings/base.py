@@ -133,7 +133,6 @@ INSTALLED_APPS = (
     # Task processing
     "django_tasks",
     "django_tasks.backends.database",
-    "crontask",
     # Custom apps
     "hawc.apps.common",
     "hawc.apps.myuser",

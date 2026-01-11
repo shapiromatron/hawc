@@ -40,7 +40,7 @@ dependencies = [
   "wagtail-draftail-anchors==0.7.0",
   # tasks
   "django-tasks==0.9.0",
-  "django-crontask==0.1.1",
+  "APScheduler==3.11.2",
   # utilities
   "jsonschema==4.25.1",
   "lxml~=6.0.2",

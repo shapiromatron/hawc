@@ -2,5 +2,5 @@
 
 set -xe
 
-# Run the django-crontask scheduler
-exec python manage.py crontask
+# Run the APScheduler-based task scheduler
+exec python manage.py run_scheduler

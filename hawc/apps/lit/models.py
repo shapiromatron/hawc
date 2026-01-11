@@ -17,7 +17,7 @@ from django.forms import MultipleChoiceField
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
-from django_tasks.task import TaskResult
+from django_tasks import TaskResult
 from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node
