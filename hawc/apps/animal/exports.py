@@ -841,7 +841,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
 
         return (
             df.groupby("endpoint-id", group_keys=False, sort=False)
-            .apply(_func, include_groups=False)
+            .apply(_func)
             .reset_index(drop=True)
         )
 
@@ -869,7 +869,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
 
         return (
             df.groupby("endpoint-id", group_keys=False, sort=False)
-            .apply(_func, include_groups=False)
+            .apply(_func)
             .reset_index(drop=True)
         )
 
@@ -938,7 +938,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
 
         return (
             df.groupby("endpoint-id", group_keys=False, sort=False)
-            .apply(_func, include_groups=False)
+            .apply(_func)
             .reset_index(drop=True)
         )
 
@@ -971,7 +971,7 @@ class EndpointGroupFlatDataPivot(FlatFileExporter):
 
         return (
             df.groupby("endpoint-id", group_keys=False, sort=False)
-            .apply(_func, include_groups=False)
+            .apply(_func)
             .reset_index(drop=True)
         )
 
@@ -1283,7 +1283,7 @@ class EndpointFlatDataPivot(EndpointGroupFlatDataPivot):
 
         return (
             df.groupby("endpoint-id", group_keys=False, sort=False)
-            .apply(_func, include_groups=False)
+            .apply(_func)
             .reset_index(drop=True)
         )
 
@@ -1508,7 +1508,7 @@ class EndpointSummary(EndpointGroupFlatDataPivot):
 
         return (
             df.groupby("endpoint-id", group_keys=False, sort=False)
-            .apply(_func, include_groups=False)
+            .apply(_func)
             .reset_index(drop=True)
         )
 
@@ -1528,7 +1528,7 @@ class EndpointSummary(EndpointGroupFlatDataPivot):
 
         return (
             df.groupby("endpoint-id", group_keys=False, sort=False)
-            .apply(_func, include_groups=False)
+            .apply(_func)
             .reset_index(drop=True)
         )
 
@@ -1563,7 +1563,7 @@ class EndpointSummary(EndpointGroupFlatDataPivot):
 
         return (
             df.groupby("endpoint-id", group_keys=False, sort=False)
-            .apply(_func, include_groups=False)
+            .apply(_func)
             .reset_index(drop=True)
         )
 
@@ -1582,13 +1582,13 @@ class EndpointSummary(EndpointGroupFlatDataPivot):
 
             return (
                 group_df.groupby("dose_group-dose_units_name", group_keys=False, sort=False)
-                .apply(__func, include_groups=False)
+                .apply(__func)
                 .reset_index(drop=True)
             )
 
         return (
             df.groupby("endpoint-id", group_keys=False, sort=False)
-            .apply(_func, include_groups=False)
+            .apply(_func)
             .reset_index(drop=True)
         )
 
