@@ -277,7 +277,7 @@ class DataPivotEndpoint(FlatFileExporter):
 
         return (
             df.groupby("iv_endpoint-id", group_keys=False)
-            .apply(_func)
+            .apply(_func, include_groups=False)
             .drop(
                 columns=[
                     "iv_endpoint_group-id",
@@ -316,7 +316,7 @@ class DataPivotEndpoint(FlatFileExporter):
 
         return (
             df.groupby("iv_endpoint-id", group_keys=False)
-            .apply(_func)
+            .apply(_func, include_groups=False)
             .drop(columns=["iv_benchmark-id", "iv_benchmark-benchmark", "iv_benchmark-value"])
             .reset_index(drop=True)
         )
@@ -474,7 +474,7 @@ class DataPivotEndpointGroup(FlatFileExporter):
 
         return (
             df.groupby("iv_endpoint-id", group_keys=False)
-            .apply(_func)
+            .apply(_func, include_groups=False)
             .drop(columns="iv_endpoint-data_type")
             .reset_index(drop=True)
         )

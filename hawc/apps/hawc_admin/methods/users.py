@@ -9,7 +9,8 @@ from ...myuser.models import HAWCUser
 def user_active():
     qs = HAWCUser.objects.filter(is_active=True).values("id", "last_login")
     df = pd.DataFrame(qs).set_index("id").sort_values(by="last_login", ascending=False)
-    df.loc[:, "last_login"] = df.last_login.dt.tz_localize(None)
+    # Convert timezone-aware datetime to naive datetime
+    df["last_login"] = df["last_login"].dt.tz_localize(None)
     ntotal = df.shape[0]
 
     reference = datetime(2021, 12, 31)
@@ -22,8 +23,9 @@ def user_active():
         data.append((days, n))
 
     df2 = pd.DataFrame(data, columns=["days", "nusers"]).sort_values("days", ascending=False)
-    df2.loc[:, "frac_total"] = df2.nusers / ntotal
-    df2.loc[:, "days"] = df2.days.astype(str)
+    df2["frac_total"] = df2.nusers / ntotal
+    # Convert days to string type explicitly
+    df2["days"] = df2.days.astype("string")
     df2.loc[:, "text"] = (
         df2.nusers.astype(str) + f"/{ntotal} (" + df2.frac_total.apply(lambda x: f"{x:.0%}") + ")"
     )
@@ -42,7 +44,8 @@ def user_growth():
     qs = HAWCUser.objects.filter(is_active=True).values("id", "email", "date_joined")
     df = pd.DataFrame(data=qs).set_index("id")
     df.loc[:, "domain"] = df.email.str.split("@", expand=True)[1]
-    df.loc[:, "date_joined"] = df.date_joined.dt.tz_localize(None)
+    # Convert timezone-aware datetime to naive datetime
+    df["date_joined"] = df["date_joined"].dt.tz_localize(None)
     df = df.drop(columns=["email"])
 
     df1 = (
@@ -72,8 +75,9 @@ def user_growth():
 def last_login():
     qs = HAWCUser.objects.filter(is_active=True).values("id", "email", "date_joined", "last_login")
     df = pd.DataFrame(qs).set_index("id")
-    df.loc[:, "date_joined"] = df.date_joined.dt.tz_localize(None)
-    df.loc[:, "last_login"] = df.last_login.dt.tz_localize(None)
+    # Convert timezone-aware datetimes to naive datetimes
+    df["date_joined"] = df["date_joined"].dt.tz_localize(None)
+    df["last_login"] = df["last_login"].dt.tz_localize(None)
     df.loc[:, "domain"] = df.email.str.split("@", expand=True)[1]
     df.loc[:, "days_since_joined"] = (datetime.today() - df.date_joined).dt.days
     df.loc[:, "days_since_login"] = (datetime.today() - df.last_login).dt.days

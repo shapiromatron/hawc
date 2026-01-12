@@ -143,7 +143,7 @@ class TestXlsxRenderer:
         assert check_is_close(df, df2) is True
 
         # with timezone
-        df.loc[:, "when"] = df.when.dt.tz_localize(tz="US/Eastern")
+        df["when"] = df["when"].dt.tz_localize(tz="US/Eastern")
         response = renderers.PandasXlsxRenderer().render(
             data=FlatExport(df=df, filename="fn"), renderer_context={"response": Response()}
         )
@@ -154,7 +154,7 @@ class TestXlsxRenderer:
             check_is_close(df, df2)
 
         # with appropriate cast, success!
-        df2.loc[:, "when"] = df2.when.astype("datetime64[ns]").dt.tz_localize(tz="US/Eastern")
+        df2["when"] = df2["when"].astype("datetime64[ns]").dt.tz_localize(tz="US/Eastern")
         assert check_is_close(df, df2) is True
 
     def test_invalid_chars(self):

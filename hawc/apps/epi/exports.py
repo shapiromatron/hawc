@@ -537,10 +537,10 @@ class OutcomeDataPivot(FlatFileExporter):
                 )
 
             rgs = _df1.groupby("result_group-id", group_keys=False)
-            return rgs.apply(_apply_result_groups)
+            return rgs.apply(_apply_result_groups, include_groups=False)
 
         results = df.groupby("result-id", group_keys=False)
-        computed_df = results.apply(_apply_results)
+        computed_df = results.apply(_apply_results, include_groups=False)
         # empty groups may return original columns, so remove them
         computed_df = computed_df[computed_df.columns.difference(df.columns)]
         return df.join(computed_df, on="result_group-id").drop(
