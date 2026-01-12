@@ -140,6 +140,10 @@ testpaths = [
   "tests/integration",
   "tests/client",
 ]
+filterwarnings = [
+  # Ignore Django 6.0 deprecation warnings that can't be fixed in Django 5.2
+  "ignore::django.utils.deprecation.RemovedInDjango60Warning",
+]
 
 [tool.coverage.run]
 omit = [

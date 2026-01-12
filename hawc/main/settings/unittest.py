@@ -39,4 +39,20 @@ EXTERNAL_RESOURCES = None
 if HERO_API_KEY is None:
     HERO_API_KEY = "secret"
 
+# Override logging configuration to avoid unclosed file warnings
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": True,
+    "handlers": {
+        "null": {"level": "DEBUG", "class": "logging.NullHandler"},
+    },
+    "loggers": {
+        "": {"handlers": ["null"], "level": "INFO"},
+        "django": {"handlers": ["null"], "propagate": False, "level": "INFO"},
+        "django.request": {"handlers": ["null"], "level": "ERROR", "propagate": False},
+        "hawc": {"handlers": ["null"], "propagate": False, "level": "INFO"},
+        "hawc.request": {"handlers": ["null"], "propagate": False, "level": "INFO"},
+    },
+}
+
 logging.disable(logging.CRITICAL)
