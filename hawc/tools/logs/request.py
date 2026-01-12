@@ -27,5 +27,6 @@ def parse_request_logs(logs: str) -> pd.DataFrame:
             df[col] = pd.to_numeric(df[col])
         except (ValueError, TypeError):
             pass
-    df = df.assign(timestamp=pd.to_datetime(df.timestamp))
+    # Specify format to avoid dateutil fallback warning
+    df = df.assign(timestamp=pd.to_datetime(df.timestamp, format="%Y-%m-%d %H:%M:%S,%f"))
     return df
