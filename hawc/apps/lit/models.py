@@ -14,7 +14,6 @@ from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, transaction
 from django.forms import MultipleChoiceField
-from django.tasks import TaskResult
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
@@ -1070,7 +1069,7 @@ class Reference(models.Model):
             )
 
     @classmethod
-    def update_hero_metadata(cls, assessment_id: int) -> TaskResult:
+    def update_hero_metadata(cls, assessment_id: int):
         """Update reference metadata for all references in an assessment.
 
         Async worker task; updates data from HERO and then applies new data to references.
@@ -1083,8 +1082,9 @@ class Reference(models.Model):
         hero_ids = identifiers.values_list("unique_id", flat=True)
         hero_ids = list(hero_ids)  # queryset to list for JSON serializability
 
-        # enqueue chained task execution
-        return tasks.update_hero_metadata_chain.enqueue(hero_ids, reference_ids)
+        # call functions directly; not tasks on the task queue
+        tasks.update_hero_content.func(hero_ids)
+        tasks.update_hero_fields.func(reference_ids)
 
     @property
     def ref_full_citation(self):

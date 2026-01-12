@@ -142,31 +142,3 @@ def fix_pubmed_without_content():
     logger.info(f"Attempting to update pubmed content for {num_ids} identifiers")
     if num_ids > 0:
         Identifiers.update_pubmed_content(ids)
-
-
-@task
-def update_hero_metadata_chain(hero_ids: list[int], reference_ids: list[int]):
-    """
-    Chain task: update hero content, then update hero fields.
-    Replaces the celery chain(update_hero_content, update_hero_fields).
-    """
-    # First update hero content
-    update_hero_content(hero_ids)
-    # Then update fields with the new content
-    update_hero_fields(reference_ids)
-
-
-@task
-def replace_and_update_hero_chain(
-    replace: list[list[int]], hero_ids: list[int], ref_ids: list[int]
-):
-    """
-    Chain task: replace hero ids, update hero content, then update hero fields.
-    Replaces the celery chain(replace_hero_ids, update_hero_content, update_hero_fields).
-    """
-    # First replace hero ids
-    replace_hero_ids(replace)
-    # Then update hero content
-    update_hero_content(hero_ids)
-    # Finally update fields with the new content
-    update_hero_fields(ref_ids)

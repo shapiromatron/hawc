@@ -138,8 +138,7 @@ class TestReferenceReplaceHeroIdSerializer:
 
         serializer = ReferenceReplaceHeroIdSerializer(data=data, context={"assessment": assessment})
         assert serializer.is_valid()
-        ret = serializer.execute()
-        assert ret.successful()
+        serializer.execute()
 
         # ensure references changed
         refs = refs.all()
@@ -178,8 +177,7 @@ class TestReferenceReplaceHeroIdSerializer:
 
         serializer = ReferenceReplaceHeroIdSerializer(data=data, context={"assessment": assessment})
         assert serializer.is_valid()
-        ret = serializer.execute()
-        assert ret.successful()
+        serializer.execute()
 
         # check new titles
         refs = refs.all()

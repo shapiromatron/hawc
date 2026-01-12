@@ -382,14 +382,13 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
 
         return replace
 
-    def execute(self) -> TaskResult:
-        # import missing identifiers
+    def execute(self):
+        # Import missing identifiers
         models.Identifiers.objects.bulk_create_hero_ids(self.fetched_content)
-
-        # enqueue chained task execution
-        return tasks.replace_and_update_hero_chain.enqueue(
-            self.validated_data["replace"], self.hero_ids, self.ref_ids
-        )
+        # call these 3 tasks directly; do not enqueue in the task queue
+        tasks.replace_hero_ids.func(self.validated_data["replace"])
+        tasks.update_hero_content.func(self.hero_ids)
+        tasks.update_hero_fields.func(self.ref_ids)
 
 
 class FilterReferences(PydanticDrfSerializer):
