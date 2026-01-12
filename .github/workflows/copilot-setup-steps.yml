@@ -69,7 +69,7 @@ jobs:
       - name: install
         run: |
           yarn --cwd ./frontend install --frozen-lockfile
-      - name: migrate databases
+      - name: Migrate main and test fixture databases
         run: |
           python manage.py migrate
           DJANGO_DB_NAME=hawc-fixture python manage.py migrate

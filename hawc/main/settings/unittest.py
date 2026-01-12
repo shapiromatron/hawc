@@ -54,5 +54,3 @@ LOGGING = {
         "hawc.request": {"handlers": ["null"], "propagate": False, "level": "INFO"},
     },
 }
-
-logging.disable(logging.CRITICAL)
