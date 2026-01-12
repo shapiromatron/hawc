@@ -8,8 +8,8 @@ from ..common.diagnostics import (
     clear_cache,
     diagnostic_500,
     diagnostic_cache,
-    diagnostic_task_test,
     diagnostic_email,
+    diagnostic_task_test,
 )
 from . import forms, models
 

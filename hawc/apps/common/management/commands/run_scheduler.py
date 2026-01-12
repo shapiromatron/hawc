@@ -1,4 +1,5 @@
 """Management command to run the task scheduler."""
+
 import logging
 
 from django.core.management.base import BaseCommand

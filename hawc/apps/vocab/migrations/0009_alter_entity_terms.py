@@ -4,15 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('vocab', '0008_alter_term_namespace'),
+        ("vocab", "0008_alter_term_namespace"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='entity',
-            name='terms',
-            field=models.ManyToManyField(related_name='entities', through='vocab.EntityTermRelation', through_fields=('entity', 'term'), to='vocab.term'),
+            model_name="entity",
+            name="terms",
+            field=models.ManyToManyField(
+                related_name="entities",
+                through="vocab.EntityTermRelation",
+                through_fields=("entity", "term"),
+                to="vocab.term",
+            ),
         ),
     ]
