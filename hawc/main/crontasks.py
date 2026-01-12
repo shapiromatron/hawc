@@ -1,12 +1,5 @@
 """
 Scheduled tasks using APScheduler.
-These are the periodic tasks that were previously managed by celery beat.
-
-TODO: Migrate to django-crontask when compatibility is resolved.
-Currently, django-crontask requires Django 6's native @task decorator, but Django 6
-doesn't provide a database backend for tasks. The django-tasks library provides the
-DatabaseBackend but uses a different Task class signature that's incompatible with
-django-crontask. Using APScheduler as an interim solution.
 """
 
 import logging
@@ -14,24 +7,29 @@ import logging
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 from django.conf import settings
+from django_tasks.base import Task
+
+from hawc.apps.assessment import tasks as assessment_tasks
+from hawc.apps.common import tasks as common_tasks
+from hawc.apps.lit import tasks as lit_tasks
+from hawc.apps.materialized import tasks as materialized_tasks
 
 logger = logging.getLogger(__name__)
+
+
+def enqueue(task: Task, **kw):
+    logger.info(f"Enqueueing {task.func.__name__}")
+    task.enqueue(**kw)
 
 
 def setup_scheduler():
     """Setup the scheduler with all scheduled tasks"""
     scheduler = BlockingScheduler(timezone=settings.TIME_ZONE)
 
-    # Import task functions
-    from hawc.apps.assessment import tasks as assessment_tasks
-    from hawc.apps.common import tasks as common_tasks
-    from hawc.apps.lit import tasks as lit_tasks
-    from hawc.apps.materialized import tasks as materialized_tasks
-
     # Worker healthcheck - every 5 minutes
     scheduler.add_job(
-        common_tasks.worker_healthcheck.func,
-        CronTrigger.from_crontab("*/5 * * * *"),
+        lambda: enqueue(common_tasks.worker_healthcheck),
+        CronTrigger.from_crontab("*/1 * * * *"),
         id="worker_healthcheck",
         name="Worker Healthcheck",
         replace_existing=True,
@@ -39,7 +37,7 @@ def setup_scheduler():
 
     # Destroy old API tokens - every 10 minutes
     scheduler.add_job(
-        common_tasks.destroy_old_api_tokens.func,
+        lambda: enqueue(common_tasks.destroy_old_api_tokens),
         CronTrigger.from_crontab("*/10 * * * *"),
         id="destroy_old_api_tokens",
         name="Destroy Old API Tokens",
@@ -48,7 +46,7 @@ def setup_scheduler():
 
     # Create initial revisions - daily at midnight
     scheduler.add_job(
-        common_tasks.create_initial_revisions.func,
+        lambda: enqueue(common_tasks.create_initial_revisions),
         CronTrigger.from_crontab("0 0 * * *"),
         id="create_initial_revisions",
         name="Create Initial Revisions",
@@ -57,7 +55,7 @@ def setup_scheduler():
 
     # Update PubMed content - daily at midnight
     scheduler.add_job(
-        lit_tasks.fix_pubmed_without_content.func,
+        lambda: enqueue(lit_tasks.fix_pubmed_without_content),
         CronTrigger.from_crontab("0 0 * * *"),
         id="fix_pubmed_without_content",
         name="Update PubMed Content",
@@ -66,7 +64,7 @@ def setup_scheduler():
 
     # Delete orphan relations - every 6 hours
     scheduler.add_job(
-        lambda: assessment_tasks.delete_orphan_relations.func(delete=False),
+        lambda: enqueue(assessment_tasks.delete_orphan_relations, delete=True),
         CronTrigger.from_crontab("0 */6 * * *"),
         id="delete_orphan_relations",
         name="Delete Orphan Relations",
@@ -75,7 +73,7 @@ def setup_scheduler():
 
     # Check and refresh materialized views - every 5 minutes
     scheduler.add_job(
-        lambda: materialized_tasks.refresh_all_mvs.func(force=False),
+        lambda: enqueue(materialized_tasks.refresh_all_mvs, force=False),
         CronTrigger.from_crontab("*/5 * * * *"),
         id="check_refresh_mvs",
         name="Check Refresh MVs",
@@ -84,7 +82,7 @@ def setup_scheduler():
 
     # Force refresh materialized views - daily at midnight
     scheduler.add_job(
-        lambda: materialized_tasks.refresh_all_mvs.func(force=True),
+        lambda: enqueue(materialized_tasks.refresh_all_mvs, force=True),
         CronTrigger.from_crontab("0 0 * * *"),
         id="refresh_mvs",
         name="Refresh MVs",

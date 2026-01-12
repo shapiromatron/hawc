@@ -153,20 +153,12 @@ DATABASES = {
 }
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
-# Task settings (django-tasks)
-# TODO: Consider migrating to Django 6 native tasks when a database backend becomes available.
-# Currently using django-tasks library (0.9.0) for DatabaseBackend support.
-# Note: django-crontask package is incompatible with django-tasks library's Task class,
-# so APScheduler is used for scheduled tasks instead.
+# Task settings
 TASKS = {
     "default": {
         "BACKEND": "django_tasks.backends.database.DatabaseBackend",
     }
 }
-
-# Task timing settings
-TASK_SOFT_TIME_LIMIT = 660  # 11 minutes
-TASK_TIME_LIMIT = 600  # 10 minutes
 
 # Cache settings
 CACHES = {

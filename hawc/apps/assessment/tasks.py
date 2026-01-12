@@ -16,7 +16,7 @@ def delete_orphan_relations(delete: bool = False):
         Log.objects.create(message=message)
 
 
-@task(enqueue_on_commit=False)
+@task
 def add_time_spent(cache_name: str, object_id: int, assessment_id: int, content_type_id: int):
     apps.get_model("assessment", "TimeSpentEditing").add_time_spent(
         cache_name, object_id, assessment_id, content_type_id
