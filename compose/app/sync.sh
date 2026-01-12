@@ -15,5 +15,5 @@ manage migrate --noinput
 # drop/rebuild materialized views
 manage recreate_views
 
-# succcessful exit for healthchecks
+# successful exit for healthcheck
 exit 0

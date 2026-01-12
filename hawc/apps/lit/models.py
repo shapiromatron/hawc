@@ -14,10 +14,10 @@ from django.contrib.postgres.indexes import GinIndex
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import models, transaction
 from django.forms import MultipleChoiceField
+from django.tasks import TaskResult
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
-from django_tasks import TaskResult
 from reversion import revisions as reversion
 from taggit.models import ItemBase
 from treebeard.mp_tree import MP_Node

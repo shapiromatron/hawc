@@ -24,8 +24,6 @@ def diagnostic_500(modeladmin, request, queryset):
 
 def diagnostic_task_test(modeladmin, request, queryset):
     result = tasks.diagnostic_task.enqueue(request.user.id)
-    # In django-tasks, we can't immediately get the result like celery's .get()
-    # The task will execute asynchronously
     message = f"Task enqueued successfully with ID: {result.id}"
     modeladmin.message_user(request, message)
 

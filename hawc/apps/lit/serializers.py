@@ -7,9 +7,9 @@ import pandas as pd
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Q
+from django.tasks import TaskResult
 from django.template.defaultfilters import slugify
 from django.urls import reverse
-from django_tasks import TaskResult
 from pydantic import Field, field_validator, model_validator
 from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ParseError
