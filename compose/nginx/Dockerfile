@@ -1,5 +1,2 @@
-FROM nginx:alpine-slim
-
-RUN apk update && \
-    apk upgrade --available && \
-    rm -rf /var/cache/apk/*
+#https://hub.docker.com/hardened-images/catalog/dhi/nginx/images/
+FROM dhi.io/nginx:1

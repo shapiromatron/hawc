@@ -22,6 +22,9 @@ Build docker containers which can be deployed. These can be pushed to a containe
 # build containers (in the hawc development environment)
 source venv/bin/activate
 poe build
+
+# login to docker to use docker hardened images
+docker login dhi.io -u $DOCKER_USERNAME -p $DOCKER_TOKEN
 docker compose -f compose/dc-build.yml --project-directory . build
 ```
 
@@ -46,7 +49,7 @@ cp ~/dev/hawc/compose/example.env ./.env
 
 # start containers, order is important
 # ... start the backend services
-docker-compose up -d redis postgres
+docker compose up -d redis postgres
 # ... one time filesystem/database changes
 docker-compose run --no-deps --rm sync
 # ... start applications

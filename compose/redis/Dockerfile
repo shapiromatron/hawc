@@ -1,5 +1,2 @@
-FROM redis:8-alpine
-
-RUN apk update && \
-    apk upgrade --available && \
-    rm -rf /var/cache/apk/*
+# https://hub.docker.com/hardened-images/catalog/dhi/redis/images/
+FROM dhi.io/redis:8

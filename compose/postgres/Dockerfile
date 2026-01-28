@@ -1,8 +1,5 @@
-FROM postgres:16-alpine
-
-RUN apk update && \
-    apk upgrade --available && \
-    rm -rf /var/cache/apk/*
+# https://hub.docker.com/hardened-images/catalog/dhi/postgres/images/
+FROM dhi.io/postgres:16-alpine3.22
 
 # add backup scripts
 ADD backup.sh /usr/local/bin/backup
