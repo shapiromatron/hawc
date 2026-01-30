@@ -463,6 +463,7 @@ class TagtreeForm(VisualForm):
 class ExternalSiteForm(VisualForm):
     external_url = forms.URLField(
         label="External URL",
+        assume_scheme="https",
         help_text="""
         <p class="form-text text-muted">
             Embed an external website. The following websites can be linked to:

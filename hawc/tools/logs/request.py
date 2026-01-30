@@ -20,6 +20,13 @@ def parse_request_logs(logs: str) -> pd.DataFrame:
     )
     data = [list(*regex.findall(line)) for line in logs.strip().splitlines()]
     cols = "message timestamp verb path status_code content_length ip user_id assessment_id".split()
-    df = pd.DataFrame(data=data, columns=cols).apply(pd.to_numeric, errors="ignore")
-    df = df.assign(timestamp=pd.to_datetime(df.timestamp))
+    df = pd.DataFrame(data=data, columns=cols)
+    # Convert numeric columns explicitly instead of using errors='ignore'
+    for col in ["status_code", "content_length", "user_id", "assessment_id"]:
+        try:
+            df[col] = pd.to_numeric(df[col])
+        except (ValueError, TypeError):
+            pass
+    # Specify format to avoid dateutil fallback warning
+    df = df.assign(timestamp=pd.to_datetime(df.timestamp, format="%Y-%m-%d %H:%M:%S,%f"))
     return df

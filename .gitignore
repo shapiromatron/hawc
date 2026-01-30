@@ -44,3 +44,4 @@ venv/
 # keep folders; not contents
 hawc/static/bundles/*
 !hawc/static/bundles/.gitkeep
+summary-migration-*.csv

@@ -321,6 +321,10 @@ class EndpointManager(BaseManager):
         df3 = df3.reset_index().set_index(["dose regime id", "dose units id", "dose_group_id"])
 
         df4 = df4.reset_index()
+        # Ensure columns are float type before setting values that may include NaN
+        df4["noel"] = df4["noel"].astype("float64")
+        df4["loel"] = df4["loel"].astype("float64")
+        df4["fel"] = df4["fel"].astype("float64")
         df4.loc[:, "noel"] = df4.apply(get_doses, axis=1, args=("noel",))
         df4.loc[:, "loel"] = df4.apply(get_doses, axis=1, args=("loel",))
         df4.loc[:, "fel"] = df4.apply(get_doses, axis=1, args=("fel",))

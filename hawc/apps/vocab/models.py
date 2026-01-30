@@ -78,7 +78,8 @@ class Term(models.Model):
             columns=cols,
         )
         names = dict(constants.VocabularyTermType.choices)
-        all_df.loc[:, "type"] = all_df["type"].map(names)
+        # Convert type column to appropriate dtype before mapping
+        all_df["type"] = all_df["type"].map(names).astype("string")
         system_df = (
             all_df.query('type=="system"')
             .drop(columns=["type", "parent_id"])
