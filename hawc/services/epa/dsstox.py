@@ -51,11 +51,11 @@ class DssSubstance(NamedTuple):
             return cls.create_fake(dtxsid)
         if not re.compile(RE_DTXSID).fullmatch(dtxsid):
             raise ValueError(f"Invalid DTXSID: {dtxsid}")
-        if settings.CCTE_API_KEY is None and settings.IS_TESTING is False:
+        if settings.EPA_COMPTOX_API_KEY is None and settings.IS_TESTING is False:
             raise ValueError("Missing API key")
-        session = get_session(headers={"x-api-key": settings.CCTE_API_KEY})
+        session = get_session(headers={"x-api-key": settings.EPA_COMPTOX_API_KEY})
         response = session.get(
-            f"https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/{dtxsid}",
+            f"https://comptox.epa.gov/ctx-api/chemical/detail/search/by-dtxsid/{dtxsid}",
             timeout=15,
         )
         response_dict = response.json()

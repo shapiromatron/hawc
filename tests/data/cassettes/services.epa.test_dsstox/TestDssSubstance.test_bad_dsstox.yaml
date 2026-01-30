@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, zstd
       Connection:
       - keep-alive
       User-Agent:
@@ -13,42 +13,32 @@ interactions:
       x-api-key:
       - <omitted>
     method: GET
-    uri: https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/DTXSID123456789
+    uri: https://comptox.epa.gov/ctx-api/chemical/detail/search/by-dtxsid/DTXSID123456789
   response:
     body:
       string: "{\n  \"type\" : \"about:blank\",\n  \"title\" : \"Bad Request\",\n
         \ \"status\" : 400,\n  \"detail\" : \"dtxsid with value DTXSID123456789 not
         found.\",\n  \"instance\" : \"/chemical/detail/search/by-dtxsid/DTXSID123456789\"\n}"
     headers:
+      Access-Control-Allow-Origin:
+      - '*'
       Cache-Control:
       - max-age=0, must-revalidate, no-transform
       Connection:
-      - keep-alive
+      - close
       Content-Type:
       - application/problem+json
       Date:
-      - Thu, 05 Sep 2024 23:00:48 GMT
+      - Fri, 30 Jan 2026 15:03:25 GMT
+      Server:
+      - Apache
       Strict-Transport-Security:
-      - max-age=31536000
+      - "max-age=63072000; includeSubDomains; preload\xE2\x80\x9C"
       Transfer-Encoding:
       - chunked
-      Via:
-      - 1.1 5eb5e19c1a78889d10ff38f1551ed2aa.cloudfront.net (CloudFront)
-      X-Amz-Cf-Id:
-      - QkxUHQsw5P2OEfQguc-yW3T0fJuxR3T7mwIQcBFFi_Zu3pXZ8dC-Ug==
-      X-Amz-Cf-Pop:
-      - IAD89-C1
-      X-Cache:
-      - Error from cloudfront
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
-      X-Vcap-Request-Id:
-      - cc08d157-3ec9-40e6-4b23-cbdac3417363
-      X-Xss-Protection:
-      - 1; mode=block
+      Vary:
+      - Origin,Access-Control-Request-Method,Access-Control-Request-Headers
     status:
       code: 400
-      message: Bad Request
+      message: ''
 version: 1
