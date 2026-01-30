@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, zstd
       Connection:
       - keep-alive
       User-Agent:
@@ -13,77 +13,67 @@ interactions:
       x-api-key:
       - <omitted>
     method: GET
-    uri: https://api-ccte.epa.gov/chemical/detail/search/by-dtxsid/DTXSID7020970
+    uri: https://comptox.epa.gov/ctx-api/chemical/detail/search/by-dtxsid/DTXSID7020970
   response:
     body:
-      string: "{\n  \"id\" : \"1630792\",\n  \"msReadySmiles\" : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n
+      string: "{\n  \"id\" : 924126,\n  \"cpdataCount\" : null,\n  \"inchikey\" :
+        \"XITQUSLLOSKDTB-UHFFFAOYSA-N\",\n  \"wikipediaArticle\" : \"Nitrofen\",\n
+        \ \"dtxsid\" : \"DTXSID7020970\",\n  \"dtxcid\" : \"DTXCID30970\",\n  \"casrn\"
+        : \"1836-75-5\",\n  \"compoundId\" : 970,\n  \"genericSubstanceId\" : 20970,\n
+        \ \"preferredName\" : \"Nitrofen\",\n  \"activeAssays\" : 126,\n  \"molFormula\"
+        : \"C12H7Cl2NO3\",\n  \"monoisotopicMass\" : 282.9802985,\n  \"percentAssays\"
+        : 18.0,\n  \"pubchemCount\" : 116,\n  \"pubmedCount\" : 341.0,\n  \"sourcesCount\"
+        : 105,\n  \"qcLevel\" : 1,\n  \"qcLevelDesc\" : \"Level 1: Expert curated,
+        highest confidence in accuracy and consistency of unique chemical identifiers\",\n
+        \ \"stereo\" : \"0\",\n  \"isotope\" : 0,\n  \"multicomponent\" : 0,\n  \"totalAssays\"
+        : 696,\n  \"toxcastSelect\" : \"126/696\",\n  \"pubchemCid\" : 15787,\n  \"relatedSubstanceCount\"
+        : 0,\n  \"relatedStructureCount\" : 0,\n  \"hasStructureImage\" : 1,\n  \"iupacName\"
+        : \"2,4-Dichloro-1-(4-nitrophenoxy)benzene\",\n  \"smiles\" : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n
+        \ \"inchiString\" : \"InChI=1S/C12H7Cl2NO3/c13-8-1-6-12(11(14)7-8)18-10-4-2-9(3-5-10)15(16)17/h1-7H\\n\",\n
+        \ \"averageMass\" : 284.09,\n  \"qcNotes\" : null,\n  \"qsarReadySmiles\"
+        : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n  \"msReadySmiles\"
+        : \"CCNC1=NC(NCC)=NC(Cl)=N1.[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1,CON(C)C(=O)NC1=CC(Cl)=C(Cl)C=C1.[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1,[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n
         \ \"irisLink\" : null,\n  \"pprtvLink\" : \"Nitrofentechnicalgrade\",\n  \"descriptorStringTsv\"
         : \"0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t1\\t1\\t1\\t0\\t0\\t1\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t1\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\\t0\",\n
-        \ \"isMarkush\" : false,\n  \"cpdataCount\" : null,\n  \"wikipediaArticle\"
-        : \"Nitrofen\",\n  \"inchikey\" : \"XITQUSLLOSKDTB-UHFFFAOYSA-N\",\n  \"nhanes\"
-        : \"Y\",\n  \"toxvalData\" : \"Y\",\n  \"waterSolubilityTest\" : 1.86209E-6,\n
-        \ \"waterSolubilityOpera\" : 3.53106E-6,\n  \"viscosityCpCpTestPred\" : null,\n
-        \ \"vaporPressureMmhgTestPred\" : 4.48745E-7,\n  \"vaporPressureMmhgOperaPred\"
-        : 1.71599E-6,\n  \"thermalConductivity\" : 133.645,\n  \"tetrahymenaPyriformis\"
-        : 3.22107E-6,\n  \"surfaceTension\" : null,\n  \"soilAdsorptionCoefficient\"
-        : 10030.7,\n  \"oralRatLd50Mol\" : 0.00961612,\n  \"operaKmDaysOperaPred\"
-        : 7.23919,\n  \"octanolWaterPartition\" : 4.6398,\n  \"octanolAirPartitionCoeff\"
-        : 8.61388,\n  \"meltingPointDegcTestPred\" : 99.224,\n  \"meltingPointDegcOperaPred\"
-        : 70.1221,\n  \"hrFatheadMinnow\" : 1.06905E-6,\n  \"hrDiphniaLc50\" : 1.63682E-6,\n
-        \ \"henrysLawAtm\" : 6.79835E-5,\n  \"flashPointDegcTestPred\" : 184.658,\n
-        \ \"devtoxTestPred\" : 0.697,\n  \"density\" : 1.452,\n  \"boilingPointDegcTestPred\"
-        : 359.215,\n  \"boilingPointDegcOperaPred\" : 358.785,\n  \"biodegradationHalfLifeDays\"
-        : 3.71673,\n  \"bioconcentrationFactorTestPred\" : 899.498,\n  \"bioconcentrationFactorOperaPred\"
-        : 739.33,\n  \"atmosphericHydroxylationRate\" : 2.58539E-12,\n  \"amesMutagenicityTestPred\"
-        : 0.751,\n  \"pkaaOperaPred\" : 8.27,\n  \"pkabOperaPred\" : null,\n  \"dtxsid\"
-        : \"DTXSID7020970\",\n  \"dtxcid\" : \"DTXCID30970\",\n  \"casrn\" : \"1836-75-5\",\n
-        \ \"compoundId\" : 970,\n  \"genericSubstanceId\" : 20970,\n  \"preferredName\"
-        : \"Nitrofen\",\n  \"activeAssays\" : 122,\n  \"molFormula\" : \"C12H7Cl2NO3\",\n
-        \ \"monoisotopicMass\" : 282.9802985,\n  \"percentAssays\" : 18.0,\n  \"pubchemCount\"
-        : 116,\n  \"pubmedCount\" : 341.0,\n  \"sourcesCount\" : 94,\n  \"qcLevel\"
-        : 1,\n  \"qcLevelDesc\" : \"Level 1: Expert curated, highest confidence in
-        accuracy and consistency of unique chemical identifiers\",\n  \"stereo\" :
-        \"0\",\n  \"isotope\" : 0,\n  \"multicomponent\" : 0,\n  \"totalAssays\" :
-        685,\n  \"toxcastSelect\" : \"122/685\",\n  \"pubchemCid\" : 15787,\n  \"relatedSubstanceCount\"
-        : null,\n  \"relatedStructureCount\" : null,\n  \"hasStructureImage\" : 1,\n
-        \ \"iupacName\" : \"2,4-Dichloro-1-(4-nitrophenoxy)benzene\",\n  \"smiles\"
-        : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n  \"inchiString\" :
-        \"InChI=1S/C12H7Cl2NO3/c13-8-1-6-12(11(14)7-8)18-10-4-2-9(3-5-10)15(16)17/h1-7H\\n\",\n
-        \ \"averageMass\" : 284.09,\n  \"qcNotes\" : null,\n  \"qsarReadySmiles\"
-        : \"[O-][N+](=O)C1=CC=C(OC2=C(Cl)C=C(Cl)C=C2)C=C1\",\n  \"expocatMedianPrediction\"
-        : \"2.23E-07\",\n  \"expocat\" : \"Y\"\n}"
+        \ \"isMarkush\" : false,\n  \"expocatMedianPrediction\" : \"2.23E-07\",\n
+        \ \"expocat\" : \"Y\",\n  \"nhanes\" : \"Y\",\n  \"toxvalData\" : \"Y\",\n
+        \ \"waterSolubilityTest\" : 1.86209E-6,\n  \"waterSolubilityOpera\" : 3.53106E-6,\n
+        \ \"viscosityCpCpTestPred\" : null,\n  \"vaporPressureMmhgTestPred\" : 4.48745E-7,\n
+        \ \"vaporPressureMmhgOperaPred\" : 1.71599E-6,\n  \"thermalConductivity\"
+        : 133.645,\n  \"tetrahymenaPyriformis\" : 3.22107E-6,\n  \"surfaceTension\"
+        : null,\n  \"soilAdsorptionCoefficient\" : 10030.7,\n  \"oralRatLd50Mol\"
+        : 0.00961612,\n  \"operaKmDaysOperaPred\" : 7.23919,\n  \"octanolWaterPartition\"
+        : 4.6398,\n  \"octanolAirPartitionCoeff\" : 8.61388,\n  \"meltingPointDegcTestPred\"
+        : 99.224,\n  \"meltingPointDegcOperaPred\" : 70.1221,\n  \"hrFatheadMinnow\"
+        : 1.06905E-6,\n  \"hrDiphniaLc50\" : 1.63682E-6,\n  \"henrysLawAtm\" : 6.79835E-5,\n
+        \ \"flashPointDegcTestPred\" : 184.658,\n  \"devtoxTestPred\" : 0.697,\n  \"density\"
+        : 1.452,\n  \"boilingPointDegcTestPred\" : 359.215,\n  \"boilingPointDegcOperaPred\"
+        : 358.785,\n  \"biodegradationHalfLifeDays\" : 3.71673,\n  \"bioconcentrationFactorTestPred\"
+        : 899.498,\n  \"bioconcentrationFactorOperaPred\" : 739.33,\n  \"atmosphericHydroxylationRate\"
+        : 2.58539E-12,\n  \"amesMutagenicityTestPred\" : 0.751,\n  \"pkaaOperaPred\"
+        : 8.27,\n  \"pkabOperaPred\" : null\n}"
     headers:
+      Access-Control-Allow-Origin:
+      - '*'
       Cache-Control:
       - max-age=0, must-revalidate, no-transform
       Connection:
-      - keep-alive
+      - Keep-Alive
       Content-Type:
       - application/json
       Date:
-      - Thu, 05 Sep 2024 23:00:48 GMT
+      - Fri, 30 Jan 2026 15:03:26 GMT
+      Keep-Alive:
+      - timeout=5, max=1000
+      Server:
+      - Apache
       Strict-Transport-Security:
-      - max-age=31536000
+      - "max-age=63072000; includeSubDomains; preload\xE2\x80\x9C"
       Transfer-Encoding:
       - chunked
       Vary:
-      - Accept-Encoding
-      Via:
-      - 1.1 841dfa6074cf4b3b0718988f088a4ac2.cloudfront.net (CloudFront)
-      X-Amz-Cf-Id:
-      - cKB6pb7iIrw_ALhD-1OWz4kofsgGCdNDfvjVQZFCr5ySpWztDc1fHw==
-      X-Amz-Cf-Pop:
-      - IAD89-C1
-      X-Cache:
-      - Miss from cloudfront
-      X-Content-Type-Options:
-      - nosniff
-      X-Frame-Options:
-      - DENY
-      X-Vcap-Request-Id:
-      - c8208b1b-c47e-4d6b-480d-c87b7cebd89e
-      X-Xss-Protection:
-      - 1; mode=block
+      - Origin,Access-Control-Request-Method,Access-Control-Request-Headers
     status:
       code: 200
-      message: OK
+      message: ''
 version: 1
