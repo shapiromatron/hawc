@@ -8,8 +8,8 @@ from ..common.diagnostics import (
     clear_cache,
     diagnostic_500,
     diagnostic_cache,
-    diagnostic_celery_task,
     diagnostic_email,
+    diagnostic_task_test,
 )
 from . import forms, models
 
@@ -83,7 +83,7 @@ class HAWCUserAdmin(admin.ModelAdmin):
         set_password,
         clear_cache,
         diagnostic_500,
-        diagnostic_celery_task,
+        diagnostic_task_test,
         diagnostic_cache,
         diagnostic_email,
     )

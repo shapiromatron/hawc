@@ -1,19 +1,19 @@
 import json
+import logging
 
-from celery import shared_task
-from celery.utils.log import get_task_logger
 from django.apps import apps
 from django.db import transaction
 from django.db.models import Model
+from django_tasks import task
 
 from ...services.epa import hero
 from ...services.nih import pubmed
 from . import constants
 
-logger = get_task_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
-@shared_task
+@task
 def update_hero_content(ids: list[int]):
     """Fetch the latest data from HERO and update identifier object."""
 
@@ -33,7 +33,7 @@ def update_hero_content(ids: list[int]):
         ).update(content='{"status": "failed"}')
 
 
-@shared_task
+@task
 def update_hero_fields(ref_ids: list[int]):
     """
     Updates the reference fields with most recent content from HERO
@@ -73,7 +73,7 @@ def update_hero_fields(ref_ids: list[int]):
             )
 
 
-@shared_task
+@task
 def replace_hero_ids(replace: list[list[int]]):
     """
     Replace the identifier on each reference with the given HERO ID
@@ -116,7 +116,7 @@ def replace_hero_ids(replace: list[list[int]]):
             reference.identifiers.set(identifier_ids)
 
 
-@shared_task
+@task
 def update_pubmed_content(ids: list[int]):
     """Fetch the latest data from Pubmed and update identifier object."""
     Identifiers = apps.get_model("lit", "identifiers")
@@ -133,7 +133,7 @@ def update_pubmed_content(ids: list[int]):
     ).update(content='{"status": "failed"}')
 
 
-@shared_task
+@task
 def fix_pubmed_without_content():
     # Try getting pubmed data without content
     Identifiers = apps.get_model("lit", "identifiers")

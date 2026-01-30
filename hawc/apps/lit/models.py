@@ -7,8 +7,6 @@ from math import ceil
 from typing import Self
 from urllib import parse
 
-from celery import chain
-from celery.result import ResultBase
 from django.apps import apps
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
@@ -680,7 +678,7 @@ class Identifiers(models.Model):
 
     @staticmethod
     def update_pubmed_content(idents):
-        tasks.update_pubmed_content.delay([d.unique_id for d in idents])
+        tasks.update_pubmed_content.enqueue([d.unique_id for d in idents])
 
     @classmethod
     def existing_doi_map(cls, dois: list[str]) -> dict[str, int]:
@@ -1071,7 +1069,7 @@ class Reference(models.Model):
             )
 
     @classmethod
-    def update_hero_metadata(cls, assessment_id: int) -> ResultBase:
+    def update_hero_metadata(cls, assessment_id: int):
         """Update reference metadata for all references in an assessment.
 
         Async worker task; updates data from HERO and then applies new data to references.
@@ -1084,14 +1082,9 @@ class Reference(models.Model):
         hero_ids = identifiers.values_list("unique_id", flat=True)
         hero_ids = list(hero_ids)  # queryset to list for JSON serializability
 
-        # update content of hero identifiers
-        t1 = tasks.update_hero_content.si(hero_ids)
-
-        # update fields from content
-        t2 = tasks.update_hero_fields.si(reference_ids)
-
-        # run chained tasks
-        return chain(t1, t2)()
+        # call functions directly; not tasks on the task queue
+        tasks.update_hero_content.func(hero_ids)
+        tasks.update_hero_fields.func(reference_ids)
 
     @property
     def ref_full_citation(self):

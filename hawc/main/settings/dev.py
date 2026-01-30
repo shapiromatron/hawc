@@ -35,9 +35,8 @@ DJANGO_VITE["default"].update(
 # use console for email
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-# execute celery-tasks locally instead of sending to queue
-CELERY_TASK_ALWAYS_EAGER = True
-CELERY_TASK_EAGER_PROPAGATES = True
+# execute tasks synchronously in dev mode (no separate worker needed)
+TASKS["default"]["BACKEND"] = "django_tasks.backends.immediate.ImmediateBackend"
 
 # use a memory cache if no redis location specified
 CACHES["default"]["TIMEOUT"] = 60 * 10  # 10 minutes (in seconds)

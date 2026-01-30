@@ -1,11 +1,12 @@
-from celery import shared_task
-from celery.utils.log import get_task_logger
+import logging
+
 from django.apps import apps
+from django_tasks import task
 
-logger = get_task_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
-@shared_task
+@task
 def delete_orphan_relations(delete: bool = False):
     # remove orphan relations in cases where the db cannot do so directly
     Log = apps.get_model("assessment", "Log")
@@ -15,7 +16,7 @@ def delete_orphan_relations(delete: bool = False):
         Log.objects.create(message=message)
 
 
-@shared_task
+@task
 def add_time_spent(cache_name: str, object_id: int, assessment_id: int, content_type_id: int):
     apps.get_model("assessment", "TimeSpentEditing").add_time_spent(
         cache_name, object_id, assessment_id, content_type_id
