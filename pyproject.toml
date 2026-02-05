@@ -41,7 +41,7 @@ dependencies = [
   "billiard==4.2.4",
   "kombu==5.6.2",
   # utilities
-  "jsonschema==4.25.1",
+  "jsonschema==4.26.0",
   "lxml~=6.0.2",
   "psycopg2-binary==2.9.11",
   "redis==7.1.0",
@@ -50,12 +50,12 @@ dependencies = [
   "nh3~=0.3.2",
   "tinycss2==1.5.1",
   # computational
-  "numpy~=2.3.5",
-  "pandas==2.3.3",
+  "numpy~=2.4.1",
+  "pandas~=2.3.3",
   "openpyxl==3.1.5",
   "jinja2~=3.1.6",
-  "plotly==6.5.0",
-  "scipy~=1.16.3",
+  "plotly==6.5.2",
+  "scipy~=1.17.0",
   "pybmds==25.1",
   # exports
   "rispy==0.10.0",
@@ -65,12 +65,12 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   # build
-  "poethepoet~=0.39.0",
+  "poethepoet~=0.40.0",
   # lint and formatting tools
-  "ruff==0.14.10",
+  "ruff==0.14.14",
   "djhtml==3.0.10",
   # django development
-  "django-debug-toolbar~=6.1.0",
+  "django-debug-toolbar~=6.2.0",
   "django-browser-reload~=1.21.0",
   "django-extensions~=4.1",
   # tests
@@ -87,7 +87,7 @@ docs = [
 ]
 prod = [
   "django-anymail~=14.0",
-  "sentry_sdk~=2.48.0",
+  "sentry_sdk~=2.51.0",
 ]
 
 [project.scripts]

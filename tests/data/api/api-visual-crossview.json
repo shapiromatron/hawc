@@ -216,7 +216,7 @@
           "id": 4,
           "incidence": null,
           "isReported": true,
-          "lower_ci": 14.204375509086153,
+          "lower_ci": 14.204375509086137,
           "n": 20,
           "percentControlHigh": 7.024472775787359,
           "percentControlLow": -7.024472775787359,
@@ -229,7 +229,7 @@
           "significant": false,
           "stdev": 1.7,
           "treatment_effect": null,
-          "upper_ci": 15.795624490913847,
+          "upper_ci": 15.795624490913863,
           "variance": 1.7
         },
         {
@@ -240,7 +240,7 @@
           "id": 5,
           "incidence": null,
           "isReported": true,
-          "lower_ci": 10.110772627802172,
+          "lower_ci": 10.110772627802152,
           "n": 20,
           "percentControlHigh": -20.026936861067796,
           "percentControlLow": -33.30639647226554,
@@ -253,7 +253,7 @@
           "significant": false,
           "stdev": 1.9,
           "treatment_effect": null,
-          "upper_ci": 11.889227372197828,
+          "upper_ci": 11.889227372197848,
           "variance": 1.9
         },
         {
@@ -264,7 +264,7 @@
           "id": 6,
           "incidence": null,
           "isReported": true,
-          "lower_ci": 13.923566865234209,
+          "lower_ci": 13.923566865234186,
           "n": 20,
           "percentControlHigh": 8.356539421980315,
           "percentControlLow": -8.356539421980315,
@@ -277,7 +277,7 @@
           "significant": false,
           "stdev": 2.3,
           "treatment_effect": null,
-          "upper_ci": 16.076433134765793,
+          "upper_ci": 16.076433134765814,
           "variance": 2.3
         },
         {
@@ -288,7 +288,7 @@
           "id": 7,
           "incidence": null,
           "isReported": true,
-          "lower_ci": 10.9703683058762,
+          "lower_ci": 10.970368305876177,
           "n": 20,
           "percentControlHigh": -12.442991867735543,
           "percentControlLow": -27.557008132264457,
@@ -301,7 +301,7 @@
           "significant": false,
           "stdev": 2.2,
           "treatment_effect": null,
-          "upper_ci": 13.0296316941238,
+          "upper_ci": 13.029631694123823,
           "variance": 2.2
         },
         {
@@ -312,7 +312,7 @@
           "id": 8,
           "incidence": null,
           "isReported": true,
-          "lower_ci": 8.438382712296109,
+          "lower_ci": 8.438382712296097,
           "n": 20,
           "percentControlHigh": -35.39838080671596,
           "percentControlLow": -44.60161919328404,
@@ -325,7 +325,7 @@
           "significant": true,
           "stdev": 1.2,
           "treatment_effect": null,
-          "upper_ci": 9.561617287703891,
+          "upper_ci": 9.561617287703903,
           "variance": 1.2
         }
       ],
@@ -1359,7 +1359,7 @@
           "id": 19,
           "incidence": null,
           "isReported": true,
-          "lower_ci": 4.216327873683602,
+          "lower_ci": 4.2163278736835785,
           "n": 20,
           "percentControlHigh": 26.27696425297329,
           "percentControlLow": -26.27696425297329,
@@ -1372,7 +1372,7 @@
           "significant": false,
           "stdev": 2.23,
           "treatment_effect": null,
-          "upper_ci": 6.303672126316398,
+          "upper_ci": 6.303672126316421,
           "variance": 2.23
         },
         {
@@ -1383,7 +1383,7 @@
           "id": 20,
           "incidence": null,
           "isReported": true,
-          "lower_ci": 5.0720188225627325,
+          "lower_ci": 5.072018822562718,
           "n": 20,
           "percentControlHigh": 33.254650788239566,
           "percentControlLow": -14.243243944133104,
@@ -1396,7 +1396,7 @@
           "significant": false,
           "stdev": 1.47,
           "treatment_effect": null,
-          "upper_ci": 6.447981177437267,
+          "upper_ci": 6.447981177437281,
           "variance": 1.47
         },
         {
@@ -1407,7 +1407,7 @@
           "id": 21,
           "incidence": null,
           "isReported": true,
-          "lower_ci": 4.974004416142824,
+          "lower_ci": 4.974004416142798,
           "n": 20,
           "percentControlHigh": 46.4136359343544,
           "percentControlLow": -13.333788025609156,
@@ -1420,7 +1420,7 @@
           "significant": false,
           "stdev": 2.47,
           "treatment_effect": null,
-          "upper_ci": 7.285995583857176,
+          "upper_ci": 7.2859955838572015,
           "variance": 2.47
         },
         {
@@ -1431,7 +1431,7 @@
           "id": 22,
           "incidence": null,
           "isReported": true,
-          "lower_ci": 7.191647729619403,
+          "lower_ci": 7.19164772961938,
           "n": 20,
           "percentControlHigh": 91.23110297490979,
           "percentControlLow": 22.07688181596476,
@@ -1444,7 +1444,7 @@
           "significant": false,
           "stdev": 2.24,
           "treatment_effect": null,
-          "upper_ci": 9.288352270380598,
+          "upper_ci": 9.28835227038062,
           "variance": 2.24
         },
         {
@@ -1455,7 +1455,7 @@
           "id": 23,
           "incidence": null,
           "isReported": true,
-          "lower_ci": 8.499897525984942,
+          "lower_ci": 8.499897525984926,
           "n": 20,
           "percentControlHigh": 110.5751033361099,
           "percentControlLow": 40.37546700609546,
@@ -1468,7 +1468,7 @@
           "significant": false,
           "stdev": 1.56,
           "treatment_effect": null,
-          "upper_ci": 9.96010247401506,
+          "upper_ci": 9.960102474015075,
           "variance": 1.56
         }
       ],
