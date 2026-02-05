@@ -34,9 +34,7 @@ class TestReference:
         )
         old_titles = [ref.title for ref in refs]
 
-        # ensure command is successful
-        ret = Reference.update_hero_metadata(refs[0].assessment_id)
-        assert ret.successful()
+        Reference.update_hero_metadata(refs[0].assessment_id)
 
         # ensure references changed
         refs = refs.all()

@@ -4,8 +4,6 @@ from collections import Counter
 from io import StringIO
 
 import pandas as pd
-from celery import chain
-from celery.result import ResultBase
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.db.models import Q
@@ -383,21 +381,13 @@ class ReferenceReplaceHeroIdSerializer(serializers.Serializer):
 
         return replace
 
-    def execute(self) -> ResultBase:
-        # import missing identifiers
+    def execute(self):
+        # Import missing identifiers
         models.Identifiers.objects.bulk_create_hero_ids(self.fetched_content)
-
-        # set hero ref
-        t1 = tasks.replace_hero_ids.si(self.validated_data["replace"])
-
-        # update content
-        t2 = tasks.update_hero_content.si(self.hero_ids)
-
-        # update fields with content
-        t3 = tasks.update_hero_fields.si(self.ref_ids)
-
-        # run chained tasks
-        return chain(t1, t2, t3)()
+        # call these 3 tasks directly; do not enqueue in the task queue
+        tasks.replace_hero_ids.func(self.validated_data["replace"])
+        tasks.update_hero_content.func(self.hero_ids)
+        tasks.update_hero_fields.func(self.ref_ids)
 
 
 class FilterReferences(PydanticDrfSerializer):

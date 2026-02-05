@@ -83,7 +83,7 @@ services:
             - ./data/private:/app/private
             - ./data/public:/app/public
         healthcheck:
-            test: celery --app=hawc.main.celery inspect ping -d celery@$$HOSTNAME --json
+            test: pgrep -f "manage.py db_worker"
             interval: 60s
             timeout: 10s
             retries: 3
@@ -106,7 +106,7 @@ services:
             - ./data/private:/app/private
             - ./data/public:/app/public
         healthcheck:
-            test: celery --app=hawc.main.celery inspect ping  --json
+            test: pgrep -f "manage.py run_scheduler"
             interval: 60s
             timeout: 10s
             retries: 3

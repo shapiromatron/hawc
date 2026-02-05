@@ -110,7 +110,7 @@ class SessionBmdUpdateSerializer(serializers.ModelSerializer):
         self.instance.save()
 
         # trigger BMD model execution
-        tasks.execute.delay(self.instance.id)
+        tasks.execute.enqueue(self.instance.id)
 
     @transaction.atomic
     def select(self):

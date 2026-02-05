@@ -1,31 +1,31 @@
+import logging
 from datetime import timedelta
 
-from celery import shared_task
-from celery.utils.log import get_task_logger
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.utils.timezone import now
+from django_tasks import task
 from rest_framework.authtoken.models import Token
 
-logger = get_task_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
-@shared_task
-def diagnostic_celery_task(id_: str):
+@task
+def diagnostic_task(id_: str):
     user = get_user_model().objects.get(id=id_)
-    logger.info(f"Diagnostic celery task triggered by: {user}")
+    logger.info(f"Diagnostic task triggered by: {user}")
     return dict(success=True, when=str(now()), user=user.email)
 
 
-@shared_task
+@task
 def worker_healthcheck():
     from .diagnostics import worker_healthcheck
 
     worker_healthcheck.push()
 
 
-@shared_task
+@task
 def destroy_old_api_tokens():
     deletion_date = now() - timedelta(seconds=settings.SESSION_COOKIE_AGE)
     qs = Token.objects.filter(created__lt=deletion_date)
@@ -33,7 +33,7 @@ def destroy_old_api_tokens():
     qs.delete()
 
 
-@shared_task
+@task
 def create_initial_revisions():
     """
     Most apis/views should create initial revisions; however if we're importing data from
