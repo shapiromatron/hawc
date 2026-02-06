@@ -357,7 +357,9 @@ class IdentifiersManager(BaseManager):
                         "wosid": ref["json"].get("wosid", ""),
                     }
                 )
-            df = pd.DataFrame(df).replace("", np.nan)
+            df = pd.DataFrame(df)
+            # Replace empty strings with NaN using mask to avoid downcasting warning
+            df = df.mask(df == "", np.nan)
             hero_dupes = df[df.HEROID.notna() & df.HEROID.duplicated(keep=False)]
             pubmed_dupes = df[df.PMID.notna() & df.PMID.duplicated(keep=False)]
             doi_dupes = df[df.doi.notna() & df.doi.duplicated(keep=False)]

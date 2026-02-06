@@ -140,6 +140,20 @@ testpaths = [
   "tests/integration",
   "tests/client",
 ]
+filterwarnings = [
+  # Ignore Django 6.0 deprecation warnings that can't be fixed in Django 5.2
+  "ignore::django.utils.deprecation.RemovedInDjango60Warning",
+  # Ignore pandas FutureWarning about groupby.apply operating on grouping columns
+  # These functions return complete DataFrames and require grouping columns
+  "ignore:DataFrameGroupBy.apply operated on the grouping columns:FutureWarning",
+  # Ignore pandas FutureWarning about DataFrame concatenation with empty entries
+  "ignore:The behavior of DataFrame concatenation with empty or all-NA entries:FutureWarning",
+  # Ignore ResourceWarnings from external libraries (plotly, tempfile, rest_framework)
+  "ignore::ResourceWarning",
+  # Ignore warnings from external libraries
+  "ignore:Initial Value < Min Value:UserWarning",
+  "ignore:Pagination may yield inconsistent results",
+]
 
 [tool.coverage.run]
 omit = [

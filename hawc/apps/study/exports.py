@@ -61,7 +61,7 @@ class StudyExport(ModelExport):
         # cast from string to null
         doi = self.get_column_name("doi")
         if doi in df.columns:
-            df[doi] = df[doi].replace("", np.nan)
+            df[doi] = df[doi].mask(df[doi] == "", np.nan)
 
         # clean html text
         summary = self.get_column_name("summary")
