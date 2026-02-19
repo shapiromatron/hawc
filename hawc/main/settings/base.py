@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 from datetime import datetime
@@ -48,8 +49,16 @@ HAWC_FLAVOR = os.getenv("HAWC_FLAVOR", "PRIME")
 HAWC_FEATURES = FeatureFlags.from_env("HAWC_FEATURE_FLAGS")
 
 # Storage
+storage_backend_json = os.environ.get(
+    "STORAGE_BACKEND_JSON", '{"BACKEND": "django.core.files.storage.FileSystemStorage"}'
+)
+storage_private_backend_json = os.environ.get(
+    "STORAGE_PRIVATE_BACKEND_JSON",
+    f'{{"BACKEND": "django.core.files.storage.FileSystemStorage", "OPTIONS": {{"location": "{PRIVATE_DATA_ROOT}"}}}}',
+)
 STORAGES = {
-    "default": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    "default": json.loads(storage_backend_json),
+    "private": json.loads(storage_private_backend_json),
     "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
 }
 
