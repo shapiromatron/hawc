@@ -35,7 +35,7 @@ services:
   web:
     restart: always
     image: hawc-app:latest
-    command: python /app/bin/commands.py web
+    command: python /app/bin/commands.py sync_web
     depends_on:
       postgres:
         condition: service_healthy
