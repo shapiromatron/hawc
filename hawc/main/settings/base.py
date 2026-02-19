@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 from datetime import datetime
@@ -46,6 +47,20 @@ HAWC_FLAVOR = os.getenv("HAWC_FLAVOR", "PRIME")
 
 # Feature flags
 HAWC_FEATURES = FeatureFlags.from_env("HAWC_FEATURE_FLAGS")
+
+# Storage
+storage_backend_json = os.environ.get(
+    "STORAGE_BACKEND_JSON", '{"BACKEND": "django.core.files.storage.FileSystemStorage"}'
+)
+storage_private_backend_json = os.environ.get(
+    "STORAGE_PRIVATE_BACKEND_JSON",
+    f'{{"BACKEND": "django.core.files.storage.FileSystemStorage", "OPTIONS": {{"location": "{PRIVATE_DATA_ROOT}"}}}}',
+)
+STORAGES = {
+    "default": json.loads(storage_backend_json),
+    "private": json.loads(storage_private_backend_json),
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}
 
 # Template processors
 TEMPLATES = [
@@ -309,7 +324,7 @@ PUBMED_API_KEY = os.getenv("PUBMED_API_KEY")
 PUBMED_MAX_QUERY_SIZE = 10000
 
 # CCTE API key
-CCTE_API_KEY = os.getenv("CCTE_API_KEY")
+EPA_COMPTOX_API_KEY = os.getenv("EPA_COMPTOX_API_KEY")
 
 # HERO API key
 HERO_API_KEY = os.getenv("HERO_API_KEY")
