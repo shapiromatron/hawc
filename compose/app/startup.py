@@ -13,59 +13,37 @@ class Cmd(StrEnum):
     workers = auto()
 
 
-def run_manage(*args):
-    subprocess.run(["manage", *args], check=True)  # noqa: S607
+def _run_cmd(text: str):
+    cmd, args = text.split(" ", 1)
+    os.execv(cmd, args.split())  # noqa: S606
 
 
 def run_cron():
-    os.execv(  # noqa: S606
-        "/usr/local/bin/celery",
-        ["celery", "--app=hawc.main.celery", "beat", "--loglevel=INFO"],
-    )
+    _run_cmd("/usr/local/bin/celery celery --app=hawc.main.celery beat--loglevel=INFO")
 
 
 def run_worker():
-    os.execv(  # noqa: S606
-        "/usr/local/bin/celery",
-        ["celery", "--app=hawc.main.celery", "worker", "--loglevel=INFO"],
-    )
+    _run_cmd("/usr/local/bin/celery celery --app=hawc.main.celery worker --loglevel=INFO")
 
 
 def run_web():
-    os.execv(  # noqa: S606
-        "/usr/local/bin/granian",
-        [
-            "granian",
-            "--interface",
-            "wsgi",
-            "--host",
-            "0.0.0.0",  # noqa: S104
-            "--port",
-            "5000",
-            "--workers",
-            "3",
-            "--workers-lifetime",
-            "3600",
-            "--respawn-interval",
-            "60",
-            "--access-log",
-            "--respawn-failed-workers",
-            "hawc.main.wsgi:application",
-        ],
+    _run_cmd(
+        "/usr/local/bin/granian granian --interface wsgi --host 0.0.0.0 --port 5000 --workers 3 --workers-lifetime 3600 --respawn-interval 60 --access-log --respawn-failed-workers hawc.main.wsgi:application"
     )
 
 
 def run_sync():
-    if os.environ.get("HAWC_LOAD_TEST_DB") == "1":
-        run_manage("load_test_db")
-    for cmd in [
+    cmds = [
         ("clear_cache",),
         ("clearsessions",),
         ("collectstatic", "--noinput"),
         ("migrate", "--noinput"),
         ("recreate_views",),
-    ]:
-        run_manage(*cmd)
+    ]
+    if os.environ.get("HAWC_LOAD_TEST_DB") == "1":
+        cmds.insert(0, ("load_test_db",))
+    for cmd in cmds:
+        subprocess.run(["/usr/local/bin/manage", *cmd], check=True)
 
 
 def main():
