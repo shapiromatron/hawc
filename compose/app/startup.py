@@ -17,6 +17,20 @@ def run_manage(*args):
     subprocess.run(["manage", *args], check=True)  # noqa: S607
 
 
+def run_cron():
+    os.execv(  # noqa: S606
+        "/usr/local/bin/celery",
+        ["celery", "--app=hawc.main.celery", "beat", "--loglevel=INFO"],
+    )
+
+
+def run_worker():
+    os.execv(  # noqa: S606
+        "/usr/local/bin/celery",
+        ["celery", "--app=hawc.main.celery", "worker", "--loglevel=INFO"],
+    )
+
+
 def run_web():
     os.execv(  # noqa: S606
         "/usr/local/bin/granian",
@@ -61,15 +75,9 @@ def main():
 
     match a.cmd:
         case Cmd.cron:
-            os.execv(  # noqa: S606
-                "/usr/local/bin/celery",
-                ["celery", "--app=hawc.main.celery", "beat", "--loglevel=INFO"],
-            )
+            run_cron()
         case Cmd.workers:
-            os.execv(  # noqa: S606
-                "/usr/local/bin/celery",
-                ["celery", "--app=hawc.main.celery", "worker", "--loglevel=INFO"],
-            )
+            run_worker()
         case Cmd.web:
             run_web()
         case Cmd.sync:
