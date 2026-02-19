@@ -49,6 +49,10 @@ elif email_backend == "CONSOLE":
 else:
     raise ValueError(f"Unknown email backend: {email_backend}")
 
+storage_backend_json = os.environ.get("STORAGE_BACKEND_JSON", "")
+if storage_backend_json:
+    STORAGES["default"] = json.loads(storage_backend_json)
+
 LOGGING["loggers"]["django"]["handlers"] = ["console", "file"]
 LOGGING["loggers"]["hawc"]["handlers"] = ["console", "file"]
 LOGGING["loggers"]["hawc.request"]["handlers"] = ["console", "hawc-request"]

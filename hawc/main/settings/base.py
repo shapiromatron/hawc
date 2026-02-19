@@ -47,6 +47,12 @@ HAWC_FLAVOR = os.getenv("HAWC_FLAVOR", "PRIME")
 # Feature flags
 HAWC_FEATURES = FeatureFlags.from_env("HAWC_FEATURE_FLAGS")
 
+# Storage
+STORAGES = {
+    "default": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}
+
 # Template processors
 TEMPLATES = [
     {
