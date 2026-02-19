@@ -39,4 +39,14 @@ EXTERNAL_RESOURCES = None
 if HERO_API_KEY is None:
     HERO_API_KEY = "secret"
 
+# Storage
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "private": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {"location": PRIVATE_DATA_ROOT},
+    },
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}
+
 logging.disable(logging.CRITICAL)

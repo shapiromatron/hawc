@@ -12,6 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.core.cache import cache
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
 from django.http import HttpRequest
 from django.template import RequestContext, Template
@@ -1081,20 +1082,22 @@ class DatasetRevision(models.Model):
         return self.try_read_df(self.data, self.metadata["extension"], self.excel_worksheet_name)
 
     def data_exists(self) -> bool:
+        """Check if the dataset file exists in storage (works with filesystem and S3)."""
         try:
-            _ = self.data.file
-            return True
-        except FileNotFoundError:
-            logger.error(f"DatasetRevision {self.id} not found: {self.data.path}")
+            return self.data.storage.exists(self.data.name)
+        except Exception:
+            logger.error(f"DatasetRevision {self.id} not found: {self.data.name}")
             return False
 
     @classmethod
-    def try_read_df(cls, data, suffix: str, worksheet_name: str | None = None) -> pd.DataFrame:
+    def try_read_df(
+        cls, data: InMemoryUploadedFile, suffix: str, worksheet_name: str | None = None
+    ) -> pd.DataFrame:
         """
         Try to load and return a pandas dataframe.
 
         Args:
-            data: File-like object
+            data: InMemoryUploadedFile = File-like object
             suffix: str = File suffix
             worksheet_name: Optional[str] = Excel worksheet name, or empty string
 
