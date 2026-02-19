@@ -88,6 +88,7 @@ docs = [
 prod = [
   "django-anymail~=14.0",
   "sentry_sdk~=2.51.0",
+  "django-storages[s3]~=1.14.6",
 ]
 
 [project.scripts]

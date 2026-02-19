@@ -25,6 +25,14 @@ DATABASES["default"]["TEST"] = {"NAME": "hawc-test"}
 IS_TESTING = True
 
 PRIVATE_DATA_ROOT = PROJECT_ROOT / "tests/data/private-data"
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "private": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "OPTIONS": {"location": PRIVATE_DATA_ROOT},
+    },
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}
 
 PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
 
