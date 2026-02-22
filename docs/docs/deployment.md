@@ -47,13 +47,7 @@ cp ~/dev/hawc/compose/nginx/conf/nginx.example.conf ./data/nginx/nginx.conf
 cp ~/dev/hawc/compose/dc-deploy.yml ./docker-compose.yml
 cp ~/dev/hawc/compose/example.env ./.env
 
-# start containers, order is important
-# ... start the backend services
-docker compose up -d redis postgres
-# ... one time filesystem/database changes
-docker-compose run --no-deps --rm sync
-# ... start applications
-docker-compose up -d web workers cron nginx
+docker compose up -d
 
 # should be running, a few example commands for testing
 # check static files
