@@ -38,8 +38,7 @@ uv venv --python=3.14
 source ./.venv/bin/activate
 
 # install requirements
-uv pip install -e ".[dev,docs]"
-uv pip install -e client
+uv pip install --with dev -e .
 
 # create a PostgreSQL database and superuser
 createuser --superuser --no-password hawc
@@ -66,20 +65,7 @@ python -m pip install -U uv
 
 :: install python requirements
 cd %HOMEPATH%\dev\hawc
-uv pip install -e ".[dev,docs]"
-uv pip install -e client
-
-:: setup and start PostgreSQL; in this example we'll put it in dev
-cd %HOMEPATH%\dev
-mkdir pgdata
-pg_ctl -D pgdata initdb
-mkdir pgdata\logs
-pg_ctl -D pgdata -l pgdata\logs\logfile start
-
-:: create our superuser and main/test databases
-createuser --superuser --no-password hawc
-createdb -T template0 -E UTF8 hawc
-createdb -T template0 -E UTF8 hawc-test
+uv pip install --with dev -e .
 ```
 
 ## Running the application
