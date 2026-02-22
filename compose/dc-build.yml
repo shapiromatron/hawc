@@ -2,5 +2,5 @@ services:
   app:
     env_file: .env
     build:
-      dockerfile: app/hawc.Dockerfile
+      dockerfile: compose/app/Dockerfile
       context: .
