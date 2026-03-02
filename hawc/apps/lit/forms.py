@@ -332,8 +332,8 @@ class SearchCopyForm(CopyForm):
         self.fields["selector"].queryset = models.Search.objects.copyable(self.user).select_related(
             "assessment"
         )
-        self.fields["selector"].label_from_instance = (
-            lambda obj: f"{obj.assessment} | {{{obj.get_search_type_display()}}} | {obj}"
+        self.fields["selector"].label_from_instance = lambda obj: (
+            f"{obj.assessment} | {{{obj.get_search_type_display()}}} | {obj}"
         )
 
     def get_success_url(self):
