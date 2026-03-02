@@ -1,11 +1,11 @@
 import json
 import os
-from enum import Enum
+from enum import StrEnum
 
 from pydantic import BaseModel
 
 
-class AuthProvider(str, Enum):
+class AuthProvider(StrEnum):
     django = "django"
     external = "external"
 

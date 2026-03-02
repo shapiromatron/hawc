@@ -22,20 +22,20 @@ dependencies = [
   # web application
   "Django~=5.2.11",
   "django-crispy-forms==2.5",
-  "crispy-bootstrap4==2025.6",
+  "crispy-bootstrap4==2026.2",
   "django-filter==25.2",
   "django-redis==6.0.0",
   "django-reversion==6.1.0",
   "django-autocomplete-light==3.12.1",
   "django-taggit==6.1.0",
-  "django-treebeard==4.8.0",
+  "django-treebeard==5.0.5",
   "djangorestframework==3.16.1",
   "drf-spectacular~=0.29.0",
   "django-vite==3.1.0",
   "uritemplate==4.2.0",
   "inflection==0.5.1",
   "pyyaml==6.0.3",
-  "granian~=2.6.1",
+  "granian~=2.7.1",
   # tasks
   "celery==5.6.2",
   "billiard==4.2.4",
@@ -44,7 +44,7 @@ dependencies = [
   "jsonschema==4.26.0",
   "lxml~=6.0.2",
   "psycopg2-binary==2.9.11",
-  "redis==7.1.0",
+  "redis==7.2.0",
   "requests~=2.32.5",
   "pydantic~=2.12.4",
   "nh3~=0.3.2",
@@ -65,9 +65,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   # build
-  "poethepoet~=0.40.0",
+  "poethepoet~=0.41.0",
   # lint and formatting tools
-  "ruff==0.14.14",
+  "ruff==0.15.2",
   "djhtml==3.0.10",
   # django development
   "django-debug-toolbar~=6.2.0",
@@ -76,10 +76,10 @@ dev = [
   # tests
   "coverage~=7.13.1",
   "pytest~=9.0.1",
-  "pytest-django~=4.11.1",
+  "pytest-django~=4.12.0",
   "vcrpy==8.1.1",
   "pytest-recording==0.13.4",
-  "playwright~=1.57.0",
+  "playwright~=1.58.0",
   "pytest-playwright~=0.7.1",
 ]
 docs = [
@@ -87,7 +87,7 @@ docs = [
 ]
 prod = [
   "django-anymail~=14.0",
-  "sentry_sdk~=2.51.0",
+  "sentry_sdk~=2.53.0",
   "django-storages[s3]~=1.14.6",
 ]
 
@@ -101,7 +101,7 @@ Source = "https://github.com/shapiromatron/hawc"
 
 # --- --- --- --- --- --- --- --- --- --- BUILD --- --- --- --- --- --- --- --- --- ---
 [build-system]
-requires = ["uv_build>=0.9.18,<0.10.0"]
+requires = ["uv_build>=0.9.18,<0.11.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]

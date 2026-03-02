@@ -572,11 +572,13 @@ class OutcomeDataPivot(FlatFileExporter):
         )
         df["key"] = df["result_group-id"]
         df["statistical significance"] = df.apply(
-            lambda x: x["result_group-p_value_qualifier"]
-            if pd.isna(x["result_group-p_value"])
-            else f"{x['result_group-p_value']:g}"
-            if x["result_group-p_value_qualifier"] in ["=", "-", "n.s."]
-            else f"{x['result_group-p_value_qualifier']}{x['result_group-p_value']:g}",
+            lambda x: (
+                x["result_group-p_value_qualifier"]
+                if pd.isna(x["result_group-p_value"])
+                else f"{x['result_group-p_value']:g}"
+                if x["result_group-p_value_qualifier"] in ["=", "-", "n.s."]
+                else f"{x['result_group-p_value_qualifier']}{x['result_group-p_value']:g}"
+            ),
             axis="columns",
         )
         df = df.drop(columns="result_group-p_value_qualifier")
