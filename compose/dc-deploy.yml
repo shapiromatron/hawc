@@ -1,126 +1,131 @@
 services:
+  # https://hub.docker.com/hardened-images/catalog/dhi/postgres
+  postgres:
+    restart: always
+    image: dhi.io/postgres:18-alpine3.22
+    env_file: .env
+    volumes:
+      - /my/data/postgres/data:/var/lib/postgresql
+      - /my/data/postgres/backups:/app/data/backups
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 30s
+      timeout: 2s
+      retries: 3
+      start_period: 10s
+      start_interval: 2s
 
-    postgres:
-        restart: always
-        image: hawc_postgres
-        env_file: .env
-        volumes:
-            - ./data/postgres/data:/var/lib/postgresql/data
-            - ./data/postgres/backups:/app/data/backups
-        healthcheck:
-            test: pg_isready -U $$POSTGRES_USER
-            interval: 60s
-            timeout: 5s
-            retries: 3
-            start_period: 30s
-            start_interval: 5s
+  # https://hub.docker.com/hardened-images/catalog/dhi/redis
+  redis:
+    restart: always
+    image: dhi.io/redis:8
+    env_file: .env
+    volumes:
+      - /my/data/redis/redis.conf:/etc/redis/redis.conf
+    ports:
+      - 6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "$$REDIS_PASSWORD", "ping"]
+      interval: 30s
+      timeout: 2s
+      retries: 3
+      start_period: 10s
+      start_interval: 2s
 
-    redis:
-        restart: always
-        image: hawc_redis
-        command: /bin/sh -c "redis-server --requirepass $$REDIS_PASSWORD"
-        env_file: .env
-        healthcheck:
-            test: redis-cli -a $$REDIS_PASSWORD ping
-            interval: 60s
-            timeout: 5s
-            retries: 3
-            start_period: 30s
-            start_interval: 5s
+  web:
+    restart: always
+    image: hawc-app:latest
+    command: python /app/bin/commands.py sync_web
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true
+      redis:
+        condition: service_healthy
+        restart: true
+    volumes:
+      - /my/data/hawc:/data
+    env_file: .env
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import sys, pathlib; sys.exit(0) if 'granian' in pathlib.Path('/proc/1/cmdline').read_text() else sys.exit(1)",
+        ]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+      start_interval: 10s
 
-    sync:
-        restart: on-failure
-        image: hawc_app
-        command: /app/bin/sync.sh
-        depends_on:
-            postgres:
-                condition: service_healthy
-                restart: true
-            redis:
-                condition: service_healthy
-                restart: true
-        env_file: .env
-        volumes:
-        - ./data/private:/app/private
-        - ./data/public:/app/public
+  worker:
+    restart: always
+    image: hawc-app:latest
+    command: python /app/bin/commands.py worker
+    depends_on:
+      web:
+        condition: service_healthy
+        restart: true
+    volumes:
+      - /my/data/hawc:/data
+    env_file: .env
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/app/.venv/bin/celery",
+          "--app=hawc.main.celery",
+          "inspect",
+          "ping",
+          "--json",
+        ]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+      start_interval: 10s
 
-    web:
-        restart: always
-        image: hawc_app
-        command: /app/bin/web.sh
-        depends_on:
-            postgres:
-                condition: service_healthy
-                restart: true
-            redis:
-                condition: service_healthy
-                restart: true
-        env_file: .env
-        volumes:
-            - ./data/private:/app/private
-            - ./data/public:/app/public
-        healthcheck:
-            test: nc -z 0.0.0.0 5000
-            interval: 60s
-            timeout: 5s
-            retries: 3
-            start_period: 30s
-            start_interval: 5s
+  cron:
+    restart: always
+    image: hawc-app:latest
+    command: python /app/bin/commands.py cron
+    depends_on:
+      web:
+        condition: service_healthy
+        restart: true
+    volumes:
+      - /my/data/hawc:/data
+    env_file: .env
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/app/.venv/bin/celery",
+          "--app=hawc.main.celery",
+          "inspect",
+          "ping",
+          "--json",
+        ]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+      start_interval: 10s
 
-    workers:
-        restart: always
-        image: hawc_app
-        command: /app/bin/workers.sh
-        depends_on:
-            postgres:
-                condition: service_healthy
-                restart: true
-            redis:
-                condition: service_healthy
-                restart: true
-        env_file: .env
-        volumes:
-            - ./data/private:/app/private
-            - ./data/public:/app/public
-        healthcheck:
-            test: celery --app=hawc.main.celery inspect ping -d celery@$$HOSTNAME --json
-            interval: 60s
-            timeout: 10s
-            retries: 3
-            start_period: 30s
-            start_interval: 5s
-
-    cron:
-        restart: always
-        image: hawc_app
-        command: /app/bin/cron.sh
-        depends_on:
-            postgres:
-                condition: service_healthy
-                restart: true
-            redis:
-                condition: service_healthy
-                restart: true
-        env_file: .env
-        volumes:
-            - ./data/private:/app/private
-            - ./data/public:/app/public
-        healthcheck:
-            test: celery --app=hawc.main.celery inspect ping  --json
-            interval: 60s
-            timeout: 10s
-            retries: 3
-            start_period: 30s
-            start_interval: 5s
-
-    nginx:
-        image: hawc_nginx
-        depends_on:
-            web:
-                condition: service_healthy
-                restart: true
-        ports:
-            - "0.0.0.0:8000:8000"
-        volumes:
-            - ./data/public:/app/public
-            - ./data/nginx/nginx.conf:/etc/nginx/nginx.conf
+  # https://hub.docker.com/hardened-images/catalog/dhi/caddy
+  caddy:
+    restart: always
+    image: dhi.io/caddy:2
+    volumes:
+      - /my/data/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - /my/data/hawc/public:/usr/share/caddy/hawc:ro
+      - /my/data/caddy/data:/data
+    depends_on:
+      web:
+        condition: service_healthy
+        restart: true
+    ports:
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
