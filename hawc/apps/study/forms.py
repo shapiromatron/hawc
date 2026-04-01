@@ -28,6 +28,7 @@ class BaseStudyForm(UDFModelFormMixin, forms.ModelForm):
             "in_vitro",
             "epi",
             "epi_meta",
+            "mechanistic",
             "eco",
             "coi_reported",
             "coi_details",
@@ -64,7 +65,7 @@ class BaseStudyForm(UDFModelFormMixin, forms.ModelForm):
         if "authors" in self.fields:
             helper.add_row("authors", 2, "col-md-6")
         helper.add_row("short_citation", 2, "col-md-6")
-        helper.add_row("bioassay", 5, ["col-md-3", "col-md-2", "col-md-2", "col-md-3", "col-md-2"])
+        helper.add_row("bioassay", 6, ["col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-2", "col-md-2"])
         helper.add_row("coi_reported", 2, "col-md-6")
         helper.add_row("funding_source", 2, "col-md-6")
         helper.add_row("contact_author", 2, "col-md-6")
@@ -133,6 +134,7 @@ class ReferenceStudyForm(BaseStudyForm):
             "in_vitro",
             "epi",
             "epi_meta",
+            "mechanistic",
             "eco",
             "coi_reported",
             "coi_details",
