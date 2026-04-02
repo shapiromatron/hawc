@@ -1,6 +1,6 @@
 [project]
 name = "hawc"
-version = "2025.1"
+version = "2026.1"
 description = "A content management system for human health assessments."
 license = {file = "LICENSE"}
 authors = [{name = "Andy Shapiro", email = "shapiromatron@gmail.com"}]
