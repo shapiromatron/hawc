@@ -57,6 +57,12 @@
             <span class="dropdown-header">Ecology editing</span>
             <a class="dropdown-item" href="{% url 'eco:design_create' object.pk %}">Create new study design</a>
           {% endif %}
+
+          {% if object.mechanistic %}
+            <div class="dropdown-divider"></div>
+            <span class="dropdown-header">Mechanistic editing</span>
+			<a class="dropdown-item" href="{% url 'mechanistic:experiment_create' object.pk %}">Create new experiment</a>
+          {% endif %}
         {% endif %}
       {% endactions %}
     {% endif %}
@@ -123,6 +129,10 @@
       {% include "invitro/_experiment_list.html" with object_list=object.ivexperiments.all %}
       {% include "invitro/_chemical_list.html" with object_list=object.ivchemicals.all %}
       {% include "invitro/_celltype_list.html" with object_list=object.ivcelltypes.all %}
+    {% endif %}
+
+    {% if study.mechanistic %}
+      {% include "mechanistic/fragments/_experiment_list.html" with object_list=object.mechanistic_experiments.all %}
     {% endif %}
 
     {% if study.eco %}

@@ -1,0 +1,36 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+  <h2 class="d-inline-block">Update '{{object.name}}'</h2>
+  <div class="float-right">
+    <a id="experiment-update" class="btn btn-sm btn-primary" href="#"
+       hx-get="{% url 'mechanistic:experiment-htmx' object.pk 'update' %}" hx-target="#experiment-table" hx-swap="outerHTML">
+      <i class="fa fa-pencil-square-o" aria-hidden="true"></i>&nbsp;Update experiment</a>
+  </div>
+
+  {% include "mechanistic/fragments/_experiment_table.html" %}
+
+  <div style="color:red">see e.g. epiv2/templates/epiv2/design_update.html for sub-object example code...</div>
+
+  <div class="well text-center">
+    <a class="btn btn-light my-3" href="{{object.get_absolute_url}}" id="mechanistic-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>
+  </div>
+
+{% endblock %}
+
+
+{% block extrajs %}
+  {% include "common/htmx_autocomplete.html" %}
+  <script type="text/javascript">
+	  /*
+    $(document).ready(function() {
+      window.app.startup("epiv2Startup", function(app){
+        app.formStartup(document);
+      });
+      $(window).ready(function() {
+        window.app.HAWCUtils.addScrollHtmx("epiv2-edit-row", "epiv2-obj-row");
+      });
+    });
+	*/
+  </script>
+{% endblock %}

@@ -21,6 +21,7 @@ from ..apps.study.urls import router as study_router
 from ..apps.summary.urls import router as summary_router
 from ..apps.udf.urls import router as udf_router
 from ..apps.vocab.urls import router as vocab_router
+from ..apps.mechanistic.urls import router as mechanistic_router
 
 urlpatterns = [
     # Portal
@@ -52,6 +53,7 @@ urlpatterns = [
     path("rob/", include("hawc.apps.riskofbias.urls")),
     path("mgmt/", include("hawc.apps.mgmt.urls")),
     path("vocab/", include("hawc.apps.vocab.urls")),
+    path("mechanistic/", include("hawc.apps.mechanistic.urls")),
     # common functionality
     path("update-session/", views.UpdateSession.as_view(), name="update_session"),
     path("rasterize/", views.RasterizeCss.as_view(), name="css-rasterize"),
@@ -81,6 +83,7 @@ open_api_patterns = [
     path("study/api/", include(study_router.urls)),
     path("summary/api/", include(summary_router.urls)),
     path("vocab/api/", include(vocab_router.urls)),
+    path("mechanistic/api/", include(mechanistic_router.urls)),
 ]
 urlpatterns += get_admin_urlpatterns(open_api_patterns)
 
