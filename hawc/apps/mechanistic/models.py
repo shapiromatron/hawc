@@ -1,7 +1,10 @@
 import reversion
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
 
+from ..assessment.models import DSSTox
+from ..common.models import clone_name
 from ..study.models import Study
 from . import constants, managers
 
@@ -12,9 +15,22 @@ class Experiment(models.Model):
     study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="mechanistic_experiments")
 
     name = models.CharField(
-        max_length=128,
+        verbose_name="Method Name",
+        help_text="Name / identifier of the method (if available)",
+        max_length=255,
     )
-    comments = models.TextField(blank=True)
+    description = models.TextField(
+        verbose_name="Method Description",
+        help_text="Provide a short description of the method and how it is relevant to the endpoint being investigated.",
+        blank=True
+    )
+    # TODO - protocol (file)
+    test_facility = models.TextField(
+        help_text="If available, enter: Test Facility Name, Location, Study director name, Other personnel name and responsibility, Study period: study start and end dates",
+        blank=True
+    )
+    # TODO - guideline, guideline name, guideline number
+
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -49,4 +65,68 @@ class Experiment(models.Model):
         return f"{self.name}"
 
 
+class Chemical(models.Model):
+    objects = managers.ChemicalManager()
+
+    experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE, related_name="chemicals")
+    name = models.CharField(
+        max_length=128,
+        help_text="This field is commonly used in visualizations, so consider using a common acronym, e.g., BPA instead of Bisphenol A",
+    )
+    dsstox = models.ForeignKey(
+        DSSTox,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        verbose_name="DSSTox substance identifier",
+        help_text=DSSTox.help_text(),
+        related_name="mechanistic_dsstox",
+    )
+    cas = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="Chemical identifier (CAS)",
+        help_text="CAS #",
+    )
+    source = models.CharField(
+        max_length=255, verbose_name="Company and catalog number (if available)", blank=True
+    )
+    # TODO - Composition/Purity
+    purity = models.FloatField(
+        blank=True,
+        null=True,
+        verbose_name="% Purity",
+        help_text="Provide the % purity or chemical composition",
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+    )
+    comments = models.TextField(
+        blank=True,
+        verbose_name="Chemical description comment",
+        help_text="Enter other descriptive information on the chemical, e.g. technical, nature, relevant P-chem properties.",
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    TEXT_CLEANUP_FIELDS = ("name","cas","source","comments")
+
+    class Meta:
+        ordering = ("id",)
+
+    def get_assessment(self):
+        return self.experiment.get_assessment()
+
+    def get_study(self):
+        return self.experiment.get_study()
+
+    def __str__(self):
+        return self.name
+
+    def clone(self):
+        self.id = None
+        self.name = clone_name(self, "name")
+        self.save()
+        return self
+
+
 reversion.register(Experiment)
+reversion.register(Chemical)
