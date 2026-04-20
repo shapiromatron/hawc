@@ -91,11 +91,23 @@ class Chemical(models.Model):
         verbose_name="Chemical identifier (CAS)",
         help_text="CAS #",
     )
+
     source = models.CharField(
-        max_length=255, verbose_name="Company and catalog number (if available)", blank=True
+        max_length=255, help_text="Company and catalog number (if available)", blank=True
     )
-    # TODO - Composition/Purity
-    purity = models.FloatField(
+
+    composition_purity = models.CharField(
+        max_length=2,
+        choices=constants.CompositionPurity,
+        verbose_name="Composition / Purity",
+        help_text="If detailed information on the purity of the composition is not known, a qualitative statement can be provided in this field, e.g. 'analytical grade' or 'technical grade'. A chemical can be created for a mixture/product. If the chemical refers to the composition of the mixture/product, in the field % purity, specify the chemical composition."
+    )
+
+    composition_purity_other = models.CharField(
+        max_length=255, help_text="Enter additional details about composition/purity.", blank=True
+    )
+
+    percent_purity = models.FloatField(
         blank=True,
         null=True,
         verbose_name="% Purity",

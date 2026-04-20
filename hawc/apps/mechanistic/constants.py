@@ -3,11 +3,9 @@ from django.db import models
 from ..common.constants import NA, NR
 
 
-"""
-# example/placeholder
-class Sex(models.TextChoices):
-    UNKNOWN = "U", "Not reported"
-    MALE = "M", "Male"
-    FEMALE = "F", "Female"
-    BOTH = "B", "Male and Female"
-"""
+class CompositionPurity(models.TextChoices):
+    AG = "AG", "Analytical Grade"
+    TG = "TG", "Technical Grade"
+    NS = "NS", "Purity Not Specified"
+    NA = "NA", "Not Applicable (e.g. In Silico Study)"
+    OT = "OT", "Other"

@@ -84,6 +84,6 @@ class ChemicalForm(forms.ModelForm):
         helper = BaseFormHelper(self)
         helper.form_tag = False
         helper.add_row("dsstox", 3, "col-md-4")
-        # helper.add_row("summary", 4, "col-md-3")
+        helper.add_row("composition_purity", 2, "col-md-6")
         helper.add_create_btn("dsstox", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         return helper
