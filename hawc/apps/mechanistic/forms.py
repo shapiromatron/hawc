@@ -23,9 +23,11 @@ class ExperimentForm(forms.ModelForm):
         model = models.Experiment
         exclude = ("study",)
         # widgets = { }
+        """
         field_classes = {
             "comments": QuillField,
         }
+        """
 
     def __init__(self, *args, **kwargs):
         study = kwargs.pop("parent", None)

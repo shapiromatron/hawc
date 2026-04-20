@@ -64,6 +64,9 @@ const startup = (name, cb) => {
         case "textCleanupStartup":
             import("./shared/textCleanup/index.js").then(app => cb(app.default));
             break;
+        case "mechanisticStartup":
+            import("./mechanistic/index.js").then(app => cb(app.default));
+            break;
         default:
             throw `Unknown startup request: ${name}`;
     }

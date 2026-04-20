@@ -24,12 +24,15 @@ class Experiment(models.Model):
         help_text="Provide a short description of the method and how it is relevant to the endpoint being investigated.",
         blank=True
     )
-    # TODO - protocol (file)
+
+    protocol = models.FileField(upload_to = "mechanistic-experiment-protocols", blank=True)
+
     test_facility = models.TextField(
         help_text="If available, enter: Test Facility Name, Location, Study director name, Other personnel name and responsibility, Study period: study start and end dates",
         blank=True
     )
     # TODO - guideline, guideline name, guideline number
+    # BE SURE TO UPDATE views.py's prepopulation when you add new fields!!!
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

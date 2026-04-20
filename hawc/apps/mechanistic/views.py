@@ -78,7 +78,39 @@ class ExperimentViewSet(HtmxViewSet):
     def update(self, request: HttpRequest, *args, **kwargs):
         template = self.form_fragment
         data = request.POST if request.method == "POST" else None
-        form = forms.ExperimentForm(data=data, instance=request.item.object)
+
+        # prepopulate it with data from the Experiment...this is kind of weird. If you instantiate the form like this:
+        #
+        #       form = forms.ExperimentForm(data=data, instance=request.item.object)
+        #
+        # you don't need to set data like this; django/crispy must use the instance to prepopulate fields. But, if
+        # you instantiate the form like this:
+        #
+        #       form = forms.ExperimentForm(data=data, instance=request.item.object, files=request.FILES)
+        #
+        # (which we have to do, since Experiment has a FileField for protocol), then the form will render initially 
+        # with no existing data filled in (i.e., the "name" field doesn't have the model.name filled in to start!
+        # 
+        # I spent an *extremely* long time trying to figure out why and eventually settled on this as the fix. Is something
+        # weird with the crispy setup? With the model/view? Is htmx confusing things? I give up, this works. -tfeiler 20260417
+        if data is None:
+            obj = request.item.object
+            data = {
+                "name": obj.name,
+                "description": obj.description,
+                "test_facility": obj.test_facility,
+            }
+
+        print(f"++++++++++ TIBS PRE CONSTRUCT: {data=}, ({type(data)})")
+        print(f"++++++++++ TIBS PRE OBJ: {request.item.object=}, ({type(request.item.object)})")
+
+        # useful reading:
+        # https://www.reddit.com/r/django/comments/b2xn3l/requestfiles_is_empty_file_didnt_upload/
+        # https://stackoverflow.com/questions/680770/django-imagefield-not-working-properly-via-modelform/681657#681657
+        # https://stackoverflow.com/questions/7920128/what-is-the-difference-between-initial-data-and-bound-data-django-forms
+        form = forms.ExperimentForm(data=data, instance=request.item.object, files=request.FILES)
+        # form = forms.ExperimentForm(data=data, instance=request.item.object)
+
         if request.method == "GET":
             TimeSpentEditing.set_start_time(request)
         elif request.method == "POST" and form.is_valid():
@@ -88,6 +120,7 @@ class ExperimentViewSet(HtmxViewSet):
             self.perform_update(request.item, form)
             template = self.detail_fragment
         context = self.get_context_data(form=form)
+
         return render(request, template, context)
 
 
