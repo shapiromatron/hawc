@@ -3,6 +3,12 @@ from django.db import models
 from ..common.constants import NA, NR
 
 
+class ExperimentGuideline(models.TextChoices):
+    YES = "YES", "Yes"
+    NO = "NO", "No"
+    NR = "NR", "Not reported"
+
+
 class CompositionPurity(models.TextChoices):
     AG = "AG", "Analytical Grade"
     TG = "TG", "Technical Grade"

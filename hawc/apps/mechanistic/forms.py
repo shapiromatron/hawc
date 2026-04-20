@@ -50,7 +50,7 @@ class ExperimentForm(forms.ModelForm):
             }
             helper = BaseFormHelper(self, **inputs)
 
-        # helper.add_row("summary", 4, "col-md-3")
+        helper.add_row("guideline", 3, "col-md-4")
         # helper.add_row("age_profile", 4, "col-md-3")
         # helper.add_row("participant_n", 3, "col-md-4")
         # helper.add_row("countries", 2, "col-md-4")

@@ -99,10 +99,10 @@ class ExperimentViewSet(HtmxViewSet):
                 "name": obj.name,
                 "description": obj.description,
                 "test_facility": obj.test_facility,
+                "guideline": obj.guideline,
+                "guideline_name_number": obj.guideline_name_number,
+                "guideline_compliance": obj.guideline_compliance,
             }
-
-        print(f"++++++++++ TIBS PRE CONSTRUCT: {data=}, ({type(data)})")
-        print(f"++++++++++ TIBS PRE OBJ: {request.item.object=}, ({type(request.item.object)})")
 
         # useful reading:
         # https://www.reddit.com/r/django/comments/b2xn3l/requestfiles_is_empty_file_didnt_upload/

@@ -25,14 +25,28 @@ class Experiment(models.Model):
         blank=True
     )
 
-    protocol = models.FileField(upload_to = "mechanistic-experiment-protocols", blank=True)
+    protocol = models.FileField(upload_to = "mechanistic-experiment-protocols", blank=True, help_text="In case the protocol is available (e.g. as supplement to a publication), please provide it as an attachment. The protocol includes the practical steps that were performed in the laboratory to generate the data.")
 
     test_facility = models.TextField(
         help_text="If available, enter: Test Facility Name, Location, Study director name, Other personnel name and responsibility, Study period: study start and end dates",
         blank=True
     )
-    # TODO - guideline, guideline name, guideline number
-    # BE SURE TO UPDATE views.py's prepopulation when you add new fields!!!
+
+    guideline = models.CharField(
+        max_length=3,
+        choices=constants.ExperimentGuideline,
+        help_text="Select whether a guideline study was conducted. If yes, enter the TG# in the Guideline Name & Number field"
+    )
+
+    guideline_name_number = models.CharField(
+        max_length=255,
+        verbose_name = "Guideline Name & Number",
+        help_text="Enter in Guideline; e.g. OECD or OCSPP"
+    )
+
+    guideline_compliance = models.CharField(blank=True)
+
+    # BE SURE TO UPDATE views.py's prepopulation if you add new fields!!!
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
