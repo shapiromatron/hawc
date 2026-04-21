@@ -1,8 +1,8 @@
 import _ from "lodash";
-import BaseTable from "shared/utils/BaseTable";
-import HAWCModal from "shared/utils/HAWCModal";
-import HAWCUtils from "shared/utils/HAWCUtils";
 
+import BaseTable from "@/shared/utils/BaseTable";
+import HAWCModal from "@/shared/utils/HAWCModal";
+import HAWCUtils from "@/shared/utils/HAWCUtils";
 import $ from "$";
 
 import Exposure from "./Exposure";

@@ -1,8 +1,9 @@
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import DebugBadge from "shared/components/DebugBadge";
-import h from "shared/utils/helpers";
+
+import DebugBadge from "@/shared/components/DebugBadge";
+import h from "@/shared/utils/helpers";
 
 @observer
 class TagNode extends Component {

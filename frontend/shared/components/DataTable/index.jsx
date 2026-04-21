@@ -3,9 +3,10 @@ import "./sorts";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
-import DataTableWrapper from "shared/components/DataTableWrapper";
-import h from "shared/utils/helpers";
 import Tablesort from "tablesort";
+
+import DataTableWrapper from "@/shared/components/DataTableWrapper";
+import h from "@/shared/utils/helpers";
 
 class DataTable extends React.Component {
     constructor(props) {

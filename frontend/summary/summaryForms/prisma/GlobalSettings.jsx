@@ -1,11 +1,12 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import CheckboxInput from "shared/components/CheckboxInput";
-import IntegerInput from "shared/components/IntegerInput";
-import SelectInput from "shared/components/SelectInput";
-import TextInput from "shared/components/TextInput";
-import wrapRow from "shared/components/WrapRow";
+
+import CheckboxInput from "@/shared/components/CheckboxInput";
+import IntegerInput from "@/shared/components/IntegerInput";
+import SelectInput from "@/shared/components/SelectInput";
+import TextInput from "@/shared/components/TextInput";
+import wrapRow from "@/shared/components/WrapRow";
 
 @inject("store")
 @observer

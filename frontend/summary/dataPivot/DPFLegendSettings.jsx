@@ -1,6 +1,6 @@
 import * as d3 from "d3";
-import HAWCModal from "shared/utils/HAWCModal";
 
+import HAWCModal from "@/shared/utils/HAWCModal";
 import $ from "$";
 
 import DataPivot from "./DataPivot";

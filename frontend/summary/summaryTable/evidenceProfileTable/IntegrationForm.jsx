@@ -1,9 +1,10 @@
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
-import CheckboxInput from "shared/components/CheckboxInput";
-import QuillTextInput from "shared/components/QuillTextInput";
-import TextInput from "shared/components/TextInput";
+
+import CheckboxInput from "@/shared/components/CheckboxInput";
+import QuillTextInput from "@/shared/components/QuillTextInput";
+import TextInput from "@/shared/components/TextInput";
 
 import {CUSTOM_JUDGEMENT, HELP_TEXT} from "./common";
 import {JudgementSelector} from "./Judgement";

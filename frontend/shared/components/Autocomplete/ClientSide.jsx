@@ -2,7 +2,8 @@ import PropTypes from "prop-types";
 import React, {Component} from "react";
 import Autosuggest from "react-autosuggest";
 import {createRoot} from "react-dom/client";
-import h from "shared/utils/helpers";
+
+import h from "@/shared/utils/helpers";
 
 import {theme} from "./constants";
 

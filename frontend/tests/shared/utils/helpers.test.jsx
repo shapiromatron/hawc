@@ -1,4 +1,4 @@
-import {addOuterTag, escapeRegex, markKeywords} from "shared/utils/_helpers";
+import {addOuterTag, escapeRegex, markKeywords} from "@/shared/utils/_helpers";
 
 import assert from "../../helpers";
 

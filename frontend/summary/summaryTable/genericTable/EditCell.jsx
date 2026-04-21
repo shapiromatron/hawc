@@ -1,11 +1,12 @@
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import CheckboxInput from "shared/components/CheckboxInput";
-import IntegerInput from "shared/components/IntegerInput";
-import Modal from "shared/components/Modal";
-import QuillTextInput from "shared/components/QuillTextInput";
-import h from "shared/utils/helpers";
+
+import CheckboxInput from "@/shared/components/CheckboxInput";
+import IntegerInput from "@/shared/components/IntegerInput";
+import Modal from "@/shared/components/Modal";
+import QuillTextInput from "@/shared/components/QuillTextInput";
+import h from "@/shared/utils/helpers";
 
 import {getCellExcelName} from "./common";
 

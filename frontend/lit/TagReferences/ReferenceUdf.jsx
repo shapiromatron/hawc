@@ -2,7 +2,8 @@ import _ from "lodash";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {useEffect} from "react";
-import HAWCUtils from "shared/utils/HAWCUtils";
+
+import HAWCUtils from "@/shared/utils/HAWCUtils";
 
 const resetDynamicForm = function (formSelector, values, errors) {
         const root = $(formSelector);

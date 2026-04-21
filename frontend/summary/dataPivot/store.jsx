@@ -1,10 +1,11 @@
 import _ from "lodash";
 import {action, makeObservable, observable, toJS} from "mobx";
+
 import {
     deleteArrayElement,
     moveArrayElementDown,
     moveArrayElementUp,
-} from "shared/components/EditableRowData";
+} from "@/shared/components/EditableRowData";
 
 import {NULL_CASE, OrderChoices} from "./shared";
 

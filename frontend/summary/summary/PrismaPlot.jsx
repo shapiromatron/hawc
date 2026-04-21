@@ -3,10 +3,11 @@ import * as d3Arrow from "d3-arrow";
 import _ from "lodash";
 import React from "react";
 import {createRoot} from "react-dom/client";
-import VisualToolbar from "shared/components/VisualToolbar";
-import HAWCModal from "shared/utils/HAWCModal";
-import HAWCUtils from "shared/utils/HAWCUtils";
-import h from "shared/utils/helpers";
+
+import VisualToolbar from "@/shared/components/VisualToolbar";
+import HAWCModal from "@/shared/utils/HAWCModal";
+import HAWCUtils from "@/shared/utils/HAWCUtils";
+import h from "@/shared/utils/helpers";
 
 const NAMESPACE = "http://www.w3.org/2000/svg",
     WORKSPACE_START_X = 20,

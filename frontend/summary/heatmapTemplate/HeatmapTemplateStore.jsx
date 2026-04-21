@@ -1,6 +1,7 @@
 import _ from "lodash";
 import {action, computed, makeObservable, observable, toJS} from "mobx";
-import h from "shared/utils/helpers";
+
+import h from "@/shared/utils/helpers";
 
 import {NULL_VALUE} from "../summary/constants";
 import {DATA_FILTER_LOGIC_AND} from "../summary/filters";

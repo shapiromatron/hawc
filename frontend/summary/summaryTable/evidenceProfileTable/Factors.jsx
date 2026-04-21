@@ -2,9 +2,10 @@ import _ from "lodash";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
-import CheckboxInput from "shared/components/CheckboxInput";
-import QuillTextInput from "shared/components/QuillTextInput";
-import h from "shared/utils/helpers";
+
+import CheckboxInput from "@/shared/components/CheckboxInput";
+import QuillTextInput from "@/shared/components/QuillTextInput";
+import h from "@/shared/utils/helpers";
 
 const increaseFactors = [
         {key: 0, label: "No factors noted", displayLabel: true},

@@ -2,7 +2,8 @@ import * as d3 from "d3";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import h from "shared/utils/helpers";
+
+import h from "@/shared/utils/helpers";
 
 // adapted from /lit/api/assessment/:id/reference-year-histogram/
 const dataTemplate = {

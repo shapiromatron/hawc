@@ -3,11 +3,12 @@ import _ from "lodash";
 import {autorun} from "mobx";
 import React from "react";
 import {createRoot} from "react-dom/client";
-import bindTooltip from "shared/components/Tooltip";
-import VisualToolbar from "shared/components/VisualToolbar";
-import HAWCModal from "shared/utils/HAWCModal";
-import HAWCUtils from "shared/utils/HAWCUtils";
-import h from "shared/utils/helpers";
+
+import bindTooltip from "@/shared/components/Tooltip";
+import VisualToolbar from "@/shared/components/VisualToolbar";
+import HAWCModal from "@/shared/utils/HAWCModal";
+import HAWCUtils from "@/shared/utils/HAWCUtils";
+import h from "@/shared/utils/helpers";
 
 import {AxisTooltip, CellTooltip} from "./heatmap/Tooltip";
 

@@ -1,15 +1,19 @@
 {
   "compilerOptions": {
-    "baseUrl": "./frontend",
-    "target": "ES6",
-    "module": "commonjs",
-    "experimentalDecorators": true
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "experimentalDecorators": true,
+    "paths": {
+      "@/*": ["./frontend/*"]
+    }
   },
   "exclude": [
     "node_modules",
     "**/node_modules/*"
   ],
   "include": [
-    "frontend/**/*.js"
+    "frontend/**/*.js",
+    "frontend/**/*.jsx"
   ]
 }

@@ -1,4 +1,4 @@
-import h from "shared/utils/helpers";
+import h from "@/shared/utils/helpers";
 
 export const getCellExcelName = function (cell) {
     const topLeft = `${h.excelCoords(cell.row, cell.column)}`;

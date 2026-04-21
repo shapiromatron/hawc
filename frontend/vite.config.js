@@ -1,6 +1,7 @@
-import react from "@vitejs/plugin-react";
 import fs from "fs";
 import path from "path";
+
+import react from "@vitejs/plugin-react";
 import {defineConfig} from "vite";
 import {viteExternalsPlugin} from "vite-plugin-externals";
 
@@ -54,20 +55,7 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            animal: path.resolve(__dirname, "animal"),
-            assessment: path.resolve(__dirname, "assessment"),
-            bmd: path.resolve(__dirname, "bmd"),
-            eco: path.resolve(__dirname, "eco"),
-            epi: path.resolve(__dirname, "epi"),
-            epiv2: path.resolve(__dirname, "epiv2"),
-            epimeta: path.resolve(__dirname, "epimeta"),
-            invitro: path.resolve(__dirname, "invitro"),
-            lit: path.resolve(__dirname, "lit"),
-            mgmt: path.resolve(__dirname, "mgmt"),
-            riskofbias: path.resolve(__dirname, "riskofbias"),
-            shared: path.resolve(__dirname, "shared"),
-            study: path.resolve(__dirname, "study"),
-            summary: path.resolve(__dirname, "summary"),
+            "@": path.resolve(__dirname, "."),
         },
     },
     server: {

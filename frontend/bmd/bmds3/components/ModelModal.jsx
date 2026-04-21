@@ -2,9 +2,10 @@ import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
-import HelpTextPopup from "shared/components/HelpTextPopup";
-import Modal from "shared/components/Modal";
-import WaitLoad from "shared/components/WaitLoad";
+
+import HelpTextPopup from "@/shared/components/HelpTextPopup";
+import Modal from "@/shared/components/Modal";
+import WaitLoad from "@/shared/components/WaitLoad";
 
 import {seErrorWarning, testFootnotes} from "../constants";
 import {ff, fractionalFormatter, parameterFormatter} from "../formatters";

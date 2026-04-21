@@ -1,6 +1,7 @@
 import _ from "lodash";
 import {action, computed, makeObservable, observable} from "mobx";
-import h from "shared/utils/helpers";
+
+import h from "@/shared/utils/helpers";
 
 const NULL_VALUE = "---",
     EMPTY = {id: NULL_VALUE, label: NULL_VALUE},

@@ -1,12 +1,13 @@
-import Endpoint from "animal/Endpoint";
 import _ from "lodash";
 import {action, computed, makeObservable, observable} from "mobx";
+
+import Endpoint from "@/animal/Endpoint";
 import {
     deleteArrayElement,
     moveArrayElementDown,
     moveArrayElementUp,
-} from "shared/components/EditableRowData";
-import h from "shared/utils/helpers";
+} from "@/shared/components/EditableRowData";
+import h from "@/shared/utils/helpers";
 
 import CrossviewPlot from "../../summary/CrossviewPlot";
 import D3Visualization from "../../summary/D3Visualization";

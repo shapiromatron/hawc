@@ -1,12 +1,13 @@
 import _ from "lodash";
 import {action, computed, makeObservable, observable, toJS} from "mobx";
+
 import {
     deleteArrayElement,
     moveArrayElementDown,
     moveArrayElementUp,
-} from "shared/components/EditableRowData";
-import h from "shared/utils/helpers";
-import {getInteractivityOptions} from "summary/interactivity/actions";
+} from "@/shared/components/EditableRowData";
+import h from "@/shared/utils/helpers";
+import {getInteractivityOptions} from "@/summary/interactivity/actions";
 
 import {NULL_VALUE} from "../../summary/constants";
 import {

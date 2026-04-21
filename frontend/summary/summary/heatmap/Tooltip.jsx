@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import h from "shared/utils/helpers";
+
+import h from "@/shared/utils/helpers";
 
 class CellTooltip extends Component {
     getRows() {

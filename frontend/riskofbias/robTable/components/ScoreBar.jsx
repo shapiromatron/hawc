@@ -1,9 +1,8 @@
-import "./ScoreBar.css";
-
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import Animation from "shared/components/Animation";
-import h from "shared/utils/helpers";
+
+import Animation from "@/shared/components/Animation";
+import h from "@/shared/utils/helpers";
 
 import {
     BIAS_DIRECTION_SIMPLE,
@@ -11,6 +10,8 @@ import {
     BIAS_DIRECTION_VERBOSE,
     SCORE_BAR_WIDTH_PERCENTAGE,
 } from "../../constants";
+
+import "./ScoreBar.css";
 
 class ScoreBar extends Component {
     render_score_bar() {

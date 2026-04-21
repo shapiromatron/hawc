@@ -1,5 +1,6 @@
 import React from "react";
-import Alert from "shared/components/Alert";
+
+import Alert from "@/shared/components/Alert";
 
 class UnderDevelopment extends React.Component {
     render() {

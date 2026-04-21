@@ -1,4 +1,4 @@
-import h from "shared/utils/helpers";
+import h from "@/shared/utils/helpers";
 
 export const NM = {backgroundColor: "#DFDFDF", color: "#404040", html: "NM"},
     dataUrl = (table_type, data_source, assessment_id, published_only) =>

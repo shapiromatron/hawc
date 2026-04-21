@@ -2,10 +2,11 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
-import CheckboxInput from "shared/components/CheckboxInput";
-import IntegerInput from "shared/components/IntegerInput";
-import SelectInput from "shared/components/SelectInput";
-import TextInput from "shared/components/TextInput";
+
+import CheckboxInput from "@/shared/components/CheckboxInput";
+import IntegerInput from "@/shared/components/IntegerInput";
+import SelectInput from "@/shared/components/SelectInput";
+import TextInput from "@/shared/components/TextInput";
 
 @inject("store")
 @observer

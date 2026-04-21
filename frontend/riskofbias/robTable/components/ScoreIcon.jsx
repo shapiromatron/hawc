@@ -1,10 +1,11 @@
-import "./ScoreIcon.css";
-
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import h from "shared/utils/helpers";
+
+import h from "@/shared/utils/helpers";
 
 import {SCORE_SHADES, SCORE_TEXT} from "../../constants";
+
+import "./ScoreIcon.css";
 
 class ScoreIcon extends Component {
     render() {

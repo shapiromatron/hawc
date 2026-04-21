@@ -1,8 +1,9 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import DebugBadge from "shared/components/DebugBadge";
-import PublishedIcon from "shared/components/PublishedIcon";
+
+import DebugBadge from "@/shared/components/DebugBadge";
+import PublishedIcon from "@/shared/components/PublishedIcon";
 
 import CreateNewRob from "./CreateNewRob";
 import RobItem from "./RobItem";

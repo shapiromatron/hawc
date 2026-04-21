@@ -1,6 +1,7 @@
 import _ from "lodash";
 import {action, computed, makeObservable, observable, toJS} from "mobx";
-import TableFootnotes from "shared/utils/TableFootnotes";
+
+import TableFootnotes from "@/shared/utils/TableFootnotes";
 
 import Endpoint from "../Endpoint";
 

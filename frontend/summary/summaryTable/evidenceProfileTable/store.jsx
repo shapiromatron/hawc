@@ -1,10 +1,11 @@
 import _ from "lodash";
 import {action, autorun, computed, makeObservable, observable} from "mobx";
+
 import {
     deleteArrayElement,
     moveArrayElementDown,
     moveArrayElementUp,
-} from "shared/components/EditableRowData";
+} from "@/shared/components/EditableRowData";
 
 const getDefaultEvidence = () => {
         const blank = "<p></p>";

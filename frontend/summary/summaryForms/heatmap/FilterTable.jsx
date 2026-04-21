@@ -1,9 +1,10 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
-import SelectInput from "shared/components/SelectInput";
-import TextInput from "shared/components/TextInput";
+
+import {ActionsTh, MoveRowTd} from "@/shared/components/EditableRowData";
+import SelectInput from "@/shared/components/SelectInput";
+import TextInput from "@/shared/components/TextInput";
 
 import {DATA_FILTER_OPTIONS} from "../../summary/filters";
 import FilterLogic from "../shared/FilterLogic";

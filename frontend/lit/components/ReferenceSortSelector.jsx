@@ -2,7 +2,8 @@ import _ from "lodash";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import SelectInput from "shared/components/SelectInput";
+
+import SelectInput from "@/shared/components/SelectInput";
 
 import {ReferenceStorageKey, SortBy} from "../constants";
 

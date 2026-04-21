@@ -1,4 +1,4 @@
-import h from "shared/utils/helpers";
+import h from "@/shared/utils/helpers";
 
 const DEFAULT_MIN_SEARCH_LENGTH = 3,
     DEBOUNCE_MS = 1000,
@@ -18,4 +18,4 @@ const DEFAULT_MIN_SEARCH_LENGTH = 3,
         return text.replace(regex, match => `<b>${match}</b>`);
     };
 
-export {boldPatternText, DEBOUNCE_MS, DEFAULT_MIN_SEARCH_LENGTH, theme};
+export {DEBOUNCE_MS, DEFAULT_MIN_SEARCH_LENGTH, boldPatternText, theme};

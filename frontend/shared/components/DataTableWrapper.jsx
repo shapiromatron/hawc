@@ -1,8 +1,10 @@
 import $ from "jquery";
 import "datatables.net";
+
 import PropTypes from "prop-types";
 import React, {createRef, useEffect, useState} from "react";
-import Loading from "shared/components/Loading";
+
+import Loading from "@/shared/components/Loading";
 
 const DataTableWrapper = ({children, className, data, columns}) => {
     const ref = createRef(),

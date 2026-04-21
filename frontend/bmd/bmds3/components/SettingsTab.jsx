@@ -2,10 +2,11 @@ import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
-import Alert from "shared/components/Alert";
-import FloatInput from "shared/components/FloatInput";
-import SelectInput from "shared/components/SelectInput";
-import WaitLoad from "shared/components/WaitLoad";
+
+import Alert from "@/shared/components/Alert";
+import FloatInput from "@/shared/components/FloatInput";
+import SelectInput from "@/shared/components/SelectInput";
+import WaitLoad from "@/shared/components/WaitLoad";
 
 import DatasetTable from "./DatasetTable";
 import DoseResponsePlot from "./DoseResponsePlot";
@@ -164,4 +165,5 @@ SettingsTab.propTypes = {
 };
 
 export default SettingsTab;
+
 export {SettingsTable};

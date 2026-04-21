@@ -1,9 +1,10 @@
-import TagTree from "lit/TagTree";
-import TagTreeViz from "lit/TagTreeViz";
 import _ from "lodash";
-import SmartTagContainer from "shared/smartTags/SmartTagContainer";
-import HAWCModal from "shared/utils/HAWCModal";
-import HAWCUtils from "shared/utils/HAWCUtils";
+
+import TagTree from "@/lit/TagTree";
+import TagTreeViz from "@/lit/TagTreeViz";
+import SmartTagContainer from "@/shared/smartTags/SmartTagContainer";
+import HAWCModal from "@/shared/utils/HAWCModal";
+import HAWCUtils from "@/shared/utils/HAWCUtils";
 
 import BaseVisual from "./BaseVisual";
 import {addLabelIndicators, handleVisualError} from "./common";

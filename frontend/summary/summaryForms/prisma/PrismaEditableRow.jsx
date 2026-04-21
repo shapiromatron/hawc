@@ -1,8 +1,9 @@
 import React from "react";
-import {EditableRow} from "shared/components/EditableRowData";
-import IntegerInput from "shared/components/IntegerInput";
-import TextInput from "shared/components/TextInput";
-import wrapRow from "shared/components/WrapRow";
+
+import {EditableRow} from "@/shared/components/EditableRowData";
+import IntegerInput from "@/shared/components/IntegerInput";
+import TextInput from "@/shared/components/TextInput";
+import wrapRow from "@/shared/components/WrapRow";
 
 class PrismaEditableRow extends EditableRow {
     constructor(props) {

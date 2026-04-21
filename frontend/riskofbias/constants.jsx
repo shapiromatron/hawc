@@ -1,5 +1,6 @@
 import _ from "lodash";
-import h from "shared/utils/helpers";
+
+import h from "@/shared/utils/helpers";
 
 const NA_KEYS = [10, 20],
     NR_KEYS = [12, 22],
@@ -310,11 +311,6 @@ export {
     BIAS_DIRECTION_VERBOSE,
     COLLAPSED_NR_FIELDS_DESCRIPTION,
     FOOTNOTES,
-    fetchRobSettings,
-    fetchRobStudy,
-    fetchStudy,
-    getMultiScoreDisplaySettings,
-    hideScore,
     NA_KEYS,
     NR_KEYS,
     OVERRIDE_SCORE_LABEL_MAPPING,
@@ -323,4 +319,9 @@ export {
     SCORE_TEXT,
     SCORE_TEXT_DESCRIPTION,
     SCORE_TEXT_DESCRIPTION_LEGEND,
+    fetchRobSettings,
+    fetchRobStudy,
+    fetchStudy,
+    getMultiScoreDisplaySettings,
+    hideScore,
 };

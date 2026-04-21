@@ -1,11 +1,12 @@
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
-import CheckboxInput from "shared/components/CheckboxInput";
-import {ActionsTh, MoveRowTd} from "shared/components/EditableRowData";
-import HelpTextPopup from "shared/components/HelpTextPopup";
-import QuillTextInput from "shared/components/QuillTextInput";
-import TextInput from "shared/components/TextInput";
+
+import CheckboxInput from "@/shared/components/CheckboxInput";
+import {ActionsTh, MoveRowTd} from "@/shared/components/EditableRowData";
+import HelpTextPopup from "@/shared/components/HelpTextPopup";
+import QuillTextInput from "@/shared/components/QuillTextInput";
+import TextInput from "@/shared/components/TextInput";
 
 import {CUSTOM_JUDGEMENT, HELP_TEXT} from "./common";
 import {FactorsForm} from "./Factors";

@@ -2,7 +2,8 @@ import _ from "lodash";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import DataTableWrapper from "shared/components/DataTableWrapper";
+
+import DataTableWrapper from "@/shared/components/DataTableWrapper";
 
 import TableCell from "./TableCell";
 import TableCellEdit from "./TableCellEdit";
