@@ -442,14 +442,14 @@ When using the recommended settings below, your python and javascript code shoul
     "python.testing.pytestEnabled": true,
     "ruff.importStrategy": "fromEnvironment",
     "ruff.nativeServer": "on",
-    "[javascript]": {
-		"editor.formatOnSave": true,
-		"editor.defaultFormatter": "biomejs.biome",
+    "[javascript][javascriptreact]": {
+        "editor.defaultFormatter": "biomejs.biome",
+        "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
-			"source.fixAll.biome": "explicit",
-			"source.organizeImports.biome": "explicit",
-		}
-	},
+            "source.organizeImports.biome": "always",
+            "source.fixAll": "always"
+        }
+    },
     "biome.lsp.bin": "./frontend/node_modules/.bin/biome",
     "biome.configurationPath": "./frontend/biome.json",
     "[markdown]": {
