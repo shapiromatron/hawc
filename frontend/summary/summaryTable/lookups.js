@@ -1,12 +1,12 @@
 import {TableType} from "./constants";
 import EvidenceProfileForm from "./evidenceProfileTable/Form";
-import EvidenceProfileTableStore from "./evidenceProfileTable/store.js";
+import EvidenceProfileTableStore from "./evidenceProfileTable/store.jsx";
 import EvidenceProfileTable from "./evidenceProfileTable/Table";
-import GenericTableStore from "./genericTable/store.js";
+import GenericTableStore from "./genericTable/store.jsx";
 import GenericTable from "./genericTable/Table";
 import GenericTableForm from "./genericTable/TableForm";
 import StudyEvaluationData from "./studyEvaluationTable/DataForm";
-import StudyEvaluationTableStore from "./studyEvaluationTable/store.js";
+import StudyEvaluationTableStore from "./studyEvaluationTable/store.jsx";
 import StudyEvaluationTable from "./studyEvaluationTable/Table";
 import StudyEvaluationTableForm from "./studyEvaluationTable/TableForm";
 

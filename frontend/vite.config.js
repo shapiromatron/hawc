@@ -1,6 +1,7 @@
-import react from "@vitejs/plugin-react";
 import fs from "fs";
 import path from "path";
+
+import react from "@vitejs/plugin-react";
 import {defineConfig} from "vite";
 import {viteExternalsPlugin} from "vite-plugin-externals";
 
@@ -10,23 +11,7 @@ export default defineConfig({
     root: ".",
     base: "/static/bundles",
     plugins: [
-        react({
-            babel: {
-                presets: [
-                    [
-                        "@babel/preset-react",
-                        {
-                            runtime: "classic",
-                            importSource: undefined,
-                        },
-                    ],
-                ],
-                plugins: [
-                    ["@babel/plugin-proposal-decorators", {legacy: true}],
-                    ["@babel/plugin-proposal-class-properties", {loose: false}],
-                ],
-            },
-        }),
+        react(),
         viteExternalsPlugin({
             $: "$",
         }),
@@ -70,20 +55,7 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            animal: path.resolve(__dirname, "animal"),
-            assessment: path.resolve(__dirname, "assessment"),
-            bmd: path.resolve(__dirname, "bmd"),
-            eco: path.resolve(__dirname, "eco"),
-            epi: path.resolve(__dirname, "epi"),
-            epiv2: path.resolve(__dirname, "epiv2"),
-            epimeta: path.resolve(__dirname, "epimeta"),
-            invitro: path.resolve(__dirname, "invitro"),
-            lit: path.resolve(__dirname, "lit"),
-            mgmt: path.resolve(__dirname, "mgmt"),
-            riskofbias: path.resolve(__dirname, "riskofbias"),
-            shared: path.resolve(__dirname, "shared"),
-            study: path.resolve(__dirname, "study"),
-            summary: path.resolve(__dirname, "summary"),
+            "@": path.resolve(__dirname, "."),
         },
     },
     server: {
@@ -100,16 +72,10 @@ export default defineConfig({
             "react/jsx-runtime",
             "react/jsx-dev-runtime",
             "react-dom/client",
+            "react-plotly.js",
         ],
-        esbuildOptions: {
-            loader: {
-                ".js": "jsx",
-            },
-        },
     },
-    esbuild: {
-        loader: "jsx",
-        include: /.*\.jsx?$/,
-        exclude: [],
+    oxc: {
+        decorator: {legacy: true},
     },
 });
