@@ -10,23 +10,7 @@ export default defineConfig({
     root: ".",
     base: "/static/bundles",
     plugins: [
-        react({
-            babel: {
-                presets: [
-                    [
-                        "@babel/preset-react",
-                        {
-                            runtime: "classic",
-                            importSource: undefined,
-                        },
-                    ],
-                ],
-                plugins: [
-                    ["@babel/plugin-proposal-decorators", {legacy: true}],
-                    ["@babel/plugin-proposal-class-properties", {loose: false}],
-                ],
-            },
-        }),
+        react(),
         viteExternalsPlugin({
             $: "$",
         }),
@@ -100,16 +84,10 @@ export default defineConfig({
             "react/jsx-runtime",
             "react/jsx-dev-runtime",
             "react-dom/client",
+            "react-plotly.js",
         ],
-        esbuildOptions: {
-            loader: {
-                ".js": "jsx",
-            },
-        },
     },
-    esbuild: {
-        loader: "jsx",
-        include: /.*\.jsx?$/,
-        exclude: [],
+    oxc: {
+        decorator: {legacy: true},
     },
 });

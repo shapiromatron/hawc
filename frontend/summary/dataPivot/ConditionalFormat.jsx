@@ -339,6 +339,8 @@ class _DataPivot_settings_conditional {
     }
 }
 
-export {_DataPivot_settings_conditionalFormat};
-export {_DataPivot_ColorGradientSVG};
-export {_DataPivot_settings_conditional};
+export {
+    _DataPivot_ColorGradientSVG,
+    _DataPivot_settings_conditional,
+    _DataPivot_settings_conditionalFormat,
+};

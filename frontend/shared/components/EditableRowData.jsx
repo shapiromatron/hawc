@@ -102,7 +102,7 @@ export {
     ActionsTh,
     deleteArrayElement,
     EditableRow,
+    MoveRowTd,
     moveArrayElementDown,
     moveArrayElementUp,
-    MoveRowTd,
 };

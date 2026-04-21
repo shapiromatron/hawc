@@ -991,15 +991,18 @@ let buildHeaderTr = function (lst) {
         return $("<colgroup>").html(widths.map(width => `<col width=${width}></col>`).join(""));
     };
 
-export {_DataPivot_settings_refline};
-export {_DataPivot_settings_refrect};
-export {_DataPivot_settings_label};
-export {_DataPivot_settings_filters};
-export {_DataPivot_settings_spacers};
-export {_DataPivot_settings_description};
-export {_DataPivot_settings_calculated};
-export {_DataPivot_settings_pointdata};
-export {_DataPivot_settings_linedata};
-export {_DataPivot_settings_barchart};
-export {_DataPivot_settings_general};
-export {buildColGroup, buildHeaderTr};
+export {
+    _DataPivot_settings_barchart,
+    _DataPivot_settings_calculated,
+    _DataPivot_settings_description,
+    _DataPivot_settings_filters,
+    _DataPivot_settings_general,
+    _DataPivot_settings_label,
+    _DataPivot_settings_linedata,
+    _DataPivot_settings_pointdata,
+    _DataPivot_settings_refline,
+    _DataPivot_settings_refrect,
+    _DataPivot_settings_spacers,
+    buildColGroup,
+    buildHeaderTr,
+};

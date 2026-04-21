@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import Plot from "react-plotly.js";
+import h from "shared/utils/helpers";
 
 // adapted from /lit/api/assessment/:id/reference-year-histogram/
 const dataTemplate = {
@@ -61,6 +61,7 @@ const dataTemplate = {
 class YearHistogram extends Component {
     render() {
         const {references, onFilter, yearFilter} = this.props,
+            Plot = h.plotlyShim(),
             years = _.chain(references)
                 .map(d => d.data.year)
                 .compact()

@@ -2,7 +2,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {createRoot} from "react-dom/client";
-import Plot from "react-plotly.js";
+import h from "shared/utils/helpers";
 
 class ResizableDiv extends Component {
     /*
@@ -38,7 +38,8 @@ ResizableDiv.propTypes = {
 
 class PlotlyFigure extends Component {
     render() {
-        const {data, layout, config, resizable} = this.props,
+        const Plot = h.plotlyShim(),
+            {data, layout, config, resizable} = this.props,
             plot = (
                 <Plot
                     data={data}
