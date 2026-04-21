@@ -3,8 +3,8 @@ import "./Main.css";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import Loading from "shared/components/Loading";
-import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
+import Loading from "@/shared/components/Loading";
+import ScrollToErrorBox from "@/shared/components/ScrollToErrorBox";
 
 import MetricForm from "./MetricForm";
 import ScoreFilterForm from "./ScoreFilterForm";

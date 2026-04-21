@@ -1,5 +1,5 @@
-import Endpoint from "animal/Endpoint";
-import {applyRecommendationLogic} from "bmd/common/recommendationLogic";
+import Endpoint from "@/animal/Endpoint";
+import {applyRecommendationLogic} from "@/bmd/common/recommendationLogic";
 import _ from "lodash";
 import {action, autorun, computed, makeObservable, observable} from "mobx";
 

@@ -1,7 +1,7 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import Spacer from "shared/components/Spacer";
+import Spacer from "@/shared/components/Spacer";
 
 import Metric from "./Metric";
 

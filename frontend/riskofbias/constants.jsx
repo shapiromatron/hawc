@@ -1,5 +1,5 @@
 import _ from "lodash";
-import h from "shared/utils/helpers";
+import h from "@/shared/utils/helpers";
 
 const NA_KEYS = [10, 20],
     NR_KEYS = [12, 22],

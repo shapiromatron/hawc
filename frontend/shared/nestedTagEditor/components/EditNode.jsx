@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React from "react";
-import ConfirmDeleteButton from "shared/components/ConfirmDeleteButton";
+import ConfirmDeleteButton from "@/shared/components/ConfirmDeleteButton";
 
 class EditNodeForm extends React.Component {
     constructor(props) {

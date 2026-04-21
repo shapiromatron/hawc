@@ -2,8 +2,8 @@ import "./ScoreBar.css";
 
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import Animation from "shared/components/Animation";
-import h from "shared/utils/helpers";
+import Animation from "@/shared/components/Animation";
+import h from "@/shared/utils/helpers";
 
 import {
     BIAS_DIRECTION_SIMPLE,

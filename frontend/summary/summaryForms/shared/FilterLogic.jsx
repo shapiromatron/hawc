@@ -1,8 +1,8 @@
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import RadioInput from "shared/components/RadioInput";
-import TextInput from "shared/components/TextInput";
+import RadioInput from "@/shared/components/RadioInput";
+import TextInput from "@/shared/components/TextInput";
 
 import {
     DATA_FILTER_LOGIC_CUSTOM,

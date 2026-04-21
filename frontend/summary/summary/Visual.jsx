@@ -1,4 +1,4 @@
-import HAWCUtils from "shared/utils/HAWCUtils";
+import HAWCUtils from "@/shared/utils/HAWCUtils";
 
 import $ from "$";
 

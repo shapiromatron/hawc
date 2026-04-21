@@ -1,4 +1,4 @@
-import BmdLine from "bmd/common/BmdLine";
+import BmdLine from "@/bmd/common/BmdLine";
 import PropTypes from "prop-types";
 import React from "react";
 

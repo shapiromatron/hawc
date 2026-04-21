@@ -1,9 +1,9 @@
-import {ehvFields} from "animal/EndpointForm/constants";
+import {ehvFields} from "@/animal/EndpointForm/constants";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import HelpTextPopup from "shared/components/HelpTextPopup";
-import h from "shared/utils/helpers";
+import HelpTextPopup from "@/shared/components/HelpTextPopup";
+import h from "@/shared/utils/helpers";
 
 const MAX_ROWS = 150;
 

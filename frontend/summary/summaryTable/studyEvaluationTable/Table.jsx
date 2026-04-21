@@ -2,13 +2,13 @@ import _ from "lodash";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import Alert from "shared/components/Alert";
-import CheckboxInput from "shared/components/CheckboxInput";
-import IntegerInput from "shared/components/IntegerInput";
-import Loading from "shared/components/Loading";
-import QuillTextInput from "shared/components/QuillTextInput";
-import SelectInput from "shared/components/SelectInput";
-import TextInput from "shared/components/TextInput";
+import Alert from "@/shared/components/Alert";
+import CheckboxInput from "@/shared/components/CheckboxInput";
+import IntegerInput from "@/shared/components/IntegerInput";
+import Loading from "@/shared/components/Loading";
+import QuillTextInput from "@/shared/components/QuillTextInput";
+import SelectInput from "@/shared/components/SelectInput";
+import TextInput from "@/shared/components/TextInput";
 
 import {COL_ATTRIBUTE, colAttributeChoices, ROW_TYPE} from "./constants";
 

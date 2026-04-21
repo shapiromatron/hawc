@@ -1,5 +1,5 @@
-import SmartTagEditor from "shared/smartTags/SmartTagEditor";
-import HAWCUtils from "shared/utils/HAWCUtils";
+import SmartTagEditor from "@/shared/smartTags/SmartTagEditor";
+import HAWCUtils from "@/shared/utils/HAWCUtils";
 
 import $ from "$";
 

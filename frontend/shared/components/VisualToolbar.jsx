@@ -4,7 +4,7 @@ import {action, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import rasterize from "shared/utils/rasterize";
+import rasterize from "@/shared/utils/rasterize";
 
 /*
 Utility toolbelt for visualizations. Adds a few key attributes:

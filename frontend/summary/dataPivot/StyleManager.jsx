@@ -1,4 +1,4 @@
-import HAWCModal from "shared/utils/HAWCModal";
+import HAWCModal from "@/shared/utils/HAWCModal";
 
 import $ from "$";
 

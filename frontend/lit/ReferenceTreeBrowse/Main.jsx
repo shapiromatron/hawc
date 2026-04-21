@@ -1,13 +1,13 @@
-import TagActions from "lit/components/TagActions";
+import TagActions from "@/lit/components/TagActions";
 import _ from "lodash";
 import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import LabelInput from "shared/components/LabelInput";
-import Loading from "shared/components/Loading";
-import Paginator from "shared/components/Paginator";
-import TextInput from "shared/components/TextInput";
+import LabelInput from "@/shared/components/LabelInput";
+import Loading from "@/shared/components/Loading";
+import Paginator from "@/shared/components/Paginator";
+import TextInput from "@/shared/components/TextInput";
 
 import ReferenceSortSelector from "../components/ReferenceSortSelector";
 import TagTree from "../components/TagTree";

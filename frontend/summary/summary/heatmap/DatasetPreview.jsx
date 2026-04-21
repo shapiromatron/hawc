@@ -1,9 +1,9 @@
 import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {ActionLink, ActionsButton} from "shared/components/ActionsButton";
-import Alert from "shared/components/Alert";
-import DataTable from "shared/components/DataTable";
+import {ActionLink, ActionsButton} from "@/shared/components/ActionsButton";
+import Alert from "@/shared/components/Alert";
+import DataTable from "@/shared/components/DataTable";
 
 class DatasetPreview extends Component {
     render() {

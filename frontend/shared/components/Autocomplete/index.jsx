@@ -4,7 +4,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import AutoSuggest from "react-autosuggest";
-import h from "shared/utils/helpers";
+import h from "@/shared/utils/helpers";
 
 import {DEBOUNCE_MS, DEFAULT_MIN_SEARCH_LENGTH, theme} from "../Autocomplete/constants";
 import {ClientSideAutosuggest, renderClientSideAutosuggest} from "./ClientSide";

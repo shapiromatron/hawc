@@ -1,8 +1,8 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
-import DataTable from "shared/components/DataTable";
-import Loading from "shared/components/Loading";
+import DataTable from "@/shared/components/DataTable";
+import Loading from "@/shared/components/Loading";
 
 import Plot from "./Plot";
 import Widgets from "./Widgets";

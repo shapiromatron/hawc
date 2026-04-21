@@ -1,4 +1,4 @@
-import h from "shared/utils/helpers";
+import h from "@/shared/utils/helpers";
 
 const DEFAULT_MIN_SEARCH_LENGTH = 3,
     DEBOUNCE_MS = 1000,

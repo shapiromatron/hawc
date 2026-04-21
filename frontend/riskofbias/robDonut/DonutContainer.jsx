@@ -1,7 +1,7 @@
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import Loading from "shared/components/Loading";
+import Loading from "@/shared/components/Loading";
 
 import Donut from "./Donut";
 import RobDonutStore from "./store";

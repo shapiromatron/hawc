@@ -1,5 +1,5 @@
-import HAWCUtils from "shared/utils/HAWCUtils";
-import h from "shared/utils/helpers";
+import HAWCUtils from "@/shared/utils/HAWCUtils";
+import h from "@/shared/utils/helpers";
 
 import $ from "$";
 

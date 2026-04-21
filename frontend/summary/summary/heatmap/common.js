@@ -1,5 +1,5 @@
 import _ from "lodash";
-import h from "shared/utils/helpers";
+import h from "@/shared/utils/helpers";
 
 export const getColumnValues = function (dataset, column, delimiter) {
     // Get column values for a column in a dataset.  Returns unique values, and removes

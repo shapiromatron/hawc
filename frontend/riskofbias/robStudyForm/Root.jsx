@@ -1,8 +1,8 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import Loading from "shared/components/Loading";
-import ScrollToErrorBox from "shared/components/ScrollToErrorBox";
+import Loading from "@/shared/components/Loading";
+import ScrollToErrorBox from "@/shared/components/ScrollToErrorBox";
 
 import Completeness from "./Completeness";
 import Domain from "./Domain";

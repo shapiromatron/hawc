@@ -2,10 +2,10 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {connect} from "react-redux";
-import {fetchFullStudyIfNeeded, selectActive} from "riskofbias/robTable/actions";
-import DisplayComponent from "riskofbias/robTable/components/AggregateGraph";
-import Loading from "shared/components/Loading";
-import h from "shared/utils/helpers";
+import {fetchFullStudyIfNeeded, selectActive} from "@/riskofbias/robTable/actions";
+import DisplayComponent from "@/riskofbias/robTable/components/AggregateGraph";
+import Loading from "@/shared/components/Loading";
+import h from "@/shared/utils/helpers";
 
 class AggregateGraph extends Component {
     constructor(props) {

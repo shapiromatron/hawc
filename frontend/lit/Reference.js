@@ -1,5 +1,5 @@
 import _ from "lodash";
-import Hero from "shared/utils/Hero";
+import Hero from "@/shared/utils/Hero";
 
 import {sortReferences} from "./constants";
 

@@ -2,7 +2,7 @@ import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import Loading from "shared/components/Loading";
+import Loading from "@/shared/components/Loading";
 
 import RoBBarchart from "../../summary/RoBBarchart";
 import RoBHeatmap from "../../summary/RoBHeatmap";

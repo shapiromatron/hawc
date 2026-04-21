@@ -2,12 +2,12 @@ import {inject, observer, Provider} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {createRoot} from "react-dom/client";
-import Alert from "shared/components/Alert";
-import Loading from "shared/components/Loading";
-import SmartTagContainer from "shared/smartTags/SmartTagContainer";
-import HAWCModal from "shared/utils/HAWCModal";
-import HAWCUtils from "shared/utils/HAWCUtils";
-import h from "shared/utils/helpers";
+import Alert from "@/shared/components/Alert";
+import Loading from "@/shared/components/Loading";
+import SmartTagContainer from "@/shared/smartTags/SmartTagContainer";
+import HAWCModal from "@/shared/utils/HAWCModal";
+import HAWCUtils from "@/shared/utils/HAWCUtils";
+import h from "@/shared/utils/helpers";
 
 import $ from "$";
 

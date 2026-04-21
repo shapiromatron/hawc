@@ -1,5 +1,5 @@
 import _ from "lodash";
-import h from "shared/utils/helpers";
+import h from "@/shared/utils/helpers";
 
 import {SCORE_SHADES, SCORE_TEXT} from "./constants";
 import RiskOfBiasScore from "./RiskOfBiasScore";

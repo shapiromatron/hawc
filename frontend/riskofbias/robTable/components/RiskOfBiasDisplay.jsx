@@ -2,7 +2,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React from "react";
 import {createRoot} from "react-dom/client";
-import DomainDisplay from "riskofbias/robTable/components/DomainDisplay";
+import DomainDisplay from "@/riskofbias/robTable/components/DomainDisplay";
 
 const RiskOfBiasDisplay = props => {
     return (

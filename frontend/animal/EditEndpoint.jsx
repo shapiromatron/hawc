@@ -3,7 +3,7 @@ import {
     addContinuousConfidenceIntervals,
     addDichotomousConfidenceIntervals,
     addStdev,
-} from "shared/utils/math";
+} from "@/shared/utils/math";
 
 import $ from "$";
 

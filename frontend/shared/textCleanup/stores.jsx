@@ -1,6 +1,6 @@
 import _ from "lodash";
 import {action, computed, makeObservable, observable, toJS} from "mobx";
-import h from "shared/utils/helpers";
+import h from "@/shared/utils/helpers";
 
 class TextCleanupStore {
     @observable isLoading = true;

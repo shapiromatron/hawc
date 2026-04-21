@@ -4,7 +4,7 @@ import {
     deleteArrayElement,
     moveArrayElementDown,
     moveArrayElementUp,
-} from "shared/components/EditableRowData";
+} from "@/shared/components/EditableRowData";
 
 import {NULL_CASE, OrderChoices} from "./shared";
 

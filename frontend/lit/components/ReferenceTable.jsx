@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import Paginator from "shared/components/Paginator";
+import Paginator from "@/shared/components/Paginator";
 
 import Reference from "./Reference";
 

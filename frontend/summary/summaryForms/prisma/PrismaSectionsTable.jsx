@@ -1,14 +1,14 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import CheckboxInput from "shared/components/CheckboxInput";
+import CheckboxInput from "@/shared/components/CheckboxInput";
 import {
     ActionsTh,
     MoveRowTd,
     moveArrayElementDown,
     moveArrayElementUp,
-} from "shared/components/EditableRowData";
-import TextInput from "shared/components/TextInput";
+} from "@/shared/components/EditableRowData";
+import TextInput from "@/shared/components/TextInput";
 
 import {PrismaEditableRow} from "./PrismaEditableRow";
 

@@ -1,6 +1,6 @@
 import _ from "lodash";
 import {action, makeObservable, observable} from "mobx";
-import h from "shared/utils/helpers";
+import h from "@/shared/utils/helpers";
 
 import {NO_PARENT} from "./constants";
 

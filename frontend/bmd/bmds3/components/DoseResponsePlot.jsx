@@ -2,7 +2,7 @@ import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
-import PlotlyFigure from "shared/components/PlotlyFigure";
+import PlotlyFigure from "@/shared/components/PlotlyFigure";
 
 @inject("store")
 @observer

@@ -2,9 +2,9 @@ import {action, computed, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import Loading from "shared/components/Loading";
-import Paginator from "shared/components/Paginator";
-import h from "shared/utils/helpers";
+import Loading from "@/shared/components/Loading";
+import Paginator from "@/shared/components/Paginator";
+import h from "@/shared/utils/helpers";
 
 import Reference from "../Reference";
 import ReferenceTable from "./ReferenceTable";

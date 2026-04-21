@@ -6,12 +6,12 @@ import {
     BIAS_DIRECTION_UP,
     FOOTNOTES,
     getMultiScoreDisplaySettings,
-} from "riskofbias/constants";
-import RiskOfBiasScore from "riskofbias/RiskOfBiasScore";
-import {renderCrossStudyDisplay} from "riskofbias/robTable/components/CrossStudyDisplay";
-import {renderRiskOfBiasDisplay} from "riskofbias/robTable/components/RiskOfBiasDisplay";
-import HAWCModal from "shared/utils/HAWCModal";
-import HAWCUtils from "shared/utils/HAWCUtils";
+} from "@/riskofbias/constants";
+import RiskOfBiasScore from "@/riskofbias/RiskOfBiasScore";
+import {renderCrossStudyDisplay} from "@/riskofbias/robTable/components/CrossStudyDisplay";
+import {renderRiskOfBiasDisplay} from "@/riskofbias/robTable/components/RiskOfBiasDisplay";
+import HAWCModal from "@/shared/utils/HAWCModal";
+import HAWCUtils from "@/shared/utils/HAWCUtils";
 
 import $ from "$";
 

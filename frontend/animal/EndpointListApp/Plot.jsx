@@ -1,12 +1,12 @@
-import Endpoint from "animal/Endpoint";
+import Endpoint from "@/animal/Endpoint";
 import * as d3 from "d3";
 import _ from "lodash";
 import {autorun, toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
-import bindTooltip from "shared/components/Tooltip";
-import h from "shared/utils/helpers";
+import bindTooltip from "@/shared/components/Tooltip";
+import h from "@/shared/utils/helpers";
 
 import $ from "$";
 

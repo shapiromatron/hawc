@@ -4,7 +4,7 @@ import {
     deleteArrayElement,
     moveArrayElementDown,
     moveArrayElementUp,
-} from "shared/components/EditableRowData";
+} from "@/shared/components/EditableRowData";
 
 const getDefaultEvidence = () => {
         const blank = "<p></p>";

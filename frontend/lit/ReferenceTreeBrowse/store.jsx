@@ -1,5 +1,5 @@
 import {action, autorun, computed, makeObservable, observable} from "mobx";
-import h from "shared/utils/helpers";
+import h from "@/shared/utils/helpers";
 
 import $ from "$";
 

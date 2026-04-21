@@ -25,7 +25,7 @@ beforeEach(() => {
 
 describe("Quillify functionality", () => {
     it("should register SmartTag correctly", async () => {
-        const SmartTag = (await import("shared/smartTags/QuillSmartTag")).default,
+        const SmartTag = (await import("@/shared/smartTags/QuillSmartTag")).default,
             smartTagEl = SmartTag.create({pk: 1, type: "study"});
         expect(smartTagEl.tagName).toBe("SPAN");
         expect(smartTagEl.dataset.pk).toBe("1");
@@ -34,7 +34,7 @@ describe("Quillify functionality", () => {
     });
 
     it("should register SmartInline blots correctly", async () => {
-        const SmartInline = (await import("shared/smartTags/QuillSmartInline")).default,
+        const SmartInline = (await import("@/shared/smartTags/QuillSmartInline")).default,
             smartInlineEl = SmartInline.create({pk: 2, type: "endpoint"});
         expect(smartInlineEl.tagName).toBe("DIV");
         expect(smartInlineEl.dataset.pk).toBe("2");
@@ -43,7 +43,7 @@ describe("Quillify functionality", () => {
     });
 
     it("should parse SmartTag format correctly", async () => {
-        const SmartTag = (await import("shared/smartTags/QuillSmartTag")).default;
+        const SmartTag = (await import("@/shared/smartTags/QuillSmartTag")).default;
 
         // Create a DOM node that represents a smart tag
         const domNode = document.createElement("span");
@@ -67,7 +67,7 @@ describe("Quillify functionality", () => {
 
     it("should create Quill instance with custom toolbar including smart tag buttons", async () => {
         const Quill = (await import("quill")).default,
-            toolbarOptions = (await import("shared/utils/Quillify")).toolbarOptions,
+            toolbarOptions = (await import("@/shared/utils/Quillify")).toolbarOptions,
             editorDiv = document.createElement("div"),
             quill = new Quill(editorDiv, {modules: {toolbar: toolbarOptions}});
 

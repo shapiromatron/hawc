@@ -1,5 +1,5 @@
-import {renderClientSideAutosuggest} from "shared/components/Autocomplete";
-import {parse} from "shared/parsers/format";
+import {renderClientSideAutosuggest} from "@/shared/components/Autocomplete";
+import {parse} from "@/shared/parsers/format";
 
 import $ from "$";
 

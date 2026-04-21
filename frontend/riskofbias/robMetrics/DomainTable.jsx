@@ -1,7 +1,7 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
-import {ActionItem, ActionLink, ActionsButton} from "shared/components/ActionsButton";
+import {ActionItem, ActionLink, ActionsButton} from "@/shared/components/ActionsButton";
 
 import DetailDomain from "../components/DetailDomain";
 import MetricRow from "./MetricRow";
