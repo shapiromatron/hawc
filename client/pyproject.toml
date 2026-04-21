@@ -1,6 +1,6 @@
 [project]
 name = "hawc-client"
-version = "2025.1"
+version = "2026.1"
 description = "A client for the Health Assessment Workspace Collaborative (HAWC)."
 license = {file = "LICENSE"}
 authors = [{name = "Andy Shapiro", email = "shapiromatron@gmail.com"}]
