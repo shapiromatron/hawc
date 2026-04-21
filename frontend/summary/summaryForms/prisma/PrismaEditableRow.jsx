@@ -1,4 +1,5 @@
 import React from "react";
+
 import {EditableRow} from "@/shared/components/EditableRowData";
 import IntegerInput from "@/shared/components/IntegerInput";
 import TextInput from "@/shared/components/TextInput";

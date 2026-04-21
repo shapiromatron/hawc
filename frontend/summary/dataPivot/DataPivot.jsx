@@ -2,11 +2,11 @@ import * as d3 from "d3";
 import _ from "lodash";
 import React from "react";
 import {createRoot} from "react-dom/client";
+
 import DataTable from "@/shared/components/DataTable";
 import HAWCModal from "@/shared/utils/HAWCModal";
 import HAWCUtils from "@/shared/utils/HAWCUtils";
 import h from "@/shared/utils/helpers";
-
 import $ from "$";
 
 import {getInteractivityOptions} from "../interactivity/actions";

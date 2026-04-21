@@ -1,6 +1,7 @@
-import BmdLine from "@/bmd/common/BmdLine";
 import PropTypes from "prop-types";
 import React from "react";
+
+import BmdLine from "@/bmd/common/BmdLine";
 
 class OutputFigure extends React.Component {
     constructor(props) {

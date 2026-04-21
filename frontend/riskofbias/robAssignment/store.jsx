@@ -1,5 +1,6 @@
 import _ from "lodash";
 import {action, computed, makeObservable, observable} from "mobx";
+
 import h from "@/shared/utils/helpers";
 
 import StudyRobStore from "../stores/StudyRobStore";

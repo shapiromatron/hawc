@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+
 import Study from "@/study/Study";
 
 import {SCORE_SHADES, SCORE_TEXT, SCORE_TEXT_DESCRIPTION} from "../../constants";

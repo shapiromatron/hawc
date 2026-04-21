@@ -2,6 +2,7 @@ import _ from "lodash";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+
 import IntegerInput from "@/shared/components/IntegerInput";
 import h from "@/shared/utils/helpers";
 

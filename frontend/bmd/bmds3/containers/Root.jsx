@@ -2,6 +2,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+
 import Loading from "@/shared/components/Loading";
 
 import ResultTab from "../components/ResultTab";

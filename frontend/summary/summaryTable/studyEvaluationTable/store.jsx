@@ -1,5 +1,6 @@
 import _ from "lodash";
 import {action, autorun, computed, makeObservable, observable} from "mobx";
+
 import RiskOfBiasScore from "@/riskofbias/RiskOfBiasScore";
 import {renderRiskOfBiasDisplay} from "@/riskofbias/robTable/components/RiskOfBiasDisplay";
 import HAWCModal from "@/shared/utils/HAWCModal";

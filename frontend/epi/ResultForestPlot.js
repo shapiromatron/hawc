@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
+
 import D3Plot from "@/shared/utils/D3Plot";
 
 class ResultForestPlot extends D3Plot {

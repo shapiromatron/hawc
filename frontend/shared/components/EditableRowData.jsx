@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+
 import h from "@/shared/utils/helpers";
 
 const moveArrayElementUp = h.moveArrayElementUp,
@@ -100,9 +101,9 @@ MoveRowTd.propTypes = {
 
 export {
     ActionsTh,
-    deleteArrayElement,
     EditableRow,
     MoveRowTd,
+    deleteArrayElement,
     moveArrayElementDown,
     moveArrayElementUp,
 };

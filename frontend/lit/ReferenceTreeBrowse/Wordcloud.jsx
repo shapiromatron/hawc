@@ -1,13 +1,14 @@
 // adapted from `https://observablehq.com/@d3/word-cloud`
+
 import * as d3 from "d3";
 import cloud from "d3-cloud";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {createRoot} from "react-dom/client";
+
 import Loading from "@/shared/components/Loading";
 import VisualToolbar from "@/shared/components/VisualToolbar";
-
 import $ from "$";
 
 const padding = 0,

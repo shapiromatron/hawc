@@ -2,6 +2,7 @@ import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+
 import {OVERRIDE_SCORE_LABEL_MAPPING} from "@/riskofbias/constants";
 import SelectInput from "@/shared/components/SelectInput";
 

@@ -1,10 +1,10 @@
 import _ from "lodash";
+
 import {
     addContinuousConfidenceIntervals,
     addDichotomousConfidenceIntervals,
     addStdev,
 } from "@/shared/utils/math";
-
 import $ from "$";
 
 import DRPlot from "./DRPlot";
@@ -197,4 +197,5 @@ class EditEndpoint {
 }
 
 export default EditEndpoint;
+
 export {addContinuousConfidenceIntervals, addDichotomousConfidenceIntervals};

@@ -2,6 +2,7 @@ import _ from "lodash";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+
 import CheckboxInput from "@/shared/components/CheckboxInput";
 import {ActionsTh, MoveRowTd} from "@/shared/components/EditableRowData";
 import HelpTextPopup from "@/shared/components/HelpTextPopup";

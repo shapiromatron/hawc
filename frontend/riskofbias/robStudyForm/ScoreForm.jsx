@@ -1,8 +1,7 @@
-import "./ScoreForm.css";
-
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+
 import ScoreIcon from "@/riskofbias/robTable/components/ScoreIcon";
 import QuillTextInput from "@/shared/components/QuillTextInput";
 import SelectInput from "@/shared/components/SelectInput";
@@ -12,6 +11,8 @@ import h from "@/shared/utils/helpers";
 
 import {hideScore} from "../constants";
 import ScoreOverrideForm from "./ScoreOverrideForm";
+
+import "./ScoreForm.css";
 
 class ScoreInput extends Component {
     constructor(props) {

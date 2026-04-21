@@ -1,6 +1,7 @@
-import Endpoint from "@/animal/Endpoint";
 import _ from "lodash";
 import {action, computed, makeObservable, observable} from "mobx";
+
+import Endpoint from "@/animal/Endpoint";
 import {
     deleteArrayElement,
     moveArrayElementDown,

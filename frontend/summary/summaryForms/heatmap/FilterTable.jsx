@@ -1,6 +1,7 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+
 import {ActionsTh, MoveRowTd} from "@/shared/components/EditableRowData";
 import SelectInput from "@/shared/components/SelectInput";
 import TextInput from "@/shared/components/TextInput";

@@ -2,6 +2,7 @@ import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {Tab, TabList, TabPanel, Tabs} from "react-tabs";
+
 import FormActions from "@/shared/components/FormActions";
 import UnderDevelopment from "@/shared/components/UnderDevelopment";
 

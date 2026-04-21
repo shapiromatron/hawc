@@ -1,11 +1,11 @@
 import * as d3 from "d3";
 import _ from "lodash";
+
 import {parse as formatParse} from "@/shared/parsers/format";
 import {parse as queryParse} from "@/shared/parsers/query";
 import D3Plot from "@/shared/utils/D3Plot";
 import HAWCUtils from "@/shared/utils/HAWCUtils";
 import h from "@/shared/utils/helpers";
-
 import $ from "$";
 
 import {getAction, showAsModal} from "../interactivity/actions";
@@ -13,7 +13,7 @@ import {applyStyles} from "../summary/common";
 import DataPivot from "./DataPivot";
 import DataPivotLegend from "./DataPivotLegend";
 import {StyleLine, StyleRectangle, StyleSymbol, StyleText} from "./Styles";
-import {buildStyleMap, NULL_CASE, OrderChoices} from "./shared";
+import {NULL_CASE, OrderChoices, buildStyleMap} from "./shared";
 
 const EXTRA_BUFFER = 8; // extra buffer around plots to prevent boundary forest-plot points
 

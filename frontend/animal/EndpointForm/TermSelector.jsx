@@ -1,6 +1,7 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+
 import AutocompleteSelectableText from "@/shared/components/AutocompleteSelectableText";
 import AutocompleteTerm from "@/shared/components/AutocompleteTerm";
 import HelpTextPopup from "@/shared/components/HelpTextPopup";

@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
+
 import {NR_KEYS, SCORE_SHADES} from "@/riskofbias/constants";
 import HAWCUtils from "@/shared/utils/HAWCUtils";
 

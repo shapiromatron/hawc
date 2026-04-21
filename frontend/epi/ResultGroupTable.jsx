@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
+
 import BaseTable from "@/shared/utils/BaseTable";
 import h from "@/shared/utils/helpers";
 

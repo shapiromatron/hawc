@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
+
 import {
     BIAS_DIRECTION_COMPACT,
     BIAS_DIRECTION_DOWN,
@@ -12,7 +13,6 @@ import {renderCrossStudyDisplay} from "@/riskofbias/robTable/components/CrossStu
 import {renderRiskOfBiasDisplay} from "@/riskofbias/robTable/components/RiskOfBiasDisplay";
 import HAWCModal from "@/shared/utils/HAWCModal";
 import HAWCUtils from "@/shared/utils/HAWCUtils";
-
 import $ from "$";
 
 import D3Visualization from "./D3Visualization";

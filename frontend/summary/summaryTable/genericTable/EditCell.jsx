@@ -1,6 +1,7 @@
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+
 import CheckboxInput from "@/shared/components/CheckboxInput";
 import IntegerInput from "@/shared/components/IntegerInput";
 import Modal from "@/shared/components/Modal";

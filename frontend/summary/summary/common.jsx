@@ -1,8 +1,8 @@
 import * as d3 from "d3";
 import _ from "lodash";
-import HAWCUtils from "@/shared/utils/HAWCUtils";
 import textures from "textures";
 
+import HAWCUtils from "@/shared/utils/HAWCUtils";
 import $ from "$";
 
 const Patterns = {
@@ -162,4 +162,4 @@ const Patterns = {
         return `<div id="label-indicators" hx-get="${url}" hx-trigger="load" hx-swap="none">`;
     };
 
-export {addLabelAction, addLabelIndicators, applyStyles, handleVisualError, Patterns};
+export {Patterns, addLabelAction, addLabelIndicators, applyStyles, handleVisualError};

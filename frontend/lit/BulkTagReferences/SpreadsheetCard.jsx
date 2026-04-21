@@ -1,6 +1,7 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+
 import FileInput from "@/shared/components/FileInput";
 
 @inject("store")

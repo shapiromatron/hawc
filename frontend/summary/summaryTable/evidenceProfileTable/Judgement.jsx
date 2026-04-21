@@ -2,6 +2,7 @@ import _ from "lodash";
 import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
+
 import SelectInput from "@/shared/components/SelectInput";
 
 import {CUSTOM_JUDGEMENT, NO_JUDGEMENT} from "./common";

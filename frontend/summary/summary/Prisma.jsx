@@ -3,9 +3,9 @@ import {observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {createRoot} from "react-dom/client";
+
 import Loading from "@/shared/components/Loading";
 import h from "@/shared/utils/helpers";
-
 import $ from "$";
 
 import {handleVisualError} from "./common";

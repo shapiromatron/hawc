@@ -1,9 +1,10 @@
-import TagActions from "@/lit/components/TagActions";
 import _ from "lodash";
 import {toJS} from "mobx";
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
+
+import TagActions from "@/lit/components/TagActions";
 import LabelInput from "@/shared/components/LabelInput";
 import Loading from "@/shared/components/Loading";
 import Paginator from "@/shared/components/Paginator";

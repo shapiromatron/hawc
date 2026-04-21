@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import _ from "lodash";
+
 import {
     COLLAPSED_NR_FIELDS_DESCRIPTION,
     NA_KEYS,

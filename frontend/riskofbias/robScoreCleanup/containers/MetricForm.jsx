@@ -1,6 +1,7 @@
 import {inject, observer} from "mobx-react";
 import PropTypes from "prop-types";
 import React from "react";
+
 import QuillTextInput from "@/shared/components/QuillTextInput";
 import h from "@/shared/utils/helpers";
 

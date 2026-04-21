@@ -1,5 +1,6 @@
 import _ from "lodash";
 import {action, autorun, computed, makeObservable, observable} from "mobx";
+
 import {
     deleteArrayElement,
     moveArrayElementDown,
