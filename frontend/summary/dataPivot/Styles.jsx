@@ -563,7 +563,4 @@ class StyleRectangle {
     }
 }
 
-export {StyleSymbol};
-export {StyleText};
-export {StyleLine};
-export {StyleRectangle};
+export {StyleLine, StyleRectangle, StyleSymbol, StyleText};
