@@ -45,8 +45,8 @@ dependencies = [
   "lxml~=6.0.2",
   "psycopg2-binary==2.9.11",
   "redis==7.4.0",
-  "requests>=2.32.5,<2.34.0",
-  "pydantic>=2.12.4,<2.14.0",
+  "requests~=2.33.1",
+  "pydantic~=2.13.0",
   "nh3~=0.3.2",
   "tinycss2==1.5.1",
   # computational
@@ -65,12 +65,12 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   # build
-  "poethepoet>=0.41,<0.45",
+  "poethepoet~=0.44",
   # lint and formatting tools
   "ruff==0.15.10",
   "djhtml==3.0.11",
   # django development
-  "django-debug-toolbar>=6.2,<6.4",
+  "django-debug-toolbar~=6.3.0",
   "django-browser-reload~=1.21.0",
   "django-extensions~=4.1",
   # tests
@@ -87,7 +87,7 @@ docs = [
 ]
 prod = [
   "django-anymail~=14.0",
-  "sentry_sdk>=2.53,<2.59",
+  "sentry_sdk~=2.58",
   "django-storages[s3]~=1.14.6",
 ]
 
@@ -101,7 +101,7 @@ Source = "https://github.com/shapiromatron/hawc"
 
 # --- --- --- --- --- --- --- --- --- --- BUILD --- --- --- --- --- --- --- --- --- ---
 [build-system]
-requires = ["uv_build>=0.9.18,<0.12.0"]
+requires = ["uv_build>=0.11.0,<0.12.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
