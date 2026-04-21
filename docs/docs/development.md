@@ -450,8 +450,8 @@ When using the recommended settings below, your python and javascript code shoul
 			"source.organizeImports.biome": "explicit",
 		}
 	},
-	"biome.configurationPath": "frontend\\biome.json",  // windows only
-	"biome.lsp.bin": "frontend\\node_modules\\@biomejs\\cli-win32-x64\\biome.exe",  // windows only
+    "biome.lsp.bin": "./frontend/node_modules/.bin/biome",
+    "biome.configurationPath": "./frontend/biome.json",
     "[markdown]": {
         "editor.formatOnSave": true,
         "editor.wordWrap": "bounded",

@@ -2,11 +2,7 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 import React, {Component} from "react";
 import {createRoot} from "react-dom/client";
-import _Plot from "react-plotly.js";
-
-// react-plotly.js is CJS with __esModule:true; rolldown interop may return the
-// module namespace rather than exports.default, so unwrap it if necessary.
-const Plot = _Plot?.default ?? _Plot;
+import h from "shared/utils/helpers";
 
 class ResizableDiv extends Component {
     /*
@@ -42,7 +38,8 @@ ResizableDiv.propTypes = {
 
 class PlotlyFigure extends Component {
     render() {
-        const {data, layout, config, resizable} = this.props,
+        const Plot = h.plotlyShim(),
+            {data, layout, config, resizable} = this.props,
             plot = (
                 <Plot
                     data={data}
