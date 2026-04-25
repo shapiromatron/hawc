@@ -1,3 +1,6 @@
+import pandas as pd
+from django.utils import timezone
+
 from ..common.exports import Exporter, ModelExport
 from ..common.models import sql_display
 from ..study.exports import StudyExport
@@ -25,6 +28,22 @@ class TaskExport(ModelExport):
             "type_display": sql_display(query_prefix + "type", constants.TaskType),
             "status_display": sql_display(query_prefix + "status", constants.TaskStatus),
         }
+
+    def prepare_df(self, df: pd.DataFrame) -> pd.DataFrame:
+        df = super().prepare_df(df)
+        tz = timezone.get_default_timezone()
+        for key in [
+            self.get_column_name("due_date"),
+            self.get_column_name("started"),
+            self.get_column_name("completed"),
+        ]:
+            if key in df.columns and not df[key].isnull().all():
+                df[key] = (
+                    pd.to_datetime(df[key], errors="coerce")  # contains NaT
+                    .dt.tz_convert(tz)
+                    .dt.strftime("%Y-%m-%dT%H:%M:%S.%f%z")
+                )
+        return df
 
 
 class TaskExporter(Exporter):

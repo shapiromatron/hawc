@@ -24,7 +24,7 @@ WSGI_APPLICATION = "hawc.main.wsgi.application"
 SECRET_KEY = "io^^q^q1))7*r0u@6i+6kx&ek!yxyf6^5vix_6io6k4kdn@@5t"  # noqa: S105
 LANGUAGE_CODE = "en-us"
 SITE_ID = 1
-TIME_ZONE = os.getenv("TIME_ZONE", "US/Eastern")
+TIME_ZONE = os.getenv("TIME_ZONE", "America/New_York")  # use canonical timezone
 USE_I18N = False
 USE_TZ = True
 
