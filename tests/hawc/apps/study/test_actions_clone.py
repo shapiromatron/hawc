@@ -74,6 +74,29 @@ class TestDeepClone:
         assert DataExtraction.objects.filter(design__study=src_study).exists()
         return
 
+    def test_clone_validation(self, db_keys):
+        src_study_id = 7
+        with pytest.raises(ValueError, match="Cannot include RoB without a RoB mapping"):
+            CloneStudySettings(
+                study={src_study_id},
+                study_bioassay={src_study_id},
+                study_rob={src_study_id},
+                study_epi=set(),
+                include_rob=False,
+                copy_mode=CloneRobCopyMode.final_to_final,
+                metric_map={},
+            )
+        with pytest.raises(ValueError, match="Cannot include RoB without a study selected for RoB"):
+            CloneStudySettings(
+                study={src_study_id},
+                study_bioassay={src_study_id},
+                study_rob=set(),
+                study_epi=set(),
+                include_rob=True,
+                copy_mode=CloneRobCopyMode.final_to_final,
+                metric_map={},
+            )
+
     def test_deep_clone_study_evaluation(self, db_keys):
         user = get_user("pm")
         # test study evaluation
