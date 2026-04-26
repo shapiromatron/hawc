@@ -32,7 +32,9 @@ class CloneStudySettings(BaseModel):
     def validate_after(self):
         if self.include_rob and len(self.study_rob) == 0:
             raise ValueError("Cannot include RoB without a study selected for RoB")
-        elif self.include_rob and (len(self.metric_map) == 0):
+        elif (self.include_rob and (len(self.metric_map) == 0)) or (
+            self.include_rob is False and self.study_rob
+        ):
             raise ValueError("Cannot include RoB without a RoB mapping")
         elif self.include_rob and (self.copy_mode is None):
             raise ValueError("Cannot include RoB without a copy mode specified")

@@ -37,7 +37,7 @@
             <input
               name="study_rob"
               value="{{study.id}}"
-              {% if not study.has_rob %}disabled{% endif %}
+              {% if not study.has_rob or not dst_metrics %}disabled{% endif %}
               type="checkbox">
           </td>
         </tr>
