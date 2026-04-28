@@ -189,8 +189,44 @@ class ExperimentChildViewSet(HtmxViewSet):
         return context
 
 
+class ChemicalCreate(EnsureExtractionStartedMixin, BaseCreate):
+    success_message = "Chemical created."
+    parent_model = Study
+    parent_template_name = "study"
+    model = models.Chemical
+    form_class = forms.ChemicalForm
+
+    def get_success_url(self):
+        super().get_success_url()
+        return self.object.get_update_url()
+
+
+class ChemicalUpdate(BaseUpdate):
+    success_message = "Chemical updated."
+    parent_model = Study
+    parent_template_name = "study"
+    model = models.Chemical
+    form_class = forms.ChemicalForm
+    # template_name = "mechanistic/chemical_update.html"
+
+
+class ChemicalDetail(BaseDetail):
+    model = models.Chemical
+
+
+class ChemicalDelete(BaseDelete):
+    success_message = "Chemical deleted."
+    model = models.Chemical
+
+    def get_success_url(self):
+        return self.object.study.get_absolute_url()
+
+
+# REMOVE NOW TAHT CHEMICALS ARE NOT AN EXPERIMENT SUBOBJ???
 # Chemical viewset
+"""
 class ChemicalViewSet(ExperimentChildViewSet):
     model = models.Chemical
     form_class = forms.ChemicalForm
     detail_fragment = "mechanistic/fragments/chemical_row.html"
+"""

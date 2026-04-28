@@ -61,7 +61,8 @@ class ExperimentForm(forms.ModelForm):
 class ChemicalForm(forms.ModelForm):
     class Meta:
         model = models.Chemical
-        exclude = ("experiment",)
+        # exclude = ("experiment",)
+        exclude = ("study",)
         widgets = {
             "name": AutocompleteTextWidget(
                 autocomplete_class=autocomplete.ChemicalAutocomplete, field="name"
@@ -73,16 +74,30 @@ class ChemicalForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        """
         experiment = kwargs.pop("parent", None)
         prefix = f"chemical-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
-        super().__init__(*args, prefix=prefix, **kwargs)
+         super().__init__(*args, prefix=prefix, **kwargs)
         if experiment:
             self.instance.experiment = experiment
+        """
+
+        study = kwargs.pop("parent", None)
+        super().__init__(*args, **kwargs)
+        if study:
+            self.instance.study = study
 
     @property
     def helper(self):
-        helper = BaseFormHelper(self)
-        helper.form_tag = False
+        inputs = {
+            "legend_text": ("Add" if not self.instance.id else "Update") + " Chemical",
+            "cancel_url": self.instance.study.get_absolute_url(),
+            "submit_text": "Save",
+        }
+        helper = BaseFormHelper(self, **inputs)
+        # helper = BaseFormHelper(self)
+        # helper.form_tag = False
+        helper.form_id = "form-mech-chemical"
         helper.add_row("dsstox", 3, "col-md-4")
         helper.add_row("composition_purity", 2, "col-md-6")
         helper.add_create_btn("dsstox", reverse("assessment:dtxsid_create"), "Add new DTXSID")

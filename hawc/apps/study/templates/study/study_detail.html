@@ -62,6 +62,9 @@
             <div class="dropdown-divider"></div>
             <span class="dropdown-header">Mechanistic editing</span>
 			<a class="dropdown-item" href="{% url 'mechanistic:experiment_create' object.pk %}">Create new experiment</a>
+			<a class="dropdown-item" href="">Copy from existing (TODO)</a>
+			<a class="dropdown-item" href="{% url 'mechanistic:chemical_create' object.pk %}">Create new chemical</a>
+			<a class="dropdown-item" href="">Copy from existing (TODO)</a>
           {% endif %}
         {% endif %}
       {% endactions %}
@@ -133,6 +136,7 @@
 
     {% if study.mechanistic %}
       {% include "mechanistic/fragments/_experiment_list.html" with object_list=object.mechanistic_experiments.all %}
+      {% include "mechanistic/fragments/_chemical_list.html" with object_list=object.mechanistic_chemicals.all %}
     {% endif %}
 
     {% if study.eco %}

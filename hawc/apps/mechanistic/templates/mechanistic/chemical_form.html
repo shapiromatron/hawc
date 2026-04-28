@@ -1,0 +1,21 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+  <div class="d-flex justify-content-end">
+    {% include "common/scientific_pulldown.html" %}
+  </div>
+  {% crispy form %}
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    // $("#id_summary").focus();
+
+    $(document).ready(function() {
+      window.app.startup("mechanisticStartup", function(app){
+        app.formStartup(document);
+      });
+    });
+
+  </script>
+{% endblock extrajs %}

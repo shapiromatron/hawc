@@ -1,0 +1,10 @@
+<table class="table table-sm table-striped" hx-target="this" id="experiment-table">
+  {% bs4_colgroup '20,80' %}
+  <tbody>
+    {% optional_table_row "Name" object.name %}
+    {% optional_table_row "DSSTox substance identifier" object.dsstox %}
+    {% optional_table_row "CAS" object.cas %}
+    {% optional_table_row "Created" object.created|date:"Y-m-d" %}
+    {% optional_table_row "Last updated" object.last_updated|date:"Y-m-d" %}
+  </tbody>
+</table>

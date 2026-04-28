@@ -20,7 +20,7 @@ class ExperimentAdmin(admin.ModelAdmin):
     list_filter = ("created",)
     raw_id_fields = ("study",)
     inlines = [
-        ChemicalInline,
+        # ChemicalInline,
     ]
 
     def get_queryset(self, request):

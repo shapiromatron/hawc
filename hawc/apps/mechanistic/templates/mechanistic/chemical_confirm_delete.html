@@ -1,0 +1,6 @@
+{% extends 'mechanistic/chemical_detail.html' %}
+
+{% block content %}
+  {% include "hawc/_delete_block.html" with name="chemical" notes="This will remove all content associated with this chemical." %}
+  {{ block.super }}
+{% endblock content %}

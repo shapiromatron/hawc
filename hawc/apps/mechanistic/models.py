@@ -85,7 +85,8 @@ class Experiment(models.Model):
 class Chemical(models.Model):
     objects = managers.ChemicalManager()
 
-    experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE, related_name="chemicals")
+    # experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE, related_name="chemicals")
+    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name="mechanistic_chemicals")
     name = models.CharField(
         max_length=128,
         help_text="This field is commonly used in visualizations, so consider using a common acronym, e.g., BPA instead of Bisphenol A",
@@ -136,16 +137,29 @@ class Chemical(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    BREADCRUMB_PARENT = "study"
+
     TEXT_CLEANUP_FIELDS = ("name","cas","source","comments")
 
     class Meta:
         ordering = ("id",)
 
     def get_assessment(self):
-        return self.experiment.get_assessment()
+        # return self.experiment.get_assessment()
+        return self.study.get_assessment()
 
     def get_study(self):
-        return self.experiment.get_study()
+        # return self.experiment.get_study()
+        return self.study
+
+    def get_absolute_url(self):
+        return reverse("mechanistic:chemical_detail", args=(self.pk,))
+
+    def get_update_url(self):
+        return reverse("mechanistic:chemical_update", args=(self.pk,))
+
+    def get_delete_url(self):
+        return reverse("mechanistic:chemical_delete", args=(self.pk,))
 
     def __str__(self):
         return self.name
