@@ -1,6 +1,7 @@
+from django.db.models import QuerySet
+
 from ..common.models import BaseManager
 
-from django.db.models import QuerySet
 
 class ExperimentQuerySet(QuerySet):
     pass

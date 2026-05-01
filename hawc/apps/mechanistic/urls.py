@@ -39,7 +39,6 @@ urlpatterns = [
         views.ExperimentViewSet.as_view(),
         name="experiment-htmx",
     ),
-
     # CHEMICAL - START
     path(
         "study/<int:pk>/chemical/create/",
@@ -66,15 +65,12 @@ urlpatterns = [
         views.ChemicalDelete.as_view(),
         name="chemical_delete",
     ),
-
-
-
     # chemical
-    #path(
-        #"chemical/<int:pk>/<slug:action>/",
-        #views.ChemicalViewSet.as_view(),
-        #name="chemical-htmx",
-    #),
+    # path(
+    # "chemical/<int:pk>/<slug:action>/",
+    # views.ChemicalViewSet.as_view(),
+    # name="chemical-htmx",
+    # ),
     # test system
     path(
         "testsystem/<int:pk>/<slug:action>/",
@@ -82,4 +78,3 @@ urlpatterns = [
         name="testsystem-htmx",
     ),
 ]
-

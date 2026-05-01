@@ -409,31 +409,31 @@ const helpers = {
         arr.splice(index, 1);
         return arr;
     },
-	setupOtherShowHideRelationship: (primaryField, otherField, otherVal) => {
-		/*
-		 * given a field (probably a dropdown) and another field - show/hide the
-		 * other field only if the primary field has a particular value selected.
-		 *
-		 * Used for a common scenario where you want a picklist with several values,
-		 * and one of the values is "Other" or "More" or whatever, and then a 
-		 * secondary freetext field you can enter in the details if someone picked
-		 * "Other" from the main picklist.
-		 */
-		let otherParent = otherField.parents(".form-group");
+    setupOtherShowHideRelationship: (primaryField, otherField, otherVal) => {
+        /*
+         * given a field (probably a dropdown) and another field - show/hide the
+         * other field only if the primary field has a particular value selected.
+         *
+         * Used for a common scenario where you want a picklist with several values,
+         * and one of the values is "Other" or "More" or whatever, and then a
+         * secondary freetext field you can enter in the details if someone picked
+         * "Other" from the main picklist.
+         */
+        let otherParent = otherField.parents(".form-group");
 
-		let showOrHide = function() {
-			let selectedVal = primaryField.val();
+        let showOrHide = function () {
+            let selectedVal = primaryField.val();
 
-			if (selectedVal == otherVal) {
-				otherParent.show();
-			} else {
-				otherParent.hide();
-				otherField.val(""); // wipe the value if you switch off of "Other"
-			}
-		};
+            if (selectedVal == otherVal) {
+                otherParent.show();
+            } else {
+                otherParent.hide();
+                otherField.val(""); // wipe the value if you switch off of "Other"
+            }
+        };
 
-		primaryField.change(showOrHide); // fire every time selection changes
-		showOrHide(); // initial fire
-	},
+        primaryField.change(showOrHide); // fire every time selection changes
+        showOrHide(); // initial fire
+    },
 };
 export default helpers;

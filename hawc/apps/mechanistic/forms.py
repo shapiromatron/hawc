@@ -6,12 +6,13 @@ from ..common.autocomplete import (
     AutocompleteSelectWidget,
     AutocompleteTextWidget,
 )
+
 # from ..common.forms import ArrayCheckboxSelectMultiple, BaseFormHelper, QuillField
-from ..common.forms import BaseFormHelper, CopyForm, QuillField
+from ..common.forms import BaseFormHelper, CopyForm
+
 # from ..common.widgets import SelectMultipleOtherWidget, SelectOtherWidget
 # from ..epi.autocomplete import CountryAutocomplete
-from . import autocomplete, constants, models
-from . import models
+from . import autocomplete, models
 
 
 class ExperimentForm(forms.ModelForm):

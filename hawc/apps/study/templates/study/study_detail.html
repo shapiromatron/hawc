@@ -61,9 +61,9 @@
           {% if object.mechanistic %}
             <div class="dropdown-divider"></div>
             <span class="dropdown-header">Mechanistic editing</span>
-			<a class="dropdown-item" href="{% url 'mechanistic:experiment_create' object.pk %}">Create new experiment</a>
+            <a class="dropdown-item" href="{% url 'mechanistic:experiment_create' object.pk %}">Create new experiment</a>
             <a class="dropdown-item" href="{% url 'mechanistic:experiment_copy' object.pk %}">Copy from existing</a>
-			<a class="dropdown-item" href="{% url 'mechanistic:chemical_create' object.pk %}">Create new chemical</a>
+            <a class="dropdown-item" href="{% url 'mechanistic:chemical_create' object.pk %}">Create new chemical</a>
             <a class="dropdown-item" href="{% url 'mechanistic:chemical_copy' object.pk %}">Copy from existing</a>
           {% endif %}
         {% endif %}

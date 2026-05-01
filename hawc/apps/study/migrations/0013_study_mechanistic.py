@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("study", "0012_study_eco"),
     ]
@@ -13,8 +12,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="study",
             name="mechanistic",
-            field=models.BooleanField(
-                default=False, help_text="Study contains mechanistic data"
-            ),
+            field=models.BooleanField(default=False, help_text="Study contains mechanistic data"),
         ),
     ]

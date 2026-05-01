@@ -1,6 +1,7 @@
 from ..common.autocomplete import BaseAutocomplete, register
 from . import models
 
+
 @register
 class ExperimentAutocomplete(BaseAutocomplete):
     model = models.Experiment
@@ -17,4 +18,3 @@ class ChemicalAutocomplete(BaseAutocomplete):
 class TestSystemAutocomplete(BaseAutocomplete):
     model = models.TestSystem
     search_fields = ["name"]
-

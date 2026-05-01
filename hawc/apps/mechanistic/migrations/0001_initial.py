@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -343,7 +342,7 @@ class Migration(migrations.Migration):
                             ),
                             ("NA", "not applicable"),
                         ],
-                        help_text="Select the option that fits best and describe the knowledge about the metabolic competence (i.e. Phase I and/or II biotransformation capacity) of the test system under remarks.<p>For example, when the test system used is  cryopreserved human pooled liver tissue homogenate 9000 g fraction (S9) procured from a commercial supplier, select “metabolic activity, specify” and specify: contains phase I and II metabolic enzymes present in the microsomal (e.g. cytochrome P450s, Flavin-containing monooxygenase, uridine 5’-diphospho-glucuronosyltransferases, carboxylesterases) and cytosolic (e.g. sulfotransferases, glutathione S-transferases, methyltransferases, N-acetyl transferases, xanthine oxidase, aldehyde oxidase) fractions.",
+                        help_text="Select the option that fits best and describe the knowledge about the metabolic competence (i.e. Phase I and/or II biotransformation capacity) of the test system under remarks.<p>For example, when the test system used is  cryopreserved human pooled liver tissue homogenate 9000 g fraction (S9) procured from a commercial supplier, select “metabolic activity, specify” and specify: contains phase I and II metabolic enzymes present in the microsomal (e.g. cytochrome P450s, Flavin-containing monooxygenase, uridine 5’-diphospho-glucuronosyltransferases, carboxylesterases) and cytosolic (e.g. sulfotransferases, glutathione S-transferases, methyltransferases, N-acetyl transferases, xanthine oxidase, aldehyde oxidase) fractions.",  # noqa: RUF001
                         max_length=3,
                         verbose_name="Metabolic competence of the test system",
                     ),

@@ -95,9 +95,9 @@ class ExperimentViewSet(HtmxViewSet):
         #
         #       form = forms.ExperimentForm(data=data, instance=request.item.object, files=request.FILES)
         #
-        # (which we have to do, since Experiment has a FileField for protocol), then the form will render initially 
+        # (which we have to do, since Experiment has a FileField for protocol), then the form will render initially
         # with no existing data filled in (i.e., the "name" field doesn't have the model.name filled in to start!
-        # 
+        #
         # I spent an *extremely* long time trying to figure out why and eventually settled on this as the fix. Is something
         # weird with the crispy setup? With the model/view? Is htmx confusing things? I give up, this works. -tfeiler 20260417
         if data is None:
@@ -228,10 +228,12 @@ class ChemicalDelete(BaseDelete):
     def get_success_url(self):
         return self.object.study.get_absolute_url()
 
+
 class ChemicalCopyForm(BaseCopyForm):
     copy_model = models.Chemical
     form_class = forms.ChemicalSelectorForm
     model = Study
+
 
 # REMOVE NOW TAHT CHEMICALS ARE NOT AN EXPERIMENT SUBOBJ???
 # Chemical viewset
@@ -241,6 +243,7 @@ class ChemicalViewSet(ExperimentChildViewSet):
     form_class = forms.ChemicalForm
     detail_fragment = "mechanistic/fragments/chemical_row.html"
 """
+
 
 class TestSystemViewSet(ExperimentChildViewSet):
     model = models.TestSystem
