@@ -4,6 +4,7 @@ from django.shortcuts import render
 from ..assessment.models import TimeSpentEditing
 from ..common.htmx import HtmxViewSet, action, can_edit, can_view
 from ..common.views import (
+    BaseCopyForm,
     BaseCreate,
     BaseDelete,
     BaseDetail,
@@ -60,6 +61,12 @@ class ExperimentDelete(BaseDelete):
 
     def get_success_url(self):
         return self.object.study.get_absolute_url()
+
+
+class ExperimentCopyForm(BaseCopyForm):
+    copy_model = models.Experiment
+    form_class = forms.ExperimentSelectorForm
+    model = Study
 
 
 # Experiment viewset
@@ -221,6 +228,10 @@ class ChemicalDelete(BaseDelete):
     def get_success_url(self):
         return self.object.study.get_absolute_url()
 
+class ChemicalCopyForm(BaseCopyForm):
+    copy_model = models.Chemical
+    form_class = forms.ChemicalSelectorForm
+    model = Study
 
 # REMOVE NOW TAHT CHEMICALS ARE NOT AN EXPERIMENT SUBOBJ???
 # Chemical viewset

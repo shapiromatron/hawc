@@ -14,6 +14,11 @@ urlpatterns = [
         name="experiment_create",
     ),
     path(
+        "study/<int:pk>/experiment/copy/",
+        views.ExperimentCopyForm.as_view(),
+        name="experiment_copy",
+    ),
+    path(
         "experiment/<int:pk>/update/",
         views.ExperimentUpdate.as_view(),
         name="experiment_update",
@@ -40,6 +45,11 @@ urlpatterns = [
         "study/<int:pk>/chemical/create/",
         views.ChemicalCreate.as_view(),
         name="chemical_create",
+    ),
+    path(
+        "study/<int:pk>/chemical/copy/",
+        views.ChemicalCopyForm.as_view(),
+        name="chemical_copy",
     ),
     path(
         "chemical/<int:pk>/update/",

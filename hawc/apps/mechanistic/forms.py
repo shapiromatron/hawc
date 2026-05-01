@@ -7,7 +7,7 @@ from ..common.autocomplete import (
     AutocompleteTextWidget,
 )
 # from ..common.forms import ArrayCheckboxSelectMultiple, BaseFormHelper, QuillField
-from ..common.forms import BaseFormHelper, QuillField
+from ..common.forms import BaseFormHelper, CopyForm, QuillField
 # from ..common.widgets import SelectMultipleOtherWidget, SelectOtherWidget
 # from ..epi.autocomplete import CountryAutocomplete
 from . import autocomplete, constants, models
@@ -58,6 +58,21 @@ class ExperimentForm(forms.ModelForm):
         return helper
 
 
+class ExperimentSelectorForm(CopyForm):
+    legend_text = "Copy experiment"
+    help_text = "Select an existing experiment as a template to create a new one."
+    create_url_pattern = "mechanistic:experiment_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.Experiment.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            study=self.parent
+        )
+
+
 class ChemicalForm(forms.ModelForm):
     class Meta:
         model = models.Chemical
@@ -102,6 +117,21 @@ class ChemicalForm(forms.ModelForm):
         helper.add_row("composition_purity", 2, "col-md-6")
         helper.add_create_btn("dsstox", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         return helper
+
+
+class ChemicalSelectorForm(CopyForm):
+    legend_text = "Copy chemical"
+    help_text = "Select an existing chemical as a template to create a new one."
+    create_url_pattern = "mechanistic:chemical_create"
+    selector = forms.ModelChoiceField(
+        queryset=models.Chemical.objects.all(), empty_label=None, label="Select template"
+    )
+
+    def __init__(self, *args, **kw):
+        super().__init__(*args, **kw)
+        self.fields["selector"].queryset = self.fields["selector"].queryset.filter(
+            study=self.parent
+        )
 
 
 class TestSystemForm(forms.ModelForm):
