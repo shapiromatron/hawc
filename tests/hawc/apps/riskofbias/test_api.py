@@ -514,7 +514,7 @@ class TestCleanupViewSet:
 
         resp = c.get(url, format="json")
         assert resp.status_code == 200
-        assert set(resp.json()) == {"in_vitro", "bioassay", "epi_meta", "epi", "eco"}
+        assert set(resp.json()) == {"in_vitro", "bioassay", "epi_meta", "epi", "eco", "mechanistic"}
 
     def test_metrics_list(self, db_keys):
         c = APIClient()
