@@ -230,3 +230,8 @@ class ChemicalViewSet(ExperimentChildViewSet):
     form_class = forms.ChemicalForm
     detail_fragment = "mechanistic/fragments/chemical_row.html"
 """
+
+class TestSystemViewSet(ExperimentChildViewSet):
+    model = models.TestSystem
+    form_class = forms.TestSystemForm
+    detail_fragment = "mechanistic/fragments/testsystem_row.html"

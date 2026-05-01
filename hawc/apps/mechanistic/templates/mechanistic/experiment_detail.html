@@ -14,23 +14,21 @@
 
   {% include "mechanistic/fragments/_experiment_table.html" %}
 
-  <!--
   <div class="card my-4 mx-2">
     <div class="card-body">
-      <h3 class="card-title">Chemicals</h3>
+      <h3 class="card-title">Test Systems</h3>
       <table class="table table-sm table-striped">
-        {% bs4_colgroup '50,50' %}
-        {% bs4_thead 'Name,DTXSID' %}
+        {% bs4_colgroup '50,25,25' %}
+        {% bs4_thead 'Name,Type,Species' %}
         <tbody>
-          {% for object in object.chemicals.all %}
-            {% include "mechanistic/fragments/chemical_row.html" %}
+          {% for object in object.testsystems.all %}
+            {% include "mechanistic/fragments/testsystem_row.html" %}
           {% empty %}
-            {% bs4_fullrow 'No chemicals available.' %}
+            {% bs4_fullrow 'No test systems available.' %}
           {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
-  -->
 
 {% endblock %}

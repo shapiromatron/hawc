@@ -12,25 +12,23 @@
 
   <div style="color:red">see e.g. epiv2/templates/epiv2/design_update.html for sub-object example code...</div>
 
-  <!--
   <div class="card my-4 mx-2">
     <div class="card-body">
-      {% url 'mechanistic:chemical-htmx' object.pk 'create' as chemical_create %}
-      {% include "common/fragments/_create_card.html" with title="Chemicals" hx_get=chemical_create hx_target=".chemical-edit-row.create-row" model="chemical" btn_text="Add Row" %}
+      {% url 'mechanistic:testsystem-htmx' object.pk 'create' as testsystem_create %}
+      {% include "common/fragments/_create_card.html" with title="Test Systems" hx_get=testsystem_create hx_target=".testsystem-edit-row.create-row" model="testsystem" btn_text="Add Row" %}
       <table class="table table-sm table-striped-invert">
-        {% bs4_colgroup '43,42,15' %}
-        {% bs4_thead 'Name,DTXSID,Edit' %}
-        <tbody id="chemical-tbody">
-          {% for object in object.chemicals.all %}
-            {% include "mechanistic/fragments/chemical_row.html" %}
+        {% bs4_colgroup '35,20,30,15' %}
+        {% bs4_thead 'Name,Type,Species,Edit' %}
+        <tbody id="testsystem-tbody">
+          {% for object in object.testsystems.all %}
+            {% include "mechanistic/fragments/testsystem_row.html" %}
           {% endfor %}
-          {% include "common/fragments/_create_one.html" with text='No chemicals to display. Click "Add Row" to create one.' %}
-          {% include "common/fragments/_create_row.html" with model="chemical" first=True %}
+          {% include "common/fragments/_create_one.html" with text='No test systems to display. Click "Add Row" to create one.' %}
+          {% include "common/fragments/_create_row.html" with model="testsystem" first=True %}
         </tbody>
       </table>
     </div>
   </div>
-  -->
 
   <div class="well text-center">
     <a class="btn btn-light my-3" href="{{object.get_absolute_url}}" id="mechanistic-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>

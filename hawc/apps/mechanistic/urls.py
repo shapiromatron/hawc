@@ -65,5 +65,11 @@ urlpatterns = [
         #views.ChemicalViewSet.as_view(),
         #name="chemical-htmx",
     #),
+    # test system
+    path(
+        "testsystem/<int:pk>/<slug:action>/",
+        views.TestSystemViewSet.as_view(),
+        name="testsystem-htmx",
+    ),
 ]
 

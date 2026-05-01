@@ -102,3 +102,39 @@ class ChemicalForm(forms.ModelForm):
         helper.add_row("composition_purity", 2, "col-md-6")
         helper.add_create_btn("dsstox", reverse("assessment:dtxsid_create"), "Add new DTXSID")
         return helper
+
+
+class TestSystemForm(forms.ModelForm):
+    class Meta:
+        model = models.TestSystem
+        exclude = ("experiment",)
+        widgets = {
+            "name": AutocompleteTextWidget(
+                autocomplete_class=autocomplete.TestSystemAutocomplete, field="name"
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        experiment = kwargs.pop("parent", None)
+        prefix = f"testsystem-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
+        super().__init__(*args, prefix=prefix, **kwargs)
+        if experiment:
+            self.instance.experiment = experiment
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.add_row("test_system_type", 2, "col-md-6")
+        helper.add_row("supplier", 2, "col-md-6")
+        helper.add_row("genetic_modification", 2, "col-md-6")
+        helper.add_row("metabolic_competence", 2, "col-md-6")
+        helper.add_row("medium_buffer", 2, "col-md-6")
+        helper.add_row("qc_confirmation", 2, "col-md-6")
+
+        assessment_id = self.instance.experiment.study.assessment.pk
+        helper.add_create_btn(
+            "species", reverse("assessment:species_create", args=(assessment_id,)), "Create species"
+        )
+
+        return helper
