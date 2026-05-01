@@ -19,6 +19,7 @@ class Experiment(models.Model):
         help_text="Name / identifier of the method (if available)",
         max_length=255,
     )
+    has_high_throughput = models.BooleanField(verbose_name="High throughput?", help_text="Indicate if the experiment is high throughput.", default=False)
     description = models.TextField(
         verbose_name="Method Description",
         help_text="Provide a short description of the method and how it is relevant to the endpoint being investigated.",
@@ -28,7 +29,7 @@ class Experiment(models.Model):
     protocol = models.FileField(upload_to = "mechanistic-experiment-protocols", blank=True, help_text="In case the protocol is available (e.g. as supplement to a publication), please provide it as an attachment. The protocol includes the practical steps that were performed in the laboratory to generate the data.")
 
     test_facility = models.TextField(
-        help_text="If available, enter: Test Facility Name, Location, Study director name, Other personnel name and responsibility, Study period: study start and end dates",
+        help_text="If available, enter:<br><ul><li>Test Facility Name</li><li>Location</li><li>Study director name</li><li>Other personnel name and responsibility</li><li>Study period: study start and end dates</li></ul>",
         blank=True
     )
 
