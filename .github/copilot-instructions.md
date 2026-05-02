@@ -15,33 +15,27 @@ HAWC is a web-based platform for capturing, analyzing, and sharing data related 
 
 ## Getting Started
 
-To set up your development environment from scratch, follow these steps:
+To set up your development environment from scratch, ensure uv is installed, and then run these
+commands:
 
-1. **Create and activate a virtual environment:**
-   ```bash
-   uv venv
-   source .venv/bin/activate
-   ```
-
-2. **Sync dependencies and set up the database:**
-   ```bash
-   poe sync-dev
-   ```
+```bash
+uv sync --all-groups
+source .venv/bin/activate
+poe sync-dev
+```
 
 This will install all Python and JavaScript dependencies and run the initial database migrations.
-
-## Development Environment
-
-Once your environment is set up, you can start the development servers.
-
-- **Run Python backend:** `poe run-py`
-- **Run JavaScript frontend:** `poe run-js`
 
 Before running any other commands, ensure your virtual environment is activated:
 
 ```bash
 source .venv/bin/activate
 ```
+
+Once your environment is set up, you can start the development servers.
+
+- **Run Python backend:** `poe run-py`
+- **Run JavaScript frontend:** `poe run-js`
 
 ## Libraries and Frameworks
 
@@ -57,15 +51,15 @@ The HAWC application is a mixture of Django HTML templates for some pages, and t
    - Lint with `poe lint-py` (ruff)
    - HTML linting with `poe lint-html`
 - **JavaScript:**
-   - Lint with `poe lint-js` (uses biome.js)
+   - Lint with `yarn --cwd ./frontend run lint` (uses biome.js)
 
 ## Testing (Python)
 
-Run backend tests: `poe test`
+Run backend tests: `pytest --record-mode=none`
 
 ## Testing (JavaScript)
 
-Run frontend tests: `poe test-js`
+Run frontend tests: `yarn --cwd ./frontend run test`
 
 ## Testing (Integration)
 
@@ -101,7 +95,7 @@ When making changes to the codebase, please follow the appropriate workflow belo
 For changes that may impact both the frontend and backend, run integration tests.
 
 1. Ensure the frontend development server is running with `poe run-js`.
-2. In a separate terminal, run `py.test -sv tests/integration/`.
+2. In a separate terminal, run `INTEGRATION_TESTS=1 py.test -sv tests/integration/`.
 
 ## References:
 

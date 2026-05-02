@@ -86,6 +86,7 @@ dev = [
   "pytest-playwright~=0.7.1",
   # docs
   "mkdocs-material~=9.7.0",
+  # hawc client (testing)
   "hawc-client",
 ]
 
@@ -96,6 +97,14 @@ manage = "hawc:manage"
 [project.urls]
 Documentation = "https://hawc.readthedocs.io/"
 Source = "https://github.com/shapiromatron/hawc"
+
+[tool.uv.workspace]
+members = [
+    "client",
+]
+
+[tool.uv.sources]
+hawc-client = { workspace = true }
 
 # --- --- --- --- --- --- --- --- --- --- BUILD --- --- --- --- --- --- --- --- --- ---
 [build-system]
@@ -112,14 +121,6 @@ source-include = [
 source-exclude = [
   "hawc/main/settings/local.py",
 ]
-
-[tool.uv.workspace]
-members = [
-    "client",
-]
-
-[tool.uv.sources]
-hawc-client = { workspace = true }
 
 # --- --- --- --- --- --- --- --- --- --- FORMAT --- --- --- --- --- --- --- --- --- ---
 [tool.ruff]
@@ -171,7 +172,7 @@ type = "virtualenv"
 [tool.poe.tasks.sync-dev]
 help = "Sync dev environment after code checkout"
 sequence = [
-  {cmd = "uv pip install -e client"},
+  {cmd = "uv sync --all-groups --all-packages"},
   {cmd = "yarn --cwd frontend"},
   {cmd = "python manage.py migrate"},
   {cmd = "python manage.py recreate_views"},
