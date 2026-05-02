@@ -185,6 +185,7 @@ const gcf = function (X, A) {
             d.upper_ci = upper_ci;
         });
     };
+
 export {
     addContinuousConfidenceIntervals,
     addDichotomousConfidenceIntervals,

@@ -104,6 +104,7 @@
       document.cookie = `timezone=${Intl.DateTimeFormat().resolvedOptions().timeZone}; path=/`;
     </script>
     {% vite_hmr_client %}
+    {% vite_react_refresh %}
     {% vite_asset 'index.js' %}
     {% if form %}{{ form.media }}{% endif %}
     {% block extrajs %}{% endblock %}

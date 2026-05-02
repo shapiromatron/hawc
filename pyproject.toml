@@ -1,6 +1,6 @@
 [project]
 name = "hawc"
-version = "2025.1"
+version = "2026.1"
 description = "A content management system for human health assessments."
 license = {file = "LICENSE"}
 authors = [{name = "Andy Shapiro", email = "shapiromatron@gmail.com"}]
@@ -20,33 +20,33 @@ requires-python = ">=3.14"
 # see https://peps.python.org/pep-0440/#version-specifiers
 dependencies = [
   # web application
-  "Django~=5.2.11",
-  "django-crispy-forms==2.5",
-  "crispy-bootstrap4==2025.6",
+  "Django~=5.2.12",
+  "django-crispy-forms==2.6",
+  "crispy-bootstrap4==2026.2",
   "django-filter==25.2",
   "django-redis==6.0.0",
   "django-reversion==6.1.0",
-  "django-autocomplete-light==3.12.1",
+  "django-autocomplete-light==4.0.0",
   "django-taggit==6.1.0",
-  "django-treebeard==4.8.0",
-  "djangorestframework==3.16.1",
+  "django-treebeard==5.0.5",
+  "djangorestframework==3.17.1",
   "drf-spectacular~=0.29.0",
   "django-vite==3.1.0",
   "uritemplate==4.2.0",
   "inflection==0.5.1",
   "pyyaml==6.0.3",
-  "granian~=2.6.1",
+  "granian~=2.7.1",
   # tasks
-  "celery==5.6.2",
+  "celery==5.6.3",
   "billiard==4.2.4",
   "kombu==5.6.2",
   # utilities
   "jsonschema==4.26.0",
-  "lxml~=6.0.2",
-  "psycopg2-binary==2.9.11",
-  "redis==7.1.0",
-  "requests~=2.32.5",
-  "pydantic~=2.12.4",
+  "lxml~=6.1.0",
+  "psycopg2-binary==2.9.12",
+  "redis==7.4.0",
+  "requests~=2.33.1",
+  "pydantic~=2.13.0",
   "nh3~=0.3.2",
   "tinycss2==1.5.1",
   # computational
@@ -54,7 +54,7 @@ dependencies = [
   "pandas~=2.3.3",
   "openpyxl==3.1.5",
   "jinja2~=3.1.6",
-  "plotly==6.5.2",
+  "plotly==6.7.0",
   "scipy~=1.17.0",
   "pybmds==25.1",
   # exports
@@ -65,28 +65,28 @@ dependencies = [
   "django-storages[s3]~=1.14.6",
 ]
 
-[tool.uv.dev-dependencies]
+[dependency-groups]
 dev = [
   # build
-  "poethepoet~=0.40.0",
+  "poethepoet~=0.44",
   # lint and formatting tools
-  "ruff==0.14.14",
-  "djhtml==3.0.10",
+  "ruff==0.15.11",
+  "djhtml==3.0.11",
   # django development
-  "django-debug-toolbar~=6.2.0",
+  "django-debug-toolbar~=6.3.0",
   "django-browser-reload~=1.21.0",
   "django-extensions~=4.1",
   # tests
   "coverage~=7.13.1",
   "pytest~=9.0.1",
-  "pytest-django~=4.11.1",
+  "pytest-django~=4.12.0",
   "vcrpy==8.1.1",
   "pytest-recording==0.13.4",
-  "playwright~=1.57.0",
+  "playwright~=1.58.0",
   "pytest-playwright~=0.7.1",
   # docs
   "mkdocs-material~=9.7.0",
-  "hawc-client @ file:./client",
+  "hawc-client",
 ]
 
 [project.scripts]
@@ -99,7 +99,7 @@ Source = "https://github.com/shapiromatron/hawc"
 
 # --- --- --- --- --- --- --- --- --- --- BUILD --- --- --- --- --- --- --- --- --- ---
 [build-system]
-requires = ["uv_build>=0.9.18,<0.10.0"]
+requires = ["uv_build>=0.11.0,<0.12.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
@@ -112,6 +112,14 @@ source-include = [
 source-exclude = [
   "hawc/main/settings/local.py",
 ]
+
+[tool.uv.workspace]
+members = [
+    "client",
+]
+
+[tool.uv.sources]
+hawc-client = { workspace = true }
 
 # --- --- --- --- --- --- --- --- --- --- FORMAT --- --- --- --- --- --- --- --- --- ---
 [tool.ruff]

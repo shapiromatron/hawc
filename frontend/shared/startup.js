@@ -1,11 +1,13 @@
-import "react-tabs/style/react-tabs.css";
-
 import * as d3 from "d3";
 import {configure} from "mobx";
+
 import $ from "$";
+
 import checkSession from "./utils/checkSession";
 import Quillify from "./utils/Quillify";
 import tryWebAppStartup from "./utils/tryWebAppStartup";
+
+import "react-tabs/style/react-tabs.css";
 
 $.fn.quillify = Quillify;
 

@@ -436,8 +436,6 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
 
     def get_template_names(self):
         visual_type = self.object.visual_type
-        if visual_type in [] and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
-            raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,

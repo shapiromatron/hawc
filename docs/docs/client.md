@@ -58,6 +58,10 @@ Client tutorials for common operations are below:
 
 ### Changelog
 
+#### [2026.1](https://pypi.org/project/hawc-client/2026.1/) (April 2026)
+
+* Fix version lookup for package to use standard library from `pyproject.toml`.
+
 #### [2025.1](https://pypi.org/project/hawc-client/2025.1/) (November 2025)
 
 * Add `unpublished` parameter to bmd dataset download
