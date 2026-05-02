@@ -26,7 +26,7 @@ dependencies = [
   "django-filter==25.2",
   "django-redis==6.0.0",
   "django-reversion==6.1.0",
-  "django-autocomplete-light==3.12.1",
+  "django-autocomplete-light==4.0.0",
   "django-taggit==6.1.0",
   "django-treebeard==5.0.5",
   "djangorestframework==3.17.1",
@@ -42,8 +42,8 @@ dependencies = [
   "kombu==5.6.2",
   # utilities
   "jsonschema==4.26.0",
-  "lxml~=6.0.2",
-  "psycopg2-binary==2.9.11",
+  "lxml~=6.1.0",
+  "psycopg2-binary==2.9.12",
   "redis==7.4.0",
   "requests~=2.33.1",
   "pydantic~=2.13.0",
@@ -67,7 +67,7 @@ dev = [
   # build
   "poethepoet~=0.44",
   # lint and formatting tools
-  "ruff==0.15.10",
+  "ruff==0.15.11",
   "djhtml==3.0.11",
   # django development
   "django-debug-toolbar~=6.3.0",
@@ -86,7 +86,7 @@ docs = [
   "mkdocs-material~=9.7.0",
 ]
 prod = [
-  "django-anymail~=14.0",
+  "django-anymail~=15.0",
   "sentry_sdk~=2.58",
   "django-storages[s3]~=1.14.6",
 ]
