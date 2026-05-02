@@ -60,9 +60,12 @@ dependencies = [
   # exports
   "rispy==0.10.0",
   "python-docx==1.2.0",
+  "django-anymail~=14.0",
+  "sentry_sdk~=2.51.0",
+  "django-storages[s3]~=1.14.6",
 ]
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
   # build
   "poethepoet~=0.44",
@@ -81,14 +84,10 @@ dev = [
   "pytest-recording==0.13.4",
   "playwright~=1.58.0",
   "pytest-playwright~=0.7.1",
-]
-docs = [
+  # docs
   "mkdocs-material~=9.7.0",
-]
-prod = [
-  "django-anymail~=15.0",
-  "sentry_sdk~=2.58",
-  "django-storages[s3]~=1.14.6",
+  # hawc client (testing)
+  "hawc-client",
 ]
 
 [project.scripts]
@@ -98,6 +97,14 @@ manage = "hawc:manage"
 [project.urls]
 Documentation = "https://hawc.readthedocs.io/"
 Source = "https://github.com/shapiromatron/hawc"
+
+[tool.uv.workspace]
+members = [
+    "client",
+]
+
+[tool.uv.sources]
+hawc-client = { workspace = true }
 
 # --- --- --- --- --- --- --- --- --- --- BUILD --- --- --- --- --- --- --- --- --- ---
 [build-system]
@@ -165,8 +172,7 @@ type = "virtualenv"
 [tool.poe.tasks.sync-dev]
 help = "Sync dev environment after code checkout"
 sequence = [
-  {cmd = 'uv pip install -e ".[dev,docs]"'},
-  {cmd = "uv pip install -e client"},
+  {cmd = "uv sync --all-groups --all-packages"},
   {cmd = "yarn --cwd frontend"},
   {cmd = "python manage.py migrate"},
   {cmd = "python manage.py recreate_views"},

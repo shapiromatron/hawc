@@ -64,8 +64,7 @@ jobs:
           cache-dependency-glob: "**/pyproject.toml"
       - name: install
         run: |
-          uv pip install --system -e ".[dev,docs]"
-          uv pip install --system -e client
+          uv sync --all-groups
       - name: install
         run: |
           yarn --cwd ./frontend install --frozen-lockfile

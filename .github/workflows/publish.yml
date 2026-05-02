@@ -28,9 +28,7 @@ jobs:
           cache-dependency-glob: "**/pyproject.toml"
       - name: Install environment
         run: |
-          uv venv --python=3.14
-          source .venv/bin/activate
-          uv pip install -e ".[dev,docs]" -e client
+          uv sync --all-groups
       - name: Build client
         run: source .venv/bin/activate && cd client && poe build
       - name: Publish package to PyPI

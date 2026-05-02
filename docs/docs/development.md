@@ -32,14 +32,7 @@ git clone https://github.com/shapiromatron/hawc.git
 
 # create virtual environment
 cd ~/dev/hawc
-uv venv --python=3.14
-
-# activate the environment
-source ./.venv/bin/activate
-
-# install requirements
-uv pip install -e ".[dev,docs]"
-uv pip install -e client
+uv sync --all-groups
 
 # create a PostgreSQL database and superuser
 createuser --superuser --no-password hawc
@@ -55,19 +48,16 @@ conda activate hawc
 conda install python=3.14 postgresql
 conda install -c conda-forge nodejs
 conda install -c conda-forge yarn=1.22.19
+python -m pip install -U uv
 
 :: clone repository; we'll put in dev but you can put anywhere
 mkdir %HOMEPATH%\dev
 cd %HOMEPATH%\dev
 git clone https://github.com/shapiromatron/hawc.git
 
-:: (optional) if uv is not already installed
-python -m pip install -U uv
-
 :: install python requirements
 cd %HOMEPATH%\dev\hawc
-uv pip install -e ".[dev,docs]"
-uv pip install -e client
+uv sync --all-groups
 
 :: setup and start PostgreSQL; in this example we'll put it in dev
 cd %HOMEPATH%\dev
@@ -236,12 +226,12 @@ This makes the test database useful when writing new features. There are multipl
 
 There are currently four assessments in the database:
 
-ID | Name | Editable | Public
----|---|---|---
-1 | Chemical Z | Yes | No
-2 | Chemical X | No | Yes
-3 | Chemical Y | Yes | Yes
-4 | Chemical A | Yes | No
+ID | Name       | Editable | Public
+---|------------|----------|-------
+1  | Chemical Z | Yes      | No
+2  | Chemical X | No       | Yes
+3  | Chemical Y | Yes      | Yes
+4  | Chemical A | Yes      | No
 
 As new features are added, adding and changing content in the test database will be required to test these features. Instructions for loading and dumping are described below.
 

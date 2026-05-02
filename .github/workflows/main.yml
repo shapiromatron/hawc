@@ -46,9 +46,7 @@ jobs:
         cache-dependency-glob: "**/pyproject.toml"
     - name: install
       run: |
-        uv venv --python=3.14
-        source .venv/bin/activate
-        uv pip install -e ".[dev,docs]" -e client
+        uv sync --all-groups --all-packages
     - name: lint-py
       run: |
         uv run poe lint-py
@@ -153,7 +151,7 @@ jobs:
         path: hawc/static/bundles/
     - name: install hawc
       run: |
-        uv sync --all-extras
+        uv sync --all-groups --all-packages
         uv run playwright install --with-deps chromium
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run integration tests
