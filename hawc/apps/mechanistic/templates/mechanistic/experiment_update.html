@@ -30,6 +30,24 @@
     </div>
   </div>
 
+  <div class="card my-4 mx-2">
+    <div class="card-body">
+      {% url 'mechanistic:method-htmx' object.pk 'create' as method_create %}
+      {% include "common/fragments/_create_card.html" with title="Methods" hx_get=method_create hx_target=".method-edit-row.create-row" model="method" btn_text="Add Row" %}
+      <table class="table table-sm table-striped-invert">
+        {% bs4_colgroup '21,64,15' %}
+        {% bs4_thead 'Test System,Endpoint Detection Method,Edit' %}
+        <tbody id="method-tbody">
+          {% for object in object.methods.all %}
+            {% include "mechanistic/fragments/method_row.html" %}
+          {% endfor %}
+          {% include "common/fragments/_create_one.html" with text='No methods to display. Click "Add Row" to create one.' %}
+          {% include "common/fragments/_create_row.html" with model="method" first=True %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <div class="well text-center">
     <a class="btn btn-light my-3" href="{{object.get_absolute_url}}" id="mechanistic-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>
   </div>

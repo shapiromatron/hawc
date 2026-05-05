@@ -1,4 +1,6 @@
 import reversion
+
+# from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -204,9 +206,7 @@ class TestSystem(models.Model):
         help_text="Describe the composition of the test system, e.g. the cells / tissues / proteins / 3D models / induced pluripotent stem cells / organ on chip / co-cultures etc. that were used in the study. When applicable, provide the following information on the genetic modification: - Gene inserted - Gene species (e.g. human, rat, mouse) - Additional information on modification",
         blank=True,
     )
-    species = models.ForeignKey(
-        "assessment.Species", on_delete=models.CASCADE, blank=True, default=None
-    )
+    species = models.ForeignKey("assessment.Species", on_delete=models.CASCADE)
     supplier = models.CharField(
         blank=True,
         max_length=2,
@@ -309,6 +309,48 @@ class TestSystem(models.Model):
         return self
 
 
+class Method(models.Model):
+    objects = managers.MethodManager()
+
+    experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE, related_name="methods")
+    test_system = models.ForeignKey(TestSystem, on_delete=models.CASCADE, related_name="methods")
+
+    endpoint_detection_method = models.CharField(
+        choices=constants.EndpointDetectionMethod,
+        max_length=10,
+        help_text="Indicate the readout used endpoint detection. Select a detection method type from the picklist and provide the type of instrument (e.g. HPLC, Spectrophotometer, Flow cytometer) or chose 'other: and specify the type or equipment used / analysis performed.",
+    )
+    remarks = models.CharField(
+        verbose_name="Remarks on detection method",
+        help_text="Provide any other relevant information on the detection method not described above",
+        blank=True,
+    )
+
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    TEXT_CLEANUP_FIELDS = "remarks"
+
+    class Meta:
+        ordering = ("id",)
+
+    def get_assessment(self):
+        return self.experiment.get_assessment()
+
+    def get_study(self):
+        return self.experiment.get_study()
+
+    def __str__(self):
+        return self.endpoint_detection_method
+
+    def clone(self):
+        self.id = None
+        # self.name = clone_name(self, "name")
+        self.save()
+        return self
+
+
 reversion.register(Experiment)
 reversion.register(Chemical)
 reversion.register(TestSystem)
+reversion.register(Method)

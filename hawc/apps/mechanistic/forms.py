@@ -169,3 +169,26 @@ class TestSystemForm(forms.ModelForm):
         )
 
         return helper
+
+
+class MethodForm(forms.ModelForm):
+    class Meta:
+        model = models.Method
+        exclude = ("experiment",)
+        # widgets = { }
+
+    def __init__(self, *args, **kwargs):
+        experiment = kwargs.pop("parent", None)
+        prefix = f"method-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
+        super().__init__(*args, prefix=prefix, **kwargs)
+        if experiment:
+            self.instance.experiment = experiment
+        self.fields["test_system"].queryset = self.instance.experiment.testsystems.all()
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        # helper.add_row("test_system_type", 2, "col-md-6")
+
+        return helper

@@ -61,3 +61,14 @@ class TestSystemQualityControl(models.TextChoices):
     RESPBASE = "RESPBASE", "test system baseline response"
     EXPBIO = "EXPBIO", "test system expression of biological markers"
     OTHER = "OTHER", "Other, specify"
+
+
+class EndpointDetectionMethod(models.TextChoices):
+    ANALYTICAL = "ANALYTICAL", "analytical method (e.g. LC/MS)"
+    CHROMATO = "CHROMATO", "chromatography"
+    COMPLEX = "COMPLEX", "complex detection methods (e.g. imaging)"
+    FLUORO = "FLUORO", "fluorescence"
+    LUMIN = "LUMIN", "luminescence"
+    RADIOACTIV = "RADIOACTIV", "radioactivity"
+    ABSORP = "ABSORP", "UV/VIS absorption"
+    OTHER = "OTHER", "other"

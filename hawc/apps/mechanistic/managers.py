@@ -35,3 +35,14 @@ class TestSystemManager(BaseManager):
 
     def get_queryset(self):
         return TestSystemQuerySet(self.model, using=self._db)
+
+
+class MethodQuerySet(QuerySet):
+    pass
+
+
+class MethodManager(BaseManager):
+    assessment_relation = "experiment__study__assessment"
+
+    def get_queryset(self):
+        return MethodQuerySet(self.model, using=self._db)
