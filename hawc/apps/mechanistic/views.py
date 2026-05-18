@@ -255,3 +255,9 @@ class MethodViewSet(ExperimentChildViewSet):
     model = models.Method
     form_class = forms.MethodForm
     detail_fragment = "mechanistic/fragments/method_row.html"
+
+
+class TestDesignViewSet(ExperimentChildViewSet):
+    model = models.TestDesign
+    form_class = forms.TestDesignForm
+    detail_fragment = "mechanistic/fragments/testdesign_row.html"

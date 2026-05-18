@@ -72,3 +72,24 @@ class EndpointDetectionMethod(models.TextChoices):
     RADIOACTIV = "RADIOACTIV", "radioactivity"
     ABSORP = "ABSORP", "UV/VIS absorption"
     OTHER = "OTHER", "other"
+
+
+class VehicleSolventType(models.TextChoices):
+    DMSO = "DMSO", "DMSO"
+    ACET = "ACET", "acetone"
+    ETHA = "ETHA", "ethanol"
+    NREQ = "NREQ", "not required"
+    NSPE = "NSPE", "not specified"
+    SALI = "SALI", "saline"
+    TREX = "TREX", "treatment/exposure medium"
+    WATR = "WATR", "water"
+    OTHR = "OTHR", "other"
+
+
+class VehicleSolventConcentrationAmount(models.TextChoices):
+    PT1 = "PT1", "0.1%"
+    PT2 = "PT2", "0.2%"
+    PT5 = "PT5", "0.5%"
+    ONE = "ONE", "1.0%"
+    NS = "NS", "Not specified"
+    OTH = "OTH", "Other, please specify"

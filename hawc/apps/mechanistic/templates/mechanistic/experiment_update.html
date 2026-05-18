@@ -48,6 +48,26 @@
     </div>
   </div>
 
+  <div class="card my-4 mx-2">
+    <div class="card-body">
+      {% url 'mechanistic:testdesign-htmx' object.pk 'create' as testdesign_create %}
+      {% include "common/fragments/_create_card.html" with title="Test Designs" hx_get=testdesign_create hx_target=".testdesign-edit-row.create-row" model="testdesign" btn_text="Add Row" %}
+      <table class="table table-sm table-striped-invert">
+        {% bs4_colgroup '33,33,19,15' %}
+        {% bs4_thead 'Test System,Vehicle,Final Concentration,Edit' %}
+        <tbody id="testdesign-tbody">
+          {% for object in object.testdesigns.all %}
+            {% include "mechanistic/fragments/testdesign_row.html" %}
+          {% endfor %}
+          {% include "common/fragments/_create_one.html" with text='No test designs to display. Click "Add Row" to create one.' %}
+          {% include "common/fragments/_create_row.html" with model="testdesign" first=True %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+
   <div class="well text-center">
     <a class="btn btn-light my-3" href="{{object.get_absolute_url}}" id="mechanistic-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>
   </div>

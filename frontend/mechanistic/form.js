@@ -34,15 +34,42 @@ const testSystemFormStartup = function (f) {
 	*/
 };
 
+const testDesignFormStartup = function (f) {
+    let form = $(f);
+
+    h.setupOtherShowHideRelationship(
+        form.find("select[name$='-vehicle']"),
+        form.find("input[name$='-vehicle_other']"),
+        "OTHR"
+    );
+
+    h.setupOtherShowHideRelationship(
+        form.find("select[name$='-final_concentration_vehicle']"),
+        form.find("input[name$='-final_concentration_vehicle_other']"),
+        "OTH"
+    );
+
+    /*
+	// we don't seem to have an async way of getting back an updated species list.
+	// other HAWC forms require users to manually refresh after adding a new one;
+	// we'll stay consistent with that pattern.
+	$("a[title='Create species']").on(window.app.HAWCUtils.HAWC_NEW_WINDOW_POPUP_CLOSING, function(e) {
+		console.log("CLOSE IT!");
+	});
+	*/
+};
+
 export default document => {
     document.body.addEventListener("htmx:load", e => {
         if (e.target.querySelector(".form-experiment")) {
             experimentFormStartup(e.target);
         } else if (e.target.querySelector(".form-testsystem")) {
             testSystemFormStartup(e.target);
+        } else if (e.target.querySelector(".form-testdesign")) {
+            testDesignFormStartup(e.target);
         } else {
-            // console.log("OTHER CASE:");
-            // console.log(e.target);
+            console.log("OTHER CASE:");
+            console.log(e.target);
         }
     });
 

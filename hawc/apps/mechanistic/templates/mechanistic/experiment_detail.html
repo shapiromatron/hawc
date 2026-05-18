@@ -48,4 +48,21 @@
     </div>
   </div>
 
+  <div class="card my-4 mx-2">
+    <div class="card-body">
+      <h3 class="card-title">Test Designs</h3>
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '40,40,20' %}
+        {% bs4_thead 'Test System,Vehicle,Final Concentration' %}
+        <tbody>
+          {% for object in object.testdesigns.all %}
+            {% include "mechanistic/fragments/testdesign_row.html" %}
+          {% empty %}
+            {% bs4_fullrow 'No test designs available.' %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 {% endblock %}

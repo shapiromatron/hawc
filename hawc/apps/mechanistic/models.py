@@ -350,7 +350,70 @@ class Method(models.Model):
         return self
 
 
+class TestDesign(models.Model):
+    objects = managers.TestDesignManager()
+
+    experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE, related_name="testdesigns")
+    test_system = models.ForeignKey(
+        TestSystem, on_delete=models.CASCADE, related_name="testdesigns"
+    )
+
+    vehicle = models.CharField(
+        verbose_name="Vehicle/Solvent",
+        max_length=4,
+        choices=constants.VehicleSolventType,
+        help_text="If a vehicle or solvent was used, select the relevant item or use 'other:' and specify.",
+    )
+
+    vehicle_other = models.CharField(
+        verbose_name="Vehicle/Solvent: Additional Details",
+        max_length=255,
+        help_text="Enter additional details about vehicle/solvent.",
+        blank=True,
+    )
+
+    final_concentration_vehicle = models.CharField(
+        verbose_name="Final concentration of the vehicle/solvent",
+        max_length=4,
+        choices=constants.VehicleSolventConcentrationAmount,
+        help_text="Specify the % of vehicle / solvent in the final incubation mixture",
+    )
+
+    final_concentration_vehicle_other = models.CharField(
+        verbose_name="Final concentration: Additional Details",
+        max_length=255,
+        help_text="Enter additional details about final concentration.",
+        blank=True,
+    )
+
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    # BREADCRUMB_PARENT = "study"
+
+    TEXT_CLEANUP_FIELDS = "name"
+
+    class Meta:
+        ordering = ("id",)
+
+    def get_assessment(self):
+        return self.experiment.get_assessment()
+
+    def get_study(self):
+        return self.experiment.get_study()
+
+    def __str__(self):
+        return self.get_vehicle_display()
+
+    def clone(self):
+        self.id = None
+        # self.name = clone_name(self, "name")
+        self.save()
+        return self
+
+
 reversion.register(Experiment)
 reversion.register(Chemical)
 reversion.register(TestSystem)
 reversion.register(Method)
+reversion.register(TestDesign)
