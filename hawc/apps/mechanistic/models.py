@@ -1,12 +1,12 @@
 import reversion
 
-# from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
 
 from ..assessment.models import DSSTox
-from ..common.models import clone_name
+from ..common.models import NumericTextField, clone_name
 from ..study.models import Study
 from . import constants, managers
 
@@ -320,6 +320,16 @@ class Method(models.Model):
         max_length=10,
         help_text="Indicate the readout used endpoint detection. Select a detection method type from the picklist and provide the type of instrument (e.g. HPLC, Spectrophotometer, Flow cytometer) or chose 'other: and specify the type or equipment used / analysis performed.",
     )
+    details = models.CharField(
+        verbose_name="Details on detection method",
+        choices=constants.EndpointDetails,
+        max_length=4,
+        help_text="Select what type of qualitative method was used and describe the method in the remarks field below.",
+    )
+    parameters_measured = ArrayField(
+        models.CharField(max_length=3, choices=constants.EndpointParameters),
+        help_text='Describe the unit or output that was provided by the instrument during the measurement. This is the instrument unit of measure of the raw data.',
+    )
     remarks = models.CharField(
         verbose_name="Remarks on detection method",
         help_text="Provide any other relevant information on the detection method not described above",
@@ -350,6 +360,7 @@ class Method(models.Model):
         return self
 
 
+
 class TestDesign(models.Model):
     objects = managers.TestDesignManager()
 
@@ -377,6 +388,7 @@ class TestDesign(models.Model):
         max_length=4,
         choices=constants.VehicleSolventConcentrationAmount,
         help_text="Specify the % of vehicle / solvent in the final incubation mixture",
+        blank=True,
     )
 
     final_concentration_vehicle_other = models.CharField(
@@ -385,6 +397,30 @@ class TestDesign(models.Model):
         help_text="Enter additional details about final concentration.",
         blank=True,
     )
+
+    final_concentration_vehicle_units = models.CharField(
+        verbose_name="Final concentration of the vehicle/solvent unit",
+        max_length=4,
+        choices=constants.VehicleSolventConcentrationUnit,
+        help_text="Specify the vehicle / solvent unit",
+        blank=True,
+    )
+
+    concentration_selection = models.CharField(
+        verbose_name="Concentration selection of the test material",
+        max_length=4,
+        choices=constants.ConcentrationSelection,
+        help_text="For data interpretation it is important to know on what basis the highest concentration tested was selected.<p>Any free text explanation can be given in the adjacent text field to justify the dose level selected.",
+    )
+
+    # always show it...
+    concentration_selection_remarks = models.CharField(
+        verbose_name="Concentration selection of the test material: Additional Details",
+        help_text="Any free text explanation can be given in the adjacent text field to justify the dose level selected.",
+        blank=True,
+    )
+
+    # TODO: rows 62-64
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

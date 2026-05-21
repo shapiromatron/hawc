@@ -8,11 +8,11 @@ from ..common.autocomplete import (
 )
 
 # from ..common.forms import ArrayCheckboxSelectMultiple, BaseFormHelper, QuillField
-from ..common.forms import BaseFormHelper, CopyForm
+from ..common.forms import ArrayCheckboxSelectMultiple, BaseFormHelper, CopyForm
 
 # from ..common.widgets import SelectMultipleOtherWidget, SelectOtherWidget
 # from ..epi.autocomplete import CountryAutocomplete
-from . import autocomplete, models
+from . import autocomplete, constants, models
 
 
 class ExperimentForm(forms.ModelForm):
@@ -175,7 +175,9 @@ class MethodForm(forms.ModelForm):
     class Meta:
         model = models.Method
         exclude = ("experiment",)
-        # widgets = { }
+        widgets = {
+            "parameters_measured": ArrayCheckboxSelectMultiple(choices=constants.EndpointParameters.choices),
+        }
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop("parent", None)
