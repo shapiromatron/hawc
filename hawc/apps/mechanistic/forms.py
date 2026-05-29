@@ -8,7 +8,7 @@ from ..common.autocomplete import (
 )
 
 # from ..common.forms import ArrayCheckboxSelectMultiple, BaseFormHelper, QuillField
-from ..common.forms import ArrayCheckboxSelectMultiple, BaseFormHelper, CopyForm
+from ..common.forms import ArrayCheckboxSelectMultiple, BaseFormHelper, CopyForm, JSONListWidget
 
 # from ..common.widgets import SelectMultipleOtherWidget, SelectOtherWidget
 # from ..epi.autocomplete import CountryAutocomplete
@@ -200,7 +200,13 @@ class TestDesignForm(forms.ModelForm):
     class Meta:
         model = models.TestDesign
         exclude = ("experiment",)
-        # widgets = { }
+        widgets = {
+            "concentrations_tested": JSONListWidget(
+                prefix="concentrations_tested",
+                row_fields=models.TestDesign.concentrations_tested_subfields
+            )
+        }
+
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop("parent", None)

@@ -49,6 +49,12 @@ const testDesignFormStartup = function (f) {
         "OTH"
     );
 
+	import("shared/components/JsonListWidget.js").then(function(module) {
+		let widget = new module.default.widget_class();
+		widget.initializeWidgetUi("concentrations_tested");
+		// widget.initializeAllWidgetUis();
+	});
+
     /*
 	// we don't seem to have an async way of getting back an updated species list.
 	// other HAWC forms require users to manually refresh after adding a new one;

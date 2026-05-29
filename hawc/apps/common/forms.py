@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+import html, json
 from typing import Any
 
 from crispy_forms import bootstrap as cfb
@@ -7,6 +8,7 @@ from crispy_forms import layout as cfl
 from django import forms
 from django.forms.widgets import RadioSelect
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 
 from . import validators, widgets
 from .clean import sanitize_html
@@ -483,3 +485,195 @@ class PydanticValidator:
         """Validate the field with the pydantic model."""
         with PydanticToDjangoError(include_field=False):
             self.schema.model_validate(value)
+
+
+class JSONListWidget(forms.TextInput):
+    # hacky - Media doesn't seem to get loaded for these htmx interfaces...
+    # we have very little CSS (only about 5 lines worth) so put that into hawc.css
+    # JS is the clunky bit; added a "JsonListWidget.js" that can handle the interactive bits;
+    # any page using this widget just needs to import that and call one of the "initialize*" methods
+    # to set up things like add/delete.
+    #
+    # doesn't currently support required anything.
+    """
+    class Media:
+        css = {
+            "all": ["json_list_widget_demo.css"],
+        }
+        js = ["json_list_widget_demo.js"]
+    """
+
+    def __init__(self, prefix, row_fields, attrs=None):
+        super().__init__(attrs)
+        self.prefix = prefix
+        self.row_fields = row_fields
+
+        for rf in self.row_fields:
+            if "name" not in rf or "type" not in rf:
+                raise Exception(f"improperly configured sub_fields for {self} '{prefix}'. Be sure to supply name & type for each.")
+            if rf.get("type") not in [str, float, int]:
+                raise Exception(f"improperly configured sub_fields for {self} '{prefix}.{rf.get('name')}'. str/float/int only.")
+
+    def jsonify_schema(self):
+        # remove raw python types (e.g. str), python enums, etc.
+        # return a json string representing the schema; this is safe to put in html etc.
+        # is there a util that would do this for us?
+        json_safe_schema = []
+        for field_def in self.row_fields:
+            row_schema = { "name": field_def["name"], "type": field_def["type"].__name__ }
+
+            if "choices" in field_def:
+                safe_choices = []
+                for c in field_def["choices"]:
+                    safe_choices.append({
+                        "val": c.value,
+                        "label": c.label
+                    })
+                row_schema["choices"] = safe_choices
+
+            json_safe_schema.append(row_schema)
+
+        return json.dumps(json_safe_schema)
+
+
+    def render(self, name, value, attrs=None, renderer=None):
+        context = self.get_context(name, value, attrs)
+        parsed = json.loads(value) 
+
+        widget_html = f"<div class='hawc-json-list-widget' data-prefix='{self.prefix}' data-schema='{html.escape(self.jsonify_schema())}'>"
+        row_idx = 0
+
+        for row in parsed:
+            widget_html += "<div class='data-row'>"
+            for field_def in self.row_fields:
+                key = field_def["name"]
+                field_type = field_def["type"]
+                qualified_name = f"{context['widget']['name']}-{key}-{row_idx}"
+                id_val = f"id_{qualified_name}"
+
+                displayable_val = row[key]
+                if displayable_val is None:
+                    displayable_val = ""
+
+                widget_html += f"<div class='field-cell'>"
+                widget_html += f"<label for='{id_val}'>{key}: </label>"
+                if field_type is str:
+                    choices = field_def.get("choices")
+                    if choices is None:
+                        widget_html += f"<input type='text' id='{id_val}' name='{qualified_name}' value='{displayable_val}'>"
+                    else:
+                        widget_html += f"<select id='{id_val}' name='{qualified_name}'>"
+                        # print(f"RENDER: {choices} ({type(choices)})")
+                        for c in choices:
+                            # print(f"\tLOOP: '{c.name}' == '{c.value}' ({c.label}) ({type(c)}); [{row[key]}]")
+                            selected_or_not = " selected" if c.value == row[key] else ""
+                            widget_html += f"<option value='{c.value}'{selected_or_not}>{c.label}</option>"
+                        widget_html += "</select>"
+                elif field_type in [float, int]:
+                    widget_html += f"<input type='number' id='{id_val}' name='{qualified_name}' value='{displayable_val}'>"
+                widget_html += f"</div>" # /.field-cell
+
+            # add control cell - start
+            widget_html += f"<div class='control-cell'></div>"
+            # add control cell - end
+
+            widget_html += "</div>"
+            row_idx += 1
+
+        # control row - start
+        widget_html += "<div class='control-row'>"
+        widget_html += "<button>Add New</button>"
+        widget_html += "</div class='control-row'>"
+        # control row - end
+
+        widget_html += "</div>"
+
+        # DONE - can i package/save this from the form? to_python?
+        # DONE - pass in keys to control order ('value' should come before 'units')
+        # DONE - add support for numeric / select
+        # DONE - fix prefixes
+        # DONE - ACTUALLY START SAVING! re-package as JSON essentially...
+        # DONE - add some classes/id's/etc. to the div/inputs
+
+        # DONE - load css/js? Media work?. Not great, but I can work it.
+        # DONE - javascript to handle add/delete/re-order?
+            # TODO - can i show/hide the other as part of the JS?
+        # TODO - add getters to the model to actually return this as nice objects (or at least parsed list/types) instead of raw JSON
+        # DONE - rename/relocate JSONListField and JSONListWidget somewhere more sensible
+        # TODO - verbose name support?
+        # TODO - maybe convert it into template(s)?
+        # TODO - support required'ness?
+
+        return mark_safe(widget_html)
+
+    def value_from_datadict(self, data, files, name):
+        # data is a QueryDict containing all the submitted form fields (whether part of this widget or not).
+        # e.g.:
+        """
+        name='testdesign-1-concentrations_tested'
+
+        data= {
+            'csrfmiddlewaretoken': ['SOME_CSRF_TOKEN'],
+
+            # other fields in the form
+            'testdesign-1-test_system': ['1'],
+            'testdesign-1-vehicle': ['DMSO'],
+            # etc.
+
+            # first row of data
+
+            'testdesign-1-concentrations_tested-value-0': ['0.91'],
+            'testdesign-1-concentrations_tested-units-0': ['GL'],
+            'testdesign-1-concentrations_tested-units_other-0': [''],
+
+            # second row of data
+            'testdesign-1-concentrations_tested-value-1': ['1.2'],
+            'testdesign-1-concentrations_tested-units-1': ['OTH'],
+            'testdesign-1-concentrations_tested-units_other-1': ['custom!'],
+
+            # etc.
+        }
+
+        """
+        # print(f"value_from_datadict firing start")
+        # print(f"{type(name)}: {name=}")
+        # print(f"{type(data)}: {data=}")
+        # print(f"value_from_datadict firing end")
+
+        submitted_data = []
+        row_idx = 0
+        keep_probing = True
+        while keep_probing:
+            row_data = {}
+            for field_def in self.row_fields:
+                key = field_def["name"]
+                field_type = field_def["type"]
+
+                qualified_name = f"{name}-{key}-{row_idx}"
+
+                if qualified_name in data:
+                    val = data[qualified_name]
+
+                    # typed_val = field_type(val)
+
+                    if field_type is float and "." not in val:
+                        # special case - we accept float, but they put in int.
+                        # otherwise if they put in "56" we save "56.0"
+                        typed_val = int(val)
+                    else:
+                        # normal behavior - cast it
+                        typed_val = field_type(val)
+
+                    row_data[key] = typed_val
+                else:
+                    keep_probing = False
+                    break
+
+            if keep_probing:
+                submitted_data.append(row_data)
+            row_idx += 1
+
+        # print(f"CONSTRUCTED:\n{json.dumps(submitted_data)}")
+
+        # return '[{"units": "GKG", "value": 0.9, "units_other": null}, {"units": "OTH", "value": 1.2, "units_other": "hardcoded value_from_datadict"}]'
+        return json.dumps(submitted_data)

@@ -2,11 +2,12 @@ import reversion
 
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django import forms
 from django.db import models
 from django.urls import reverse
 
 from ..assessment.models import DSSTox
-from ..common.models import NumericTextField, clone_name
+from ..common.models import JSONListField, NumericTextField, clone_name
 from ..study.models import Study
 from . import constants, managers
 
@@ -360,7 +361,6 @@ class Method(models.Model):
         return self
 
 
-
 class TestDesign(models.Model):
     objects = managers.TestDesignManager()
 
@@ -421,6 +421,16 @@ class TestDesign(models.Model):
     )
 
     # TODO: rows 62-64
+    concentrations_tested_subfields = [
+        { "name": "value", "type": float },
+        { "name": "units", "type": str, "choices": constants.ConcentrationUnits },
+        { "name": "units_other", "type": str },
+    ]
+    concentrations_tested = JSONListField(
+        blank=True,
+        help_text='Concentrations tested',
+        sub_fields=concentrations_tested_subfields # see above note...maybe lose this and just keep concentrations_tested_subfields, and pass that to the widget.
+    )
 
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

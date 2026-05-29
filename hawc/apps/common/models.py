@@ -655,3 +655,26 @@ class ColorField(models.CharField):
 
 def search_query(value: str) -> SearchQuery:
     return SearchQuery(value, search_type="websearch", config="english")
+
+
+# a field that:
+# stores JSON in the db
+# but, (generally) presents a list of fields in input boxes/dropdowns -- NOT raw json!
+#
+# typical use case - you have some model that needs to contain a list of,
+# say: value and unit. So like "10/cm, 15/inches" etc. One option of course
+# is to make a separate db table but maybe we'd prefer the data live in the same
+# table as the rest of the model. This field + accompanying JSONListWidget can be used to
+# store something like '[ {"val": 10, "units": "cm", {"val": 15, "units": inches" } ]'
+# in the database, and present a simple UI to let users add/edit/delete these entries.
+#
+# this is fairly limited -- no nested, no reuquired'ness, etc. But it works as a simple solution
+# and can be built out more as needed.
+class JSONListField(models.JSONField):
+    widget = None # we expect a widget to be supplied
+
+    # def __init__(self, encoder=None, decoder=None, **kwargs):
+    def __init__(self, sub_fields, **kwargs):
+        super().__init__(**kwargs)
+        # print(f"JSONListField constructor firing: {sub_fields}")
+        self.sub_fields = sub_fields # does this actually do anything? My thinking was put this on here and supply Field def to the widget...but lifecycle makes that iffy...
