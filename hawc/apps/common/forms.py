@@ -510,9 +510,13 @@ class JSONListWidget(forms.TextInput):
 
         for rf in self.row_fields:
             if "name" not in rf or "type" not in rf:
-                raise Exception(f"improperly configured sub_fields for {self} '{prefix}'. Be sure to supply name & type for each.")
+                raise Exception(
+                    f"improperly configured sub_fields for {self} '{prefix}'. Be sure to supply name & type for each."
+                )
             if rf.get("type") not in [str, float, int]:
-                raise Exception(f"improperly configured sub_fields for {self} '{prefix}.{rf.get('name')}'. str/float/int only.")
+                raise Exception(
+                    f"improperly configured sub_fields for {self} '{prefix}.{rf.get('name')}'. str/float/int only."
+                )
 
     def jsonify_schema(self):
         # remove raw python types (e.g. str), python enums, etc.
@@ -520,38 +524,41 @@ class JSONListWidget(forms.TextInput):
         # is there a util that would do this for us?
         json_safe_schema = []
         for field_def in self.row_fields:
-            row_schema = { "name": field_def["name"], "type": field_def["type"].__name__ }
+            row_schema = {"name": field_def["name"], "type": field_def["type"].__name__}
 
             if "choices" in field_def:
                 safe_choices = []
                 for c in field_def["choices"]:
-                    safe_choices.append({
-                        "val": c.value,
-                        "label": c.label
-                    })
+                    safe_choices.append({"val": c.value, "label": c.label})
                 row_schema["choices"] = safe_choices
 
             json_safe_schema.append(row_schema)
 
         return json.dumps(json_safe_schema)
 
-
     def render(self, name, value, attrs=None, renderer=None):
         context = self.get_context(name, value, attrs)
-        parsed = json.loads(value) 
+        parsed = json.loads(value)
 
         widget_html = f"<div class='hawc-json-list-widget' data-prefix='{self.prefix}' data-schema='{html.escape(self.jsonify_schema())}'>"
-        row_idx = 0
+        row_idx = -1
+
+        if parsed is None:
+            parsed = []
+        # we insert a dummy element at the start to have a template we can use for the UI when adding...
+        parsed.insert(0, None)
 
         for row in parsed:
-            widget_html += "<div class='data-row'>"
+            widget_html += f"<div class='{'data-row' if row is not None else 'template-row'}'>"
             for field_def in self.row_fields:
                 key = field_def["name"]
                 field_type = field_def["type"]
-                qualified_name = f"{context['widget']['name']}-{key}-{row_idx}"
+                qualified_name = (
+                    f"{context['widget']['name']}-{key}-{row_idx if row is not None else 'X'}"
+                )
                 id_val = f"id_{qualified_name}"
 
-                displayable_val = row[key]
+                displayable_val = row[key] if row is not None else ""
                 if displayable_val is None:
                     displayable_val = ""
 
@@ -566,12 +573,14 @@ class JSONListWidget(forms.TextInput):
                         # print(f"RENDER: {choices} ({type(choices)})")
                         for c in choices:
                             # print(f"\tLOOP: '{c.name}' == '{c.value}' ({c.label}) ({type(c)}); [{row[key]}]")
-                            selected_or_not = " selected" if c.value == row[key] else ""
-                            widget_html += f"<option value='{c.value}'{selected_or_not}>{c.label}</option>"
+                            selected_or_not = " selected" if c.value == displayable_val else ""
+                            widget_html += (
+                                f"<option value='{c.value}'{selected_or_not}>{c.label}</option>"
+                            )
                         widget_html += "</select>"
                 elif field_type in [float, int]:
                     widget_html += f"<input type='number' id='{id_val}' name='{qualified_name}' value='{displayable_val}'>"
-                widget_html += f"</div>" # /.field-cell
+                widget_html += f"</div>"  # /.field-cell
 
             # add control cell - start
             widget_html += f"<div class='control-cell'></div>"
@@ -597,7 +606,7 @@ class JSONListWidget(forms.TextInput):
 
         # DONE - load css/js? Media work?. Not great, but I can work it.
         # DONE - javascript to handle add/delete/re-order?
-            # TODO - can i show/hide the other as part of the JS?
+        # TODO - can i show/hide the other as part of the JS?
         # TODO - add getters to the model to actually return this as nice objects (or at least parsed list/types) instead of raw JSON
         # DONE - rename/relocate JSONListField and JSONListWidget somewhere more sensible
         # TODO - verbose name support?

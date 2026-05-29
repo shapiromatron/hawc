@@ -176,7 +176,9 @@ class MethodForm(forms.ModelForm):
         model = models.Method
         exclude = ("experiment",)
         widgets = {
-            "parameters_measured": ArrayCheckboxSelectMultiple(choices=constants.EndpointParameters.choices),
+            "parameters_measured": ArrayCheckboxSelectMultiple(
+                choices=constants.EndpointParameters.choices
+            ),
         }
 
     def __init__(self, *args, **kwargs):
@@ -203,10 +205,9 @@ class TestDesignForm(forms.ModelForm):
         widgets = {
             "concentrations_tested": JSONListWidget(
                 prefix="concentrations_tested",
-                row_fields=models.TestDesign.concentrations_tested_subfields
+                row_fields=models.TestDesign.concentrations_tested_subfields,
             )
         }
-
 
     def __init__(self, *args, **kwargs):
         experiment = kwargs.pop("parent", None)
@@ -222,5 +223,29 @@ class TestDesignForm(forms.ModelForm):
         helper.form_tag = False
         helper.add_row("vehicle", 2, "col-md-6")
         helper.add_row("final_concentration_vehicle", 2, "col-md-6")
+
+        return helper
+
+
+class ExperimentalDesignForm(forms.ModelForm):
+    class Meta:
+        model = models.ExperimentalDesign
+        exclude = ("experiment",)
+
+    def __init__(self, *args, **kwargs):
+        experiment = kwargs.pop("parent", None)
+        prefix = (
+            f"experimentaldesign-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
+        )
+        super().__init__(*args, prefix=prefix, **kwargs)
+        if experiment:
+            self.instance.experiment = experiment
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        # helper.add_row("vehicle", 2, "col-md-6")
+        # helper.add_row("final_concentration_vehicle", 2, "col-md-6")
 
         return helper

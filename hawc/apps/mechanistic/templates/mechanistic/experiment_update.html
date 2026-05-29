@@ -66,6 +66,23 @@
     </div>
   </div>
 
+  <div class="card my-4 mx-2">
+    <div class="card-body">
+      {% url 'mechanistic:experimentaldesign-htmx' object.pk 'create' as experimentaldesign_create %}
+      {% include "common/fragments/_create_card.html" with title="Experimental Designs" hx_get=experimentaldesign_create hx_target=".experimentaldesign-edit-row.create-row" model="experimentaldesign" btn_text="Add Row" %}
+      <table class="table table-sm table-striped-invert">
+        {% bs4_colgroup '43,42,15' %}
+        {% bs4_thead 'Concentration,Composition,Edit' %}
+        <tbody id="experimentaldesign-tbody">
+          {% for object in object.experimentaldesigns.all %}
+            {% include "mechanistic/fragments/experimentaldesign_row.html" %}
+          {% endfor %}
+          {% include "common/fragments/_create_one.html" with text='No experimental designs to display. Click "Add Row" to create one.' %}
+          {% include "common/fragments/_create_row.html" with model="experimentaldesign" first=True %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 
 
   <div class="well text-center">

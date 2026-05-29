@@ -87,4 +87,9 @@ urlpatterns = [
         views.TestDesignViewSet.as_view(),
         name="testdesign-htmx",
     ),
+    path(
+        "experimentaldesign/<int:pk>/<slug:action>/",
+        views.ExperimentalDesignViewSet.as_view(),
+        name="experimentaldesign-htmx",
+    ),
 ]

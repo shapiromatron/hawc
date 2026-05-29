@@ -1,0 +1,6 @@
+<tr hx-target="this" hx-swap="outerHTML" class="mechanistic-obj-row {{action}} experimentaldesign-{{object.pk}}">
+  <td>{{object.test_system_concentration}}</td>
+  <td>{{object.exposure_medium_composition}}</td>
+  {% include "common/fragments/_object_row.html" with app="mechanistic" model="experimentaldesign" %}
+</tr>
+{% include "common/fragments/_create_row.html" with model="experimentaldesign" %}

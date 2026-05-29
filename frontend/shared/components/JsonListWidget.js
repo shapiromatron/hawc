@@ -11,7 +11,7 @@ function JsonListWidget() {
 			return false;
 		});
 
-		this.widgetDiv.find(".data-row").each(function() {
+		this.widgetDiv.find(".data-row, .template-row").each(function() {
 			let dataRow = $(this);
 			let controlCell = dataRow.find(".control-cell");
 			let deleteBtn = $("<button/>").html("Delete").appendTo(controlCell);
@@ -24,7 +24,7 @@ function JsonListWidget() {
 	};
 
 	this.onDeleteRowButtonClicked = function(clickedButton) {
-		let rowIdx = $(clickedButton).parents(".data-row").index();
+		let rowIdx = $(clickedButton).parents(".data-row").index(".data-row");
 		this.deleteRowAtIndex(rowIdx);
 	};
 
@@ -85,10 +85,78 @@ function JsonListWidget() {
 	 *
 	 */
 	this.addRow = function() {
-		// console.log(this.schema);
+		console.log("ADD ONE");
+		console.log(this.schema);
 
 		let numElements = this.widgetDiv.find(".data-row").length;
 
+
+		let fixers = [
+			[ "label", "for" ],
+			[ "input,select", "id" ],
+			[ "input,select", "name" ],
+		];
+
+		let newRow = this.widgetDiv.find(".template-row:eq(0)").clone().addClass("data-row").removeClass("template-row");
+
+		// set up delete btn
+		let hook = this;
+		newRow.find(".control-cell button").click(function() {
+			hook.onDeleteRowButtonClicked($(this));
+			return false;
+		});
+
+		newRow.find(".field-cell").each(function() {
+			let cell = $(this);
+
+			for (let i = 0 ; i < fixers.length ; i++) {
+				let fixer = fixers[i];
+				let selectorToFix = fixer[0];
+				let attribToFix = fixer[1];
+
+				let domEl = cell.find(selectorToFix);
+				if (selectorToFix != "label") {
+					domEl.val(""); // wipe the input
+				}
+				let currAttribVal = domEl.attr(attribToFix);
+				let finalDashIdx = currAttribVal.lastIndexOf("-");
+				let correctedVal = currAttribVal.substring(0, finalDashIdx+1) + numElements;
+				domEl.attr(attribToFix, correctedVal);
+			}
+		});
+
+
+
+
+
+	/*
+
+
+<div class="data-row">
+	<div class="field-cell">
+		<label for="id_testdesign-1-concentrations_tested-value-0">value: </label>
+		<input type="number" id="id_testdesign-1-concentrations_tested-value-0" name="testdesign-1-concentrations_tested-value-0" value="0.9">
+	</div>
+	<div class="field-cell">
+		<label for="id_testdesign-1-concentrations_tested-units-0">units: </label>
+		<select id="id_testdesign-1-concentrations_tested-units-0" name="testdesign-1-concentrations_tested-units-0">
+			<option value="OTH">other</option>
+		</select>
+	</div>
+	<div class="field-cell">
+		<label for="id_testdesign-1-concentrations_tested-units_other-0">units_other: </label>
+		<input type="text" id="id_testdesign-1-concentrations_tested-units_other-0" name="testdesign-1-concentrations_tested-units_other-0" value="">
+	</div>
+	<div class="control-cell">
+		<button>Delete</button>
+	</div>
+</div>
+
+
+	 
+	 
+	 */
+		/*
 		let fixers = [
 			[ "label", "for" ],
 			[ "input,select", "id" ],
@@ -122,6 +190,7 @@ function JsonListWidget() {
 				domEl.attr(attribToFix, correctedVal);
 			}
 		});
+		*/
 
 		newRow.insertBefore(this.widgetDiv.find(".control-row"));
 	};
