@@ -82,4 +82,21 @@
     </div>
   </div>
 
+  <div class="card my-4 mx-2">
+    <div class="card-body">
+      <h3 class="card-title">Data Analyses</h3>
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '50,50' %}
+        {% bs4_thead 'Validity,Cytotoxicity' %}
+        <tbody>
+          {% for object in object.dataanalyses.all %}
+            {% include "mechanistic/fragments/dataanalysis_row.html" %}
+          {% empty %}
+            {% bs4_fullrow 'No experimental designs available.' %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 {% endblock %}

@@ -68,7 +68,6 @@ class EndpointDetails(models.TextChoices):
     QUAN = "QUAN", "quantitative"
 
 
-
 class EndpointDetectionMethod(models.TextChoices):
     ANALYTICAL = "ANALYTICAL", "analytical method (e.g. LC/MS)"
     CHROMATO = "CHROMATO", "chromatography"
@@ -79,17 +78,19 @@ class EndpointDetectionMethod(models.TextChoices):
     ABSORP = "ABSORP", "UV/VIS absorption"
     OTHER = "OTHER", "other"
 
+
 class EndpointParameters(models.TextChoices):
-	RFU = "RFU", "RFU"
-	RLU = "RLU", "RLU"
-	OD = "OD", "OD"
-	CPD = "CPD", "Detected compound (e.g. metabolite detection with LC-MS)"
-	PKA = "PKA", "Peak area"
-	PKH = "PKH", "Peak height"
-	FSC = "FSC", "Forward Scatter"
-	SSC = "SSC", "Side Scatter"
-	DBI = "DBI", "Detected biomarker (e.g. with imaging)"
-	OTH = "OTH", "Other"
+    RFU = "RFU", "RFU"
+    RLU = "RLU", "RLU"
+    OD = "OD", "OD"
+    CPD = "CPD", "Detected compound (e.g. metabolite detection with LC-MS)"
+    PKA = "PKA", "Peak area"
+    PKH = "PKH", "Peak height"
+    FSC = "FSC", "Forward Scatter"
+    SSC = "SSC", "Side Scatter"
+    DBI = "DBI", "Detected biomarker (e.g. with imaging)"
+    OTH = "OTH", "Other"
+
 
 class VehicleSolventType(models.TextChoices):
     DMSO = "DMSO", "DMSO"
@@ -113,23 +114,32 @@ class VehicleSolventConcentrationAmount(models.TextChoices):
 
 
 class ConcentrationSelection(models.TextChoices):
-	HUEX = "HUEX", "human exposure levels"
-	INDE = "INDE", "interference with the detection method (e.g. auto fluorescence)"
-	INTS = "INTS", "interference with the test system (e.g. cytotoxicity or pH)"
-	PRIN = "PRIN", "prior information of response (e.g. dose-range finding experiment)"
-	SOEM = "SOEM", "solubility in exposure medium"
-	SOSO = "SOSO", "solubility in solvent"
-	UNKW = "UNKW", "unknown"
-	OTHR = "OTHR", "other"
+    HUEX = "HUEX", "human exposure levels"
+    INDE = "INDE", "interference with the detection method (e.g. auto fluorescence)"
+    INTS = "INTS", "interference with the test system (e.g. cytotoxicity or pH)"
+    PRIN = "PRIN", "prior information of response (e.g. dose-range finding experiment)"
+    SOEM = "SOEM", "solubility in exposure medium"
+    SOSO = "SOSO", "solubility in solvent"
+    UNKW = "UNKW", "unknown"
+    OTHR = "OTHR", "other"
+
 
 class VehicleSolventConcentrationUnit(models.TextChoices):
     TODO = "TODO", "todo/placeholder"
 
+
 class ConcentrationUnits(models.TextChoices):
-	PCT = "PCT", "%"
-	GKG = "GKG", "g/kg"
-	M = "M", "M"
-	GL = "GL", "g/L"
-	PPB = "PPB", "ppb"
-	PPM = "PPM", "ppm"
-	OTH = "OTH", "other"
+    PCT = "PCT", "%"
+    GKG = "GKG", "g/kg"
+    M = "M", "M"
+    GL = "GL", "g/L"
+    PPB = "PPB", "ppb"
+    PPM = "PPM", "ppm"
+    OTH = "OTH", "other"
+
+
+class YesNoRemarks(models.TextChoices):
+    YS = "YS", "Yes, with remarks"
+    NO = "NO", "no"
+    NR = "NR", "not relevant"
+    UN = "UN", "unknown"

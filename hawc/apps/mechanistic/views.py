@@ -267,3 +267,9 @@ class ExperimentalDesignViewSet(ExperimentChildViewSet):
     model = models.ExperimentalDesign
     form_class = forms.ExperimentalDesignForm
     detail_fragment = "mechanistic/fragments/experimentaldesign_row.html"
+
+
+class DataAnalysisViewSet(ExperimentChildViewSet):
+    model = models.DataAnalysis
+    form_class = forms.DataAnalysisForm
+    detail_fragment = "mechanistic/fragments/dataanalysis_row.html"

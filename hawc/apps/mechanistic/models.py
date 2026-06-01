@@ -557,9 +557,131 @@ class ExperimentalDesign(models.Model):
         return self
 
 
+# ExperimentalDesign -> DataAnalysis, etc.
+#
+# :Subvert/ExperimentalDesign{,s}/DataAnalys{is,es}/g
+
+
+class DataAnalysis(models.Model):
+    objects = managers.DataAnalysisManager()
+
+    experiment = models.ForeignKey(
+        Experiment, on_delete=models.CASCADE, related_name="dataanalyses"
+    )
+
+    validity = models.CharField(
+        verbose_name="Validity / acceptance criteria",
+        help_text="Select whether criteria were used for the validity of the experiment and acceptance of the result. If so, please specify the criteria used to accept or reject an experiment or result.",
+        choices=constants.YesNoRemarks,
+        max_length=2,
+        blank=True,
+    )
+
+    validity_remarks = models.CharField(
+        verbose_name="Validity / acceptance criteria remarks",
+        max_length=2000,
+        blank=True,
+    )
+
+    cytotoxicity = models.CharField(
+        verbose_name="Cytotoxicity assay",
+        help_text="Was the absence of cytotoxicity confirmed? Select the best answer and provide other relevant details in the remarks field. If yes, specify the type of cytotoxicity assay used.",
+        choices=constants.YesNoRemarks,
+        max_length=2,
+        blank=True,
+    )
+
+    cytotoxicity_remarks = models.CharField(
+        verbose_name="Cytotoxicity assay remarks",
+        max_length=2000,
+        blank=True,
+    )
+
+    interference_tests = models.CharField(
+        help_text="Was the absence of interference from test material confirmed? Select yes in case another type of analysis (other than cytotoxicity) was performed that is important for the interpretation of results (e.g. autofluorescence, quenching, etc.). If yes, specify the type of inference test used.",
+        choices=constants.YesNoRemarks,
+        max_length=2,
+        blank=True,
+    )
+
+    interference_tests_remarks = models.CharField(
+        max_length=2000,
+        blank=True,
+    )
+
+    detection_range = models.CharField(
+        help_text="Did the (object) measurement fall within the detection range for the method used?",
+        choices=constants.YesNoRemarks,
+        max_length=2,
+        blank=True,
+    )
+
+    detection_range_remarks = models.CharField(
+        max_length=2000,
+        blank=True,
+    )
+
+    data_calculation = models.CharField(
+        verbose_name="Data calculation and statistics",
+        help_text="Is it clear how results are calculated from the raw data?<br>Provide in the remarks field:<br><ul><li>Calculations performed</li><li>Statistical methods used</li><li>Where relevant, provide the method used to exclude outliers</li></ul>",
+        choices=constants.YesNoRemarks,
+        max_length=2,
+        blank=True,
+    )
+
+    data_calculation_remarks = models.CharField(
+        max_length=2000,
+        blank=True,
+    )
+
+    evaluation = models.CharField(
+        verbose_name="Evaluation / data interpretation criteria",
+        help_text="Is there criteria available to determine if the test material resulted as active (or not) in the study? If yes, describe the evaluation criteria used in the study to judge if the test material is positive, negative or equivocal. For example:<p>When there is more than 10% binding to the androgen receptor (as expressed in relative light units) for more than two concentrations, the result is ‘positive’.",
+        choices=constants.YesNoRemarks,
+        max_length=2,
+        blank=True,
+    )
+
+    evaluation_remarks = models.CharField(
+        max_length=2000,
+        blank=True,
+    )
+
+    general_remarks = models.CharField(
+        verbose_name="Remarks on data analysis",
+        max_length=32768,
+        blank=True,
+    )
+
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    # TEXT_CLEANUP_FIELDS = "name"
+
+    class Meta:
+        ordering = ("id",)
+
+    def get_assessment(self):
+        return self.experiment.get_assessment()
+
+    def get_study(self):
+        return self.experiment.get_study()
+
+    """
+    def __str__(self):
+        return self.test_system_concentration
+    """
+
+    def clone(self):
+        self.id = None
+        self.save()
+        return self
+
+
 reversion.register(Experiment)
 reversion.register(Chemical)
 reversion.register(TestSystem)
 reversion.register(Method)
 reversion.register(TestDesign)
 reversion.register(ExperimentalDesign)
+reversion.register(DataAnalysis)

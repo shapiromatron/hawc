@@ -84,6 +84,24 @@
     </div>
   </div>
 
+  <div class="card my-4 mx-2">
+    <div class="card-body">
+      {% url 'mechanistic:dataanalysis-htmx' object.pk 'create' as dataanalysis_create %}
+      {% include "common/fragments/_create_card.html" with title="Data Analyses" hx_get=dataanalysis_create hx_target=".dataanalysis-edit-row.create-row" model="dataanalysis" btn_text="Add Row" %}
+      <table class="table table-sm table-striped-invert">
+        {% bs4_colgroup '43,42,15' %}
+        {% bs4_thead 'Validity,Cytotoxicity,Edit' %}
+        <tbody id="dataanalysis-tbody">
+          {% for object in object.dataanalyses.all %}
+            {% include "mechanistic/fragments/dataanalysis_row.html" %}
+          {% endfor %}
+          {% include "common/fragments/_create_one.html" with text='No data analyses to display. Click "Add Row" to create one.' %}
+          {% include "common/fragments/_create_row.html" with model="dataanalysis" first=True %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 
   <div class="well text-center">
     <a class="btn btn-light my-3" href="{{object.get_absolute_url}}" id="mechanistic-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>

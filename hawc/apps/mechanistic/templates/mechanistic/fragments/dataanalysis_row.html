@@ -1,0 +1,6 @@
+<tr hx-target="this" hx-swap="outerHTML" class="mechanistic-obj-row {{action}} dataanalysis-{{object.pk}}">
+  <td>{{object.get_validity_display}}</td>
+  <td>{{object.get_cytotoxicity_display}}</td>
+  {% include "common/fragments/_object_row.html" with app="mechanistic" model="dataanalysis" %}
+</tr>
+{% include "common/fragments/_create_row.html" with model="dataanalysis" %}

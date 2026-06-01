@@ -68,3 +68,14 @@ class ExperimentalDesignManager(BaseManager):
 
     def get_queryset(self):
         return ExperimentalDesignQuerySet(self.model, using=self._db)
+
+
+class DataAnalysisQuerySet(QuerySet):
+    pass
+
+
+class DataAnalysisManager(BaseManager):
+    assessment_relation = "experiment__study__assessment"
+
+    def get_queryset(self):
+        return DataAnalysisQuerySet(self.model, using=self._db)

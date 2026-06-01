@@ -249,3 +249,29 @@ class ExperimentalDesignForm(forms.ModelForm):
         # helper.add_row("final_concentration_vehicle", 2, "col-md-6")
 
         return helper
+
+
+class DataAnalysisForm(forms.ModelForm):
+    class Meta:
+        model = models.DataAnalysis
+        exclude = ("experiment",)
+
+    def __init__(self, *args, **kwargs):
+        experiment = kwargs.pop("parent", None)
+        prefix = f"dataanalysis-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
+        super().__init__(*args, prefix=prefix, **kwargs)
+        if experiment:
+            self.instance.experiment = experiment
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.add_row("validity", 2, "col-md-6")
+        helper.add_row("cytotoxicity", 2, "col-md-6")
+        helper.add_row("interference_tests", 2, "col-md-6")
+        helper.add_row("detection_range", 2, "col-md-6")
+        helper.add_row("data_calculation", 2, "col-md-6")
+        helper.add_row("evaluation", 2, "col-md-6")
+
+        return helper
