@@ -13,4 +13,5 @@ class ExceptionReporter(BaseExceptionReporter):
     def get_traceback_data(self):
         context = super().get_traceback_data()
         context["settings"] = {"message": "Settings removed for security and readability"}
+        context["request_meta"] = {"message": "META removed for security and readability"}
         return context
