@@ -11,7 +11,7 @@
       // show-hide N fields for cohort level fields only
       var nDiv = $("#id_eligible_n").closest('.row');
       $('#id_design').on('change', function(e){
-        if (_.contains(['CC'], e.target.value)){
+        if (e.target.value === 'CC'){
           nDiv.hide();
         } else {
           nDiv.show();
