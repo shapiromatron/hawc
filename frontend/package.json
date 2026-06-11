@@ -17,11 +17,11 @@
     "url": "https://github.com/shapiromatron/hawc.git"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.13",
+    "@biomejs/biome": "2.4.15",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/react": "^16.3.2",
     "@types/react": "^18.3.27",
-    "@vitejs/plugin-react": "^6.0.1",
+    "@vitejs/plugin-react": "^6.0.2",
     "assert": "^2.0.0",
     "jsdom": "^29.0.2",
     "peggy": "^5.1.0",
