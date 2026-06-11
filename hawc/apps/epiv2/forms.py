@@ -139,15 +139,15 @@ class ExposureLevelForm(forms.ModelForm):
     def clean(self):
         data = super().clean()
 
-        variance_type = data["variance_type"]
-        variance = data["variance"]
+        variance_type = data.get("variance_type", constants.VarianceType.NA)
+        variance = data.get("variance")
         if variance and variance_type == constants.VarianceType.NA:
             msg = "A Variance Type must be selected when a value is given for Variance."
             self.add_error("variance_type", msg)
 
-        ci_type = data["ci_type"]
-        upper = data["ci_ucl"]
-        lower = data["ci_lcl"]
+        ci_type = data.get("ci_type", constants.ConfidenceIntervalType.NA)
+        upper = data.get("ci_ucl")
+        lower = data.get("ci_lcl")
         if (upper or lower) and ci_type == constants.ConfidenceIntervalType.NA:
             msg = "A Lower/Upper Interval Type must be selected when a value is given for the Lower or Upper interval."
             self.add_error("ci_type", msg)
