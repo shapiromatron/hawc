@@ -148,9 +148,7 @@ class ExposureLevelForm(forms.ModelForm):
         ci_type = data.get("ci_type", constants.ConfidenceIntervalType.NA)
         upper = data.get("ci_ucl")
         lower = data.get("ci_lcl")
-        if (
-            upper is not None or lower is not None
-        ) and ci_type == constants.ConfidenceIntervalType.NA:
+        if (upper or lower) and ci_type == constants.ConfidenceIntervalType.NA:
             msg = "A Lower/Upper Interval Type must be selected when a value is given for the Lower or Upper interval."
             self.add_error("ci_type", msg)
 
