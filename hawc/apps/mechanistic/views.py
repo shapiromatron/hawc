@@ -263,6 +263,11 @@ class TestDesignViewSet(ExperimentChildViewSet):
     detail_fragment = "mechanistic/fragments/testdesign_row.html"
 
 
+class MechControlViewSet(ExperimentChildViewSet):
+    model = models.MechControl
+    form_class = forms.MechControlForm
+
+
 class ExperimentalDesignViewSet(ExperimentChildViewSet):
     model = models.ExperimentalDesign
     form_class = forms.ExperimentalDesignForm

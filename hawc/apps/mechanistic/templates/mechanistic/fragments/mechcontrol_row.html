@@ -1,0 +1,6 @@
+<tr hx-target="this" hx-swap="outerHTML" class="mechanistic-obj-row {{action}} mechcontrol-{{object.pk}}">
+  <td>{{object.get_test_system_type_display}}</td>
+  <td>{{object.control_type}}</td>
+  {% include "common/fragments/_object_row.html" with app="mechanistic" model="mechcontrol" %}
+</tr>
+{% include "common/fragments/_create_row.html" with model="mechcontrol" %}

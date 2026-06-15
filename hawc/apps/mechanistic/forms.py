@@ -227,6 +227,32 @@ class TestDesignForm(forms.ModelForm):
         return helper
 
 
+class MechControlForm(forms.ModelForm):
+    class Meta:
+        model = models.MechControl
+        exclude = ("experiment",)
+        widgets = {}
+
+    def __init__(self, *args, **kwargs):
+        experiment = kwargs.pop("parent", None)
+        prefix = f"mechcontrol-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
+        super().__init__(*args, prefix=prefix, **kwargs)
+        if experiment:
+            self.instance.experiment = experiment
+        # self.fields["test_system"].queryset = self.instance.experiment.testsystems.all()
+        self.fields["test_system"].queryset = self.instance.experiment.testsystems.filter(
+            controls_used=constants.ControlsUsed.YS
+        )
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+        helper.add_row("test_system", 3, "col-md-4")
+
+        return helper
+
+
 class ExperimentalDesignForm(forms.ModelForm):
     class Meta:
         model = models.ExperimentalDesign

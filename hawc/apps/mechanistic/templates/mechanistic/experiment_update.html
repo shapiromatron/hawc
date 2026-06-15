@@ -68,6 +68,24 @@
 
   <div class="card my-4 mx-2">
     <div class="card-body">
+      {% url 'mechanistic:mechcontrol-htmx' object.pk 'create' as mechcontrol_create %}
+      {% include "common/fragments/_create_card.html" with title="Controls" hx_get=mechcontrol_create hx_target=".mechcontrol-edit-row.create-row" model="mechcontrol" btn_text="Add Row" %}
+      <table class="table table-sm table-striped-invert">
+        {% bs4_colgroup '64,21,15' %}
+        {% bs4_thead 'Test System,Control Type,Edit' %}
+        <tbody id="mechcontrol-tbody">
+          {% for object in object.mechcontrols.all %}
+            {% include "mechanistic/fragments/mechcontrol_row.html" %}
+          {% endfor %}
+          {% include "common/fragments/_create_one.html" with text='No controls to display. Click "Add Row" to create one.' %}
+          {% include "common/fragments/_create_row.html" with model="mechcontrol" first=True %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card my-4 mx-2">
+    <div class="card-body">
       {% url 'mechanistic:experimentaldesign-htmx' object.pk 'create' as experimentaldesign_create %}
       {% include "common/fragments/_create_card.html" with title="Experimental Designs" hx_get=experimentaldesign_create hx_target=".experimentaldesign-edit-row.create-row" model="experimentaldesign" btn_text="Add Row" %}
       <table class="table table-sm table-striped-invert">

@@ -284,6 +284,12 @@ class TestSystem(models.Model):
         max_length=255,
         help_text="Specify the quality control that was performed on the test system, before or during the generation of results, to confirm the test system was healthy, stable and / or responsive.",
     )
+    controls_used = models.CharField(
+        verbose_name="Controls / reference items used",
+        help_text='Indicate whether controls / reference substances were used. Enter controls data in the "Controls" block.',
+        choices=constants.ControlsUsed,
+        max_length=2,
+    )
     created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
@@ -453,6 +459,56 @@ class TestDesign(models.Model):
     def clone(self):
         self.id = None
         # self.name = clone_name(self, "name")
+        self.save()
+        return self
+
+
+class MechControl(models.Model):
+    objects = managers.MechControlManager()
+
+    experiment = models.ForeignKey(
+        Experiment, on_delete=models.CASCADE, related_name="mechcontrols"
+    )
+    test_system = models.ForeignKey(
+        TestSystem, on_delete=models.CASCADE, related_name="mechcontrols"
+    )
+
+    # note line item 66 -- "controls used" we put this on the test system...
+
+    control_type = models.CharField(
+        verbose_name="Type of controls used",
+        help_text="Select the type of control used to demonstrate the proper performance of the test system and therefore the validity of the experiments. More than one control/reference item can be provided.<p> Solvent / vehicle controls consist of solvent or vehicle alone, without test material, and otherwise treated in the same way as the treatment groups.<p>Untreated controls consist of culture medium without solvent / vehicle or test material, and otherwise treated in the same way as the treatment groups.<p>True negative controls include items (e.g. chemicals) with known lack of activity.<p>Positive controls include items with known activity.<p>Reference items are substances with known activity, used as basis for comparison with the test material.",
+        choices=constants.ControlType,
+        max_length=3,
+    )
+    control_type_other = models.CharField(
+        max_length=255, help_text="Enter control type information", blank=True
+    )
+    description = models.CharField(
+        verbose_name="Description of reference and control items used",
+        help_text="Describe the reference or control item used or provide the name and identifier (e.g. CAS number), source, lot/batch #, purity, and concentration (range) used.",
+        blank=True,
+    )
+    remarks = models.CharField(
+        help_text="Provide any additional information about control and reference items used.",
+        blank=True,
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    # BREADCRUMB_PARENT = "study"
+
+    class Meta:
+        ordering = ("id",)
+
+    def get_assessment(self):
+        return self.experiment.get_assessment()
+
+    def get_study(self):
+        return self.experiment.get_study()
+
+    def clone(self):
+        self.id = None
         self.save()
         return self
 
@@ -683,5 +739,6 @@ reversion.register(Chemical)
 reversion.register(TestSystem)
 reversion.register(Method)
 reversion.register(TestDesign)
+reversion.register(MechControl)
 reversion.register(ExperimentalDesign)
 reversion.register(DataAnalysis)

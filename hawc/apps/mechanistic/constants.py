@@ -138,6 +138,22 @@ class ConcentrationUnits(models.TextChoices):
     OTH = "OTH", "other"
 
 
+class ControlsUsed(models.TextChoices):
+    YS = "YS", "yes"
+    NO = "NO", "no"
+    NS = "NS", "not specified"
+    NR = "NR", "not required"
+
+
+class ControlType(models.TextChoices):
+    UNT = "UNT", "untreated control"
+    POS = "POS", "positive control item"
+    REF = "REF", "reference item"
+    SVC = "SVC", "solvent / vehicle control"
+    NEG = "NEG", "negative control item"
+    OTH = "OTH", "other"
+
+
 class YesNoRemarks(models.TextChoices):
     YS = "YS", "Yes, with remarks"
     NO = "NO", "no"

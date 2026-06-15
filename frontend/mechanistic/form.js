@@ -65,6 +65,16 @@ const testDesignFormStartup = function (f) {
 	*/
 };
 
+const controlFormStartup = function (f) {
+    let form = $(f);
+
+    h.setupOtherShowHideRelationship(
+        form.find("select[name$='-control_type']"),
+        form.find("input[name$='-control_type_other']"),
+        "OTH"
+    );
+};
+
 export default document => {
     document.body.addEventListener("htmx:load", e => {
         if (e.target.querySelector(".form-experiment")) {
@@ -73,6 +83,8 @@ export default document => {
             testSystemFormStartup(e.target);
         } else if (e.target.querySelector(".form-testdesign")) {
             testDesignFormStartup(e.target);
+        } else if (e.target.querySelector(".form-mechcontrol")) {
+            controlFormStartup(e.target);
         } else {
             console.log("OTHER CASE:");
             console.log(e.target);

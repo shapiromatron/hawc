@@ -67,6 +67,23 @@
 
   <div class="card my-4 mx-2">
     <div class="card-body">
+      <h3 class="card-title">Controls</h3>
+      <table class="table table-sm table-striped">
+        {% bs4_colgroup '75,25' %}
+        {% bs4_thead 'Test System,Control Type' %}
+        <tbody>
+          {% for object in object.mechcontrols.all %}
+            {% include "mechanistic/fragments/mechcontrol_row.html" %}
+          {% empty %}
+            {% bs4_fullrow 'No controls available.' %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card my-4 mx-2">
+    <div class="card-body">
       <h3 class="card-title">Experimental Designs</h3>
       <table class="table table-sm table-striped">
         {% bs4_colgroup '50,50' %}
