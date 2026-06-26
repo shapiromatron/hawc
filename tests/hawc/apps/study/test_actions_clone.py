@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 import pytest
 from django.core.files.base import ContentFile
 
@@ -12,6 +14,7 @@ from hawc.apps.study.actions.clone import (
     _clone_animal_bioassay,
     _clone_epiv2,
     _clone_study,
+    sort_animal_groups,
 )
 from hawc.apps.study.models import Attachment, Study
 
@@ -142,3 +145,36 @@ class TestDeepClone:
         assert qs.exists()
         qs = RiskOfBiasScoreOverrideObject.objects.filter(score__riskofbias__study=src_study)
         assert qs.exists()
+
+
+def test_sort_animal_groups():
+
+    @dataclass
+    class Node:
+        id: int
+        parents: list[int]  # zero or more parent IDs
+
+    # Intentionally scrambled so children appear before parents.
+    objs = [
+        Node(id=4, parents=[2]),
+        Node(id=2, parents=[1]),
+        Node(id=3, parents=[1]),
+        Node(id=1, parents=[]),
+        Node(id=6, parents=[5]),
+        Node(id=5, parents=[]),
+        Node(id=7, parents=[999]),  # parent not in set -> ignored
+        Node(id=8, parents=[1, 5]),  # multiple parents (DAG node)
+    ]
+
+    out = sort_animal_groups(objs, get_parent_ids=lambda n: n.parents)
+    pos = {o.id: i for i, o in enumerate(out)}
+
+    # Every in-set parent must appear before its child.
+    for o in out:
+        for parent_id in o.parents:
+            if parent_id in pos:
+                assert pos[parent_id] < pos[o.id]
+
+    # Same objects, no duplicates/drops.
+    assert {o.id for o in out} == {o.id for o in objs}
+    assert len(out) == len(objs)
