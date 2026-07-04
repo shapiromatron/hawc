@@ -9,7 +9,7 @@ multi-ecosystem-groups:
 updates:
   - package-ecosystem: uv
     directory: /
-    multi-ecosystem-group: "infrastructure"
+    multi-ecosystem-group: Python
     patterns: ["**/*"]
     cooldown:
       default-days: 7
@@ -19,7 +19,7 @@ updates:
 
   - package-ecosystem: npm
     directory: frontend
-    multi-ecosystem-group: "infrastructure"
+    multi-ecosystem-group: JavaScript
     patterns: ["**/*"]
     cooldown:
       default-days: 7
@@ -35,7 +35,7 @@ updates:
 
   - package-ecosystem: github-actions
     directory: .github
-    multi-ecosystem-group: "infrastructure"
+    multi-ecosystem-group: Github Actions
     patterns: ["**/*"]
     cooldown:
       default-days: 7
