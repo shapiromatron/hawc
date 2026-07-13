@@ -1086,6 +1086,24 @@ form#form-mech-chemical #div_id_composition_purity_other {
 	display: none;
 }
 
+.hawc-json-list-widget .data-row {
+	border: 1px solid black;
+	margin-bottom: 5px;
+	padding-top: 5px;
+}
+
+.hawc-json-list-widget .sub-row {
+	display: inline-block;
+}
+
+.hawc-json-list-widget .hidden {
+	display: none;
+}
+
+.hawc-json-list-widget .newline-padder {
+	height: 0px;
+}
+
 .hawc-json-list-widget .field-cell, .hawc-json-list-widget .control-cell {
 	display: inline-block;
 	margin-left: 10px;
@@ -1097,4 +1115,8 @@ form#form-mech-chemical #div_id_composition_purity_other {
 
 .hawc-json-list-widget .control-row {
 	margin-left: 10px;
+}
+
+tr.mechanisticendpoint-edit-row {
+	opacity: 0; /* see mechanistic form.js -- that will display it once it's ready/initialized as we want it */
 }

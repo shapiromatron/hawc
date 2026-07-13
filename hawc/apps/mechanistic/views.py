@@ -193,6 +193,14 @@ class ExperimentChildViewSet(HtmxViewSet):
         context = super().get_context_data(**kwargs)
         context["model"] = self.model.__name__.lower()
         context["app"] = "mechanistic"
+
+        try:
+            context["customTemplateScriptContext"] = self.model.get_custom_context(
+                self.request.item.assessment, context["form"]
+            )
+        except Exception as e:
+            context["customTemplateScriptContext"] = {}
+
         return context
 
 
@@ -278,3 +286,9 @@ class DataAnalysisViewSet(ExperimentChildViewSet):
     model = models.DataAnalysis
     form_class = forms.DataAnalysisForm
     detail_fragment = "mechanistic/fragments/dataanalysis_row.html"
+
+
+class MechanisticEndpointViewSet(ExperimentChildViewSet):
+    model = models.MechanisticEndpoint
+    form_class = forms.MechanisticEndpointForm
+    detail_fragment = "mechanistic/fragments/endpoint_row.html"

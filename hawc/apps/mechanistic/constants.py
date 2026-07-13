@@ -1,6 +1,11 @@
 from django.db import models
 
 
+class SimpleYesNo(models.TextChoices):
+    YES = "YES", "Yes"
+    NO = "NO", "No"
+
+
 class ExperimentGuideline(models.TextChoices):
     YES = "YES", "Yes"
     NO = "NO", "No"
@@ -159,3 +164,53 @@ class YesNoRemarks(models.TextChoices):
     NO = "NO", "no"
     NR = "NR", "not relevant"
     UN = "UN", "unknown"
+
+
+class EndpointProcess(models.TextChoices):
+    APOP = "APOP", "apoptotic process - [GO:0008219]"
+    BIOP = "BIOP", "biosynthetic process - [GO:0009058]"
+    CATA = "CATA", "catalytic activity - [GO:0003824]"
+    CACT = "CACT", "cell activation - [GO:0001775]"
+    CDEA = "CDEA", "cell death - [GO:0008219]"
+    CDIF = "CDIF", "cell differentiation - [GO:0030154]"
+    CMIG = "CMIG", "cell migration - [GO:0016477]"
+    CPRO = "CPRO", "cell proliferation - [GO:0008283]"
+    GEXP = "GEXP", "gene expression - [GO:0010467]"
+    KACT = "KACT", "keratinocyte activation - [GO:0032980]"
+    METP = "METP", "metabolic process - [GO:0008152]"
+    NURA = "NURA", "nuclear receptor activity - [GO:0004879]"
+    NURB = "NURB", "nuclear receptor binding - [GO:0016922]"
+    OXST = "OXST", "oxidative stress - [NCIT:C17741]"
+    PERA = "PERA", "peroxidase activity - [GO:0004601]"
+    PNCD = "PNCD", "programmed necrotic cell death - [GO:0097300]"
+    PROB = "PROB", "protein binding - [GO:0005515]"
+    PROI = "PROI", "protein iodination - [GO:0018077]"
+    RECA = "RECA", "receptor activity - [GO:0004872]"
+    RECB = "RECB", "receptor binding - [GO:0005102]"
+    SIGN = "SIGN", "signalling - [GO:0023052]"
+    SHBP = "SHBP", "steroid hormone biosynthetic process - [GO:0120178]"
+    TRAA = "TRAA", "transporter activity - [GO:0005215]"
+    OTHR = "OTHR", "other"
+
+
+class EndpointObject(models.TextChoices):
+    NAME = "NAME", "Object name, specify"
+    IDEN = "IDEN", "Object identifier, specify"
+
+
+class EndpointAction(models.TextChoices):
+    ALTR = "ALTR", "alteration"
+    BIND = "BIND", "binder / non-binder"
+    DECR = "DECR", "decrease"
+    DECA = "DECA", "decrease, antagonism"
+    DISR = "DISR", "disruption"
+    DREG = "DREG", "down regulation"
+    ENHA = "ENHA", "enhancement"
+    INCR = "INCR", "increase"
+    INDE = "INDE", "increase / decrease"
+    INCA = "INCA", "increase, agonism"
+    INDU = "INDU", "induction"
+    INHI = "INHI", "inhibition"
+    OCCR = "OCCR", "occurrence"
+    UREG = "UREG", "up regulation"
+    OTHR = "OTHR", "other"

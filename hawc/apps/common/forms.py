@@ -532,6 +532,9 @@ class JSONListWidget(forms.TextInput):
                     safe_choices.append({"val": c.value, "label": c.label})
                 row_schema["choices"] = safe_choices
 
+            if "only_show_if" in field_def:
+                row_schema["only_show_if"] = field_def["only_show_if"]
+
             json_safe_schema.append(row_schema)
 
         return json.dumps(json_safe_schema)
@@ -550,8 +553,11 @@ class JSONListWidget(forms.TextInput):
 
         for row in parsed:
             widget_html += f"<div class='{'data-row' if row is not None else 'template-row'}'>"
+
+            widget_html += f"<div class='sub-row'>" # easy way to add line breaks...
             for field_def in self.row_fields:
                 key = field_def["name"]
+                title = field_def.get("label", key.title())
                 field_type = field_def["type"]
                 qualified_name = (
                     f"{context['widget']['name']}-{key}-{row_idx if row is not None else 'X'}"
@@ -562,8 +568,8 @@ class JSONListWidget(forms.TextInput):
                 if displayable_val is None:
                     displayable_val = ""
 
-                widget_html += f"<div class='field-cell'>"
-                widget_html += f"<label for='{id_val}'>{key}: </label>"
+                widget_html += f"<div class='field-cell' data-for-field-name='" + key + "'>"
+                widget_html += f"<label for='{id_val}'>{title}: </label>"
                 if field_type is str:
                     choices = field_def.get("choices")
                     if choices is None:
@@ -581,6 +587,12 @@ class JSONListWidget(forms.TextInput):
                 elif field_type in [float, int]:
                     widget_html += f"<input type='number' id='{id_val}' name='{qualified_name}' value='{displayable_val}'>"
                 widget_html += f"</div>"  # /.field-cell
+            
+                if field_def.get("break_after", False) is True:
+                    widget_html += "</div>"
+                    widget_html += "<div class='newline-padder'>&nbsp;</div>" # this one inserts the newline...
+                    widget_html += "<div class='sub-row'>"
+            widget_html += f"</div>" #/.sub-row
 
             # add control cell - start
             widget_html += f"<div class='control-cell'></div>"

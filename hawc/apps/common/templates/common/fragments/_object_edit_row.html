@@ -2,6 +2,9 @@
   {% if form %}
     <td colspan="100%" class="p-3">
       <form method="post" class="border p-2 pb-4 edit-form-background rounded pad-form form-{{model}}">
+        {% with scriptId="hxCustomContext_"|add:model %}
+          {{ customTemplateScriptContext | json_script:scriptId }}
+        {% endwith %}
         <div class="d-flex justify-content-end">
           {% include "common/scientific_pulldown.html" %}
         </div>

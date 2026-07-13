@@ -102,4 +102,9 @@ urlpatterns = [
         views.DataAnalysisViewSet.as_view(),
         name="dataanalysis-htmx",
     ),
+    path(
+        "mechanisticendpoint/<int:pk>/<slug:action>/",
+        views.MechanisticEndpointViewSet.as_view(),
+        name="mechanisticendpoint-htmx",
+    ),
 ]

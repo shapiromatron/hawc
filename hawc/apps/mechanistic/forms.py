@@ -1,3 +1,4 @@
+from crispy_forms import layout as cfl
 from django import forms
 from django.urls import reverse
 
@@ -301,3 +302,65 @@ class DataAnalysisForm(forms.ModelForm):
         helper.add_row("evaluation", 2, "col-md-6")
 
         return helper
+
+
+class MechanisticEndpointForm(forms.ModelForm):
+    class Meta:
+        model = models.MechanisticEndpoint
+        exclude = (
+            "experiment",
+            "assessment",
+            "effects",
+        )
+        widgets = {
+            "system_term": forms.HiddenInput,
+            "name_term": forms.HiddenInput,
+            "organ_term": forms.HiddenInput,
+            "effect_term": forms.HiddenInput,
+            "effect_subtype_term": forms.HiddenInput,
+        }
+
+    def __init__(self, *args, **kwargs):
+        experiment = kwargs.pop("parent", None)
+        prefix = f"endpoint-{kwargs.get('instance').pk if 'instance' in kwargs else 'new'}"
+        super().__init__(*args, prefix=prefix, **kwargs)
+        if experiment:
+            self.instance.experiment = experiment
+            self.instance.assessment = experiment.get_assessment()
+
+    @property
+    def helper(self):
+        helper = BaseFormHelper(self)
+        helper.form_tag = False
+
+        helper.layout.insert(
+            helper.find_layout_idx_for_field_name("name"),
+            cfl.Div(id="vocabWidgets"),
+        )
+
+        helper.add_row("poa_process", 2, "col-md-6")
+        helper.add_row("poa_object", 2, "col-md-6")
+        helper.add_row("poa_action", 2, "col-md-6")
+        # helper.add_row("final_concentration_vehicle", 2, "col-md-6")
+
+        return helper
+
+    NAME_REQ = "Endpoint/Adverse outcome is required"
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        """
+        # see animalv2 clean method...
+        errors = self.clean_endpoint(self.instance, cleaned_data)
+        for key, value in errors.items():
+            self.add_error(key, value)
+        """
+
+        # the name input is hidden and overridden, so any "name" field error
+        # must be displayed instead as a non_field_error
+        name_error = self.errors.get("name", None)
+        if name_error is not None:
+            self.add_error(None, self.NAME_REQ)
+
+        return cleaned_data

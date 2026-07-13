@@ -90,3 +90,17 @@ class DataAnalysisManager(BaseManager):
 
     def get_queryset(self):
         return DataAnalysisQuerySet(self.model, using=self._db)
+
+
+class MechanisticEndpointQuerySet(QuerySet):
+    pass
+
+
+class MechanisticEndpointManager(BaseManager):
+    assessment_relation = "experiment__study__assessment"
+
+    def get_queryset(self):
+        return MechanisticEndpointQuerySet(self.model, using=self._db)
+
+    def get_system_choices(self, assessment_id):
+        return get_distinct_charfield_opts(self, assessment_id, "system")

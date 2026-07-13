@@ -1,14 +1,17 @@
-import reversion
+import json, reversion
 
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django import forms
 from django.db import models
+from django.forms import ModelForm
 from django.urls import reverse
 
-from ..assessment.models import DSSTox
+from ..assessment.models import Assessment, BaseEndpoint, DSSTox
 from ..common.models import JSONListField, NumericTextField, clone_name
 from ..study.models import Study
+from ..vocab.constants import VocabularyNamespace
+from ..vocab.models import Term
 from . import constants, managers
 
 
@@ -734,6 +737,200 @@ class DataAnalysis(models.Model):
         return self
 
 
+class MechanisticEndpoint(BaseEndpoint):
+    objects = managers.MechanisticEndpointManager()
+
+    TEXT_CLEANUP_FIELDS = (
+        "name",
+        "poa_process_other",
+        "poa_object_details",
+        "poa_action_other",
+        "details",
+        "aop_details",
+        "system",
+    )
+    # CARGO CULT? what is this bit doing...
+    TERM_FIELD_MAPPING = {
+        "name": "name_term_id",
+        "system": "system_term_id",
+        "organ": "organ_term_id",
+        "effect": "effect_term_id",
+        "effect_subtype": "effect_subtype_term_id",
+    }
+
+    experiment = models.ForeignKey(Experiment, on_delete=models.CASCADE, related_name="endpoints")
+
+    poa_process = models.CharField(
+        verbose_name="Process",
+        choices=constants.EndpointProcess,
+        max_length=4,
+        help_text="Process represents the dynamics of the underlying biological system (e.g., receptor binding) (Ives et al, 2017). The Process is also used to annotate Key events in the Adverse Outcome Pathway Wiki (https://aopwiki.org/) as described in Ives et al, 2017, doi:10.1089/aivt.2017.0017).<p>Select the process that best describes the mechanistic information observed or select ‘other’ to specify the Process and provide a term. Please consult the Ontology Lookup Service (OLS) which is available at https://www.ebi.ac.uk/ols/index to choose a Process term. If possible please select as Process one term belonging to the following ontology Gene Ontology (GO).<p>For most terms there will be several options. It is therefore important to also copy the preferred ontology identifier into the remarks field.<p>Cytotoxicity data should only be reported as a process (e.g. cell death) when it is the scope of the study to determine cytotoxicity. In cases where cytotoxicity is measured for supporting information e.g. for dose selection/elimination, it should not be considered as a process. Such data are reported as ‘Other observations’.",
+        blank=True,
+    )
+
+    poa_process_other = models.CharField(
+        max_length=255, help_text="Enter additional details about Process", blank=True
+    )
+
+    poa_object = models.CharField(
+        verbose_name="Object",
+        choices=constants.EndpointObject,
+        max_length=4,
+        help_text="Object represents the subject of the observed measurement (biological or chemical), for example, a specific biological receptor that is activated or inhibited, a specific molecule that is being formed and detected or a specific protein that is being bound. The Object is also used to annotate Key events in the Adverse Outcome Pathway Wiki (https://aopwiki.org/) as described in Ives et al, 2017, doi:10.1089/aivt.2017.0017).<p>It is optional to record both Process and Object. If both Process and Object are recorded, they have to be concordant with the chosen Action.<p>Please consult the Ontology Lookup Service (OLS) which is available at https://www.ebi.ac.uk/ols/index to choose a Process term. If possible, please select as Object one term belonging to the following ontologies protein Ontology (PR) or Chemical Entities of Biological Interest (ChEBI).<p> Enter the name and identifier of the object:<p>For most terms there will be several options. It is therefore important to also copy the preferred ontology identifier into the remarks field.<p>More than one object can be provided e.g. when changes of more than one biomarker is measured.<p>Examples of objects are:<br><ul><li>CD86 molecule - [PR:000001412]</li><li>cytochrome P450 - [CHEBI:38559]</li><li>interleukin 8 (IL8) - [PR:000001395]</li><li>thyroid peroxidase (TPO) - [PR:000016584]</li><li>UDP-glucuronosyltransferase (UDP GT) - [PR:000024849]</li></ul>",
+        blank=True,
+    )
+
+    poa_object_details = models.CharField(
+        max_length=255, help_text="Enter additional details about Object", blank=True
+    )
+
+    poa_action = models.CharField(
+        verbose_name="Action",
+        choices=constants.EndpointAction,
+        max_length=4,
+        help_text="Action represents the type of change observed e.g. ‘‘decrease’’ in the case where a receptor is inhibited to indicate a decrease in the signalling by that receptor. Action is also used to annotate Key events in the Adverse Outcome Pathway Wiki (https://aopwiki.org/) as described in Ives et al, 2017, doi:10.1089/aivt.2017.0017). Action is used together with the field Process and/or Object.<p>The Action field is always required to describe the type of change observed and it can form the following syntaxes “Process, Action” e.g. “gene expression, increase” or “Process, Object, Action” e.g. receptor activity, estrogen receptor, increase.<p>Select the Action that best describes the change observed or select ‘other’ to  specify the action and provide a term.",
+        blank=True,
+    )
+
+    poa_action_other = models.CharField(
+        max_length=255, help_text="Enter additional details about Action", blank=True
+    )
+
+    details = models.CharField(
+        verbose_name="Details on the effect measured",
+        help_text="Enter details about the endpoint that is measured in the (research) study.<br>Describe the (biological) change that is measured and what this means for human health, the environment or wildlife.",
+        blank=True,
+    )
+
+    links_to_aops = models.CharField(
+        help_text="Does the effect identification link to an AOP, MIE, KE, or KER? See https://aopwiki.org/.",
+        choices=constants.SimpleYesNo,
+        max_length=3,
+        blank=True,
+    )
+
+    aop_details = models.CharField(
+        help_text="Provide details of linked AOP content as available (note, more than one AOP link may be provided):<br><ul><li>AOP name and link</li><li>KE name and link</li><li>KER name and link</li><li>AO name and link</li></ul>",
+        blank=True,
+    )
+
+    name_term = models.ForeignKey(
+        Term,
+        related_name="mech_endpoint_name_terms",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
+    # SYSTEM
+    system = models.CharField(
+        max_length=128,
+        blank=True,
+        help_text="Select the specific system where the observed effect(s) play a role.",
+    )
+    system_term = models.ForeignKey(
+        Term,
+        related_name="mech_endpoint_system_terms",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
+    organ = models.CharField(
+        max_length=128,
+        blank=True,
+        verbose_name="Organ (and tissue)",
+        help_text="Relevant organ or tissue",
+    )
+    organ_term = models.ForeignKey(
+        Term,
+        related_name="mech_endpoint_organ_terms",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+    effect = models.CharField(
+        max_length=128, blank=True, help_text="Effect, using common-vocabulary"
+    )
+    effect_term = models.ForeignKey(
+        Term,
+        related_name="mech_endpoint_effect_terms",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+    effect_subtype = models.CharField(
+        max_length=128, blank=True, help_text="Effect subtype, using common-vocabulary"
+    )
+    effect_subtype_term = models.ForeignKey(
+        Term,
+        related_name="mech_endpoint_effect_subtype_terms",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+
+    remarks = models.CharField(
+        help_text="Include any remarks as appropriate.",
+        blank=True,
+    )
+
+    class Meta:
+        ordering = ("id",)
+
+    def get_assessment(self):
+        return self.experiment.get_assessment()
+
+    def get_study(self):
+        return self.experiment.get_study()
+
+    # will get exposed in the _object_edit_row.html template for use by javascript/template
+    @classmethod
+    def get_custom_context(cls, assessment, form_context):
+        return {
+            "vocabulary": cls.get_vocabulary_settings(assessment, form_context),
+        }
+
+    def clone(self):
+        self.id = None
+        self.save()
+        return self
+
+    @classmethod
+    def get_vocabulary_settings(cls, assessment: Assessment, form: ModelForm) -> str:
+        try:
+            vocab = VocabularyNamespace(assessment.vocabulary) if assessment.vocabulary else None
+            return json.dumps(
+                {
+                    "vocabulary": vocab.value if vocab else None,
+                    "vocabulary_display": vocab.display_name if vocab else None,
+                    "object": {
+                        "system": form["system"].value() or "",
+                        "system_term_id": form["system_term"].value(),
+                        "name": form["name"].value() or "",
+                        "name_term_id": form["name_term"].value(),
+                        "organ": form["organ"].value() or "",
+                        "organ_term_id": form["organ_term"].value(),
+                        "effect": form["effect"].value() or "",
+                        "effect_term_id": form["effect_term"].value(),
+                        "effect_subtype": form["effect_subtype"].value() or "",
+                        "effect_subtype_term_id": form["effect_subtype_term"].value(),
+                    },
+                }
+            )
+        except Exception as e:
+            print(e)
+
+    def save(self, *args, **kwargs):
+        # ensure our controlled vocabulary terms don't have leading/trailing whitespace
+        self.system = self.system.strip()
+        self.organ = self.organ.strip()
+        self.effect = self.effect.strip()
+        self.effect_subtype = self.effect_subtype.strip()
+        self.name = self.name.strip()
+        super().save(*args, **kwargs)
+
+
 reversion.register(Experiment)
 reversion.register(Chemical)
 reversion.register(TestSystem)
@@ -742,3 +939,4 @@ reversion.register(TestDesign)
 reversion.register(MechControl)
 reversion.register(ExperimentalDesign)
 reversion.register(DataAnalysis)
+reversion.register(MechanisticEndpoint)

@@ -3,7 +3,6 @@ function JsonListWidget() {
 		this.prefix = prefix;
 		this.widgetDiv = widgetDiv;
 		this.schema = JSON.parse(widgetDiv.attr("data-schema"));
-		console.log("INIT:", this.schema);
 
 		let hook = this;
 		this.widgetDiv.find("button").click(function() {
@@ -20,7 +19,37 @@ function JsonListWidget() {
 				hook.onDeleteRowButtonClicked($(this));
 				return false;
 			});
+
+			if (!dataRow.hasClass("template-row")) {
+				hook.setDependentVisibilityForRow(dataRow);
+			}
 		});
+	};
+
+	this.setDependentVisibilityForRow = function(row) {
+		// find the elements in the schema that only show in certain scenarios
+		let showHideHelper = function(pfw, cfw, v) {
+			if (pfw.find("input,select").val() == v) {
+				cfw.removeClass("hidden");
+			} else {
+				cfw.addClass("hidden");
+				cfw.find("input,select").val("");
+			}
+		};
+
+
+		for (let i = 0 ; i < this.schema.length ; i++) {
+			let fieldDef = this.schema[i];
+			if (fieldDef["only_show_if"] !== undefined) {
+				let childFieldWrapper = row.find("[data-for-field-name='" + fieldDef["name"] + "']");
+				let parentFieldWrapper = row.find("[data-for-field-name='" + fieldDef["only_show_if"]["field"] + "']");
+
+				parentFieldWrapper.change(function() {
+					showHideHelper(parentFieldWrapper, childFieldWrapper, fieldDef["only_show_if"]["val"]);
+				});
+				showHideHelper(parentFieldWrapper, childFieldWrapper, fieldDef["only_show_if"]["val"]);
+			}
+		}
 	};
 
 	this.onDeleteRowButtonClicked = function(clickedButton) {
@@ -51,7 +80,7 @@ function JsonListWidget() {
 			let newIdx = 0;
 			hook.widgetDiv.find(".data-row").each(function() {
 				let firstCellInRow = $(this).find(".field-cell:eq(0)");
-				let cellName = firstCellInRow.find("input").attr("name");
+				let cellName = firstCellInRow.find("input,select").attr("name");
 
 				let lastDashIdx = cellName.lastIndexOf("-");
 				let currIdx = Number(cellName.substring(lastDashIdx+1));
@@ -69,7 +98,6 @@ function JsonListWidget() {
 							let currAttribVal = domEl.attr(attribToFix);
 							let finalDashIdx = currAttribVal.lastIndexOf("-");
 							let correctedVal = currAttribVal.substring(0, finalDashIdx+1) + newIdx;
-							console.log("  [" + selectorToFix + "]/[" + attribToFix + "]: FIX '" + currAttribVal + "' -> '" + correctedVal + "'");
 							domEl.attr(attribToFix, correctedVal);
 						}
 					});
@@ -85,11 +113,7 @@ function JsonListWidget() {
 	 *
 	 */
 	this.addRow = function() {
-		console.log("ADD ONE");
-		console.log(this.schema);
-
 		let numElements = this.widgetDiv.find(".data-row").length;
-
 
 		let fixers = [
 			[ "label", "for" ],
@@ -124,6 +148,8 @@ function JsonListWidget() {
 				domEl.attr(attribToFix, correctedVal);
 			}
 		});
+
+		this.setDependentVisibilityForRow(newRow);
 
 
 
