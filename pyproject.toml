@@ -21,7 +21,7 @@ requires-python = ">=3.14"
 dependencies = [
   # web application
   "Django~=5.2.15",
-  "django-crispy-forms==2.6",
+  "django~=5.2.16",
   "crispy-bootstrap4==2026.2",
   "django-filter==25.2",
   "django-redis==6.0.0",
