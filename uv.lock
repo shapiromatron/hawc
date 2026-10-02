@@ -1,6 +1,11 @@
 version = 1
 revision = 3
 requires-python = ">=3.14"
+resolution-markers = [
+    "sys_platform == 'win32'",
+    "sys_platform == 'emscripten'",
+    "sys_platform != 'emscripten' and sys_platform != 'win32'",
+]
 
 [manifest]
 members = [
@@ -71,11 +76,11 @@ wheels = [
 
 [[package]]
 name = "billiard"
-version = "4.2.4"
+version = "4.3.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/58/23/b12ac0bcdfb7360d664f40a00b1bda139cbbbced012c34e375506dbd0143/billiard-4.2.4.tar.gz", hash = "sha256:55f542c371209e03cd5862299b74e52e4fbcba8250ba611ad94276b369b6a85f", size = 156537, upload-time = "2025-11-30T13:28:48.52Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/60/a9/b1c91c6866717e68b12331222f294e20df4b7674f58c14639ecd0166549c/billiard-4.3.0.tar.gz", hash = "sha256:3ddeaf82c0373e076c7b450c2fdc7ded6d73981bcfd931da1cdd0c0a03468dc5", size = 160930, upload-time = "2026-09-17T08:38:04.925Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/cb/87/8bab77b323f16d67be364031220069f79159117dd5e43eeb4be2fef1ac9b/billiard-4.2.4-py3-none-any.whl", hash = "sha256:525b42bdec68d2b983347ac312f892db930858495db601b5836ac24e6477cde5", size = 87070, upload-time = "2025-11-30T13:28:47.016Z" },
+    { url = "https://files.pythonhosted.org/packages/60/60/ade6d336983b82fbc330d0d0371f945249b448152852952f643787a3288d/billiard-4.3.0-py3-none-any.whl", hash = "sha256:be3e51fb6202df38e1d67ff0aa3bfa4cdc1838a3c47c36373cc3220c6b787c2a", size = 88116, upload-time = "2026-09-17T08:38:03.233Z" },
 ]
 
 [[package]]
@@ -464,14 +469,14 @@ wheels = [
 
 [[package]]
 name = "django-autocomplete-light"
-version = "4.0.0"
+version = "5.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/40/2a/7dfb8b219d7c8ed3e82481a801829e5d74203a854a11a3db105e91659d06/django_autocomplete_light-4.0.0.tar.gz", hash = "sha256:2d4438320eefe1248ad0543e1d1673449f571afcc5c603fb487e5ed2fe4849cf", size = 102423, upload-time = "2026-04-23T07:11:51.727Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5d/ca/1288c2c7597484340c6ba5e3911c84b552511310633954d7aa496610e45a/django_autocomplete_light-5.0.0.tar.gz", hash = "sha256:115ee3541ee4a7ddd1b92396ea75d0f38d0b91899b0dc17259310975c728b32e", size = 117640, upload-time = "2026-06-18T01:43:28.909Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/93/c2/feb897d6215d6aa8d8b96081f2be976624ff22717950d058ad16dea94072/django_autocomplete_light-4.0.0-py3-none-any.whl", hash = "sha256:60ecf1bbc00f8a633c3967443ab745d9945b73cd6b4f7f64f236280c956b7ba4", size = 117892, upload-time = "2026-04-23T07:11:49.78Z" },
+    { url = "https://files.pythonhosted.org/packages/e1/bd/9e9cc8746bf51031a477dd21ee3a08449ab9d94739a242622dc381ebe763/django_autocomplete_light-5.0.0-py3-none-any.whl", hash = "sha256:6fa30efa43e87ff17266e638de04accb11543186e332b09ae43cbccb10e804bb", size = 134025, upload-time = "2026-06-18T01:43:27.178Z" },
 ]
 
 [[package]]
@@ -592,14 +597,14 @@ wheels = [
 
 [[package]]
 name = "django-treebeard"
-version = "5.0.5"
+version = "7.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/19/31/d9380569d2e185458240497c948591d9183bd5c77d11800441b1ccee6933/django_treebeard-5.0.5.tar.gz", hash = "sha256:edca8ef8f92a92d607a1310838fe02806414d0678187316b43b48677aff2f51c", size = 299223, upload-time = "2026-02-19T13:47:17.211Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e1/c0/1875927de0e4b00670b3b8394c424edce7b964b30f06bb9e9f8e1657b6cc/django_treebeard-7.0.2.tar.gz", hash = "sha256:37b917c9b5d56ae2e0f3d03be4446e861d28bf021433045b37d952e0188a114d", size = 231337, upload-time = "2026-09-15T04:29:33.921Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/21/27/fac0bc188340e39b35ec916b6da2919c387df2e512d622af665e59600f97/django_treebeard-5.0.5-py3-none-any.whl", hash = "sha256:879b3103c2d25fb98750e3b61d9bcda58c18e4617f5e1156bbc50a79104c9f1f", size = 76185, upload-time = "2026-02-19T13:47:15.636Z" },
+    { url = "https://files.pythonhosted.org/packages/1e/b4/01235cccddcd911b26652da568d450ade8fa352631f518f0032edfa6c58f/django_treebeard-7.0.2-py3-none-any.whl", hash = "sha256:95bf9296401a99f3575b060265918b9456c7ec36eb2026c6287f33017ba0d5d7", size = 80452, upload-time = "2026-09-15T04:29:32.514Z" },
 ]
 
 [[package]]
@@ -616,14 +621,14 @@ wheels = [
 
 [[package]]
 name = "djangorestframework"
-version = "3.17.2"
+version = "3.18.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3b/35/c96055e700fdff25da3a7b7756cfd1d4dc54f38b9bc6d6c5e19e3a0fdc20/djangorestframework-3.17.2.tar.gz", hash = "sha256:89ed713b6dc83e1539f214b7d10808ae19bb8511004beba886225da6d5c9dafa", size = 906683, upload-time = "2026-08-05T07:47:22.5Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8a/2e/b3ce9d449b1ed9f9dd74fb7dfbc5f20860d5f40c2b4b10a2c3eabd8ff579/djangorestframework-3.18.1.tar.gz", hash = "sha256:605d79fa2ec2f02905492e5ea13d903c2d842d0b4c915a57f7bf02ab9f3c91dd", size = 915653, upload-time = "2026-09-07T18:04:08.288Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a2/46/c14108e400b208c394325eb63fbae06c81341b6447fa1a6f9da718b17fe7/djangorestframework-3.17.2-py3-none-any.whl", hash = "sha256:cb0546a7415d5b46c04e0f4fe0a54b2109f4fdd5e83ca773c8c6183a6493d042", size = 899109, upload-time = "2026-08-05T07:47:20.853Z" },
+    { url = "https://files.pythonhosted.org/packages/e8/83/5ed615e47339d8e65f62eb1a8133f8f046492eb3a25ad40d90acb9a208b3/djangorestframework-3.18.1-py3-none-any.whl", hash = "sha256:f1409d698967aaf82d5d98d76b549c8fba8bd92ebd0d83d24454508f72168dc2", size = 901373, upload-time = "2026-09-07T18:04:06.237Z" },
 ]
 
 [[package]]
@@ -879,21 +884,21 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "billiard", specifier = "==4.2.4" },
+    { name = "billiard", specifier = "==4.3.0" },
     { name = "celery", specifier = "==5.6.3" },
     { name = "crispy-bootstrap4", specifier = "==2026.2" },
     { name = "django", specifier = "~=5.2.17" },
     { name = "django-anymail", specifier = "~=15.2" },
-    { name = "django-autocomplete-light", specifier = "==4.0.0" },
+    { name = "django-autocomplete-light", specifier = "==5.0.0" },
     { name = "django-crispy-forms", specifier = "==2.7" },
     { name = "django-filter", specifier = "==26.1" },
     { name = "django-redis", specifier = "==7.0.0" },
     { name = "django-reversion", specifier = "==6.3.0" },
     { name = "django-storages", extras = ["s3"], specifier = "~=1.14.6" },
     { name = "django-taggit", specifier = "==6.1.0" },
-    { name = "django-treebeard", specifier = "==5.0.5" },
+    { name = "django-treebeard", specifier = "==7.0.2" },
     { name = "django-vite", specifier = "==3.2.0" },
-    { name = "djangorestframework", specifier = "==3.17.2" },
+    { name = "djangorestframework", specifier = "==3.18.1" },
     { name = "drf-spectacular", specifier = "~=0.30.0" },
     { name = "granian", specifier = "~=2.8.4" },
     { name = "inflection", specifier = "==0.5.1" },
@@ -904,10 +909,10 @@ requires-dist = [
     { name = "nh3", specifier = "~=0.3.7" },
     { name = "numpy", specifier = "~=2.5.3" },
     { name = "openpyxl", specifier = "==3.1.5" },
-    { name = "pandas", specifier = "~=2.3.3" },
-    { name = "plotly", specifier = "==6.7.0" },
+    { name = "pandas", specifier = ">=2.3.3,<3.1.0" },
+    { name = "plotly", specifier = "==7.1.0" },
     { name = "psycopg2-binary", specifier = "==2.9.13" },
-    { name = "pybmds", specifier = "==25.1" },
+    { name = "pybmds", specifier = "==25.2" },
     { name = "pydantic", specifier = "~=2.13.5" },
     { name = "python-docx", specifier = "==1.2.0" },
     { name = "pyyaml", specifier = "==6.0.3" },
@@ -1611,15 +1616,15 @@ wheels = [
 
 [[package]]
 name = "plotly"
-version = "6.7.0"
+version = "7.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "narwhals" },
     { name = "packaging" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3a/7f/0f100df1172aadf88a929a9dbb902656b0880ba4b960fe5224867159d8f4/plotly-6.7.0.tar.gz", hash = "sha256:45eea0ff27e2a23ccd62776f77eb43aa1ca03df4192b76036e380bb479b892c6", size = 6911286, upload-time = "2026-04-09T20:36:45.738Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/49/c3/72b369f5ed7701b04ab0ea3dcf83e9bbce71c0b3bc6f07f87568550d09ea/plotly-7.1.0.tar.gz", hash = "sha256:f860166a4a3d78c69cb1f4a15f28a5c8283eade98a282a698f3bb853a449ace5", size = 6689315, upload-time = "2026-09-15T19:21:21.75Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/90/ad/cba91b3bcf04073e4d1655a5c1710ef3f457f56f7d1b79dcc3d72f4dd912/plotly-6.7.0-py3-none-any.whl", hash = "sha256:ac8aca1c25c663a59b5b9140a549264a5badde2e057d79b8c772ae2920e32ff0", size = 9898444, upload-time = "2026-04-09T20:36:39.812Z" },
+    { url = "https://files.pythonhosted.org/packages/e5/7d/905a3a3d51087515719058c94cfbda2ff0fc14417c20d557ae3e82d8b250/plotly-7.1.0-py3-none-any.whl", hash = "sha256:dbb7fa18afce40d0a8e80d1bf162eceb3faa0ce5a77fe741ad09a74cf78f53f3", size = 9692368, upload-time = "2026-09-15T19:21:18.331Z" },
 ]
 
 [[package]]
@@ -1688,7 +1693,7 @@ wheels = [
 
 [[package]]
 name = "pybmds"
-version = "25.1"
+version = "25.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "matplotlib" },
@@ -1702,10 +1707,10 @@ dependencies = [
     { name = "tqdm" },
 ]
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/09/0b/ca5e32ebeb27c21e7415df5f504ba58423ea39a159a514eb147fd2a167e0/pybmds-25.1-cp314-cp314-macosx_14_0_arm64.whl", hash = "sha256:38a9787a5758dc16466e995b9e2f7b00428483fb5f4895548b8fca2a93081a90", size = 1815497, upload-time = "2025-12-29T03:48:37.595Z" },
-    { url = "https://files.pythonhosted.org/packages/41/79/ac910ed5039c04ef79110e58557764b1b1caacba66cf48e1b1b86c7d4b95/pybmds-25.1-cp314-cp314-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:dece0bf9d9cb9b401bdac7bd995dd754dda5c0b8d5364096b5ffb2cedae24760", size = 2124865, upload-time = "2025-12-29T03:48:39.526Z" },
-    { url = "https://files.pythonhosted.org/packages/c7/b9/eceab95ecec0765b1d49f9d76d5738e03c932f9c188ecad248ed2280804b/pybmds-25.1-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:b37a0048588390be898d740d85b3a83bc0722811bd455e088719d4ce7afca41b", size = 2433796, upload-time = "2025-12-29T03:48:41.807Z" },
-    { url = "https://files.pythonhosted.org/packages/79/0b/f5449d47cf91a90a37273a3b24eeb9590213916ecc62eea67e120a02fcaf/pybmds-25.1-cp314-cp314-win_amd64.whl", hash = "sha256:39490cbd68f1e8a687d974ce9e3275a5b459f352d4ec287547fc3524da4fa8f9", size = 1051595, upload-time = "2025-12-29T03:48:43.484Z" },
+    { url = "https://files.pythonhosted.org/packages/5d/b0/717b29f853003632bf1d898f6eb2b9d48865ed873612c56305ba9a5bd36d/pybmds-25.2-cp314-cp314-macosx_14_0_arm64.whl", hash = "sha256:c056049ddd7ea067dd28158793121ea237f4c842bbf787c5187a126df9037089", size = 1195714, upload-time = "2026-02-04T18:14:57.803Z" },
+    { url = "https://files.pythonhosted.org/packages/1d/14/80c357d859a46e5ca64a61f6cfc879cbece05f1ce5d07e31ebcd44f61e62/pybmds-25.2-cp314-cp314-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:a7b01754ebdf0dd560d2a2c3d3efb3f3635ab96718571dc69a6faec2c9b68957", size = 1250524, upload-time = "2026-02-04T18:14:58.975Z" },
+    { url = "https://files.pythonhosted.org/packages/5e/7a/5396b8eff69f834cdeca290ce2ec50d3dd5806c542656987b8c6f4974c19/pybmds-25.2-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:a1e22544220bd58fd0e6f73d0451af403f02876f9b421a1eba361495b435e5f8", size = 1440581, upload-time = "2026-02-04T18:15:00.362Z" },
+    { url = "https://files.pythonhosted.org/packages/3c/91/f987a3e8b873b523f72bc62f04c863058f84d7f54d83d2c88e484ec9b68b/pybmds-25.2-cp314-cp314-win_amd64.whl", hash = "sha256:eaa3007082b3427d5c1c231d145f22403ec32b5e4c02aebaecb410927a8312b3", size = 1112143, upload-time = "2026-02-04T18:15:01.975Z" },
 ]
 
 [[package]]
