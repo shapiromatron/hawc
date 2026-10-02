@@ -27,10 +27,10 @@ dependencies = [
   "django-filter==26.1",
   "django-redis==7.0.0",
   "django-reversion==6.3.0",
-  "django-autocomplete-light==4.0.0",
+  "django-autocomplete-light==5.0.0",
   "django-taggit==6.1.0",
-  "django-treebeard==5.0.5",
-  "djangorestframework==3.17.2",
+  "django-treebeard==7.0.2",
+  "djangorestframework==3.18.1",
   "drf-spectacular~=0.30.0",
   "django-vite==3.2.0",
   "uritemplate==4.2.0",
@@ -39,7 +39,7 @@ dependencies = [
   "granian~=2.8.4",
   # tasks
   "celery==5.6.3",
-  "billiard==4.2.4",
+  "billiard==4.3.0",
   "kombu==5.6.2",
   # utilities
   "jsonschema==4.26.0",
@@ -52,12 +52,12 @@ dependencies = [
   "tinycss2==1.5.1",
   # computational
   "numpy~=2.5.3",
-  "pandas~=2.3.3",
+  "pandas>=2.3.3,<3.1.0",
   "openpyxl==3.1.5",
   "jinja2~=3.1.6",
-  "plotly==6.7.0",
+  "plotly==7.1.0",
   "scipy~=1.18.1",
-  "pybmds==25.1",
+  "pybmds==25.2",
   # exports
   "rispy==0.10.0",
   "python-docx==1.2.0",
@@ -108,7 +108,7 @@ hawc-client = { workspace = true }
 
 # --- --- --- --- --- --- --- --- --- --- BUILD --- --- --- --- --- --- --- --- --- ---
 [build-system]
-requires = ["uv_build>=0.11.0,<0.12.0"]
+requires = ["uv_build>=0.11.0,<0.13.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
