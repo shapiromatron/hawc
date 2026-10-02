@@ -1,26 +1,28 @@
 version: 2
 
-multi-ecosystem-groups:
-  infrastructure:
+updates:
+  - package-ecosystem: "uv"
+    directory: "/"
     schedule:
       interval: "monthly"
-
-
-updates:
-  - package-ecosystem: uv
-    directory: /
-    multi-ecosystem-group: Python
-    patterns: ["**/*"]
+    groups:
+      python-dependencies:
+        patterns:
+          - "*"
     cooldown:
       default-days: 7
     ignore:
       - dependency-name: "Django"
         update-types: ["version-update:semver-major"]
 
-  - package-ecosystem: npm
-    directory: frontend
-    multi-ecosystem-group: JavaScript
-    patterns: ["**/*"]
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "monthly"
+    groups:
+      javascript-dependencies:
+        patterns:
+          - "*"
     cooldown:
       default-days: 7
     ignore:
@@ -33,9 +35,13 @@ updates:
       - dependency-name: "react-dom"
         update-types: ["version-update:semver-major"]
 
-  - package-ecosystem: github-actions
-    directory: .github
-    multi-ecosystem-group: Github Actions
-    patterns: ["**/*"]
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      github-actions-dependencies:
+        patterns:
+          - "*"
     cooldown:
       default-days: 7
