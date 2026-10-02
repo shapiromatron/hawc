@@ -70,20 +70,20 @@ dev = [
   # build
   "poethepoet~=0.44",
   # lint and formatting tools
-  "ruff==0.15.11",
+  "ruff==0.16.10",
   "djhtml==3.0.11",
   # django development
   "django-debug-toolbar~=8.0.0",
   "django-browser-reload~=1.21.0",
   "django-extensions~=4.1",
   # tests
-  "coverage~=7.13.1",
-  "pytest~=9.0.1",
-  "pytest-django~=4.12.0",
-  "vcrpy==8.1.1",
-  "pytest-recording==0.13.4",
-  "playwright~=1.58.0",
-  "pytest-playwright~=0.7.1",
+  "coverage~=7.16.2",
+  "pytest~=9.1.1",
+  "pytest-django~=4.14.0",
+  "vcrpy==8.3.0",
+  "pytest-recording==0.14.0",
+  "playwright~=1.63.0",
+  "pytest-playwright~=0.9.0",
   # docs
   "mkdocs-material~=9.7.0",
   # hawc client (testing)
