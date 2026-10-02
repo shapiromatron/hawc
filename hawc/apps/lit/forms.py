@@ -585,7 +585,7 @@ class WorkflowForm(forms.ModelForm):
                 ),
                 cfl.Column(
                     cfl.Fieldset(
-                        "Removal Criteria",
+                        "Exit Criteria",
                         cfl.Row(
                             cfl.Column("removal_tags", css_class="col-md-12"),
                         ),
