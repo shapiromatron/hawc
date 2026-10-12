@@ -153,8 +153,8 @@ class ReferenceFilterSet(BaseFilterSet):
         ]
 
     def filter_queryset(self, queryset):
-        queryset = super().filter_queryset(queryset)
-        return queryset.filter(assessment=self.assessment)
+        queryset = queryset.filter(assessment=self.assessment)
+        return super().filter_queryset(queryset)
 
     def filter_authors(self, queryset, name, value):
         query = Q(authors_short__unaccent__icontains=value) | Q(authors__unaccent__icontains=value)
