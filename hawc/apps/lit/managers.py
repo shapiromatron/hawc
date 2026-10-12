@@ -546,6 +546,14 @@ class ReferenceQuerySet(models.QuerySet):
             for reference_id, tag_ids in user_qs
         }
 
+    def require_resolution(self):
+        """References with >= 2 unresolved user tags ready for conflict resolution."""
+        return self.annotate(
+            n_unresolved_user_tag_count=Count(
+                "user_tags", filter=Q(user_tags__is_resolved=False), distinct=True
+            ),
+        ).filter(n_unresolved_user_tag_count__gte=2)
+
     @transaction.atomic
     def merge_tag_conflicts(
         self,

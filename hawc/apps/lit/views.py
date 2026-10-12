@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Count, Q, prefetch_related_objects
+from django.db.models import prefetch_related_objects
 from django.forms.models import model_to_dict
 from django.http import HttpRequest, HttpResponseRedirect
 from django.middleware.csrf import get_token
@@ -611,12 +611,7 @@ class ConflictResolution(BaseFilterList):
         return (
             super()
             .get_queryset()
-            .annotate(
-                n_unapplied_reviews=Count(
-                    "user_tags__user", filter=Q(user_tags__is_resolved=False), distinct=True
-                )
-            )
-            .filter(n_unapplied_reviews__gt=1)
+            .require_resolution()
             .order_by("-last_updated")
             .prefetch_related("identifiers", "tags", "user_tags__user", "user_tags__tags")
         )
