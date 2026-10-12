@@ -892,14 +892,10 @@ class ReferenceManager(BaseManager):
         untagged_refs = refs.annotate(tag_count=models.Count("tags")).filter(tag_count=0)
         total_untagged = untagged_refs.count()
         total_tagged = total - total_untagged
-        total_searched = refs.all().filter(searches__search_type="s").distinct().count()
-        total_imported = total - total_searched
         overview = {
             "total_references": total,
             "total_tagged": total_tagged,
             "total_untagged": total_untagged,
-            "total_searched": total_searched,
-            "total_imported": total_imported,
         }
         if assessment.literature_settings.conflict_resolution:
             UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
