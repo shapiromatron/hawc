@@ -905,9 +905,8 @@ class ReferenceManager(BaseManager):
             user_refs = UserReferenceTag.objects.filter(reference__in=refs)
             require_resolution = refs.require_resolution().values("id")
             for workflow in workflows:
-                workflow_refs = refs.in_workflow(workflow)
                 workflow.conflicts = (
-                    require_resolution.intersection(workflow_refs).count()
+                    require_resolution.intersection(refs.in_workflow(workflow).values("id")).count()
                     if workflow.link_conflict_resolution
                     else None
                 )

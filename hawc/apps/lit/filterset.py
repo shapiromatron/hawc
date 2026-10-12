@@ -108,7 +108,7 @@ class ReferenceFilterSet(BaseFilterSet):
         method="filter_needs_tagging",
         widget=CheckboxInput(),
         label="Needs Tagging",
-        help_text="References untagged by you with less than 2 unresolved user tag",
+        help_text="References untagged by you with fewer than two unresolved user tags",
     )
     partially_tagged = df.BooleanFilter(
         method="filter_partially_tagged",
@@ -272,8 +272,8 @@ class ReferenceFilterSet(BaseFilterSet):
         ).filter(n_unresolved_user_tag=1)
 
     def filter_needs_tagging(self, queryset, name, value):
-        """References which have less than 2 unresolved user tags, where the current user does
-        not haven unresolved user tag."""
+        """References with fewer than two unresolved user tags, where the current user does
+        not have an unresolved user tag."""
         if not value:
             return queryset
         return (
@@ -283,7 +283,11 @@ class ReferenceFilterSet(BaseFilterSet):
                 )
             )
             .filter(n_unresolved_user_tag__lt=2)
-            .exclude(Q(user_tags__user=self.request.user) & Q(user_tags__is_resolved=False))
+            .exclude(
+                user_tags__in=models.UserReferenceTag.objects.filter(
+                    user=self.request.user, is_resolved=False
+                )
+            )
         )
 
     def filter_workflow(self, queryset, name, value):
