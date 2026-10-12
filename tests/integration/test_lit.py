@@ -112,9 +112,9 @@ class TestLiterature(PlaywrightTestCase):
         page.get_by_label("Title*").fill("Title/Abstract")
         page.get_by_text("Link tagging").click()
         page.get_by_text("Link conflict resolution").click()
-        page.get_by_role("group", name="Removal Criteria").get_by_label(
-            "Tagged With:"
-        ).select_option("32")
+        page.get_by_role("group", name="Exit Criteria").get_by_label("Tagged With:").select_option(
+            "32"
+        )
         page.locator("#div_id_workflow-new-removal_tags_descendants").get_by_text(
             "Include Descendants of above tag(s)"
         ).click()
