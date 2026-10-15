@@ -17,7 +17,7 @@
     "url": "https://github.com/shapiromatron/hawc.git"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.14",
+    "@biomejs/biome": "2.5.15",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",
     "@types/react": "^18.3.27",
@@ -36,7 +36,7 @@
     "d3-cloud": "^1.2.9",
     "datatables.net-dt": "^3.1.4",
     "lodash": "^4.18.1",
-    "mobx": "^6.16.1",
+    "mobx": "^7.0.6",
     "mobx-react": "^7.6.0",
     "moment": "^2.31.0",
     "plotly.js": "4.1.2",
