@@ -5,7 +5,8 @@ import react from "@vitejs/plugin-react";
 import {defineConfig} from "vite";
 import {viteExternalsPlugin} from "vite-plugin-externals";
 
-const outDir = "../hawc/static/bundles";
+const outDir = "../hawc/static/bundles",
+    __dirname = import.meta.dirname;
 
 export default defineConfig({
     root: ".",
