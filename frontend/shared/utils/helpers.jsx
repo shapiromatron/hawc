@@ -2,7 +2,6 @@ import * as d3 from "d3";
 import _ from "lodash";
 import moment from "moment";
 import React from "react";
-import Plot from "react-plotly.js";
 
 import $ from "$";
 
@@ -409,11 +408,6 @@ const helpers = {
     deleteArrayElement: (arr, index) => {
         arr.splice(index, 1);
         return arr;
-    },
-    plotlyShim: () => {
-        // react-plotly.js is CJS with __esModule:true; rolldown interop may return the
-        // module namespace rather than exports.default, so unwrap it if necessary.
-        return Plot?.default ?? Plot;
     },
 };
 export default helpers;
