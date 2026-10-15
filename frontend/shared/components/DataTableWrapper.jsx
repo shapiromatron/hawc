@@ -1,4 +1,4 @@
-import DataTable from 'datatables.net-dt';
+import DataTable from "datatables.net-dt";
 import PropTypes from "prop-types";
 import React, {createRef, useEffect, useState} from "react";
 
