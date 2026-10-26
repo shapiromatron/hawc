@@ -23,6 +23,14 @@ class ReferenceDatabase(models.IntegerChoices):
             for choice in [ReferenceDatabase.PUBMED, ReferenceDatabase.HERO]
         ]
 
+    @classmethod
+    def export_map(cls) -> dict[int, str]:
+        add_id = {cls.PUBMED, cls.HERO, cls.WOS, cls.SCOPUS, cls.EMBASE}
+        mapping: dict[int, str] = {}
+        for k, v in ReferenceDatabase.choices:
+            mapping[k] = v + " ID" if k in add_id else v
+        return mapping
+
 
 class SearchType(models.TextChoices):
     SEARCH = "s", "Search"
