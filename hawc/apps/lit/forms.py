@@ -374,6 +374,13 @@ def validate_external_id(
     if identifier:
         return identifier, None
 
+    if (
+        db_type in {constants.ReferenceDatabase.PUBMED, constants.ReferenceDatabase.HERO}
+        and isinstance(db_id, str)
+        and not db_id.isdecimal()
+    ):
+        raise forms.ValidationError("Identifier must be numeric")
+
     if db_type == constants.ReferenceDatabase.PUBMED:
         content = models.Identifiers.objects.validate_pubmed_ids([db_id])
         return None, content
