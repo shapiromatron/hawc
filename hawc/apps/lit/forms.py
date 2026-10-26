@@ -377,7 +377,7 @@ def validate_external_id(
     if (
         db_type in {constants.ReferenceDatabase.PUBMED, constants.ReferenceDatabase.HERO}
         and isinstance(db_id, str)
-        and not db_id.isnumeric()
+        and not db_id.isdecimal()
     ):
         raise forms.ValidationError("Identifier must be numeric")
 
