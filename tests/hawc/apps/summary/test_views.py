@@ -111,6 +111,11 @@ class TestVisualVisualizationCreate:
             url = reverse("summary:visualization_create", args=args)
             check_404(client, url)
 
+        args = (1, 10)  # evidence type required for this visual type
+        url = reverse("summary:visualization_create", args=args)
+        resp = client.get(url)
+        assert resp.status_code == 400
+
 
 @pytest.mark.django_db
 class TestVisualizationUpdateSettings:
