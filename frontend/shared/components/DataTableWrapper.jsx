@@ -1,6 +1,4 @@
-import $ from "jquery";
-import "datatables.net";
-
+import DataTable from "datatables.net-dt";
 import PropTypes from "prop-types";
 import React, {createRef, useEffect, useState} from "react";
 
@@ -22,7 +20,7 @@ const DataTableWrapper = ({children, className, data, columns}) => {
     }
 
     useEffect(() => {
-        const table = $(ref.current.firstElementChild).DataTable(dtProps);
+        const table = new DataTable(ref.current.firstElementChild, dtProps);
         setLoading(false);
         return () => table.destroy();
     });
