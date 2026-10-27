@@ -546,6 +546,14 @@ class ReferenceQuerySet(models.QuerySet):
             for reference_id, tag_ids in user_qs
         }
 
+    def require_resolution(self):
+        """References with >= 2 unresolved user tags ready for conflict resolution."""
+        return self.annotate(
+            n_unresolved_user_tag_count=Count(
+                "user_tags", filter=Q(user_tags__is_resolved=False), distinct=True
+            ),
+        ).filter(n_unresolved_user_tag_count__gte=2)
+
     @transaction.atomic
     def merge_tag_conflicts(
         self,
@@ -757,7 +765,7 @@ class ReferenceQuerySet(models.QuerySet):
         )
 
     def in_workflow(self, workflow: "Workflow"):
-        return self.filter(workflow.reference_filter())
+        return self.filter(workflow.reference_filter()).distinct()
 
     def with_identifiers(self):
         Identifiers = apps.get_model("lit", "Identifiers")
@@ -884,46 +892,31 @@ class ReferenceManager(BaseManager):
         untagged_refs = refs.annotate(tag_count=models.Count("tags")).filter(tag_count=0)
         total_untagged = untagged_refs.count()
         total_tagged = total - total_untagged
-        total_searched = refs.all().filter(searches__search_type="s").distinct().count()
-        total_imported = total - total_searched
         overview = {
             "total_references": total,
             "total_tagged": total_tagged,
             "total_untagged": total_untagged,
-            "total_searched": total_searched,
-            "total_imported": total_imported,
         }
+        for workflow in workflows:
+            workflow.in_workflow = refs.in_workflow(workflow).count()
+
         if assessment.literature_settings.conflict_resolution:
             UserReferenceTag = apps.get_model("lit", "UserReferenceTag")
             user_refs = UserReferenceTag.objects.filter(reference__in=refs)
-            refs = refs.annotate(
-                tags_count=Count("tags"),
-                user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False)),
-            )
-            needs_tagging = refs.filter(user_tag_count__lt=2)
-            conflicts = refs.filter(user_tag_count__gt=1)
+            require_resolution = refs.require_resolution().values("id")
             for workflow in workflows:
-                workflow_refs = refs.in_workflow(workflow)
-                workflow.needs_tagging = (
-                    needs_tagging.intersection(workflow_refs).count()
-                    if workflow.link_tagging
-                    else None
-                )
                 workflow.conflicts = (
-                    conflicts.intersection(workflow_refs).count()
+                    require_resolution.intersection(refs.in_workflow(workflow).values("id")).count()
                     if workflow.link_conflict_resolution
                     else None
                 )
             # needs_tagging = 0 consensus tags and < 2 unresolved user reviews
             overview.update(
-                needs_tagging=needs_tagging.filter(tags_count=0).count(),
-                conflicts=conflicts.count(),
+                conflicts=require_resolution.count(),
                 total_reviews=user_refs.count(),
                 total_users=user_refs.distinct("user_id").count(),
             )
-        else:
-            for workflow in workflows:
-                workflow.needs_tagging = refs.in_workflow(workflow).count()
+
         return overview, list(workflows)
 
     def get_pubmed_references(self, search, identifiers):

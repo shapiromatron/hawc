@@ -100,6 +100,15 @@ class TestIdentifierStudyForm:
         assert form.is_valid() is False
         assert "db_id" in form.errors
 
+        # Test with non-numeric PMID
+        form = forms.IdentifierStudyForm(
+            {"db_type": str(ReferenceDatabase.PUBMED.value), "db_id": "1,2"},
+            instance=None,
+            parent=assessment,
+        )
+        assert form.is_valid() is False
+        assert form.errors == {"__all__": ["Identifier must be numeric"]}
+
         # Test validation when study with identifier already exists
         # Get an existing study with an identifier
         study_with_id = models.Study.objects.filter(identifiers__isnull=False).first()

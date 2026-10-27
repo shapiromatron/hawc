@@ -1,6 +1,7 @@
-import $ from "jquery";
 import _ from "lodash";
 import {action, autorun, computed, makeObservable, observable} from "mobx";
+
+import $ from "$";
 
 const renderTagForm = function (tagId, referenceId, tagNames, udf) {
     return `<div class='box-shadow rounded mt-3 mb-4'>

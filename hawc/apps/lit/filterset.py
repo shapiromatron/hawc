@@ -108,7 +108,7 @@ class ReferenceFilterSet(BaseFilterSet):
         method="filter_needs_tagging",
         widget=CheckboxInput(),
         label="Needs Tagging",
-        help_text="References tagged by less than two people",
+        help_text="References untagged by you with fewer than two unresolved user tags",
     )
     partially_tagged = df.BooleanFilter(
         method="filter_partially_tagged",
@@ -153,8 +153,8 @@ class ReferenceFilterSet(BaseFilterSet):
         ]
 
     def filter_queryset(self, queryset):
-        queryset = super().filter_queryset(queryset)
-        return queryset.filter(assessment=self.assessment)
+        queryset = queryset.filter(assessment=self.assessment)
+        return super().filter_queryset(queryset)
 
     def filter_authors(self, queryset, name, value):
         query = Q(authors_short__unaccent__icontains=value) | Q(authors__unaccent__icontains=value)
@@ -264,26 +264,36 @@ class ReferenceFilterSet(BaseFilterSet):
         return queryset.distinct()
 
     def filter_partially_tagged(self, queryset, name, value):
+        """References with exactly one unresolved user tag."""
         if not value:
             return queryset
-        queryset = queryset.annotate(
-            user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
-        ).filter(user_tag_count=1)
-        return queryset.distinct()
+        return queryset.annotate(
+            n_unresolved_user_tag=Count("user_tags", Q(user_tags__is_resolved=False), distinct=True)
+        ).filter(n_unresolved_user_tag=1)
 
     def filter_needs_tagging(self, queryset, name, value):
+        """References with fewer than two unresolved user tags, where the current user does
+        not have an unresolved user tag."""
         if not value:
             return queryset
-        queryset = queryset.annotate(
-            user_tag_count=Count("user_tags", filter=Q(user_tags__is_resolved=False))
+        return (
+            queryset.annotate(
+                n_unresolved_user_tag=Count(
+                    "user_tags", Q(user_tags__is_resolved=False), distinct=True
+                )
+            )
+            .filter(n_unresolved_user_tag__lt=2)
+            .exclude(
+                user_tags__in=models.UserReferenceTag.objects.filter(
+                    user=self.request.user, is_resolved=False
+                )
+            )
         )
-        queryset = queryset.filter(user_tag_count__lt=2)
-        return queryset.distinct()
 
     def filter_workflow(self, queryset, name, value):
         if not value:
             return queryset
-        return queryset.in_workflow(value).distinct()
+        return queryset.in_workflow(value)
 
     def create_form(self):
         form = super().create_form()
