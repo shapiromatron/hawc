@@ -235,12 +235,12 @@ class TestStudyViewSet:
         assert response.json() == {"db_id": ["Study already exists; see Foo et al. [1]"]}
 
         # IDs must be valid
-        data = {"db_type": "PUBMED", "db_id": -1, "assessment_id": db_keys.assessment_working}
+        data = {"db_type": "PUBMED", "db_id": 0, "assessment_id": db_keys.assessment_working}
         response = client.post(url, data)
         assert response.status_code == 400
         assert (
             str(response.data["non_field_errors"][0])
-            == "The following PubMed ID(s) could not be imported: -1"
+            == "The following PubMed ID(s) could not be imported: 0"
         )
 
     @pytest.mark.vcr
