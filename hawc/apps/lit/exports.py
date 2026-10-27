@@ -92,8 +92,9 @@ class ReferenceFlatComplete(FlatFileExporter):
 
         def cast_to_int(df):
             target_cols = [col for col in {"PubMed ID", "HERO ID"} if col in df.columns]
-            if target_cols:
-                df[target_cols] = df[target_cols].astype(pd.Int64Dtype)
+            for col in target_cols:
+                if not df[col].str.contains("|", regex=False, na=False).any():
+                    df[col] = df[col].astype(pd.Int64Dtype())
             return df
 
         col_renames = {"references__id": "HAWC ID", "database": "id_type", "unique_id": "id_"}
