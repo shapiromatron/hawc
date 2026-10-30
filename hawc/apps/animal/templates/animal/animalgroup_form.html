@@ -14,7 +14,7 @@
   {% endif %}
 
 
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   <script type="text/javascript">
@@ -72,7 +72,7 @@
             genInput = $('#id_generation'),
             drcInsertLocation = $('.form-actions'),
             dose_values = undefined,
-            dose_types = {{dose_types|safe}},
+            dose_types = {{ dose_types|safe }},
             onDosingRegimeChange = function(){
           var show = isNaN(parseInt(drInput.val()));
           return (show) ?
@@ -97,7 +97,7 @@
         drf.remove();
 
         {% if dose_groups_json %}
-          dose_values = {{dose_groups_json|safe}};
+          dose_values = {{ dose_groups_json|safe }};
         {% endif %}
 
         genInput

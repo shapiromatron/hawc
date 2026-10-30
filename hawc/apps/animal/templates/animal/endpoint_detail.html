@@ -4,7 +4,7 @@
 
   {% if crud == "Read" %}
     <div class="d-flex">
-      <h2>{{object}}</h2>
+      <h2>{{ object }}</h2>
       {% if obj_perms.edit or bmd_session %}
         {% actions %}
           {% if obj_perms.edit %}
@@ -16,7 +16,7 @@
           {% if assessment.enable_bmd and object.bmd_modeling_possible %}
             <span class="dropdown-header">BMD Modeling</span>
             {% if bmd_session %}
-              <a class="dropdown-item" href="{{bmd_session.get_absolute_url}}">Latest session</a>
+              <a class="dropdown-item" href="{{ bmd_session.get_absolute_url }}">Latest session</a>
               <a class="dropdown-item" href="{% url 'bmd:session_list' object.pk %}">All sessions</a>
             {% endif %}
             {% if obj_perms.edit %}
@@ -45,12 +45,12 @@
     </div>
   </div>
 
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(() => {
-      const data = {{object.get_json|safe}};
+      const data = {{ object.get_json|safe }};
       window.app.startup("animalStartup", function(app){
         var endpoint = new app.Endpoint(data);
         endpoint.build_details_table($('#endpoint-details-table'));
@@ -60,4 +60,4 @@
       })
     });
   </script>
-{% endblock %}
+{% endblock extrajs %}

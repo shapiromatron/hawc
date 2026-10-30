@@ -2,7 +2,7 @@
 
 {% block content %}
   <div class="d-flex">
-    <h2>{{object}}</h2>
+    <h2>{{ object }}</h2>
     {% if obj_perms.edit and crud == "Read" %}
       {% actions %}
         <span class="dropdown-header">Meta-result editing</span>
@@ -12,8 +12,8 @@
     {% endif %}
   </div>
   <div id="main"></div>
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   {{ config|json_script:"config" }}
-{% endblock %}
+{% endblock extrajs %}

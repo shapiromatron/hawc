@@ -6,11 +6,11 @@
 
 {% block breadcrumbs %}
   <div class="breadcrumbs">
-    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
     &rsaquo;
     Media preview
   </div>
-{% endblock %}
+{% endblock breadcrumbs %}
 
 {% block content %}
   <div class="container-fluid" id="main">
@@ -21,28 +21,28 @@
     <form>
       <div class="form-row">
         <label for="id_item">Specify an item</label>
-        <input id="id_item" name="item" value="{{object_name}}" />
+        <input id="id_item" name="item" value="{{ object_name }}" />
       </div>
       <button typ="submit">Submit</button>
     </form>
 
     {% if not has_object %}
       <p><b>Object not found. Please pass an item to your request.</b></p>
-      <p>The item currently passed: "{{object_name}}"</p>
+      <p>The item currently passed: "{{ object_name }}"</p>
     {% else %}
-      <p><b>Download:</b>&nbsp;<a href="{{object_uri}}">{{object_name}}</a></p>
+      <p><b>Download:</b>&nbsp;<a href="{{ object_uri }}">{{ object_name }}</a></p>
     {% endif %}
 
     {% if object_text %}
-        <pre style="white-space: pre-wrap;">{{object_text}}</pre>
+        <pre style="white-space: pre-wrap;">{{ object_text }}</pre>
     {% endif %}
 
     {% if object_html %}
-      {{object_html|safe}}
+      {{ object_html|safe }}
     {% endif %}
 
     {% if object_image %}
-      <img alt="Media preview image" src="{{object_uri}}" />
+      <img alt="Media preview image" src="{{ object_uri }}" />
     {% endif %}
 
     {% if object_pdf %}
@@ -55,7 +55,7 @@
       <script src="{% static 'js/pdf.js' %}"></script>
       <script>
         document.addEventListener("DOMContentLoaded", function () {
-          renderPdf("{{object_uri}}");
+          renderPdf("{{ object_uri }}");
         });
       </script>
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf_viewer.min.css"

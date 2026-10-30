@@ -4,11 +4,11 @@
     <tbody>
       {% for object in object_list %}
         <tr>
-          <td><a href="{% url 'animal:animal_group_detail' object.pk %}">{{object}}</a></td>
-          <td>{{object.species}}</td>
-          <td>{{object.strain}}</td>
-          <td>{{object.get_sex_display}}</td>
-          <td>{% if object.siblings %}<a href="{% url 'animal:animal_group_detail' object.siblings.pk %}">{{object.siblings}}</a>{% else %}None{% endif %}</td>
+          <td><a href="{% url 'animal:animal_group_detail' object.pk %}">{{ object }}</a></td>
+          <td>{{ object.species }}</td>
+          <td>{{ object.strain }}</td>
+          <td>{{ object.get_sex_display }}</td>
+          <td>{% if object.siblings %}<a href="{% url 'animal:animal_group_detail' object.siblings.pk %}">{{ object.siblings }}</a>{% else %}None{% endif %}</td>
         </tr>
       {% endfor %}
     </tbody>

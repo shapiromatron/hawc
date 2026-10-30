@@ -6,7 +6,7 @@
     {% crispy form %}
   </div>
   {% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   {{ smart_tag_form.media }}
@@ -21,4 +21,4 @@
       });
     });
   </script>
-{% endblock %}
+{% endblock extrajs %}

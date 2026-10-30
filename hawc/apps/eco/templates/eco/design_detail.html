@@ -2,12 +2,12 @@
 
 {% block content %}
   <div class="d-flex">
-    <h2>{{object.name}}</h2>
+    <h2>{{ object.name }}</h2>
     {% if obj_perms.edit and crud == "Read" %}
       {% actions %}
         <span class="dropdown-header">Study design editing</span>
-        <a class="dropdown-item" href="{{object.get_update_url}}">Update</a>
-        <a class="dropdown-item" href="{{object.get_delete_url}}">Delete</a>
+        <a class="dropdown-item" href="{{ object.get_update_url }}">Update</a>
+        <a class="dropdown-item" href="{{ object.get_delete_url }}">Delete</a>
       {% endactions %}
     {% endif %}
   </div>
@@ -65,4 +65,4 @@
     </div>
   </div>
 
-{% endblock %}
+{% endblock content %}

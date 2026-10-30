@@ -6,17 +6,17 @@
       {% for object in object_list %}
         <tr>
           <td>
-            <a href="{{object.get_absolute_url}}">{{object.title}}</a><br>
-            <span class='form-text text-muted'>{{object.description|safe}}</span>
+            <a href="{{ object.get_absolute_url }}">{{ object.title }}</a><br>
+            <span class='form-text text-muted'>{{ object.description|safe }}</span>
           </td>
-          <td>{{object.get_search_type_display}}: {{object.get_source_display}}</td>
-          <td>{{object.references.count}}<br/>
-            {% with object.fraction_tagged|default:0 as tagged %}
-              <span class='form-text text-muted'>{{tagged|percentage}} tagged</span>
+          <td>{{ object.get_search_type_display }}: {{ object.get_source_display }}</td>
+          <td>{{ object.references.count }}<br/>
+            {% with tagged=object.fraction_tagged|default:0 %}
+              <span class='form-text text-muted'>{{ tagged|percentage }} tagged</span>
             {% endwith %}
           </td>
-          <td>{{object.created}}</td>
-          <td>{{object.date_last_run}}</td>
+          <td>{{ object.created }}</td>
+          <td>{{ object.date_last_run }}</td>
         </tr>
       {% endfor %}
     </tbody>

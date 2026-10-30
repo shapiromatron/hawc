@@ -2,7 +2,7 @@
 
 {% block content %}
   <div id="animal-group-header" class="d-flex">
-    <h2>{{object}}</h2>
+    <h2>{{ object }}</h2>
     {% if obj_perms.edit %}
       {% actions %}
         <span class="dropdown-header">Animal Group Editing</span>
@@ -30,8 +30,7 @@
     <div id="animalGroupTableMain"></div>
   {% endif %}
 
-{% endblock %}
-
+{% endblock content %}
 
 {% block extrajs %}
   {{ config|json_script:"config" }}
@@ -51,4 +50,4 @@
       });
     });
   </script>
-{% endblock %}
+{% endblock extrajs %}

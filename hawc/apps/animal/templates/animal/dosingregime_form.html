@@ -3,7 +3,7 @@
 {% block content %}
   {% crispy form %}
   {% include 'animal/_doseGroupsDiv.html' %}
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   <script type="text/javascript">
@@ -12,8 +12,8 @@
       var actions = $('.form-actions');
       $('#doseGroupsDiv').insertBefore($('.form-actions'))
 
-      var dose_types = {{dose_types|safe}},
-          dose_values = {{dose_groups_json|safe}};
+      var dose_types = {{ dose_types|safe }},
+          dose_values = {{ dose_groups_json|safe }};
 
       window.app.startup("animalStartup", function(animal){
         new animal.DosingRegimeForm($("#dosing_regime"), dose_types, dose_values);

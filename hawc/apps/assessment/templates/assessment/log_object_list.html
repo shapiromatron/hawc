@@ -2,7 +2,7 @@
 
 {% block content %}
 
-  <h2>{{first_log}}s</h2>
+  <h2>{{ first_log }}s</h2>
 
   <table class="table table-sm table-striped">
     {% bs4_colgroup '30,70' %}
@@ -11,11 +11,11 @@
       <tr>
         <th>Item</th>
         <td>
-          {% with first_log.content_object.get_absolute_url as absolute_url %}
+          {% with absolute_url=first_log.content_object.get_absolute_url %}
             {% if absolute_url %}
-              <a href="{{absolute_url}}">{{first_log.get_object_name}}</a>
+              <a href="{{ absolute_url }}">{{ first_log.get_object_name }}</a>
             {% else %}
-              {{first_log.get_object_name}}
+              {{ first_log.get_object_name }}
             {% endif %}
           {% endwith %}
         </td>
@@ -23,12 +23,12 @@
 
       <tr>
         <th>Data type</th>
-        <td>{{first_log.content_type}}</td>
+        <td>{{ first_log.content_type }}</td>
       </tr>
 
       <tr>
         <th>Assessment</th>
-        <td>{{first_log.assessment}}</td>
+        <td>{{ first_log.assessment }}</td>
       </tr>
 
     </tbody>
@@ -42,9 +42,9 @@
     <tbody>
       {% for event in object_list %}
         <tr>
-          <td>{{event.created}}</td>
-          <td>{{event.user}}</td>
-          <td>{% if event.message %}<p class="mb-1">{{event.message}}</p>{% endif %}{{event.snapshot}}</td>
+          <td>{{ event.created }}</td>
+          <td>{{ event.user }}</td>
+          <td>{% if event.message %}<p class="mb-1">{{ event.message }}</p>{% endif %}{{ event.snapshot }}</td>
         </tr>
       {% empty %}
         <tr>

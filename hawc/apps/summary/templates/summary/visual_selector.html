@@ -4,7 +4,7 @@
 
 {% block content %}
   <div class="container-fluid">
-    <h2>{{action}} a new visualization</h2>
+    <h2>{{ action }} a new visualization</h2>
     <p class="form-text text-muted">Multiple visualization types are available. Please select the type of visualization
       you would like to create.</p>
     <div class="row">
@@ -15,8 +15,8 @@
           <option value="5" data-url="{% url url_copy assessment.id 5 %}">Embedded external website</option>
           <option value="7" data-url="{% url url_copy assessment.id 7 %}">Plotly visual</option>
           <option value="9" data-url="{% url url_copy assessment.id 9 %}">PRISMA visual</option>
-          <option value="2" data-url="{% url url_copy assessment.id 2 %}">{{assessment.get_rob_name_display}} heatmap</option>
-          <option value="3" data-url="{% url url_copy assessment.id 3 %}">{{assessment.get_rob_name_display}} barchart</option>
+          <option value="2" data-url="{% url url_copy assessment.id 2 %}">{{ assessment.get_rob_name_display }} heatmap</option>
+          <option value="3" data-url="{% url url_copy assessment.id 3 %}">{{ assessment.get_rob_name_display }} barchart</option>
           <option value="10" data-url="{% url url_copy assessment.id 10 %}">Data pivot (from query)</option>
           <option value="11" data-url="{% url url_copy assessment.id 11 %}">Data pivot (from file)</option>
           <option value="1" data-url="{% url url_copy assessment.id 1 %}">Bioassay endpoint crossview</option>
@@ -124,14 +124,14 @@
           <input type="radio" id="2-invitro" name="evidence-type" value="2" data-url="{% url url_copy assessment.id 2 2 %}" />
           <label for="2-invitro">In vitro</label>
         {% endif %}
-        <h3>{{assessment.get_rob_name_display}} heatmap</h3>
+        <h3>{{ assessment.get_rob_name_display }} heatmap</h3>
         <div class="row">
           <img alt="Image of a study evaluation heatmap" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
                src="{% static 'img/summary/rob-heatmap.svg' %}">
         </div>
         <p class="form-text text-muted">
-          A {{assessment.get_rob_name_display|lower}} heatmap, showing a subset of selected studies and
-          {{assessment.get_rob_name_display|lower}} findings for each metric. This plot is interactive; a user
+          A {{ assessment.get_rob_name_display|lower }} heatmap, showing a subset of selected studies and
+          {{ assessment.get_rob_name_display|lower }} findings for each metric. This plot is interactive; a user
           can select and row, column, or cell, to view all details associated
           with these cells.
         </p>
@@ -145,13 +145,13 @@
           <input type="radio" id="3-invitro" name="evidence-type" value="2" data-url="{% url url_copy assessment.id 3 2 %}" />
           <label for="3-invitro">In vitro</label>
         {% endif %}
-        <h3>{{assessment.get_rob_name_display}} barchart</h3>
+        <h3>{{ assessment.get_rob_name_display }} barchart</h3>
         <div class="row">
           <img alt="Image of a study evaluation barchart" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
                src="{% static 'img/summary/rob-barchart.svg' %}">
         </div>
         <p class="form-text text-muted">
-          A {{assessment.get_rob_name_display|lower}} stacked barchart, showing the percent of studies with
+          A {{ assessment.get_rob_name_display|lower }} stacked barchart, showing the percent of studies with
           each judgment, for each metric, in a selectable subset of studies.
         </p>
       </div>
@@ -214,7 +214,7 @@
       </div>
     </div>
   </div>
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   <script type="text/javascript">
@@ -240,4 +240,4 @@
       $("#detail_display").trigger("select:change");
     });
   </script>
-{% endblock %}
+{% endblock extrajs %}

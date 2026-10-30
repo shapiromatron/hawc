@@ -6,7 +6,7 @@
     {% actions %}
       <span class="dropdown-header">Tasks</span>
       <a class="dropdown-item" href="{% url 'mgmt:task-list' assessment.pk %}">Task list</a>
-      <a class="dropdown-item" href="{% url 'mgmt:task-list' assessment.pk %}?owner={{user.id}}&status=990">My assigned tasks</a>
+      <a class="dropdown-item" href="{% url 'mgmt:task-list' assessment.pk %}?owner={{ user.id }}&status=990">My assigned tasks</a>
       <a class="dropdown-item" href="{% url 'mgmt:api:assessment-tasks' assessment.pk %}?format=xlsx">Download Tasks Export (xlsx)</a>
       <span class="dropdown-header">Assessment Analytics</span>
       <a class="dropdown-item" href="{% url 'mgmt:assessment-analytics' assessment.pk %}">View Analytics</a>
@@ -34,4 +34,4 @@
   {% else %}
     <p>No tasks have been assigned.</p>
   {% endif %}
-{% endblock %}
+{% endblock content %}
