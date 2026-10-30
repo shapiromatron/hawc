@@ -13,6 +13,30 @@ HAWC is a web-based platform for capturing, analyzing, and sharing data related 
 - `tests/integration/`: Python integration tests which require the JavaScript code to be compiled. This can be done either in a separate process (via `npm run start`; preferred) or built (via `npm run build`).
 - `docs/`: documentation for development and overall structure of application
 
+## Getting Started
+
+To set up your development environment from scratch, ensure uv is installed, and then run these
+commands:
+
+```bash
+uv sync --all-groups
+source .venv/bin/activate
+poe sync-dev
+```
+
+This will install all Python and JavaScript dependencies and run the initial database migrations.
+
+Before running any other commands, ensure your virtual environment is activated:
+
+```bash
+source .venv/bin/activate
+```
+
+Once your environment is set up, you can start the development servers.
+
+- **Run Python backend:** `poe run-py`
+- **Run JavaScript frontend:** `poe run-js`
+
 ## Libraries and Frameworks
 
 - **Backend:** Python 3.14, Django, uv (dependency management, packaging)
@@ -43,12 +67,35 @@ Integration tests require both backend and frontend to be available.  The integr
 
 Python integration tests which require the JavaScript code to be compiled. To compile:
 
-- **Preferred:** Start the frontend in a separate process: `yarn --cwd ./frontend run`
+- **Preferred:** Start the frontend in a separate process: `poe run-js`
 - **Alternative:** Build the frontend before running integration tests: `yarn --cwd ./frontend build`
 
 The preferred approach allows for faster development cycles since it doesn't require a compile step.
 
 To run integration tests: `py.test -sv tests/integration/`
+
+## Agent Development Workflow
+
+When making changes to the codebase, please follow the appropriate workflow below.
+
+### Python (Backend)
+
+1. Make required code changes in the `hawc/` directory.
+2. Run `poe lint-py` to ensure code is properly formatted.
+3. Run `poe test` to run backend unit tests.
+
+### JavaScript (Frontend)
+
+1. Make required code changes in the `frontend/` directory.
+2. Run `poe lint-js` to ensure code is properly formatted.
+3. Run `poe test-js` to run frontend unit tests.
+
+### Integration Testing
+
+For changes that may impact both the frontend and backend, run integration tests.
+
+1. Ensure the frontend development server is running with `poe run-js`.
+2. In a separate terminal, run `INTEGRATION_TESTS=1 py.test -sv tests/integration/`.
 
 ## References:
 

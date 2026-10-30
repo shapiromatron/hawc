@@ -41,8 +41,8 @@ client = HawcClient("https://hawcproject.org")
 client.set_authentication_token(getpass(), login=True)  # must set login to True
 
 with client.interactive(headless=False) as iclient:
-    iclient.download_visual(123, 'visual.png')
-    iclient.download_data_pivot(456, 'data-pivot.png')
+    iclient.download_visual(123, "visual.png")
+    iclient.download_data_pivot(456, "data-pivot.png")
 ```
 
 There are many more commands available in the HAWC client that aren't documented here. It is recommended to use an interactive terminal session using a jupyter notebook to browse the available methods and their docstrings for more details.
@@ -57,6 +57,10 @@ Client tutorials for common operations are below:
 - Bioassay: [Creating bioassay data](https://github.com/shapiromatron/hawc/blob/master/scripts/client/bioassay-crud.ipynb)
 
 ### Changelog
+
+#### [2026.1](https://pypi.org/project/hawc-client/2026.1/) (April 2026)
+
+* Fix version lookup for package to use standard library from `pyproject.toml`.
 
 #### [2025.1](https://pypi.org/project/hawc-client/2025.1/) (November 2025)
 
@@ -119,7 +123,7 @@ import requests
 session = requests.Session()
 login = requests.post(
     "https://hawcproject.org/user/api/token-auth/",
-    json={"username": "me@me.com", "password": "keep-it-hidden"}
+    json={"username": "me@me.com", "password": "keep-it-hidden"},
 )
 
 if login.status_code == 200:
@@ -127,5 +131,5 @@ if login.status_code == 200:
 else:
     raise EnvironmentError("Authentication failed")
 
-session.get('https://hawcproject.org/ani/api/endpoint/?assessment_id=123').json()
+session.get("https://hawcproject.org/ani/api/endpoint/?assessment_id=123").json()
 ```

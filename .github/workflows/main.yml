@@ -35,8 +35,8 @@ jobs:
         - 6379:6379
 
     steps:
-    - uses: actions/checkout@v6
-    - uses: actions/setup-python@v6
+    - uses: actions/checkout@v7
+    - uses: actions/setup-python@v7
       with:
         python-version: '3.14'
         architecture: 'x64'
@@ -46,9 +46,7 @@ jobs:
         cache-dependency-glob: "**/pyproject.toml"
     - name: install
       run: |
-        uv venv --python=3.14
-        source .venv/bin/activate
-        uv pip install -e ".[dev,docs]" -e client
+        uv sync --all-groups --all-packages
     - name: lint-py
       run: |
         uv run poe lint-py
@@ -74,7 +72,7 @@ jobs:
         echo "# Lines of code report" >> $GITHUB_STEP_SUMMARY
         uv run poe loc >> $GITHUB_STEP_SUMMARY
     - name: Upload Coverage Report
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: coverage
         path: coverage
@@ -84,8 +82,8 @@ jobs:
     name: frontend
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v6
-    - uses: actions/setup-node@v6
+    - uses: actions/checkout@v7
+    - uses: actions/setup-node@v7
       with:
         node-version: 24
         cache: 'yarn'
@@ -103,7 +101,7 @@ jobs:
       run: |
         yarn --cwd ./frontend run build
     - name: Upload js build
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: js
         path: hawc/static/bundles/
@@ -137,8 +135,8 @@ jobs:
       PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
 
     steps:
-    - uses: actions/checkout@v6
-    - uses: actions/setup-python@v6
+    - uses: actions/checkout@v7
+    - uses: actions/setup-python@v7
       with:
         python-version: '3.14'
         architecture: 'x64'
@@ -147,13 +145,13 @@ jobs:
       with:
         cache-dependency-glob: "**/pyproject.toml"
     - name: Download js build
-      uses: actions/download-artifact@v7
+      uses: actions/download-artifact@v8
       with:
         name: js
         path: hawc/static/bundles/
     - name: install hawc
       run: |
-        uv sync --all-extras
+        uv sync --all-groups --all-packages
         uv run playwright install --with-deps chromium
     # https://github.community/t/how-to-retry-a-failed-step-in-github-actions-workflow/125880
     - name: run integration tests

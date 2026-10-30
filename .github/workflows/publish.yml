@@ -17,8 +17,8 @@ jobs:
       url: https://pypi.org/project/hawc-client/
 
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-python@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.14'
           architecture: 'x64'
@@ -28,9 +28,7 @@ jobs:
           cache-dependency-glob: "**/pyproject.toml"
       - name: Install environment
         run: |
-          uv venv --python=3.14
-          source .venv/bin/activate
-          uv pip install -e client
+          uv sync --all-groups
       - name: Build client
         run: source .venv/bin/activate && cd client && poe build
       - name: Publish package to PyPI

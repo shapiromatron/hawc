@@ -2,8 +2,9 @@ import pandas as pd
 from django.db.models import QuerySet
 from django.utils.html import strip_tags
 
-from ..common.helper import FlatFileExporter
+from ..common.helper import FlatFileExporter, df_move_column
 from . import models
+from .constants import ReferenceDatabase
 
 
 class ReferenceFlatComplete(FlatFileExporter):
@@ -14,9 +15,6 @@ class ReferenceFlatComplete(FlatFileExporter):
     def _get_header_row(self):
         headers = [
             "HAWC ID",
-            "HERO ID",
-            "PubMed ID",
-            "DOI",
             "Citation",
             "Full Citation",
             "Title",
@@ -46,9 +44,6 @@ class ReferenceFlatComplete(FlatFileExporter):
     def _get_reference_data(self, ref: models.Reference) -> list:
         return [
             ref.pk,
-            ref.get_hero_id(),
-            ref.get_pubmed_id(),
-            ref.get_doi_id(),
             ref.ref_short_citation,
             ref.ref_full_citation,
             ref.title,
@@ -67,6 +62,56 @@ class ReferenceFlatComplete(FlatFileExporter):
         user_tags = self.kwargs.get("user_tags", False)
         func = self._get_reference_rows_with_users if user_tags else self._get_reference_rows
         return func(tag_tree)
+
+    def build_df(self) -> pd.DataFrame:
+        df = super().build_df()
+
+        # add identifiers dataframe (if any exist)
+        identifier_df = self._get_identifiers_df()
+        if not identifier_df.empty:
+            cols_to_move = identifier_df.columns[1:]
+            df = df.merge(identifier_df, on="HAWC ID", how="left").pipe(
+                df_move_column, cols_to_move[0], "HAWC ID", n_cols=len(cols_to_move)
+            )
+
+        return df
+
+    def _get_identifiers_df(self) -> pd.DataFrame:
+        ref_ids = (
+            self.queryset.values("id")  # Reference Model
+            if self.queryset.model == models.Reference
+            else self.queryset.values("reference_id")  # UserReferenceTag Model
+        )
+        qs = (
+            models.Identifiers.objects.filter(references__in=ref_ids)
+            .values("references__id", "database", "unique_id")
+            .exclude(database__in=[ReferenceDatabase.MANUAL, ReferenceDatabase.RIS])
+        )
+        if qs.count() == 0:
+            return pd.DataFrame()
+
+        def cast_to_int(df):
+            target_cols = [col for col in {"PubMed ID", "HERO ID"} if col in df.columns]
+            for col in target_cols:
+                if not df[col].str.contains("|", regex=False, na=False).any():
+                    df[col] = df[col].astype(pd.Int64Dtype())
+            return df
+
+        col_renames = {"references__id": "HAWC ID", "database": "id_type", "unique_id": "id_"}
+        return (
+            pd.DataFrame(list(qs))
+            .rename(columns=col_renames)
+            .assign(id_type=lambda x: x["id_type"].map(ReferenceDatabase.export_map()))
+            .pivot_table(
+                index="HAWC ID",
+                columns="id_type",
+                values="id_",
+                aggfunc=lambda x: "|".join(str(v) for v in x if v),
+            )
+            .reset_index()
+            .rename_axis(None, axis=1)
+            .pipe(cast_to_int)
+        )
 
     def _get_reference_rows(
         self, tag_tree: models.ReferenceFilterTag.TreeDescendantType

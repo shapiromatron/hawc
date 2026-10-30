@@ -1,5 +1,5 @@
 import assert from "assert";
-import {parse} from "shared/parsers/format";
+import {parse} from "@/shared/parsers/format";
 
 const obj = {one: 1, two: "two", three: "", four: null, float: 123.123456},
     getValue = prop => obj[prop],

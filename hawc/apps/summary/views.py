@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import BadRequest, PermissionDenied
 from django.http import Http404, HttpResponseRedirect
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404
@@ -335,7 +335,10 @@ class VisualizationCreate(BaseCreate):
             evidence_type = initial["evidence_type"]
 
         if evidence_type is None:
-            evidence_type = constants.get_default_evidence_type(self.visual_type)
+            try:
+                evidence_type = constants.get_default_evidence_type(self.visual_type)
+            except ValueError as err:
+                raise BadRequest("Requires evidence type") from err
         else:
             try:
                 evidence_type = constants.StudyType(evidence_type)
@@ -436,8 +439,6 @@ class VisualizationUpdate(GetVisualizationObjectMixin, BaseUpdate):
 
     def get_template_names(self):
         visual_type = self.object.visual_type
-        if visual_type in [] and not settings.HAWC_FEATURES.ENABLE_WIP_VISUALS:
-            raise PermissionDenied()
         if visual_type in {
             constants.VisualType.BIOASSAY_AGGREGATION,
             constants.VisualType.LITERATURE_TAGTREE,

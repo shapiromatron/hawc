@@ -17,7 +17,6 @@ celerybeat*
 hawc/gitcommit.json
 hawc/main/settings/local.py
 package-lock.json
-uv.lock
 
 # folders
 *.egg-info/

@@ -8,10 +8,10 @@ const startup = (name, cb) => {
             import("./animal/index.js").then(app => cb(app.default));
             break;
         case "bmds2Startup":
-            import("./bmd/bmds2/index.js").then(app => cb(app.default));
+            import("./bmd/bmds2/index.jsx").then(app => cb(app.default));
             break;
         case "bmds3Startup":
-            import("./bmd/bmds3/index.js").then(app => cb(app.default));
+            import("./bmd/bmds3/index.jsx").then(app => cb(app.default));
             break;
         case "dataPivotStartup":
             import("./summary/dataPivot/index.js").then(app => cb(app.default));
@@ -26,16 +26,16 @@ const startup = (name, cb) => {
             import("./epimeta/index.js").then(app => cb(app.default));
             break;
         case "heatmapTemplateStartup":
-            import("./summary/heatmapTemplate/index.js").then(app => cb(app.default));
+            import("./summary/heatmapTemplate/index.jsx").then(app => cb(app.default));
             break;
         case "invitroStartup":
             import("./invitro/index.js").then(app => cb(app.default));
             break;
         case "litStartup":
-            import("./lit/index.js").then(app => cb(app.default));
+            import("./lit/index.jsx").then(app => cb(app.default));
             break;
         case "nestedTagEditorStartup":
-            import("./shared/nestedTagEditor/index.js").then(app => cb(app.default));
+            import("./shared/nestedTagEditor/index.jsx").then(app => cb(app.default));
             break;
         case "riskofbiasStartup":
             import("./riskofbias/index.js").then(app => cb(app.default));
@@ -53,16 +53,16 @@ const startup = (name, cb) => {
             import("./summary/summary/index.js").then(app => cb(app.default));
             break;
         case "summaryTableEditStartup":
-            import("./summary/summaryTable/editing/index.js").then(app => cb(app.default));
+            import("./summary/summaryTable/editing/index.jsx").then(app => cb(app.default));
             break;
         case "summaryTableViewStartup":
-            import("./summary/summaryTable/viewing/index.js").then(app => cb(app.default));
+            import("./summary/summaryTable/viewing/index.jsx").then(app => cb(app.default));
             break;
         case "summaryInteractivityStartup":
             import("./summary/interactivity/index.js").then(app => cb(app.default));
             break;
         case "textCleanupStartup":
-            import("./shared/textCleanup/index.js").then(app => cb(app.default));
+            import("./shared/textCleanup/index.jsx").then(app => cb(app.default));
             break;
         default:
             throw `Unknown startup request: ${name}`;

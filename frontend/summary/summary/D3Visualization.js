@@ -1,5 +1,5 @@
-import D3Plot from "shared/utils/D3Plot";
-import HAWCUtils from "shared/utils/HAWCUtils";
+import D3Plot from "@/shared/utils/D3Plot";
+import HAWCUtils from "@/shared/utils/HAWCUtils";
 
 import {Patterns} from "./common";
 

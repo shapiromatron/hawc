@@ -23,29 +23,36 @@
       var elFormset = $("#rFormset").insertBefore($('#rForm .form-actions')),
           isNew = "{{crud|lower}}" == "create",
           fs = new window.app.DynamicFormset(elFormset, 'form', {oneFormRequired: true}),
-          comparison_set_id = {{ form.comparison_set.value|default:"null" }},
-          updateFormset = function(d){
+          comparison_set_id = {{ form.comparison_set.value|default:"null" }};
+
+      const updateFormset = function(d){
         var n;
 
-        if (_.isUndefined(d)) return elFormset.hide();
+        if (d === undefined) {
+          return elFormset.hide();
+        }
 
-            // update formset name
+        // update formset name
         $("#formsetName").text(d.name);
 
-            // remove all but first row
+        // remove all but first row
         fs.$el.find('tbody tr:gt(0)').remove();
 
-            // reset first-row values
+        // reset first-row values
         fs.clearForm(fs.$el.find('tbody tr').slice(0, 1));
 
-            // add rows based on number of groups in collection
-        _(d.groups.length-1).times(fs.addForm.bind(fs));
+        // add rows based on number of groups in collection (except for first row)
+        for (let i = 1; i < d.groups.length; i++) {
+          fs.addForm.bind(fs)()
+        }
 
-            // bind each row to a different group-id
+        // bind each row to a different group-id
         fs.$el.find('tbody tr').each(function(i, v){
           $(v).find('.groupField').val(d.groups[i].id);
           n = d.groups[i].participant_n;
-          if (_.isNumber(n)) $(v).find('.nField').val(n);
+          if (isFinite(n)){
+            $(v).find('.nField').val(n);
+          }
         });
         updateLabels();
 
@@ -78,7 +85,7 @@
       $('#id_comparison_set').change(function(){
         var val = parseInt(this.value),
             url = `/epi/api/comparison-set/${val}/`;
-        if (_.isNaN(val)){
+        if (isNaN(val)){
           updateFormset();
         } else if (val !== comparison_set_id || isNew){
           $.get(url, updateFormset);

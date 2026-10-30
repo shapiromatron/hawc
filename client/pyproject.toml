@@ -1,6 +1,6 @@
 [project]
 name = "hawc-client"
-version = "2025.1"
+version = "2026.1"
 description = "A client for the Health Assessment Workspace Collaborative (HAWC)."
 license = {file = "LICENSE"}
 authors = [{name = "Andy Shapiro", email = "shapiromatron@gmail.com"}]
@@ -35,7 +35,7 @@ Changes = "https://hawc.readthedocs.io/latest/client/#changelog"
 "Source Code" = "https://github.com/shapiromatron/hawc"
 
 [build-system]
-requires = ["uv_build>=0.9.18,<0.10.0"]
+requires = ["uv_build>=0.11.0,<0.12.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]

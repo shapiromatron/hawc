@@ -102,8 +102,8 @@ class SummaryTableCopySelectorForm(CopyForm):
             .select_related("assessment")
             .order_by("assessment", "title")
         )
-        self.fields["selector"].label_from_instance = (
-            lambda obj: f"{obj.assessment} | {{{obj.get_table_type_display()}}} | {obj}"
+        self.fields["selector"].label_from_instance = lambda obj: (
+            f"{obj.assessment} | {{{obj.get_table_type_display()}}} | {obj}"
         )
 
     def get_success_url(self):
@@ -689,8 +689,8 @@ class DataPivotDatasetForm(VisualForm):
         self.fields["dataset"].queryset = self.fields["dataset"].queryset.filter(
             assessment=self.instance.assessment_id
         )
-        self.fields["dataset"].label_from_instance = (
-            lambda obj: f"{obj} ({'published' if obj.published else 'unpublished'})"
+        self.fields["dataset"].label_from_instance = lambda obj: (
+            f"{obj} ({'published' if obj.published else 'unpublished'})"
         )
         self.fields["settings"].required = False
         self.helper = self.setHelper()

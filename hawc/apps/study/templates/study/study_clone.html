@@ -1,0 +1,47 @@
+{% extends 'assessment-rooted.html' %}
+
+{% block content %}
+  <h2>Clone studies from another assessment</h2>
+  <form method="post">
+    {% crispy form %}
+    <div class="form-group form-actions">
+      <button
+        name='action'
+        value="fetch"
+        type="submit"
+        class="btn btn-primary"
+        hx-post="."
+        hx-trigger="click"
+        hx-indicator="#spinner-fetch"
+        hx-target="#src-assessment-details"
+      >Fetch Studies</button>
+      <a class="btn btn-light" href="{% url 'study:list' assessment.pk %}">Cancel</a>
+      <i class="fa fa-spinner fa-spin htmx-indicator ml-3" id="spinner-fetch" aria-hidden="true"></i>
+    </div>
+  </form>
+  <div id="src-assessment-details" class="mt-3"></div>
+{% endblock %}
+
+{% block extrajs %}
+  <script type="text/javascript">
+    $(document).ready(function(){
+      // check/uncheck nested data types with deep clone.
+      $('#src-assessment-details').on('click', '.study-selector', e => {
+        const row = $(e.target).closest('tr'),
+              checked =  e.target.checked;
+        row.find('input[type="checkbox"]').each((i,el)=>{
+          if(!el.disabled){
+            el.checked = checked;
+          }
+        })
+      });
+
+      $('#src-assessment-details').on('click', '#include-rob', e => {
+        const checked =  e.target.checked,
+              selector = $('.hide-if-no-include-rob');
+        (checked) ? selector.show() : selector.hide()
+      });
+
+    });
+  </script>
+{% endblock extrajs %}

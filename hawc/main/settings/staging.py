@@ -53,6 +53,12 @@ LOGGING["loggers"]["django"]["handlers"] = ["console", "file"]
 LOGGING["loggers"]["hawc"]["handlers"] = ["console", "file"]
 LOGGING["loggers"]["hawc.request"]["handlers"] = ["console", "hawc-request"]
 
+if os.environ.get("EMAIL_EXCEPTIONS", "True") != "True":
+    handlers = LOGGING["loggers"]["django.request"]["handlers"]
+    if "mail_admins" in handlers:
+        handlers.remove("mail_admins")
+
+
 ANYONE_CAN_CREATE_ASSESSMENTS = os.getenv("HAWC_ANYONE_CAN_CREATE_ASSESSMENTS", "True") == "True"
 PM_CAN_MAKE_PUBLIC = os.getenv("HAWC_PM_CAN_MAKE_PUBLIC", "True") == "True"
 ACCEPT_LICENSE_REQUIRED = os.getenv("HAWC_ACCEPT_LICENSE_REQUIRED", "True") == "True"

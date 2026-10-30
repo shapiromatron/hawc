@@ -332,8 +332,8 @@ class SearchCopyForm(CopyForm):
         self.fields["selector"].queryset = models.Search.objects.copyable(self.user).select_related(
             "assessment"
         )
-        self.fields["selector"].label_from_instance = (
-            lambda obj: f"{obj.assessment} | {{{obj.get_search_type_display()}}} | {obj}"
+        self.fields["selector"].label_from_instance = lambda obj: (
+            f"{obj.assessment} | {{{obj.get_search_type_display()}}} | {obj}"
         )
 
     def get_success_url(self):
@@ -373,6 +373,13 @@ def validate_external_id(
 
     if identifier:
         return identifier, None
+
+    if (
+        db_type in {constants.ReferenceDatabase.PUBMED, constants.ReferenceDatabase.HERO}
+        and isinstance(db_id, str)
+        and not db_id.isdecimal()
+    ):
+        raise forms.ValidationError("Identifier must be numeric")
 
     if db_type == constants.ReferenceDatabase.PUBMED:
         content = models.Identifiers.objects.validate_pubmed_ids([db_id])
@@ -585,7 +592,7 @@ class WorkflowForm(forms.ModelForm):
                 ),
                 cfl.Column(
                     cfl.Fieldset(
-                        "Removal Criteria",
+                        "Exit Criteria",
                         cfl.Row(
                             cfl.Column("removal_tags", css_class="col-md-12"),
                         ),

@@ -1,9 +1,9 @@
 import * as d3 from "d3";
 import _ from "lodash";
-import {parse} from "shared/parsers/query";
-import HAWCUtils from "shared/utils/HAWCUtils";
-import h from "shared/utils/helpers";
 
+import {parse} from "@/shared/parsers/query";
+import HAWCUtils from "@/shared/utils/HAWCUtils";
+import h from "@/shared/utils/helpers";
 import $ from "$";
 
 import {applyStyles} from "./common";

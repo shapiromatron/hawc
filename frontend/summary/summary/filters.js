@@ -1,5 +1,6 @@
 import _ from "lodash";
-import {parse} from "shared/parsers/query";
+
+import {parse} from "@/shared/parsers/query";
 
 import {NULL_VALUE} from "./constants";
 

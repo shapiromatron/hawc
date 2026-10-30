@@ -2,7 +2,7 @@ import {
     addContinuousConfidenceIntervals,
     addDichotomousConfidenceIntervals,
     inv_tdist_05,
-} from "shared/utils/math";
+} from "@/shared/utils/math";
 
 import assert from "../../helpers";
 

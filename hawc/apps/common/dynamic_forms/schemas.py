@@ -1,6 +1,6 @@
 """Schemas to build dynamic Django forms."""
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from django.forms import HiddenInput, JSONField
@@ -10,7 +10,7 @@ from ..forms import DynamicFormField
 from . import fields, forms
 
 
-class Comparison(str, Enum):
+class Comparison(StrEnum):
     """Enum for comparisons."""
 
     __slots__ = ()
@@ -38,7 +38,7 @@ class Comparison(str, Enum):
         return getattr(self, f"_{self.value.lower()}")(x, y)
 
 
-class Behavior(str, Enum):
+class Behavior(StrEnum):
     """Enum for form field behavior; behavior applies when condition is true."""
 
     __slots__ = ()
