@@ -1,5 +1,6 @@
 import json
 from collections import defaultdict
+from collections.abc import Callable
 from enum import StrEnum
 
 from django.db import transaction
@@ -98,11 +99,14 @@ def _clone_study(src_study: Study, dst_assessment: Assessment) -> tuple[StudyApp
     return study_map, dst_study
 
 
-def _get_animal_group_parent_ids(obj):
+def _get_animal_group_parent_ids[T](obj: T) -> list[int]:
+    # function so we can test easier
     return [p.id for p in obj.parents.all()]
 
 
-def sort_animal_groups(objs, get_parent_ids=_get_animal_group_parent_ids):
+def sort_animal_groups[T](
+    objs: list[T], get_parent_ids: Callable[[T], list[int]] = _get_animal_group_parent_ids
+) -> list[T]:
     """Sort animal groups so each parent appears before its children.
 
     Performs a parent-first topological ordering (DFS) over a collection of
@@ -122,7 +126,6 @@ def sort_animal_groups(objs, get_parent_ids=_get_animal_group_parent_ids):
     Returns:
         list: Objects ordered so in-set parents come before their descendants.
     """
-    objs = list(objs)
     by_id = {obj.id: obj for obj in objs}
     out = []
     seen = set()
