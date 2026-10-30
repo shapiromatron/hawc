@@ -21,3 +21,16 @@ class TestReferenceTagLongExport:
         df = exporter.build_df()
         assert df.shape == (1, 1)
         assert df.Result[0] == "No data available."
+
+
+@pytest.mark.django_db
+class TestReferenceFlatComplete:
+    def test_get_identifiers_df(self):
+        qs = models.Reference.objects.filter(assessment_id=2).order_by("id")
+        exporter = exports.ReferenceFlatComplete(queryset=qs)
+        df = exporter._get_identifiers_df()
+        assert df.fillna("").to_dict(orient="list") == {
+            "HAWC ID": [5, 6, 7, 8, 12],
+            "DOI": ["10.1093/milmed/166.suppl_2.23", "", "", "", ""],
+            "PubMed ID": [11778423, 15907334, 21284075, 24004895, 28572920],
+        }
