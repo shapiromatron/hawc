@@ -226,6 +226,7 @@ cmd = "npm --prefix ./frontend run format"
 
 [tool.poe.tasks.format-html]
 help = "Fix HTML formatting issues where possible"
+verbosity = -1
 sequence = [
   {cmd = "djade hawc/templates/**/*.html hawc/apps/**/*.html"},
   {cmd = "djhtml --tabwidth 2 hawc/"},
@@ -248,6 +249,7 @@ cmd = "npm --prefix ./frontend run lint"
 
 [tool.poe.tasks.lint-html]
 help = "Check HTML formatting issues where possible"
+verbosity = -1
 sequence = [
   {cmd = "djade --check hawc/templates/**/*.html hawc/apps/**/*.html"},
   {cmd = "djhtml --tabwidth 2 --check hawc/"},
