@@ -1,5 +1,6 @@
 import json
 from collections import defaultdict
+from collections.abc import Callable
 from enum import StrEnum
 
 from django.db import transaction
@@ -98,12 +99,59 @@ def _clone_study(src_study: Study, dst_assessment: Assessment) -> tuple[StudyApp
     return study_map, dst_study
 
 
+def _get_animal_group_parent_ids[T](obj: T) -> list[int]:
+    # function so we can test easier
+    return [p.id for p in obj.parents.all()]
+
+
+def sort_animal_groups[T](
+    objs: list[T], get_parent_ids: Callable[[T], list[int]] = _get_animal_group_parent_ids
+) -> list[T]:
+    """Sort animal groups so each parent appears before its children.
+
+    Performs a parent-first topological ordering (DFS) over a collection of
+    objects that may each have zero or more parents (a DAG / forest).
+
+    Parents not present in the input collection are ignored. Runs in O(n) time
+    with O(n) extra space.
+
+    Args:
+        objs: Iterable of objects with an ``id`` attribute.
+        get_parent_ids: Callable ``(obj) -> Iterable[int]`` that returns the
+            parent IDs for a given object. Defaults to
+            ``_get_animal_group_parent_ids``, which calls
+            ``obj.parents.all()`` and works with Django ``AnimalGroup``
+            instances (supports ``prefetch_related('parents')``).
+
+    Returns:
+        list: Objects ordered so in-set parents come before their descendants.
+    """
+    by_id = {obj.id: obj for obj in objs}
+    out = []
+    seen = set()
+
+    def add(obj):
+        if obj.id in seen:
+            return
+        for parent_id in get_parent_ids(obj):
+            if parent_id in by_id:
+                add(by_id[parent_id])
+        seen.add(obj.id)
+        out.append(obj)
+
+    for obj in objs:
+        add(obj)
+    return out
+
+
 def _clone_animal_bioassay(src_study: Study, dst_study: Study) -> StudyAppMapping:
     animal_map = defaultdict(dict)
     experiments = list(src_study.experiments.all().order_by("id"))
     for experiment in experiments:
         src_experiment_id = experiment.id
-        animal_groups = list(experiment.animal_groups.all().order_by("id"))
+        animal_groups = list(
+            experiment.animal_groups.prefetch_related("parents").all().order_by("id")
+        )
 
         experiment.id = None  # both pk and id must be set to None
         experiment.pk = None
@@ -112,7 +160,7 @@ def _clone_animal_bioassay(src_study: Study, dst_study: Study) -> StudyAppMappin
         animal_map["experiment"][src_experiment_id] = experiment.id
 
         animal_groups_object_map = {}
-        for animal_group in animal_groups:
+        for animal_group in sort_animal_groups(animal_groups):
             dosing_regime = animal_group.dosing_regime
             dose_groups = list(dosing_regime.dose_groups.all().order_by("id"))
             endpoints = list(animal_group.endpoints.all().order_by("id"))
