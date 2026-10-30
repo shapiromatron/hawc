@@ -225,7 +225,7 @@ cmd = "npm --prefix ./frontend run format"
 
 [tool.poe.tasks.format-html]
 help = "Fix HTML formatting issues where possible"
-cmd = "djade hawc/"
+cmd = "djade hawc/templates/**/*.html hawc/apps/**/*.html"
 
 [tool.poe.tasks.lint]
 help = "Check formatting issues"
@@ -244,7 +244,7 @@ cmd = "npm --prefix ./frontend run lint"
 
 [tool.poe.tasks.lint-html]
 help = "Check HTML formatting issues where possible"
-cmd = "djade --check hawc/"
+cmd = "djade --check djade hawc/templates/**/*.html hawc/apps/**/*.html"
 
 [tool.poe.tasks.build]
 help = "Build package"
