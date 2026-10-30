@@ -107,7 +107,10 @@ class EditPermissionsCheckMixin:
             objects.append(serializer.instance)
 
         # additional checks on other attributes
-        for checker_key in getattr(self, "edit_check_keys", []):
+        check_keys = getattr(self, "edit_check_keys", [])
+        if len(check_keys) == 0:
+            raise ImproperlyConfigured("Requires at least one check key")
+        for checker_key in check_keys:
             if checker_key in serializer.validated_data:
                 objects.append(serializer.validated_data.get(checker_key))
 

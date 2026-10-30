@@ -152,7 +152,8 @@ class VisualViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
         return Response(data)
 
 
-class SummaryTableViewSet(AssessmentEditViewSet):
+class SummaryTableViewSet(EditPermissionsCheckMixin, AssessmentEditViewSet):
+    edit_check_keys = ["assessment"]
     assessment_filter_args = "assessment"
     model = models.SummaryTable
     filter_backends = (InAssessmentFilter, UnpublishedFilter)
