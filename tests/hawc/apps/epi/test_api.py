@@ -978,9 +978,56 @@ class TestComparisonSetApi:
                 "expected_code": 400,
                 "data": self.get_upload_data({"outcome": generic_get_any(models.Outcome).id}),
             },
+            {
+                "desc": "cant have neither study pop nor outcome",
+                "expected_code": 400,
+                "data": {
+                    "name": "comparison set name",
+                    "description": "test description",
+                },
+            },
         )
 
         generic_test_scenarios(client, url, scenarios)
+
+        # Test update: adding outcome to a CS that already has study_population (both would be set)
+        cs_with_sp = models.ComparisonSet.objects.filter(
+            study_population__isnull=False, outcome__isnull=True
+        ).first()
+        same_study_outcome = models.Outcome.objects.filter(
+            study_population__study=cs_with_sp.study_population.study
+        ).first()
+        assert cs_with_sp is not None and same_study_outcome is not None
+        update_url = f"{url}{cs_with_sp.id}/"
+        update_scenarios = (
+            {
+                "desc": "cant add outcome when study_population already set",
+                "expected_code": 400,
+                "method": "PATCH",
+                "data": {"outcome": same_study_outcome.id},
+            },
+        )
+        generic_test_scenarios(client, update_url, update_scenarios)
+
+        # Test update: adding study_population to a CS that already has outcome (both would be set)
+        cs_with_outcome = models.ComparisonSet.objects.filter(
+            outcome__isnull=False, study_population__isnull=True
+        ).first()
+        if cs_with_outcome:
+            same_study_sp = models.StudyPopulation.objects.filter(
+                study=cs_with_outcome.outcome.get_study()
+            ).first()
+            if same_study_sp:
+                update_url = f"{url}{cs_with_outcome.id}/"
+                update_scenarios = (
+                    {
+                        "desc": "cant add study_population when outcome already set",
+                        "expected_code": 400,
+                        "method": "PATCH",
+                        "data": {"study_population": same_study_sp.id},
+                    },
+                )
+                generic_test_scenarios(client, update_url, update_scenarios)
 
     def test_valid_requests(self, db_keys):
         url = reverse("epi:api:set-list")

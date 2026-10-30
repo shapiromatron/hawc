@@ -363,7 +363,15 @@ class ComparisonSetSerializer(serializers.ModelSerializer):
                     )
 
         else:
-            # When updating, validate that all related objects are part of the same study.
+            # Validation resulting state still has exactly one of study_population or outcome set
+            final_study_population = attrs.get("study_population", self.instance.study_population)
+            final_outcome = attrs.get("outcome", self.instance.outcome)
+            if not ((final_outcome is None) ^ (final_study_population is None)):  # XOR check
+                raise serializers.ValidationError(
+                    "Must supply either a study_population or an outcome, but not both"
+                )
+
+            # Validate that all related objects are part of the same study.
             study_id = self.instance.get_study().id
             if study_population := attrs.get("study_population"):
                 if study_population.get_study().id != study_id:
