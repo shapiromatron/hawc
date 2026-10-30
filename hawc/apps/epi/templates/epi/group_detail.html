@@ -2,7 +2,7 @@
 
 {% block content %}
   <div class="d-flex">
-    <h2>{{object.name}}</h2>
+    <h2>{{ object.name }}</h2>
     {% if obj_perms.edit and crud == "Read" %}
       {% actions %}
         <span class="dropdown-header">Group editing</span>
@@ -11,16 +11,15 @@
     {% endif %}
   </div>
   <div id="objContainer"></div>
-{% endblock %}
-
+{% endblock content %}
 
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function() {
-      const id = {{object.id}};
+      const id = {{ object.id }};
       window.app.startup("epiStartup", function(app){
         app.Group.displayFullPager($("#objContainer"), id);
       });
     });
   </script>
-{% endblock %}
+{% endblock extrajs %}

@@ -19,33 +19,33 @@
       {% optional_table_row "External ID" user.external_id %}
       <tr>
         <th>Can Create Assessments</th>
-        <td>{{user.can_create_assessments}}</td>
+        <td>{{ user.can_create_assessments }}</td>
       </tr>
       <tr>
-        <th>HERO website</a></th>
-      <td>{% if object.HERO_access %}
-        <a href="https://heronet.epa.gov">https://heronet.epa.gov</a> (authentication required)
-      {% else %}
-        <a href="https://hero.epa.gov">https://hero.epa.gov</a> (no authentication required)
-      {% endif %}
-        <p class="text-muted mb-0">Website used to redirect HERO links.</p>
-      </td>
-    </tr>
-    <tr>
-      <th>API token</th>
-      <td>
-        <span id="api_token">{{token.key}}</span>
-        <p class="text-muted mb-0">Token is only valid during the current login session.</p>
-      </td>
-    </tr>
-    <tr>
-      <th>Show debug information</th>
-      <td>
-        <span id="id_debug"></span><br/>
-        <p class="text-muted mb-0">Show additional debug information on views throughout HAWC.</p>
-      </td>
-    </tr>
-  </tbody>
+        <th>HERO website</th>
+        <td>{% if object.HERO_access %}
+          <a href="https://heronet.epa.gov">https://heronet.epa.gov</a> (authentication required)
+        {% else %}
+          <a href="https://hero.epa.gov">https://hero.epa.gov</a> (no authentication required)
+        {% endif %}
+          <p class="text-muted mb-0">Website used to redirect HERO links.</p>
+        </td>
+      </tr>
+      <tr>
+        <th>API token</th>
+        <td>
+          <span id="api_token">{{ token.key }}</span>
+          <p class="text-muted mb-0">Token is only valid during the current login session.</p>
+        </td>
+      </tr>
+      <tr>
+        <th>Show debug information</th>
+        <td>
+          <span id="id_debug"></span><br/>
+          <p class="text-muted mb-0">Show additional debug information on views throughout HAWC.</p>
+        </td>
+      </tr>
+    </tbody>
   </table>
 {% endblock content %}
 

@@ -6,10 +6,10 @@
     <tbody>
       {% for object in object_list %}
         <tr>
-          <td><a href="{{object.get_absolute_url}}">{{object}}</a></td>
-          <td>{{object.get_protocol_type_display}}</td>
-          <td>{{object.total_references}}</td>
-          <td>{{object.total_studies_identified}}</td>
+          <td><a href="{{ object.get_absolute_url }}">{{ object }}</a></td>
+          <td>{{ object.get_protocol_type_display }}</td>
+          <td>{{ object.total_references }}</td>
+          <td>{{ object.total_studies_identified }}</td>
         </tr>
       {% empty %}
         {% bs4_fullrow 'No meta-protocols are available.' %}

@@ -8,10 +8,10 @@
       <tbody>
         {% for query in queries %}
           <tr>
-            <td>{{query.query_date}}</td>
-            <td>{{query.total_count}}</td>
-            <td>{{query.total_added}}</td>
-            <td>{{query.total_removed}}</td>
+            <td>{{ query.query_date }}</td>
+            <td>{{ query.total_count }}</td>
+            <td>{{ query.total_added }}</td>
+            <td>{{ query.total_removed }}</td>
           </tr>
         {% endfor %}
       </tbody>
@@ -22,19 +22,16 @@
 
   {% if obj_perms.edit %}
     <div class="well">
-
       {% if queries %}
-        <a href="{% url 'lit:tag' assessment.pk %}?search={{object.pk}}" class="btn btn-primary">Tag literature</a>
+        <a href="{% url 'lit:tag' assessment.pk %}?search={{ object.pk }}" class="btn btn-primary">Tag literature</a>
         <a id="run_search" href="{% url 'lit:search_query' assessment.pk object.slug %}" class="btn btn-light">Rerun search</a>
       {% else %}
         <a id="run_search" href="{% url 'lit:search_query' assessment.pk object.slug %}" class="btn btn-primary">Run search</a>
       {% endif %}
-
       <div id="loading_div" style="display: none">
         <br>
-        <p>Please wait; depending on query size this may take up to 15 minutes... <span class="fa fa-spin fa-spinner"></span>
-        </div>
-
+        <p>Please wait; depending on query size this may take up to 15 minutes... <span class="fa fa-spin fa-spinner"></span></p>
       </div>
+    </div>
   {% endif %}
 {% endwith %}

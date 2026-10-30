@@ -1,6 +1,4 @@
-{% load cache %}
-{% load static %}
-{% load django_vite %}
+{% load cache django_vite static %}
 
 <!DOCTYPE html>
 <html class="js" lang="en-us">
@@ -9,12 +7,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="NONE,NOARCHIVE" />
-    {% if session_expire_time %}<meta name="session_expire_time" content="{{session_expire_time}}" />{% endif %}
+    {% if session_expire_time %}<meta name="session_expire_time" content="{{ session_expire_time }}" />{% endif %}
     <title>{% block title %}Health Assessment Workspace Collaborative (HAWC){% endblock %}</title>
 
     {% if GTM_ID %}
       <!-- Google Tag Manager -->
-      <script>(function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != "dataLayer" ? "&l=" + l : ""; j.async = true; j.src = "//www.googletagmanager.com/gtm.js?id=" + i + dl; f.parentNode.insertBefore(j, f); })(window, document, "script", "dataLayer", "{{GTM_ID}}");</script>
+      <script>(function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != "dataLayer" ? "&l=" + l : ""; j.async = true; j.src = "//www.googletagmanager.com/gtm.js?id=" + i + dl; f.parentNode.insertBefore(j, f); })(window, document, "script", "dataLayer", "{{ GTM_ID }}");</script>
       <!-- End Google Tag Manager -->
     {% endif %}
 
@@ -48,7 +46,7 @@
   <body class="html">
     {% if GTM_ID %}
       <!-- Google Tag Manager -->
-      <noscript><iframe src="//www.googletagmanager.com/ns.html?id={{GTM_ID}}" height="0" width="0"
+      <noscript><iframe src="//www.googletagmanager.com/ns.html?id={{ GTM_ID }}" height="0" width="0"
                         style="display:none;visibility:hidden"></iframe></noscript>
       <!-- End Google Tag Manager -->
     {% endif %}
@@ -67,17 +65,17 @@
       <section class="main-content clearfix" id="main-content">
         {% include 'includes/navigation.html' %}
         <div class="row no-gutters" style="min-height: 100vh;">
-          {% block sidebar_outer %}{% endblock sidebar_outer %}
+          {% block sidebar_outer %}{% endblock %}
           <div class="col overflow-auto">
             <div id="main-content-container" class="container-fluid mt-2">
-              {% block breadcrumbs_outer %}{% endblock breadcrumbs_outer %}
+              {% block breadcrumbs_outer %}{% endblock %}
               {% include "includes/messages.html" %}
               {% include "includes/htmx_alert.html" %}
-              {% block content_header %}{% endblock content_header %}
+              {% block content_header %}{% endblock %}
               {% block content_outer %}
                 <div class="row overflow-auto mb-4" style="min-height: 48rem;">
                   <div class="col overflow-auto">
-                    {% block content %}{% endblock content %}
+                    {% block content %}{% endblock %}
                   </div>
                 </div>
               {% endblock content_outer %}

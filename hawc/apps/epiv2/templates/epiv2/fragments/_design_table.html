@@ -12,12 +12,12 @@
     {% optional_table_row "Study (cohort) name" object.study_name %}
     {% optional_table_row "Year(s) of enrollment" object.years_enrolled %}
     {% optional_table_row "Year(s) or length of follow-up" object.years_followup %}
-    {% with object.countries.all as countries %}
+    {% with countries=object.countries.all %}
       {% if countries %}
         <tr>
           <th>Countries</th>
           <td>{% for object in object.countries.all %}
-            <span class="badge badge-secondary">{{object.name}}</span>
+            <span class="badge badge-secondary">{{ object.name }}</span>
           {% endfor %}
           </td>
         </tr>
@@ -27,19 +27,19 @@
     {% if object.criteria|hastext %}
       <tr>
         <th>Inclusion/Exclusion Criteria</th>
-        <td>{{object.criteria|safe}}</td>
+        <td>{{ object.criteria|safe }}</td>
       </tr>
     {% endif %}
     {% if object.susceptibility|hastext %}
       <tr>
         <th>Susceptibility</th>
-        <td>{{object.susceptibility|safe}}</td>
+        <td>{{ object.susceptibility|safe }}</td>
       </tr>
     {% endif %}
     {% if object.comments|hastext %}
       <tr>
         <th>Comments</th>
-        <td>{{object.comments|safe}}</td>
+        <td>{{ object.comments|safe }}</td>
       </tr>
     {% endif %}
   </tbody>

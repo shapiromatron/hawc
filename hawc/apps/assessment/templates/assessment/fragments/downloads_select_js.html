@@ -1,6 +1,6 @@
 <script type="text/javascript">
   $(document).ready(function () {
-    $('{{name_list}}').on('change', function () {
+    $('{{ name_list }}').on('change', function () {
       var format = $(this).val(),
           url = $(`#${this.id}-url`).attr("href");
       if (format && url) {

@@ -2,13 +2,13 @@
 {% load static %}
 
 {% block extrahead %}
-  <meta name="hawc-viz-type" data-viz-type="{{object.get_visual_type_display}}" />
-{% endblock %}
+  <meta name="hawc-viz-type" data-viz-type="{{ object.get_visual_type_display }}" />
+{% endblock extrahead %}
 
 {% block content %}
   <div class="visualization">
     <div class='d-flex'>
-      <h2>{% debug_badge object.id %}{{object.title}}</h2>
+      <h2>{% debug_badge object.id %}{{ object.title }}</h2>
       {% include "common/unpublished_badge.html" %}
       {% if obj_perms.edit %}
         {% actions %}
@@ -19,12 +19,12 @@
       {% endif %}
     </div>
     <div id="visual-image">
-      <img src="{{object.image.url}}"
-           alt="{{object.settings.alt_text}}"
+      <img src="{{ object.image.url }}"
+           alt="{{ object.settings.alt_text }}"
            class="img-fluid"
-           {% if object.settings.max_width %}style="width: {{object.settings.max_width}}px"{% endif %}
+           {% if object.settings.max_width %}style="width: {{ object.settings.max_width }}px"{% endif %}
       />
     </div>
-    <p>{{object.caption|safe}}</p>
+    <p>{{ object.caption|safe }}</p>
   </div>
-{% endblock %}
+{% endblock content %}

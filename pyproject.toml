@@ -71,7 +71,8 @@ dev = [
   "poethepoet~=0.44",
   # lint and formatting tools
   "ruff==0.16.10",
-  "djhtml==3.0.11",
+  "djade~=1.10",
+  "djhtml~=3.0",
   # django development
   "django-debug-toolbar~=8.0.0",
   "django-browser-reload~=1.21.0",
@@ -225,8 +226,11 @@ cmd = "npm --prefix ./frontend run format"
 
 [tool.poe.tasks.format-html]
 help = "Fix HTML formatting issues where possible"
-env = { PYTHONUTF8 = "1" }  # see https://github.com/rtts/djhtml/issues/122
-cmd = "djhtml --tabwidth 2 hawc/"
+verbosity = -1
+sequence = [
+  {cmd = "djade hawc/templates/**/*.html hawc/apps/**/*.html"},
+  {cmd = "djhtml --tabwidth 2 hawc/"},
+]
 
 [tool.poe.tasks.lint]
 help = "Check formatting issues"
@@ -245,7 +249,11 @@ cmd = "npm --prefix ./frontend run lint"
 
 [tool.poe.tasks.lint-html]
 help = "Check HTML formatting issues where possible"
-cmd = "djhtml --tabwidth 2 --check hawc/"
+verbosity = -1
+sequence = [
+  {cmd = "djade --check hawc/templates/**/*.html hawc/apps/**/*.html"},
+  {cmd = "djhtml --tabwidth 2 --check hawc/"},
+]
 
 [tool.poe.tasks.build]
 help = "Build package"

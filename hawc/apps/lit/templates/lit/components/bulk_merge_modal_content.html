@@ -26,7 +26,7 @@
       {% elif action == 'merge' %}
         <h3 class="mb-0">Error</h3>
       {% elif action == 'preview' %}
-        <h3 class="mb-0">The following {{object_list|length}} reference(s) will be tagged:</h3>
+        <h3 class="mb-0">The following {{ object_list|length }} reference(s) will be tagged:</h3>
       {% endif %}
     </div>
     <ul class="list-group list-group-flush">
@@ -42,10 +42,10 @@
     </ul>
   {% endif %}
   {% if message and not merged %}
-    {% alert classes="mt-4" %} {{message}} {% endalert %}
+    {% alert classes="mt-4" %} {{ message }} {% endalert %}
   {% endif %}
   {% if merged %}
-    {% alert type="success" classes="mt-4" %} {{message}} {% endalert %}
+    {% alert type="success" classes="mt-4" %} {{ message }} {% endalert %}
   {% endif %}
 </div>
 <div class="modal-footer">

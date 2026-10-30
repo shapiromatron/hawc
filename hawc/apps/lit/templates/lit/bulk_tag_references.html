@@ -1,10 +1,10 @@
 {% extends 'assessment-rooted.html' %}
 
-{% block title %}Bulk tag references |{{block.super}}{% endblock %}
+{% block title %}Bulk tag references |{{ block.super }}{% endblock %}
 
 {% block content %}
   <div id="main"></div>
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   {{ config|json_script:"config" }}
