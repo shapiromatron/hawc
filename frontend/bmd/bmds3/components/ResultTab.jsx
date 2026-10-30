@@ -145,6 +145,9 @@ class SummaryTable extends React.Component {
                 </thead>
                 <tbody>
                     {store.outputs.models.map((model, i) => {
+                        const p_value = Number.isFinite(model.results.gof.p_value)
+                            ? model.results.gof.p_value
+                            : model.results.tests.p_values[3];
                         return (
                             <tr
                                 key={i}
@@ -163,11 +166,7 @@ class SummaryTable extends React.Component {
                                 <td>{ff(model.results.bmdl)}</td>
                                 <td>{ff(model.results.bmd)}</td>
                                 <td>{ff(model.results.bmdu)}</td>
-                                <td>
-                                    {fractionalFormatter(
-                                        model.results.gof.p_value || model.results.tests.p_values[3]
-                                    )}
-                                </td>
+                                <td>{fractionalFormatter(p_value)}</td>
                                 <td>{ff(model.results.fit.aic)}</td>
                                 <td>{ff(model.results.gof.residual[0])}</td>
                                 <td>{ff(model.results.gof.roi)}</td>
