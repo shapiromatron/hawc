@@ -4,7 +4,7 @@
 {% block sidebar %}
   <div id="content-related">
     <div class="module" id="recent-actions-module">
-      <h2>{% trans 'Dashboard' %}</h2>
+      <h2>{% translate 'Dashboard' %}</h2>
       <ul class="actionlist">
         <li><a href="{% url 'admin_dashboard' %}">Dashboard</a></li>
       </ul>
@@ -35,4 +35,4 @@
       {% endif %}
     </div>
   </div>
-{% endblock %}
+{% endblock sidebar %}

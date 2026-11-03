@@ -1,8 +1,8 @@
 {% extends 'crumbless.html' %}
 
 {% block content %}
-  <h2>{{title}}</h2>
-  <p>{{description}}</p>
+  <h2>{{ title }}</h2>
+  <p>{{ description }}</p>
   {% include "common/inline_filter_form.html" %}
   {% include table_fragment %}
   {% include "includes/paginator.html" with plural_object_name="assessments" %}

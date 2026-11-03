@@ -96,7 +96,7 @@
   </div>
 
   <div class="my-4">
-    <h3>{{assessment.get_rob_name_display}}</h3>
+    <h3>{{ assessment.get_rob_name_display }}</h3>
     <div class="card-columns">
       {% analytics_card value=study_types.rob label='studies with a review' %}
       {% analytics_card value=rob_counts.n_robs label='reviews' %}
@@ -117,4 +117,4 @@
     </div>
     <hr/>
   </div>
-{% endblock %}
+{% endblock content %}

@@ -2,7 +2,7 @@
 
 {% block content %}
   <div class="d-flex mb-2">
-    <h2 class="mb-0">Meta-analysis/pooled results ({{page_obj.paginator.count}} found)</h2>
+    <h2 class="mb-0">Meta-analysis/pooled results ({{ page_obj.paginator.count }} found)</h2>
     {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
       {% actions %}
         <a class="dropdown-item" href="#"><i class="fa fa-fw fa-download mr-1"></i>Download (xlsx)</a>
@@ -18,30 +18,30 @@
         <tr>
           <td>
             <a
-              href="{{object.protocol.study.get_absolute_url}}">{{object.protocol.study.short_citation}}</a>{% debug_badge object.protocol.study_id %}
+              href="{{ object.protocol.study.get_absolute_url }}">{{ object.protocol.study.short_citation }}</a>{% debug_badge object.protocol.study_id %}
           </td>
           <td class="previewModalParent">
-            <i data-id={{object.pk}} class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
-            <a href="{{object.get_absolute_url}}">{{object.label}}</a>{% debug_badge object.id %}
+            <i data-id={{ object.pk }} class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
+            <a href="{{ object.get_absolute_url }}">{{ object.label }}</a>{% debug_badge object.id %}
           </td>
           <td>
-            <a href="{{object.protocol.get_absolute_url}}">{{object.protocol.name}}</a>{% debug_badge object.protocol_id %}
+            <a href="{{ object.protocol.get_absolute_url }}">{{ object.protocol.name }}</a>{% debug_badge object.protocol_id %}
           </td>
           <td>
-            {{object.health_outcome|default:"--"}}
+            {{ object.health_outcome|default:"--" }}
           </td>
           <td>
-            {{object.exposure_name|default:"--"}}
+            {{ object.exposure_name|default:"--" }}
           </td>
           <td>
             {% if object.ci_units_percentage is not None %}
-              {{object.ci_units_percentage}}%
+              {{ object.ci_units_percentage }}%
             {% else %}
               --
             {% endif %}
           </td>
           <td>
-            {{object.estimate_formatted|default:"--"}}
+            {{ object.estimate_formatted|default:"--" }}
           </td>
         </tr>
       {% empty %}
@@ -56,7 +56,7 @@
 
   {% include "includes/paginator.html" with plural_object_name="results" %}
 
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   <script type="text/javascript">
@@ -66,4 +66,4 @@
       });
     });
   </script>
-{% endblock %}
+{% endblock extrajs %}

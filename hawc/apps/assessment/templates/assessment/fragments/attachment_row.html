@@ -1,13 +1,13 @@
 <tr hx-target="this" hx-swap="outerHTML" class="attachment-detail-row">
   <td>
-    <a href="{{ object.get_absolute_url }}">{{object.title}}</a>
+    <a href="{{ object.get_absolute_url }}">{{ object.title }}</a>
     {% if canEdit or permissions.edit %}
       {% if not object.publicly_available %}
         <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
       {% endif %}
     {% endif %}
   </td>
-  <td>{{object.description|safe}}</td>
+  <td>{{ object.description|safe }}</td>
   {% if action == 'delete' %}
     <td>
       {% alert %}

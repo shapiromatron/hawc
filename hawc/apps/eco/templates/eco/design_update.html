@@ -1,7 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h2 class="d-inline-block">{{object.name}}</h2>
+  <h2 class="d-inline-block">{{ object.name }}</h2>
   <div class="float-right pb-2">
     <a id="design-update" class="btn btn-sm btn-primary" href="#" hx-get="{% url 'eco:design-htmx' object.pk 'update' %}" hx-target="#design-table"
        hx-swap="outerHTML">
@@ -65,9 +65,9 @@
   </div>
 
   <div class="well text-center">
-    <a class="btn btn-light my-3" id="design-page-cancel" href="{{object.get_absolute_url}}"><i class="fa fa-fw fa-times"></i>Cancel</a>
+    <a class="btn btn-light my-3" id="design-page-cancel" href="{{ object.get_absolute_url }}"><i class="fa fa-fw fa-times"></i>Cancel</a>
   </div>
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   <script type="text/javascript">
@@ -75,4 +75,4 @@
       window.app.HAWCUtils.addScrollHtmx("eco-edit-row", "eco-obj-row");
     });
   </script>
-{% endblock %}
+{% endblock extrajs %}

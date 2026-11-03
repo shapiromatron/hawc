@@ -27,7 +27,7 @@
             <td>
               <div>
                 {% debug_badge object.id %}
-                <a href="{{object.get_absolute_url}}">{{object.title}}</a>
+                <a href="{{ object.get_absolute_url }}">{{ object.title }}</a>
                 {% if obj_perms.edit and not object.published %}<i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>{% endif %}
               </div>
               <div class="d-flex flex-wrap">
@@ -35,11 +35,11 @@
                   {% include "assessment/fragments/label.html" with label=labeled_item.label anchor_tag=True %}
                 {% endfor %}
               </div>
-              {% if object.caption %}<div class='text-muted' title="{{visual.caption|striptags|safe}}">{{object.caption|striptags|truncatewords:20|safe}}</div>{% endif %}
+              {% if object.caption %}<div class='text-muted' title="{{ visual.caption|striptags|safe }}">{{ object.caption|striptags|truncatewords:20|safe }}</div>{% endif %}
             </td>
-            <td>{{object.get_table_type_display}}</td>
-            <td>{{object.created|date:"Y-m-d" }}</td>
-            <td>{{object.last_updated|date:"Y-m-d" }}</td>
+            <td>{{ object.get_table_type_display }}</td>
+            <td>{{ object.created|date:"Y-m-d" }}</td>
+            <td>{{ object.last_updated|date:"Y-m-d" }}</td>
           </tr>
         {% endfor %}
       </tbody>
@@ -52,4 +52,4 @@
       <p><i>No tables are available.</i></p>
     {% endif %}
   {% endif %}
-{% endblock %}
+{% endblock content %}

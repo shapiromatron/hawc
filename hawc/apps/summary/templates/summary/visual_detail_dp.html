@@ -4,15 +4,15 @@
 
 {% block extrahead %}
   <meta name="hawc-viz-type" data-viz-type="data pivot" />
-{% endblock %}
+{% endblock extrahead %}
 
 {% block content %}
   <div class="d-flex">
-    <h2>{% debug_badge object.id %}{{object}}</h2>
+    <h2>{% debug_badge object.id %}{{ object }}</h2>
     {% include "assessment/fragments/label_indicators.html" %}
     {% include "common/unpublished_badge.html" %}
     {% actions %}
-      <a class="dropdown-item" href="{{object.get_data_url}}?format=xlsx">Download data file</a>
+      <a class="dropdown-item" href="{{ object.get_data_url }}?format=xlsx">Download data file</a>
       {% if obj_perms.edit %}
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" href="{{ object.get_dp_update_settings }}">Edit display settings</a>
@@ -25,17 +25,17 @@
   {% block dp_content %}
     <div id="dp_display"></div>
     <div id="loading_div"></div>
-    <div id="caption">{{object.caption|safe}}</div>
+    <div id="caption">{{ object.caption|safe }}</div>
   {% endblock dp_content %}
   {% include "assessment/components/label_modal.html" with modal_id="label-modal" %}
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function() {
       $('#loading_div').html(window.app.HAWCUtils.loading())
       window.app.startup("dataPivotStartup", function(app){
-        app.DataPivot.get_object({{object.id}}, function(dp){
+        app.DataPivot.get_object({{ object.id }}, function(dp){
           $('#loading_div').fadeOut(function(){
             dp.build_data_pivot_vis($('#dp_display'));
           });
@@ -46,4 +46,4 @@
       });
     });
   </script>
-{% endblock %}
+{% endblock extrajs %}

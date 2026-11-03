@@ -10,7 +10,7 @@
         <div class="{% for offset in bootstrap_checkbox_offsets %}{{ offset }} {% endfor %}{{ field_class }}">
       {% endif %}
   {% endif %}
-  <{% if tag %}{{ tag }}{% else %}div{% endif %} id="div_{{ field.auto_id }}" class="{% if not field|is_checkbox %}form-group{% if 'form-horizontal' in form_class %} row{% endif %}{% else %}{%if use_custom_control%}{% if tag != 'td' %}custom-control {%endif%} custom-checkbox{% else %}form-check{% endif %}{% endif %}{% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
+  <{% if tag %}{{ tag }}{% else %}div{% endif %} id="div_{{ field.auto_id }}" class="{% if not field|is_checkbox %}form-group{% if 'form-horizontal' in form_class %} row{% endif %}{% else %}{% if use_custom_control %}{% if tag != 'td' %}custom-control {% endif %} custom-checkbox{% else %}form-check{% endif %}{% endif %}{% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
 
         {% comment %} start create_new_button.html changes {% endcomment %}
   {% if field.label and not field|is_checkbox and form_show_labels %}
@@ -19,7 +19,7 @@
         {{ field.label }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
       </label>
       <div class="ml-2">
-        <a class="btn btn-primary" title="{{adder_title}}" href="{{adder_url}}"
+        <a class="btn btn-primary" title="{{ adder_title }}" href="{{ adder_url }}"
            onclick="return window.app.HAWCUtils.newWindowPopupLink(this);">
           <i class="fa fa-plus"></i></a>
       </div>
@@ -37,7 +37,7 @@
 
   {% if not field|is_checkboxselectmultiple and not field|is_radioselect %}
     {% if field|is_checkbox and form_show_labels %}
-      {%if use_custom_control%}
+      {% if use_custom_control %}
         {% if field.errors %}
           {% crispy_field field 'class' 'custom-control-input is-invalid' %}
         {% else %}
@@ -50,11 +50,11 @@
           {% crispy_field field 'class' 'form-check-input' %}
         {% endif %}
       {% endif %}
-      <label for="{{ field.id_for_label }}" class="{%if use_custom_control%}custom-control-label{% else %}form-check-label{% endif %}{% if field.field.required %} requiredField{% endif %}">
+      <label for="{{ field.id_for_label }}" class="{% if use_custom_control %}custom-control-label{% else %}form-check-label{% endif %}{% if field.field.required %} requiredField{% endif %}">
         {{ field.label }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
       </label>
       {% include 'bootstrap4/layout/help_text_and_errors.html' %}
-    {% elif field|is_file and use_custom_control  %}
+    {% elif field|is_file and use_custom_control %}
       {% include 'bootstrap4/layout/field_file.html' %}
     {% else %}
       <div{% if field_class %} class="{{ field_class }}"{% endif %}>

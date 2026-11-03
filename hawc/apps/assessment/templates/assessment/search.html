@@ -1,6 +1,6 @@
 {% extends 'crumbless.html' %}
 
-{% block title %}Search | HAWC{% endblock title %}
+{% block title %}Search | HAWC{% endblock %}
 
 {% block content %}
   <h2>Search</h2>
@@ -16,30 +16,30 @@
               {% for object in object_list %}
                 <tr>
                   <td>
-                    <a href="{{ object.get_absolute_url }}">{{object.short_citation}}</a>
+                    <a href="{{ object.get_absolute_url }}">{{ object.short_citation }}</a>
                     {% if not object.published %}
                       <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
                     {% endif %}
                   </td>
                   <td>
-                    {{object.full_citation}}
+                    {{ object.full_citation }}
                     {% for ident in object.identifiers.all %}
                       {% with url=ident.get_url %}
                         {% if url %}
-                          <a class="badge badge-secondary" target="_blank" href="{{url}}">
-                            {{ident.get_database_display}}
+                          <a class="badge badge-secondary" target="_blank" href="{{ url }}">
+                            {{ ident.get_database_display }}
                           </a>
                         {% endif %}
                       {% endwith %}
                     {% endfor %}
                   </td>
                   <td>
-                    <a href="{{ object.assessment.get_absolute_url }}">{{object.assessment}}</a>
+                    <a href="{{ object.assessment.get_absolute_url }}">{{ object.assessment }}</a>
                     {% if object.assessment.public_on is None %}
                       <i class="fa fa-eye-slash" title="Not Public" aria-hidden="true"></i>
                     {% endif %}
                   </td>
-                  <td>{{object.last_updated}}</td>
+                  <td>{{ object.last_updated }}</td>
                 </tr>
               {% empty %}
                 <tr>
@@ -57,7 +57,7 @@
               {% for object in object_list %}
                 <tr>
                   <td>
-                    <a href="{{ object.get_absolute_url }}">{{object.title}}</a>
+                    <a href="{{ object.get_absolute_url }}">{{ object.title }}</a>
                     {% if not object.published %}
                       <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
                     {% endif %}
@@ -65,19 +65,19 @@
                       {% include "assessment/fragments/label.html" with label=labeled_item.label anchor_tag=True %}
                     {% endfor %}
                     {% if object.caption %}
-                      <div class='text-muted' title="{{object.caption|striptags|safe}}">{{object.caption|striptags|truncatewords:20|safe}}</div>
+                      <div class='text-muted' title="{{ object.caption|striptags|safe }}">{{ object.caption|striptags|truncatewords:20|safe }}</div>
                     {% endif %}
                   </td>
                   <td>
-                    {{object.get_visual_type_display}}
+                    {{ object.get_visual_type_display }}
                   </td>
                   <td>
-                    <a href="{{ object.assessment.get_absolute_url }}">{{object.assessment}}</a>
+                    <a href="{{ object.assessment.get_absolute_url }}">{{ object.assessment }}</a>
                     {% if object.assessment.public_on is None %}
                       <i class="fa fa-eye-slash" title="Not Public" aria-hidden="true"></i>
                     {% endif %}
                   </td>
-                  <td>{{object.last_updated}}</td>
+                  <td>{{ object.last_updated }}</td>
                 </tr>
               {% empty %}
                 <tr>

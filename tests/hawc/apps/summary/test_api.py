@@ -418,7 +418,7 @@ class TestSummaryTableViewSet:
         assert resp.status_code == 400
         assert resp.json() == {"data_source": ['"not a data source" is not a valid choice.']}
 
-    def test_data_permissions(self, rewrite_data_files: bool):
+    def test_data_permissions(self):
         # even with a public assessment, must be part of team to view unpublished data
         pub = {"assessment_id": 2, "table_type": 2, "data_source": "ani", "published_only": True}
         unpub = {"assessment_id": 2, "table_type": 2, "data_source": "ani", "published_only": False}

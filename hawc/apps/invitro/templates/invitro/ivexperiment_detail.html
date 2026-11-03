@@ -2,17 +2,17 @@
 
 {% block content %}
   <div id="ivExperiment"></div>
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function() {
-      const canEdit = {{obj_perms.edit|lower}},
-            id = {{object.id}};
+      const canEdit = {{ obj_perms.edit|lower }},
+            id = {{ object.id }};
       window.app.startup("invitroStartup", function(app){
         window.canEdit = canEdit;
         app.IVExperiment.displayAsPage(id, $("#ivExperiment"));
       });
     });
   </script>
-{% endblock %}
+{% endblock extrajs %}

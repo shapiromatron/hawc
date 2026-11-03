@@ -2,7 +2,7 @@
 
 {% block content %}
   <div class="d-flex">
-    <h2>{{object}}</h2>
+    <h2>{{ object }}</h2>
     {% if obj_perms.edit %}
       {% actions %}
         <span class="dropdown-header">Experiment Editing</span>
@@ -23,13 +23,12 @@
     {% include "animal/_animal_group_list_tbl.html" with object_list=object.animal_groups.all %}
 
   {% endif %}
-{% endblock %}
-
+{% endblock content %}
 
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(() => {
-      const id = {{object.id}};
+      const id = {{ object.id }};
       window.app.startup("animalStartup", function(app){
         app.Experiment.displayFullPager($("#objContainer"), id);
       });

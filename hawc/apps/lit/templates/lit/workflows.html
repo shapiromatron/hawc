@@ -17,7 +17,7 @@
     {% endfor %}
     {% alert type="info" classes="text-center show-only-child" %}No workflows created (yet).{% endalert %}
   </div>
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   {% include "common/htmx_autocomplete.html" %}
@@ -27,4 +27,4 @@
       window.app.HAWCUtils.addScrollHtmx("workflow-edit-row", "workflow-row", "workflow-conf-delete");
     });
   </script>
-{% endblock %}
+{% endblock extrajs %}

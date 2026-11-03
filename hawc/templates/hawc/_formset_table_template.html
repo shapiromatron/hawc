@@ -1,4 +1,3 @@
-
 {{ formset.non_form_errors|add_class:"alert alert-danger" }}
 {{ formset.non_field_errors|add_class:"alert alert-danger" }}
 <table class="table table-sm table-striped formset">
@@ -10,7 +9,7 @@
           {{ formset.management_form }}
           {% for field in form.visible_fields %}
             <th>
-              <span class="formsetFieldLabel" {% if field.help_text %}data-toggle="tooltip" title="{{field.help_text}}"{% endif %}>
+              <span class="formsetFieldLabel" {% if field.help_text %}data-toggle="tooltip" title="{{ field.help_text }}"{% endif %}>
                 {{ field.label|capfirst }}
               </span>
               {% if field.field.required %}<span class="asteriskField">*</span>{% endif %}

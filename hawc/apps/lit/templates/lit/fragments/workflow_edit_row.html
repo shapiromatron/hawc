@@ -30,12 +30,12 @@
       {% endif %}
       {% crispy form %}
       <div class="form-row d-flex flex-row-reverse justify-content-center align-items-center px-3 pb-3">
-        <i class="fa fa-spinner fa-spin htmx-indicator ml-3" id="spinner-{{object.pk}}" aria-hidden="true"></i>
+        <i class="fa fa-spinner fa-spin htmx-indicator ml-3" id="spinner-{{ object.pk }}" aria-hidden="true"></i>
         {% if form.instance.id %}
           <button class="btn btn-primary ml-2"
                   id="workflow-update"
                   hx-post="{% url 'lit:workflow-htmx' object.pk 'update' %}"
-                  hx-indicator="#spinner-{{object.pk}}"
+                  hx-indicator="#spinner-{{ object.pk }}"
                   hx-encoding="multipart/form-data"
                   style="width: 15rem; height: 2rem;">
             <i class="fa fa-fw fa-save"></i>&nbsp;
@@ -44,7 +44,7 @@
           <button class="btn btn-light"
                   id="workflow-cancel"
                   hx-get="{% url 'lit:workflow-htmx' object.pk 'read' %}"
-                  hx-indicator="#spinner-{{object.pk}}"
+                  hx-indicator="#spinner-{{ object.pk }}"
                   style="width: 10rem; height: 2rem;">
             Cancel
           </button>
@@ -52,7 +52,7 @@
           <button class="btn btn-primary ml-2"
                   id="workflow-create"
                   hx-post="{% url 'lit:workflow-htmx' assessment.pk 'create' %}"
-                  hx-indicator="#spinner-{{object.pk}}"
+                  hx-indicator="#spinner-{{ object.pk }}"
                   hx-encoding="multipart/form-data"
                   style="width: 15rem; height: 2rem;">
             <i class="fa fa-fw fa-save"></i>&nbsp;Create

@@ -1,5 +1,4 @@
-{% load crispy_forms_field %}
-{% load crispy_forms_filters %}
+{% load crispy_forms_field crispy_forms_filters %}
 {% comment %} Adapted from https://github.com/django-crispy-forms/crispy-bootstrap4/blob/main/crispy_bootstrap4/templates/bootstrap4/field.html {% endcomment %}
 <div id="div_{{ field.auto_id }}" class="form-group mb-0">
   <label for="{{ field.id_for_label }}" class="sr-only">{{ field.label }}</label>
@@ -28,7 +27,7 @@
             {% endif %}
           </div>
         {% elif field|is_select and use_custom_control %}
-          <div {% if field.errors %} title="{% for error in field.errors %} {{error}} {% endfor %}" {% else %} title="{{field.help_text}} {% endif %}">
+          <div {% if field.errors %} title="{% for error in field.errors %} {{ error }} {% endfor %}" {% else %} title="{{ field.help_text }} {% endif %}">
             <label for="{{ field.id_for_label }}" class="custom-control-label sr-only">{{ field.label }}</label>
             {% if field.errors %}
               {% crispy_field field 'class' 'custom-select form-sm-field is-invalid' 'placeholder' field.help_text %}
@@ -38,7 +37,7 @@
             <div id="{{ field.id_for_label }}_helptext" class="sr-only">{{ field.help_text }}</div>
           </div>
         {% else %}
-          <div class="alert alert-danger">NOT IMPLEMENTED: {{field.id_for_label}}</div>
+          <div class="alert alert-danger">NOT IMPLEMENTED: {{ field.id_for_label }}</div>
         {% endif %}
       {% endfor %}
       <a role="button" style="border: #ced4da solid 1px !important;" class="btn btn-light d-flex flex-wrap align-content-center px-3" href="." title="Reset form"><span aria-hidden="true">&times;</span></a>

@@ -3,7 +3,7 @@
 {% block content %}
   {% if crud == "Read" %}
     <div class="d-flex">
-      <h3>Assessment Value for {{object.assessment}}</h3>
+      <h3>Assessment Value for {{ object.assessment }}</h3>
       {% if obj_perms.edit %}
         {% actions %}
           <a class="dropdown-item" href="{% url 'assessment:values-update' object.pk %}">Update</a>
@@ -20,12 +20,12 @@
       {% optional_table_row "Value type" object.get_combined_value_type_display %}
       <tr>
         <th>Value{% if object.adaf %}{% include "common/info_popover.html" with text=adaf_footnote %}{% endif %}</th>
-        <td>{{object.value|default:""|e_notation}} {{object.value_unit|default:""}}</td>
+        <td>{{ object.value|default:""|e_notation }} {{ object.value_unit|default:"" }}</td>
       </tr>
       {% if object.confidence %}
         <tr>
           <th>Confidence{% include "common/info_popover.html" with text="Confidence in the toxicity value." %}</th>
-          <td>{{object.confidence}}</td>
+          <td>{{ object.confidence }}</td>
         </tr>
       {% endif %}
       {% optional_table_row "Value duration" object.duration %}
@@ -34,7 +34,7 @@
       {% if object.pod_value %}
         <tr>
           <th>POD Value</th>
-          <td>{{object.pod_value|default:""|e_notation}} {{object.pod_unit|default:""}}</td>
+          <td>{{ object.pod_value|default:""|e_notation }} {{ object.pod_unit|default:"" }}</td>
         </tr>
       {% endif %}
       {% if object.show_noncancer_fields %}
@@ -45,8 +45,8 @@
         <tr>
           <th>Key Studies</th>
           <td>
-            {% for study in object.studies.all  %}
-              <a class="badge badge-info mr-1" href="{{study.get_absolute_url}}">{{study}}</a>
+            {% for study in object.studies.all %}
+              <a class="badge badge-info mr-1" href="{{ study.get_absolute_url }}">{{ study }}</a>
             {% endfor %}
           </td>
         </tr>
@@ -59,8 +59,8 @@
       {% optional_table_row "Comments" object.comments %}
       {% for key, value in object.extra.items %}
         <tr>
-          <th>{{key}}</th>
-          <td>{{value}}</td>
+          <th>{{ key }}</th>
+          <td>{{ value }}</td>
         </tr>
       {% empty %}
       {% endfor %}
@@ -70,12 +70,12 @@
     {% alert type="warning" %}
       <p><b>Note: this message only appears to team members and higher.</b></p>
       <p>
-        The calculated {{object.get_value_type_display}} ({{object.check_calculated_value.calculated_value|e_notation}} {{object.value_unit|default:""}}), is > {{object.check_calculated_value.tolerance|percentage}} different than the reported value ({{object.value}} {{object.value_unit|default:""}}). The calculated value was generated using the formula POD / UF, or {{object.pod_value}} / {{object.uncertainty}} = {{object.check_calculated_value.calculated_value|e_notation}}. This difference may be due to the level of precision the {{object.get_value_type_display}} is reported, but please review in case of an error.
+        The calculated {{ object.get_value_type_display }} ({{ object.check_calculated_value.calculated_value|e_notation }} {{ object.value_unit|default:"" }}), is > {{ object.check_calculated_value.tolerance|percentage }} different than the reported value ({{ object.value }} {{ object.value_unit|default:"" }}). The calculated value was generated using the formula POD / UF, or {{ object.pod_value }} / {{ object.uncertainty }} = {{ object.check_calculated_value.calculated_value|e_notation }}. This difference may be due to the level of precision the {{ object.get_value_type_display }} is reported, but please review in case of an error.
       </p>
     {% endalert %}
   {% endif %}
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   {% include "common/helptext_popup_js.html" %}
-{% endblock %}
+{% endblock extrajs %}

@@ -1,12 +1,12 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block extrahead %}
-  <meta name="hawc-viz-type" data-viz-type="{{object.get_visual_type_display}}" />
-{% endblock %}
+  <meta name="hawc-viz-type" data-viz-type="{{ object.get_visual_type_display }}" />
+{% endblock extrahead %}
 
 {% block content %}
   <div class='d-flex'>
-    <h2>{% debug_badge object.id %}{{object.title}}</h2>
+    <h2>{% debug_badge object.id %}{{ object.title }}</h2>
     {% include "assessment/fragments/label_indicators.html" %}
     {% include "common/unpublished_badge.html" %}
     {% if obj_perms.edit %}
@@ -19,21 +19,20 @@
     {% endif %}
   </div>
   <div id='visualization'></div>
-  <p>{{object.caption|safe}}</p>
+  <p>{{ object.caption|safe }}</p>
   {% include "assessment/components/label_modal.html" with modal_id="label-modal" %}
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   {{ config|json_script:"config" }}
   <script type="text/javascript">
     $(document).ready(function() {
       window.app.startup("summaryStartup", function(summary){
-        window.isEditable = {{obj_perms.edit|lower}};
+        window.isEditable = {{ obj_perms.edit|lower }};
         const config = JSON.parse(document.getElementById('config').textContent),
               el = document.getElementById('visualization');
         summary.startupPrismaAppRender(el, config.settings, config.data, config);
       });
     });
   </script>
-{% endblock %}
-
+{% endblock extrajs %}

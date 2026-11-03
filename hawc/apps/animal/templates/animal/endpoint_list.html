@@ -2,7 +2,7 @@
 
 {% block content %}
   <div class="d-flex mb-2">
-    <h2 class="mb-0">Assessment endpoints ({{page_obj.paginator.count}} found)</h2>
+    <h2 class="mb-0">Assessment endpoints ({{ page_obj.paginator.count }} found)</h2>
     {% if feature_flags.ENABLE_FILTER_DOWNLOADS and page_obj.paginator.count > 0 %}
       {% actions %}
         <a class="dropdown-item" href="#"><i class="fa fa-fw fa-download mr-1"></i>Download (xlsx)</a>
@@ -18,24 +18,24 @@
         <tr>
           <td>
             <a
-              href="{{object.animal_group.experiment.study.get_absolute_url}}">{{object.animal_group.experiment.study.short_citation}}</a>{% debug_badge object.animal_group.experiment.study_id %}
+              href="{{ object.animal_group.experiment.study.get_absolute_url }}">{{ object.animal_group.experiment.study.short_citation }}</a>{% debug_badge object.animal_group.experiment.study_id %}
           </td>
           <td>
             <a
-              href="{{object.animal_group.experiment.get_absolute_url }}">{{object.animal_group.experiment.name}}</a>{% debug_badge object.animal_group.experiment_id %}
+              href="{{ object.animal_group.experiment.get_absolute_url }}">{{ object.animal_group.experiment.name }}</a>{% debug_badge object.animal_group.experiment_id %}
           </td>
           <td>
-            <a href="{{object.animal_group.get_absolute_url}}">{{object.animal_group.name}}</a>{% debug_badge object.animal_group_id %}
+            <a href="{{ object.animal_group.get_absolute_url }}">{{ object.animal_group.name }}</a>{% debug_badge object.animal_group_id %}
           </td>
           <td class="previewModalParent">
-            <i data-id={{object.pk}} class="float-right fa fa-fixed fa-external-link previewModalIcon mr-2" title="preview"></i>
-            <a href="{{object.get_absolute_url}}">{{object.name}}</a>{% debug_badge object.id %}
+            <i data-id={{ object.pk }} class="float-right fa fa-fixed fa-external-link previewModalIcon mr-2" title="preview"></i>
+            <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>{% debug_badge object.id %}
           </td>
-          <td>{{object.units_name|default:"-"}}</td>
-          <td>{{object.noel_value|default:"-"}}</td>
-          <td>{{object.loel_value|default:"-"}}</td>
-          <td>{{object.bmd|default:"-"}}</td>
-          <td>{{object.bmdl|default:"-"}}</td>
+          <td>{{ object.units_name|default:"-" }}</td>
+          <td>{{ object.noel_value|default:"-" }}</td>
+          <td>{{ object.loel_value|default:"-" }}</td>
+          <td>{{ object.bmd|default:"-" }}</td>
+          <td>{{ object.bmdl|default:"-" }}</td>
         </tr>
       {% empty %}
         <tr>
@@ -49,7 +49,7 @@
 
   {% include "includes/paginator.html" with plural_object_name="endpoints" %}
 
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   <script type="text/javascript">
@@ -59,4 +59,4 @@
       });
     });
   </script>
-{% endblock %}
+{% endblock extrajs %}

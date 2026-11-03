@@ -71,15 +71,15 @@
                     {{ hidden }}
                   {% endfor %}
 
-                  <td class="doses" id="dose_{{i}}"></td>
-                  <td>{{form.n}}{{form.n.errors|add_class:"alert alert-danger"}}</td>
-                  <td class="d_only">{{form.incidence}}{{form.incidence.errors|add_class:"alert alert-danger"}}</td>
-                  <td class="pc_only">{{form.response}}{{form.response.errors|add_class:"alert alert-danger"}}</td>
-                  <td class="c_only">{{form.variance}}{{form.variance.errors|add_class:"alert alert-danger"}}</td>
-                  <th class="p_only">{{form.lower_ci}}{{form.lower_ci.errors|add_class:"alert alert-danger"}}</th>
-                  <th class="p_only">{{form.upper_ci}}{{form.upper_ci.errors|add_class:"alert alert-danger"}}</th>
-                  <td>{{form.significance_level}}</td>
-                  <td>{{form.treatment_effect}}</td>
+                  <td class="doses" id="dose_{{ i }}"></td>
+                  <td>{{ form.n }}{{ form.n.errors|add_class:"alert alert-danger" }}</td>
+                  <td class="d_only">{{ form.incidence }}{{ form.incidence.errors|add_class:"alert alert-danger" }}</td>
+                  <td class="pc_only">{{ form.response }}{{ form.response.errors|add_class:"alert alert-danger" }}</td>
+                  <td class="c_only">{{ form.variance }}{{ form.variance.errors|add_class:"alert alert-danger" }}</td>
+                  <th class="p_only">{{ form.lower_ci }}{{ form.lower_ci.errors|add_class:"alert alert-danger" }}</th>
+                  <th class="p_only">{{ form.upper_ci }}{{ form.upper_ci.errors|add_class:"alert alert-danger" }}</th>
+                  <td>{{ form.significance_level }}</td>
+                  <td>{{ form.treatment_effect }}</td>
                 </tr>
               {% endfor %}
             </tbody>
@@ -92,24 +92,24 @@
       </div>
     </div>
   </div>
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   <script type="text/json" id="config">
     {
-      "vocabulary": {{vocabulary|safe}},
-      "litterEffectRequired": {{form.instance.litter_effect_required|lower}},
-      "doses": {{animal_group.get_doses_json|safe}},
-      {% if form.instance.id  %}
-        "endpoint_data": {{form.instance.get_json|safe}}
+      "vocabulary": {{ vocabulary|safe }},
+      "litterEffectRequired": {{ form.instance.litter_effect_required|lower }},
+      "doses": {{ animal_group.get_doses_json|safe }},
+      {% if form.instance.id %}
+        "endpoint_data": {{ form.instance.get_json|safe }}
       {% else %}
         "endpoint_data": {
-          "animal_group": {{animal_group.get_json|safe}},
+          "animal_group": {{ animal_group.get_json|safe }},
           "groups": [],
-          "noel_names": {{form.noel_names|safe}},
-          "NOEL": {{form.NOEL.value|default_if_none:"-999"}},
-          "LOEL": {{form.LOEL.value|default_if_none:"-999"}},
-          "FEL": {{form.FEL.value|default_if_none:"-999"}}
+          "noel_names": {{ form.noel_names|safe }},
+          "NOEL": {{ form.NOEL.value|default_if_none:"-999" }},
+          "LOEL": {{ form.LOEL.value|default_if_none:"-999" }},
+          "FEL": {{ form.FEL.value|default_if_none:"-999" }}
         }
       {% endif %}
     }
@@ -137,4 +137,4 @@
     });
   </script>
   {% include "common/helptext_popup_js.html" %}
-{% endblock %}
+{% endblock extrajs %}

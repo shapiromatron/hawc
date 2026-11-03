@@ -14,14 +14,13 @@
     {% endif %}
     {% include "hawc/_formset_table_template.html" with showDeleteRow=False %}
   </div>
-{% endblock %}
-
+{% endblock content %}
 
 {% block extrajs %}
   <script type="text/javascript">
     $(document).ready(function() {
       var elFormset = $("#rFormset").insertBefore($('#rForm .form-actions')),
-          isNew = "{{crud|lower}}" == "create",
+          isNew = "{{ crud|lower }}" == "create",
           fs = new window.app.DynamicFormset(elFormset, 'form', {oneFormRequired: true}),
           comparison_set_id = {{ form.comparison_set.value|default:"null" }};
 

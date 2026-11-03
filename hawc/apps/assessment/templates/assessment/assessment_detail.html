@@ -2,7 +2,7 @@
 
 {% block content %}
   <div class="d-flex">
-    <h2>{{object}}{% debug_badge object.id %}</h2>
+    <h2>{{ object }}{% debug_badge object.id %}</h2>
     {% if crud == "Read" %}
       {% actions %}
           <!-- assessment editing -->
@@ -34,21 +34,21 @@
           <!-- application settings -->
         <span class="dropdown-header">Application settings</span>
         {% if assessment.enable_risk_of_bias %}
-          <a class="dropdown-item" href="{% url 'riskofbias:arob_detail' pk=object.pk %}">{{object.get_rob_name_display}} settings</a>
+          <a class="dropdown-item" href="{% url 'riskofbias:arob_detail' pk=object.pk %}">{{ object.get_rob_name_display }} settings</a>
         {% endif %}
 
         {% if assessment.enable_data_extraction and obj_perms.edit_assessment %}
           <a class="dropdown-item" href="{% url 'invitro:endpointcategory_update' object.pk %}">In vitro endpoint categories</a>
-        {% endif%}
+        {% endif %}
 
         {% if obj_perms.edit_assessment %}
           <div class="dropdown-divider"></div>
           <span class="dropdown-header">Data cleanup views</span>
           {% if assessment.enable_data_extraction %}
             <a class="dropdown-item" href="{% url 'assessment:clean_extracted_data' object.pk %}">Clean extracted data</a>
-          {% endif%}
+          {% endif %}
           {% if assessment.enable_risk_of_bias %}
-            <a class="dropdown-item" href="{% url 'assessment:clean_study_metrics' pk=object.pk %}">Clean {{object.get_rob_name_display|lower}} responses</a>
+            <a class="dropdown-item" href="{% url 'assessment:clean_study_metrics' pk=object.pk %}">Clean {{ object.get_rob_name_display|lower }} responses</a>
           {% endif %}
           <a class="dropdown-item" href="{% url 'assessment:bulk-publish' object.pk %}">Publish items</a>
         {% endif %}
@@ -67,13 +67,13 @@
 
       <tr>
         <th>Assessment name</th>
-        <td>{{object.name}}</td>
+        <td>{{ object.name }}</td>
       </tr>
 
       {% if object.cas %}
         <tr>
           <th>CASRN</th>
-          <td>{{object.cas}}</td>
+          <td>{{ object.cas }}</td>
         </tr>
       {% endif %}
 
@@ -86,39 +86,39 @@
 
       <tr>
         <th>Year</th>
-        <td>{{object.year}}</td>
+        <td>{{ object.year }}</td>
       </tr>
 
       <tr>
         <th>Version</th>
-        <td>{{object.version}}</td>
+        <td>{{ object.version }}</td>
       </tr>
 
       {% if object.assessment_objective %}
         <tr>
           <th>Objective</th>
-          <td>{{object.assessment_objective|safe}}</td>
+          <td>{{ object.assessment_objective|safe }}</td>
         </tr>
       {% endif %}
 
       {% if object.authors %}
         <tr>
           <th>Authors</th>
-          <td>{{object.authors|safe}}</td>
+          <td>{{ object.authors|safe }}</td>
         </tr>
       {% endif %}
 
       {% if object.conflicts_of_interest %}
         <tr>
           <th>Conflicts of interest</th>
-          <td>{{object.conflicts_of_interest|safe}}</td>
+          <td>{{ object.conflicts_of_interest|safe }}</td>
         </tr>
       {% endif %}
 
       {% if object.funding_source %}
         <tr>
           <th>Funding source</th>
-          <td>{{object.funding_source|safe}}</td>
+          <td>{{ object.funding_source|safe }}</td>
         </tr>
       {% endif %}
 
@@ -129,7 +129,7 @@
       {% if object.vocabulary %}
         <tr>
           <th>Vocabulary</th>
-          <td>{{object.get_vocabulary_display}}</td>
+          <td>{{ object.get_vocabulary_display }}</td>
         </tr>
       {% endif %}
     </tbody>
@@ -143,14 +143,14 @@
         <tbody>
           <tr>
             <th>Assessment ID</th>
-            <td colspan="3">{{object.id}}</td>
+            <td colspan="3">{{ object.id }}</td>
           </tr>
 
           <tr>
             <th>Public</th>
             <td colspan="3">
               {% if object.public_on %}
-                Yes; published on {{object.public_on|date:"DATE_FORMAT"}}
+                Yes; published on {{ object.public_on|date:"DATE_FORMAT" }}
               {% else %}
                 No; this assessment is currently private
               {% endif %}
@@ -160,13 +160,13 @@
           {% if object.public_on %}
             <tr>
               <th>Public; Listed on Assessments Page</th>
-              <td colspan="3">{{object.hide_from_public_page|yesno:"No; unlisted and only available if you have the link,Yes; listed and available via searching or browsing"|safe}}</td>
+              <td colspan="3">{{ object.hide_from_public_page|yesno:"No; unlisted and only available if you have the link,Yes; listed and available via searching or browsing"|safe }}</td>
             </tr>
           {% endif %}
 
           <tr>
             <th>Locked to Prevent Further Edits</th>
-            <td colspan="3">{{object.editable|yesno:"No; assessment is editable,Yes; assessment is not editable"}}</td>
+            <td colspan="3">{{ object.editable|yesno:"No; assessment is editable,Yes; assessment is not editable" }}</td>
           </tr>
 
           <tr>
@@ -175,7 +175,7 @@
               <p><strong>Project Manager{{ object.project_manager.all|pluralize }}</strong></p>
               <ul class="mb-0">
                 {% for m in object.project_manager.active %}
-                  <li title="{{m.email}}">{{ m.get_full_name }}</li>
+                  <li title="{{ m.email }}">{{ m.get_full_name }}</li>
                 {% endfor %}
               </ul>
             </td>
@@ -183,7 +183,7 @@
               <p><strong>Team Member{{ object.team_members.all|pluralize }}</strong></p>
               <ul class="mb-0">
                 {% for m in object.team_members.active %}
-                  <li title="{{m.email}}">{{ m.get_full_name }}</li>
+                  <li title="{{ m.email }}">{{ m.get_full_name }}</li>
                 {% empty %}
                   <li><i>None assigned</i></li>
                 {% endfor %}
@@ -193,7 +193,7 @@
               <p><strong>Reviewer{{ object.reviewers.all|pluralize }}</strong></p>
               <ul class="mb-0">
                 {% for m in object.reviewers.active %}
-                  <li title="{{m.email}}">{{ m.get_full_name }}</li>
+                  <li title="{{ m.email }}">{{ m.get_full_name }}</li>
                 {% empty %}
                   <li><i>None assigned</i></li>
                 {% endfor %}
@@ -203,7 +203,7 @@
 
           <tr>
             <th>Date Created</th>
-            <td colspan="3">Created by {{object.creator}} on {{object.created|date:"DATE_FORMAT"}}</td>
+            <td colspan="3">Created by {{ object.creator }} on {{ object.created|date:"DATE_FORMAT" }}</td>
           </tr>
 
           {% if object.details and object.details.qa_id %}
@@ -240,7 +240,7 @@
   <script type="text/javascript">
     $(document).ready(function() {
       {% if crud == "Read" and object.dtxsids.first %}
-        const dtxsids = {{dtxsids|safe}},
+        const dtxsids = {{ dtxsids|safe }},
               el = document.getElementById('dtxsid-app');
         window.app.startup("assessmentStartup", app => app.renderDssToxTabs(el, dtxsids));
       {% endif %}

@@ -1,7 +1,6 @@
 {% extends 'crumbless.html' %}
 
-{% block title %}Content Types | HAWC{% endblock title %}
-
+{% block title %}Content Types | HAWC{% endblock %}
 
 {% block content %}
   <h2>Content Types</h2>
@@ -15,13 +14,12 @@
     <tbody>
       {% for ct in content_types %}
         <tr>
-          <td>{{ct.app_label}}</td>
-          <td>{{ct.model}}</td>
-          <td>{{ct.id}}</td>
+          <td>{{ ct.app_label }}</td>
+          <td>{{ ct.model }}</td>
+          <td>{{ ct.id }}</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
 
 {% endblock content %}
-

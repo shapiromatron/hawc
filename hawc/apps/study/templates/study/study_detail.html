@@ -2,7 +2,7 @@
 
 {% block content %}
   <div class="d-flex">
-    <h2>{{object}}</h2>
+    <h2>{{ object }}</h2>
     {% include "common/unpublished_badge.html" %}
     {% if obj_perms.edit %}
       {% actions %}
@@ -95,7 +95,7 @@
 
     {% if assessment.enable_risk_of_bias and object.riskofbiases.count > 0 %}
       <div class="d-flex">
-        <h3>{{assessment.get_rob_name_display}}</h3>
+        <h3>{{ assessment.get_rob_name_display }}</h3>
         <div class="dropdown btn-group ml-auto align-self-start">
           <a class="btn btn-primary" href="{% url 'riskofbias:rob_detail' object.pk %}">View details</a>
         </div>
@@ -131,7 +131,7 @@
 
   {% endif %}
 
-{% endblock %}
+{% endblock content %}
 
 {% block extrajs %}
   {{ config|json_script:"config" }}

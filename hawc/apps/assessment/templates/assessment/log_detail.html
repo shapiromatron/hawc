@@ -3,10 +3,10 @@
 {% block content %}
 
   <div class="d-flex">
-    <h2>{{object}}</h2>
+    <h2>{{ object }}</h2>
     {% if object.get_object_name %}
       {% actions %}
-        <a class="dropdown-item" href="{{object.get_object_list_url}}">View all logs for object</a>
+        <a class="dropdown-item" href="{{ object.get_object_list_url }}">View all logs for object</a>
       {% endactions %}
     {% endif %}
   </div>
@@ -19,11 +19,11 @@
       <tr>
         <th>Object</th>
         <td>
-          {% with object.content_object.get_absolute_url as absolute_url %}
+          {% with absolute_url=object.content_object.get_absolute_url %}
             {% if absolute_url %}
-              <a href="{{absolute_url}}">{{object.get_object_name}}</a>
+              <a href="{{ absolute_url }}">{{ object.get_object_name }}</a>
             {% else %}
-              {{object.get_object_name}}
+              {{ object.get_object_name }}
             {% endif %}
           {% endwith %}
         </td>
@@ -31,27 +31,27 @@
 
       <tr>
         <th>Object type</th>
-        <td>{{object.content_type}}</td>
+        <td>{{ object.content_type }}</td>
       </tr>
 
       <tr>
         <th>Assessment</th>
-        <td>{{object.assessment}}</td>
+        <td>{{ object.assessment }}</td>
       </tr>
 
       <tr>
         <th>Message</th>
-        <td>{{object.message}}</td>
+        <td>{{ object.message }}</td>
       </tr>
 
       <tr>
         <th>User</th>
-        <td>{{object.user}}</td>
+        <td>{{ object.user }}</td>
       </tr>
 
       <tr>
         <th>Timestamp</th>
-        <td>{{object.created}}</td>
+        <td>{{ object.created }}</td>
       </tr>
 
     </tbody>

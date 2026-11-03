@@ -1,7 +1,7 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <h2 class="d-inline-block">Update {{object.summary}}</h2>
+  <h2 class="d-inline-block">Update {{ object.summary }}</h2>
   <div class="float-right">
     <a id="design-update" class="btn btn-sm btn-primary" href="#"
        hx-get="{% url 'epiv2:design-htmx' object.pk 'update' %}" hx-target="#design-table" hx-swap="outerHTML">
@@ -119,10 +119,9 @@
   </div>
 
   <div class="well text-center">
-    <a class="btn btn-light my-3" href="{{object.get_absolute_url}}" id="epiv2-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>
+    <a class="btn btn-light my-3" href="{{ object.get_absolute_url }}" id="epiv2-page-cancel"><i class="fa fa-fw fa-times"></i>Cancel</a>
   </div>
-{% endblock %}
-
+{% endblock content %}
 
 {% block extrajs %}
   {% include "common/htmx_autocomplete.html" %}
@@ -136,4 +135,4 @@
       });
     });
   </script>
-{% endblock %}
+{% endblock extrajs %}

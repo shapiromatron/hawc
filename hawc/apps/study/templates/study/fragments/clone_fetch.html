@@ -1,5 +1,5 @@
 <form>
-  <h3>Source assessment: <a href="{{src_assessment.get_absolute_url}}" {% anchor_new_tab %}>{{src_assessment}}</a></h3>
+  <h3>Source assessment: <a href="{{ src_assessment.get_absolute_url }}" {% anchor_new_tab %}>{{ src_assessment }}</a></h3>
   <p class="text-muted">Select which studies from the selected assessment to copy into this assessment.</p>
   <table id="src-studies-table" class='table table-sm table-striped'>
     {% bs4_colgroup '40,20,20,20' %}
@@ -8,35 +8,35 @@
         <th>Short Citation</th>
         <th>Bioassay</th>
         <th>Epidemiology*</th>
-        <th>{{assessment.get_rob_name_display|title}}</th>
+        <th>{{ assessment.get_rob_name_display|title }}</th>
       </tr>
     </thead>
     <tbody>
       {% for study in studies %}
-        <tr id="{{study.id}}">
+        <tr id="{{ study.id }}">
           <td>
-            <input type="checkbox" name="study" value="{{study.id}}" id="study-{{study.id}}" class="study-selector">
-            <label class="ml-1" for="study-{{study.id}}">{{study}}</label>
-            <a class="ml-1 btn btn-light" href="{{study.get_absolute_url}}" {% anchor_new_tab %}>View</a>
+            <input type="checkbox" name="study" value="{{ study.id }}" id="study-{{ study.id }}" class="study-selector">
+            <label class="ml-1" for="study-{{ study.id }}">{{ study }}</label>
+            <a class="ml-1 btn btn-light" href="{{ study.get_absolute_url }}" {% anchor_new_tab %}>View</a>
           </td>
           <td>
             <input
               name="study_bioassay"
-              value="{{study.id}}"
+              value="{{ study.id }}"
               {% if not study.has_bioassay %}disabled{% endif %}
               type="checkbox">
           </td>
           <td>
             <input
               name="study_epi"
-              value="{{study.id}}"
+              value="{{ study.id }}"
               {% if not study.has_epi %}disabled{% endif %}
               type="checkbox">
           </td>
           <td>
             <input
               name="study_rob"
-              value="{{study.id}}"
+              value="{{ study.id }}"
               {% if not study.has_rob or not dst_metrics %}disabled{% endif %}
               type="checkbox">
           </td>
@@ -59,8 +59,8 @@
   </table>
 
   {% if src_metrics and dst_metrics %}
-    <h3>{{assessment.get_rob_name_display|title}} Mapping</h3>
-    <p class="text-muted">Optional; if any selected studies have been selected with {{assessment.get_rob_name_display|lower}}, you must also map metrics from the source assessment to the destination assessment. Skip this section if no evaluations were selected. Any evaluations which are cloned will be be authored by you in the cloned assessment.</p>
+    <h3>{{ assessment.get_rob_name_display|title }} Mapping</h3>
+    <p class="text-muted">Optional; if any selected studies have been selected with {{ assessment.get_rob_name_display|lower }}, you must also map metrics from the source assessment to the destination assessment. Skip this section if no evaluations were selected. Any evaluations which are cloned will be be authored by you in the cloned assessment.</p>
     <div class="form-row">
       <div class="col-md-6">
         <div class="form-group">
@@ -92,14 +92,14 @@
         {% for metric in dst_metrics %}
           <tr>
             <td>
-              <p class="font-weight-bold">{{metric.domain.name}}: {{ metric.name }}</p>
-              <div>{{metric.description|safe}}</div>
+              <p class="font-weight-bold">{{ metric.domain.name }}: {{ metric.name }}</p>
+              <div>{{ metric.description|safe }}</div>
             </td>
             <td>
-              <select class="custom-select" name="metric-{{metric.id}}">
+              <select class="custom-select" name="metric-{{ metric.id }}">
                 <option value="" selected >N/A (do not clone)</option>
                 {% for src_metric in src_metrics %}
-                  <option value="{{ src_metric.id }}">{{src_metric.domain.name}}: {{ src_metric.name }}</option>
+                  <option value="{{ src_metric.id }}">{{ src_metric.domain.name }}: {{ src_metric.name }}</option>
                 {% endfor %}
               </select>
             </td>
@@ -110,7 +110,7 @@
   {% endif %}
 
   {% csrf_token %}
-  <input name="src_assessment" value="{{src_assessment.id}}" class='hidden' />
+  <input name="src_assessment" value="{{ src_assessment.id }}" class='hidden' />
   <div class="form-group form-actions">
     <button
       name='action'
@@ -132,4 +132,3 @@
     {% endalert %}
   </div>
 </form>
-

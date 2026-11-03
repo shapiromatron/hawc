@@ -22,14 +22,14 @@
   <form id="dp_settings_form" action="." method="post">
     <fieldset class="hidden">
       {% for field in form %}
-        {{field}}
+        {{ field }}
       {% endfor %}
       {% csrf_token %}
     </fieldset>
 
     <div class="form-actions">
       <button type="submit" class="btn btn-primary">Update data-pivot settings</button>
-      <a href="{{object.get_absolute_url}}" class="btn btn-light">Cancel</a>
+      <a href="{{ object.get_absolute_url }}" class="btn btn-light">Cancel</a>
     </div>
   </form>
 

@@ -2,7 +2,7 @@
   <h3><i>In vitro</i> experiment chemicals</h3>
   <ul>
     {% for object in object_list %}
-      <li><a href="{{ object.get_absolute_url }}">{{object}}</a></li>
+      <li><a href="{{ object.get_absolute_url }}">{{ object }}</a></li>
     {% empty %}
       <li><i>No experimental chemicals are available.</i></li>
     {% endfor %}
