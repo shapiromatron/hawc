@@ -82,7 +82,6 @@ dev = [
   "pytest~=9.1.1",
   "pytest-django~=4.14.0",
   "pytest-xdist~=3.8",
-  "pytest-randomly~=5.0",
   "pytest-cov~=7.1",
   "vcrpy==8.3.0",
   "pytest-recording==0.14.0",
@@ -156,7 +155,7 @@ testpaths = [
 
 [tool.coverage.run]
 omit = [
-  "*migrations*",
+  "**/migrations/**",
   "./build/",
   "./client/hawc_client/interactive.py",
   "./hawc/apps/*/management/*",
@@ -269,10 +268,7 @@ sequence = [
 
 [tool.poe.tasks.coverage]
 help = "Run python coverage and create HTML report"
-sequence = [
-  {cmd = "coverage run -m pytest -n auto --maxprocesses=6 --cov=hawc"},
-  {cmd = "coverage html -d coverage_html -i"},
-]
+cmd = "pytest -n auto --maxprocesses=6 --dist=loadfile --cov=hawc --cov-report html"
 
 [tool.poe.tasks.loc]
 help = "Generate lines of code report"
