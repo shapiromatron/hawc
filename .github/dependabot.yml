@@ -26,6 +26,8 @@ updates:
     cooldown:
       default-days: 7
     ignore:
+      - dependency-name: "mobx"
+        update-types: ["version-update:semver-major"]
       - dependency-name: "mobx-react"
         update-types: ["version-update:semver-major"]
       - dependency-name: "react"
