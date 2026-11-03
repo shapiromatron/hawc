@@ -81,6 +81,9 @@ dev = [
   "coverage~=7.16.2",
   "pytest~=9.1.1",
   "pytest-django~=4.14.0",
+  "pytest-xdist~=3.8",
+  "pytest-randomly~=5.0",
+  "pytest-cov~=7.1",
   "vcrpy==8.3.0",
   "pytest-recording==0.14.0",
   "playwright~=1.63.0",
@@ -267,7 +270,7 @@ sequence = [
 [tool.poe.tasks.coverage]
 help = "Run python coverage and create HTML report"
 sequence = [
-  {cmd = "coverage run -m pytest"},
+  {cmd = "coverage run -m pytest -n auto --maxprocesses=6"},
   {cmd = "coverage html -d coverage_html -i"},
 ]
 
