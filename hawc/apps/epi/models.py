@@ -327,10 +327,10 @@ class ComparisonSet(models.Model):
     objects = managers.ComparisonSetManager()
 
     study_population = models.ForeignKey(
-        StudyPopulation, on_delete=models.SET_NULL, related_name="comparison_sets", null=True
+        StudyPopulation, on_delete=models.CASCADE, related_name="comparison_sets", null=True
     )
     outcome = models.ForeignKey(
-        Outcome, on_delete=models.SET_NULL, related_name="comparison_sets", null=True
+        Outcome, on_delete=models.CASCADE, related_name="comparison_sets", null=True
     )
     name = models.CharField(
         max_length=256,

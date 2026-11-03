@@ -978,6 +978,14 @@ class TestComparisonSetApi:
                 "expected_code": 400,
                 "data": self.get_upload_data({"outcome": generic_get_any(models.Outcome).id}),
             },
+            {
+                "desc": "cant have neither study pop nor outcome",
+                "expected_code": 400,
+                "data": {
+                    "name": "comparison set name",
+                    "description": "test description",
+                },
+            },
         )
 
         generic_test_scenarios(client, url, scenarios)

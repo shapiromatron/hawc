@@ -26,6 +26,8 @@ updates:
     cooldown:
       default-days: 7
     ignore:
+      - dependency-name: "@biomejs/biome"
+        update-types: ["version-update:semver-minor"]
       - dependency-name: "mobx"
         update-types: ["version-update:semver-major"]
       - dependency-name: "mobx-react"
