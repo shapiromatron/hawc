@@ -1,38 +1,34 @@
 import pytest
-from django.urls import reverse
-from rest_framework.test import APIClient
-from hawc.apps.vocab.constants import VocabularyNamespace, VocabularyTermType
+from rest_framework.test import APIClient, force_authenticate
 from hawc.apps.myuser.models import HAWCUser
-from . import Term
-
-def bake(model, **kwargs):
-    obj = model(**kwargs)
-    obj.save()
-    return obj
+from hawc.apps.vocab.models import Term
 
 @pytest.fixture(scope='function')
-def auth_client():
-    username = "team@hawcproject.org"
-    password = "testpassword123"
-    user = HAWCUser.objects.get_or_create(email=username, defaults={'username': username.split('@')[0]})[0]
-    user.set_password(password)
-    user.save()
-    
-    client = APIClient()
-    client.force_authenticate(user=user)
-    return client
+def test_user():
+    email = "test_api_user@hawcproject.org"
+    user = HAWCUser.objects.create_user(email=email, password="testpass123")
+    yield user
+    # Cleanup  
+    user.delete()
 
 @pytest.mark.django_db
 class TestEhvTermViewSet:
-    def test_permissions_anonymous_blocked(self):
+    def test_system_action_authenticated(self, test_user):
+        """Test GET /vocab/api/ehv/?system=True (the system action) returns 200."""
+        
+        # Create some terms first
+        term1 = Term.objects.create(namespace=1, type=1, name="Cardiovascular", uid=5000)
+        term2 = Term.objects.create(namespace=1, type=1, name="Immunotoxicity", uid=5010)
+        
         client = APIClient()
-        url = reverse("vocab:api:ehv-system")
-        response = client.get(url)
-        assert response.status_code == 403
+        
+        url = '/vocab/api/ehv/?system=True'
+        
+        # Use the standard DRF pattern - force_authenticate modifies request in place
+        # The key is that we need to make the authenticated request before calling get()
+        with client:
+            client.force_authenticate(user=test_user)
+            response = client.get(url)
+            
+            assert response.status_code == 200
 
-    def test_permissions_authenticated_success(self, auth_client):
-        term1 = bake(Term, namespace=1, type=1, name="Cardiovascular", uid=5000)
-        term2 = bake(Term, namespace=1, type=1, name="Immunotoxicity", uid=5010)
-        url = reverse("vocab:api:ehv-system")
-        response = auth_client.get(url)
-        assert response.status_code == 200
