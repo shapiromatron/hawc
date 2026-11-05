@@ -7,18 +7,50 @@ from hawc.apps.vocab.models import Entity, EntityTermRelation, Term
 
 
 def chain(namespace, prefix):
-    system = make(Term, namespace=namespace, type=VocabularyTermType.system, name=f"{prefix} system")
-    organ = make(Term, namespace=namespace, type=VocabularyTermType.organ, parent=system, name=f"{prefix} organ")
-    effect = make(Term, namespace=namespace, type=VocabularyTermType.effect, parent=organ, name=f"{prefix} effect")
-    subtype = make(Term, namespace=namespace, type=VocabularyTermType.effect_subtype, parent=effect, name=f"{prefix} subtype")
-    endpoint = make(Term, namespace=namespace, type=VocabularyTermType.endpoint_name, parent=subtype, name=f"{prefix} endpoint")
+    system = make(
+        Term, namespace=namespace, type=VocabularyTermType.system, name=f"{prefix} system"
+    )
+    organ = make(
+        Term,
+        namespace=namespace,
+        type=VocabularyTermType.organ,
+        parent=system,
+        name=f"{prefix} organ",
+    )
+    effect = make(
+        Term,
+        namespace=namespace,
+        type=VocabularyTermType.effect,
+        parent=organ,
+        name=f"{prefix} effect",
+    )
+    subtype = make(
+        Term,
+        namespace=namespace,
+        type=VocabularyTermType.effect_subtype,
+        parent=effect,
+        name=f"{prefix} subtype",
+    )
+    endpoint = make(
+        Term,
+        namespace=namespace,
+        type=VocabularyTermType.endpoint_name,
+        parent=subtype,
+        name=f"{prefix} endpoint",
+    )
     return system, organ, effect, subtype, endpoint
 
 
 @pytest.mark.django_db
 class TestTerm:
     def test_attributes_and_deprecated(self):
-        term = make(Term, namespace=VocabularyNamespace.EHV, type=VocabularyTermType.system, name="System", uid=8100)
+        term = make(
+            Term,
+            namespace=VocabularyNamespace.EHV,
+            type=VocabularyTermType.system,
+            name="System",
+            uid=8100,
+        )
         assert str(term) == "EHV::system::System"
         assert term.deprecated is False
         assert term.get_admin_edit_url() == reverse("admin:vocab_term_change", args=(term.id,))
@@ -27,7 +59,7 @@ class TestTerm:
         assert term.deprecated is True
 
     def test_inheritance_ehv(self):
-        system, organ, effect, subtype, endpoint = chain(VocabularyNamespace.EHV, "ehv")
+        system, organ, effect, _subtype, endpoint = chain(VocabularyNamespace.EHV, "ehv")
         result = endpoint.inheritance()
         assert result["system"] == system.name
         assert result["organ"] == organ.name
@@ -36,10 +68,22 @@ class TestTerm:
 
     def test_inheritance_toxrefdb(self):
         system, effect, subtype, endpoint = None, None, None, None
-        system = make(Term, namespace=VocabularyNamespace.ToxRefDB, type=1, name="tox system", uid=8200)
-        effect = make(Term, namespace=VocabularyNamespace.ToxRefDB, type=3, parent=system, name="tox effect")
-        subtype = make(Term, namespace=VocabularyNamespace.ToxRefDB, type=4, parent=effect, name="tox subtype")
-        endpoint = make(Term, namespace=VocabularyNamespace.ToxRefDB, type=5, parent=subtype, name="tox endpoint")
+        system = make(
+            Term, namespace=VocabularyNamespace.ToxRefDB, type=1, name="tox system", uid=8200
+        )
+        effect = make(
+            Term, namespace=VocabularyNamespace.ToxRefDB, type=3, parent=system, name="tox effect"
+        )
+        subtype = make(
+            Term, namespace=VocabularyNamespace.ToxRefDB, type=4, parent=effect, name="tox subtype"
+        )
+        endpoint = make(
+            Term,
+            namespace=VocabularyNamespace.ToxRefDB,
+            type=5,
+            parent=subtype,
+            name="tox endpoint",
+        )
         result = endpoint.inheritance()
         assert result["system"] == system.name
         assert result["organ"] is None
@@ -63,6 +107,7 @@ class TestEntity:
         assert "C999999" in entity.get_external_url()
         assert str(relation) == f"{term} -> {entity}"
 
+
 @pytest.mark.django_db
 def test_invalid_namespace_and_unknown_ontology_raise():
     term = make(Term, namespace=99, type=1, name="invalid", uid=8900)
@@ -72,6 +117,7 @@ def test_invalid_namespace_and_unknown_ontology_raise():
     with pytest.raises(ValueError):
         entity.get_external_url()
 
+
 @pytest.mark.django_db
 def test_namespace_properties():
     assert VocabularyNamespace.display_choices()
@@ -80,11 +126,14 @@ def test_namespace_properties():
     assert VocabularyNamespace.EHV.display_url == reverse("vocab:ehv-browse")
     assert VocabularyNamespace.ToxRefDB.display_url == reverse("vocab:toxrefdb-browse")
 
+
 @pytest.mark.django_db
 def test_constants_mappings_and_admin_queryset():
     from django.contrib import admin
     from django.test import RequestFactory
+
     from hawc.apps.vocab.admin import TermAdmin
+
     assert VocabularyTermType.value_to_text_field()[5] == "name"
     assert VocabularyTermType.value_to_term_field()[5] == "name_term_id"
     admin_obj = TermAdmin(Term, admin.site)

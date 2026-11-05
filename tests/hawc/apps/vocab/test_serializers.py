@@ -1,27 +1,39 @@
 import pytest
-from model_bakery.baker import make
 from django.utils import timezone
-from hawc.apps.vocab.constants import Ontology, VocabularyTermType
-from hawc.apps.vocab.models import Entity, EntityTermRelation, Term
+from model_bakery.baker import make
+
+from hawc.apps.vocab.constants import Ontology
+from hawc.apps.vocab.models import Entity, Term
 from hawc.apps.vocab.serializers import EntitySerializer, SimpleTermSerializer, TermSerializer
+
 
 @pytest.mark.django_db
 def test_term_serializer_bulk_create_and_deprecated():
-    data = [{"uid": 8600, "name": "active", "type": 1}, {"uid": 8601, "name": "old", "type": 1, "deprecated": True}]
+    data = [
+        {"uid": 8600, "name": "active", "type": 1},
+        {"uid": 8601, "name": "old", "type": 1, "deprecated": True},
+    ]
     serializer = TermSerializer(data=data, many=True)
     assert serializer.is_valid(), serializer.errors
     created = serializer.save()
     assert created[0].deprecated_on is None
     assert created[1].deprecated_on is not None
 
+
 @pytest.mark.django_db
 def test_term_serializer_bulk_update_partial():
     first = make(Term, uid=8610, name="before")
     second = make(Term, uid=8611, name="unchanged")
-    serializer = TermSerializer(instance=Term.objects.filter(pk__in=[first.pk, second.pk]), data=[{"id": first.id, "name": "after"}, {"id": second.id, "name": second.name}], many=True, partial=True)
+    serializer = TermSerializer(
+        instance=Term.objects.filter(pk__in=[first.pk, second.pk]),
+        data=[{"id": first.id, "name": "after"}, {"id": second.id, "name": second.name}],
+        many=True,
+        partial=True,
+    )
     assert serializer.is_valid(), serializer.errors
     updated = serializer.save()
     assert any(item.id == first.id and item.name == "after" for item in updated)
+
 
 @pytest.mark.django_db
 def test_simple_and_entity_serializers():
@@ -31,6 +43,7 @@ def test_simple_and_entity_serializers():
     data = EntitySerializer(entity).data
     assert data["uid"] == "C8620"
     assert set(data) == {"id", "ontology", "uid"}
+
 
 @pytest.mark.django_db
 def test_serializer_validation_helpers():

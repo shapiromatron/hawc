@@ -1,5 +1,6 @@
 import pytest
 from model_bakery.baker import make
+
 from hawc.apps.animal.models import Endpoint, Study
 from hawc.apps.vocab.constants import VocabularyNamespace, VocabularyTermType
 from hawc.apps.vocab.models import Term
@@ -27,7 +28,7 @@ def baked_endpoint(field, uid, assessment_id=None):
     ],
 )
 def test_assessment_manager_returns_baked_nonzero(method, field, uid):
-    study, term, endpoint = baked_endpoint(field, uid)
+    study, term, _endpoint = baked_endpoint(field, uid)
     result = getattr(Term.objects, method)(study.assessment_id)
     assert result.filter(pk=term.pk).count() == 1
     assert result.count() > 0

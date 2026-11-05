@@ -2,9 +2,11 @@ import pytest
 from django.urls import reverse
 from model_bakery.baker import make
 from rest_framework.test import APIClient
+
 from hawc.apps.myuser.models import HAWCUser
 from hawc.apps.vocab.constants import VocabularyNamespace, VocabularyTermType
 from hawc.apps.vocab.models import Term
+
 
 @pytest.mark.django_db
 @pytest.mark.parametrize("name", ["vocab:ehv-browse", "vocab:toxrefdb-browse"])
