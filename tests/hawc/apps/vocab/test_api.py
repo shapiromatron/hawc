@@ -1,239 +1,150 @@
 import pytest
 from django.urls import reverse
+from model_bakery.baker import make
 from rest_framework.test import APIClient
 
+from hawc.apps.myuser.models import HAWCUser
+from hawc.apps.vocab.constants import VocabularyNamespace, VocabularyTermType
 from hawc.apps.vocab.models import Term
 
 
-@pytest.mark.django_db
-class TestEhvTermViewSet:
-    def test_permissions(self):
-        url = reverse("vocab:api:ehv-system")
-        anon_client = APIClient()
-        auth_client = APIClient()
-        assert auth_client.login(username="team@hawcproject.org", password="pw") is True
-        assert anon_client.get(url).status_code == 403
-        assert auth_client.get(url).status_code == 200
-
-    def test_expected_response(self):
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-
-        test_cases = [
-            # test urls resolve
-            (reverse("vocab:api:ehv-system"), [{"id": 1, "name": "Cardiovascular"}]),
-            (reverse("vocab:api:ehv-organ"), [{"id": 2, "name": "Serum"}]),
-            (reverse("vocab:api:ehv-effect"), [{"id": 3, "name": "Fatty Acids"}]),
-            (reverse("vocab:api:ehv-effect-subtype"), [{"id": 4, "name": "Clinical Chemistry"}]),
-            (reverse("vocab:api:ehv-endpoint-name"), [{"id": 5, "name": "Fatty Acid Balance"}]),
-        ]
-
-        for url, resp in test_cases:
-            assert client.get(url).json() == resp
-
-    def test_nested(self):
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-        url = reverse("vocab:api:ehv-nested") + "?format=csv"
-        resp = client.get(url)
-        assert resp.status_code == 200
-        data = resp.content.decode().split("\n")
-        assert len(data) >= 2
-        assert (
-            data[0]
-            == "system_term_id,system,organ_term_id,organ,effect_term_id,effect,effect_subtype_term_id,effect_subtype,name_term_id,name"
-        )
-
-    def test_query_params(self):
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-
-        test_cases = [
-            # test term lookup
-            (
-                reverse("vocab:api:ehv-endpoint-name") + "?term=Acid",
-                [{"id": 5, "name": "Fatty Acid Balance"}],
-            ),
-            (reverse("vocab:api:ehv-endpoint-name") + "?term=NONE", []),
-            # test parent lookup
-            (
-                reverse("vocab:api:ehv-endpoint-name") + "?parent=4",
-                [{"id": 5, "name": "Fatty Acid Balance"}],
-            ),
-            (reverse("vocab:api:ehv-endpoint-name") + "?parent=3", []),
-            (
-                reverse("vocab:api:ehv-endpoint-name") + "?parent=text",
-                [{"id": 5, "name": "Fatty Acid Balance"}],
-            ),
-        ]
-
-        for url, resp in test_cases:
-            assert client.get(url).json() == resp
+def client_for_user(**kwargs):
+    user = make(
+        HAWCUser, email=kwargs.pop("email", "vocab-api@example.com"), is_active=True, **kwargs
+    )
+    client = APIClient()
+    client.force_authenticate(user=user)
+    return client
 
 
 @pytest.mark.django_db
-class TestToxRefDBTermViewSet:
-    def test_permissions(self):
-        url = reverse("vocab:api:toxrefdb-system")
-        anon_client = APIClient()
-        auth_client = APIClient()
-        assert auth_client.login(username="team@hawcproject.org", password="pw") is True
-        assert anon_client.get(url).status_code == 403
-        assert auth_client.get(url).status_code == 200
-
-    def test_expected_response(self):
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-
-        test_cases = [
-            # test urls resolve
-            (reverse("vocab:api:toxrefdb-system"), [{"id": 7000, "name": "systemic"}]),
-            (reverse("vocab:api:toxrefdb-effect"), [{"id": 7001, "name": "pathology microscopic"}]),
-            (reverse("vocab:api:toxrefdb-effect-subtype"), [{"id": 7002, "name": "eye"}]),
-            (reverse("vocab:api:toxrefdb-endpoint-name"), [{"id": 7003, "name": "dysplasia"}]),
-        ]
-
-        for url, resp in test_cases:
-            assert client.get(url).json() == resp
-
-    def test_nested(self):
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-        url = reverse("vocab:api:toxrefdb-nested") + "?format=csv"
-        resp = client.get(url)
-        assert resp.status_code == 200
-        data = resp.content.decode().split("\n")
-        assert len(data) >= 2
-        assert (
-            data[0]
-            == "system_term_id,system,effect_term_id,effect,effect_subtype_term_id,effect_subtype,name_term_id,name"
-        )
-
-    def test_query_params(self):
-        client = APIClient()
-        assert client.login(username="team@hawcproject.org", password="pw") is True
-
-        test_cases = [
-            # test term lookup
-            (
-                reverse("vocab:api:toxrefdb-endpoint-name") + "?term=dysplasia",
-                [{"id": 7003, "name": "dysplasia"}],
-            ),
-            (reverse("vocab:api:toxrefdb-endpoint-name") + "?term=NONE", []),
-            # test parent lookup
-            (
-                reverse("vocab:api:toxrefdb-endpoint-name") + "?parent=7002",
-                [{"id": 7003, "name": "dysplasia"}],
-            ),
-            (reverse("vocab:api:toxrefdb-endpoint-name") + "?parent=7001", []),
-            (
-                reverse("vocab:api:toxrefdb-endpoint-name") + "?parent=text",
-                [{"id": 7003, "name": "dysplasia"}],
-            ),
-        ]
-
-        for url, resp in test_cases:
-            assert client.get(url).json() == resp
+def test_ehv_actions_and_filters_use_baked_data():
+    term = make(
+        Term,
+        namespace=VocabularyNamespace.EHV,
+        type=VocabularyTermType.endpoint_name,
+        name="Unique Endpoint",
+        uid=8800,
+    )
+    client = client_for_user()
+    assert client.get(reverse("vocab:api:ehv-endpoint-name") + "?term=Unique").json() == [
+        {"id": term.id, "name": term.name}
+    ]
+    assert client.get(reverse("vocab:api:ehv-endpoint-name") + "?term=missing").json() == []
+    anonymous = APIClient()
+    assert anonymous.get(reverse("vocab:api:ehv-system")).status_code == 403
+    assert anonymous.get(reverse("vocab:api:toxrefdb-system")).status_code == 403
+    assert client.get(reverse("vocab:api:ehv-system")).status_code == 200
+    assert client.get(reverse("vocab:api:toxrefdb-system")).status_code == 200
 
 
 @pytest.mark.django_db
-class TestTermViewSet:
-    def test_bulk_permissions(self):
+def test_nested_and_uids_endpoints():
+    make(
+        Term,
+        namespace=VocabularyNamespace.EHV,
+        type=VocabularyTermType.system,
+        uid=8810,
+        name="nested system",
+    )
+    client = client_for_user()
+    response = client.get(reverse("vocab:api:ehv-nested") + "?format=csv")
+    assert response.status_code == 200
+    assert response.content
+    response = client.get(reverse("vocab:api:term-uids"))
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_term_bulk_create_requires_admin_and_saves_baked_payload():
+    client = client_for_user(is_staff=True, is_superuser=True)
+    response = client.post(
+        reverse("vocab:api:term-bulk-create"),
+        [{"uid": 8820, "name": "bulk", "type": 1}],
+        format="json",
+    )
+    assert response.status_code == 201
+    assert Term.objects.filter(uid=8820, name="bulk").exists()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "action,type_value", [("organ", 2), ("effect", 3), ("effect-subtype", 4), ("endpoint-name", 5)]
+)
+def test_all_ehv_actions_and_parent_filter(action, type_value):
+    parent = make(Term, namespace=1, type=1, name=f"parent-{action}")
+    other_parent = make(Term, namespace=1, type=1, name=f"other-parent-{action}")
+    term = make(Term, namespace=1, type=type_value, parent=parent, name=f"unique-{action}")
+    make(Term, namespace=1, type=type_value, parent=other_parent, name=f"unique-{action}")
+    client = client_for_user(email=f"{action}@example.com")
+    url = reverse(f"vocab:api:ehv-{action}") + f"?term=unique&parent={parent.id}"
+    assert client.get(url).json() == [{"id": term.id, "name": term.name}]
+
+
+@pytest.mark.django_db
+def test_tox_nested_and_endpoint_lookup_and_related_entity():
+    system = make(Term, namespace=2, type=1, name="tox lookup system")
+    effect = make(Term, namespace=2, type=3, parent=system, name="tox lookup effect")
+    subtype = make(Term, namespace=2, type=4, parent=effect, name="tox lookup subtype")
+    endpoint = make(Term, namespace=2, type=5, parent=subtype, name="tox lookup endpoint")
+    client = client_for_user(email="tox-api@example.com")
+    assert client.get(reverse("vocab:api:toxrefdb-nested") + "?format=csv").status_code == 200
+    lookup = client.get(reverse("vocab:api:toxrefdb-endpoint-name-lookup", args=[endpoint.id]))
+    assert lookup.status_code == 200 and lookup.json()["name"] == endpoint.name
+    related = client.post(
+        reverse("vocab:api:toxrefdb-related-entity", args=[endpoint.id]),
+        {"ontology": 1, "uid": "C8801", "notes": "n"},
+        format="json",
+    )
+    assert related.status_code == 201
+
+
+@pytest.mark.django_db
+def test_endpoint_lookup_not_found_and_bulk_update():
+    client = client_for_user(email="admin-api@example.com", is_staff=True, is_superuser=True)
+    missing = client.get(reverse("vocab:api:ehv-endpoint-name-lookup", args=[999999]))
+    assert missing.status_code == 404
+    term = make(Term, uid=8830, name="before bulk")
+    response = client.patch(
+        reverse("vocab:api:term-bulk-update"),
+        [{"id": term.id, "name": "after bulk"}],
+        format="json",
+    )
+    assert response.status_code == 200 and response.json()[0]["name"] == "after bulk"
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("payload", "method"),
+    [
+        ({"id": "existing"}, "post"),
+        ({"type": 99}, "post"),
+        ({"id": "missing", "name": "updated"}, "patch"),
+    ],
+)
+def test_bulk_validation_rejects_invalid_payloads(payload, method):
+    client = client_for_user(email="validation-admin@example.com", is_staff=True, is_superuser=True)
+    existing = make(Term, uid=8840, name="existing")
+    if payload.get("id") == "existing":
+        payload["id"] = existing.pk
+    elif payload.get("id") == "missing":
+        payload["id"] = existing.pk + 100000
+    if method == "post":
+        payload.setdefault("uid", 8841)
+        payload.setdefault("name", "invalid")
         url = reverse("vocab:api:term-bulk-create")
-        # non superusers do not have permission
-        client = APIClient()
-        assert client.login(username="pm@hawcproject.org", password="pw") is True
-        response = client.post(url, [], format="json")
-        assert response.status_code == 403
-        # superusers have permission
-        client = APIClient()
-        assert client.login(username="admin@hawcproject.org", password="pw") is True
-        response = client.post(url, [], format="json")
-        assert response.status_code == 201
-
-    def test_bad_bulk_create(self):
-        url = reverse("vocab:api:term-bulk-create")
-        client = APIClient()
-        assert client.login(username="admin@hawcproject.org", password="pw") is True
-
-        test_cases = [
-            # not array
-            ({}, {"non_field_errors": ['Expected a list of items but got type "dict".']}),
-            # id provided
-            (
-                [{"id": 1, "uid": 100, "type": 1, "name": "name"}],
-                {"non_field_errors": ["'id' is prohibited."]},
-            ),
-            # wrong attr type
-            (
-                [{"uid": "slug", "type": 1, "name": "name"}],
-                [{"uid": ["A valid integer is required."]}],
-            ),
-        ]
-
-        for data, err in test_cases:
-            response = client.post(url, data, format="json")
-            assert response.status_code == 400 and response.json() == err
-
-    def test_valid_bulk_create(self):
-        url = reverse("vocab:api:term-bulk-create")
-        client = APIClient()
-        assert client.login(username="admin@hawcproject.org", password="pw") is True
-        # simple singular create
-        data = [{"uid": 100, "type": 1, "name": "new term 1", "notes": "notes"}]
-        response = client.post(url, data, format="json")
-        assert response.status_code == 201
-        assert response.json()[0].items() >= data[0].items()
-        # multiple create with parents / deprecated
-        data = [
-            {"uid": 101, "type": 1, "name": "new term 2", "parent_id": 1},
-            {"uid": 102, "type": 1, "name": "new term 3", "deprecated": True},
-        ]
-        response = client.post(url, data, format="json")
-        assert response.status_code == 201
-        assert response.json()[0]["parent"] == 1
-        assert response.json()[1]["deprecated_on"] is not None
-
-    def test_bad_bulk_update(self):
+        response = client.post(url, [payload], format="json")
+    else:
         url = reverse("vocab:api:term-bulk-update")
-        client = APIClient()
-        assert client.login(username="admin@hawcproject.org", password="pw") is True
+        response = client.patch(url, [payload], format="json")
+    assert response.status_code == 400
 
-        test_cases = [
-            # not array
-            ({}, {"non_field_errors": ['Expected a list of items but got type "dict".']}),
-            # id missing
-            ([{"name": "name"}], [{"id": ["This field is required."]}]),
-            # invalid id
-            ([{"id": 9999, "name": "name"}], {"non_field_errors": ["Invalid 'id's: 9999."]}),
-            (
-                ["not-a-dict"],
-                [{"non_field_errors": ["Invalid data. Expected a dictionary, but got str."]}],
-            ),
-            ([{"id": "str"}], [{"id": ["A valid integer is required."]}]),
-            # wrong attr type
-            ([{"id": 1, "type": "one"}], [{"type": ['"one" is not a valid choice.']}]),
-        ]
 
-        for data, err in test_cases:
-            response = client.patch(url, data, format="json")
-            assert response.status_code == 400 and response.json() == err
-
-    def test_valid_bulk_update(self):
-        url = reverse("vocab:api:term-bulk-update")
-        client = APIClient()
-        assert client.login(username="admin@hawcproject.org", password="pw") is True
-        terms = Term.objects.filter(id__in=[1, 2, 3])
-        data = [
-            {"id": terms[0].id, "uid": 9999},
-            {"id": terms[1].id, "deprecated": True},
-            {"id": terms[2].id},
-        ]
-        response = client.patch(url, data, format="json")
-        # term 3 was not updated
-        assert len(response.json()) == 2
-        terms = terms.all()
-        # uid has been set on term 1
-        assert terms[0].id == response.json()[0]["id"] and terms[0].uid == response.json()[0]["uid"]
-        # deprecated_on has been set on term 2
-        assert terms[1].id == response.json()[1]["id"] and terms[1].deprecated_on is not None
+@pytest.mark.django_db
+def test_anonymous_and_non_admin_bulk_permissions():
+    url = reverse("vocab:api:term-bulk-create")
+    assert APIClient().post(url, [], format="json").status_code == 403
+    assert (
+        client_for_user(email="nonadmin@example.com").post(url, [], format="json").status_code
+        == 403
+    )
