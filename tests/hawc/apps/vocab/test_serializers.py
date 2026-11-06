@@ -32,7 +32,11 @@ def test_term_serializer_bulk_update_partial():
     )
     assert serializer.is_valid(), serializer.errors
     updated = serializer.save()
-    assert any(item.id == first.id and item.name == "after" for item in updated)
+    assert [item.id for item in updated] == [first.id]
+    first.refresh_from_db()
+    second.refresh_from_db()
+    assert first.name == "after"
+    assert second.name == "unchanged"
 
 
 @pytest.mark.django_db

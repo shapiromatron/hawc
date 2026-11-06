@@ -1,57 +1,35 @@
-from hawc_client.vocab import VocabClient
+import pytest
+from django.test import LiveServerTestCase, TestCase
+
+from hawc_client import HawcClient
 
 
-class FakeResponse:
-    def __init__(self, payload):
-        self.payload = payload
+@pytest.mark.usefixtures("set_db_keys")
+class TestVocabClient(LiveServerTestCase, TestCase):
+    """Exercise vocabulary client methods against the live Django server."""
 
-    def json(self):
-        return self.payload
+    def setUp(self):
+        self.client = HawcClient(self.live_server_url)
+        self.client.authenticate("admin@hawcproject.org", "pw")
 
+    def test_bulk_create_posts_terms_and_returns_json(self):
+        result = self.client.vocab.bulk_create([{"uid": 9100, "name": "system", "type": 1}])
 
-class FakeSession:
-    root_url = "https://hawc.example"
+        assert result[0]["uid"] == 9100
+        assert result[0]["name"] == "system"
+        assert "id" in result[0]
 
-    def __init__(self):
-        self.calls = []
+    def test_bulk_update_patches_terms_and_returns_json(self):
+        created = self.client.vocab.bulk_create([{"uid": 9101, "name": "before", "type": 1}])[0]
 
-    def post(self, url, payload):
-        self.calls.append(("post", url, payload))
-        return FakeResponse([{"id": 1, **payload[0]}])
+        result = self.client.vocab.bulk_update([{"id": created["id"], "name": "updated"}])
 
-    def patch(self, url, payload):
-        self.calls.append(("patch", url, payload))
-        return FakeResponse([{"id": 1, **payload[0]}])
+        assert result[0]["id"] == created["id"]
+        assert result[0]["name"] == "updated"
 
-    def get(self, url):
-        self.calls.append(("get", url))
-        return FakeResponse([[1, 100]])
+    def test_uids_gets_id_uid_pairs(self):
+        created = self.client.vocab.bulk_create([{"uid": 9102, "name": "uids", "type": 1}])[0]
 
+        result = self.client.vocab.uids()
 
-def test_bulk_create_posts_terms_and_returns_json():
-    session = FakeSession()
-    terms = [{"uid": 100, "name": "system"}]
-
-    result = VocabClient(session).bulk_create(terms)
-
-    assert result == [{"id": 1, "uid": 100, "name": "system"}]
-    assert session.calls == [("post", "https://hawc.example/vocab/api/term/bulk-create/", terms)]
-
-
-def test_bulk_update_patches_terms_and_returns_json():
-    session = FakeSession()
-    terms = [{"id": 1, "name": "updated"}]
-
-    result = VocabClient(session).bulk_update(terms)
-
-    assert result == [{"id": 1, "name": "updated"}]
-    assert session.calls == [("patch", "https://hawc.example/vocab/api/term/bulk-update/", terms)]
-
-
-def test_uids_gets_id_uid_pairs():
-    session = FakeSession()
-
-    result = VocabClient(session).uids()
-
-    assert result == [[1, 100]]
-    assert session.calls == [("get", "https://hawc.example/vocab/api/term/uids/")]
+        assert [created["id"], 9102] in result

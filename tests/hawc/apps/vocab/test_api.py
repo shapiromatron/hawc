@@ -31,7 +31,11 @@ def test_ehv_actions_and_filters_use_baked_data():
         {"id": term.id, "name": term.name}
     ]
     assert client.get(reverse("vocab:api:ehv-endpoint-name") + "?term=missing").json() == []
+    anonymous = APIClient()
+    assert anonymous.get(reverse("vocab:api:ehv-system")).status_code == 403
+    assert anonymous.get(reverse("vocab:api:toxrefdb-system")).status_code == 403
     assert client.get(reverse("vocab:api:ehv-system")).status_code == 200
+    assert client.get(reverse("vocab:api:toxrefdb-system")).status_code == 200
 
 
 @pytest.mark.django_db
@@ -69,7 +73,9 @@ def test_term_bulk_create_requires_admin_and_saves_baked_payload():
 )
 def test_all_ehv_actions_and_parent_filter(action, type_value):
     parent = make(Term, namespace=1, type=1, name=f"parent-{action}")
+    other_parent = make(Term, namespace=1, type=1, name=f"other-parent-{action}")
     term = make(Term, namespace=1, type=type_value, parent=parent, name=f"unique-{action}")
+    make(Term, namespace=1, type=type_value, parent=other_parent, name=f"unique-{action}")
     client = client_for_user(email=f"{action}@example.com")
     url = reverse(f"vocab:api:ehv-{action}") + f"?term=unique&parent={parent.id}"
     assert client.get(url).json() == [{"id": term.id, "name": term.name}]
@@ -105,6 +111,33 @@ def test_endpoint_lookup_not_found_and_bulk_update():
         format="json",
     )
     assert response.status_code == 200 and response.json()[0]["name"] == "after bulk"
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("payload", "method"),
+    [
+        ({"id": "existing"}, "post"),
+        ({"type": 99}, "post"),
+        ({"id": "missing", "name": "updated"}, "patch"),
+    ],
+)
+def test_bulk_validation_rejects_invalid_payloads(payload, method):
+    client = client_for_user(email="validation-admin@example.com", is_staff=True, is_superuser=True)
+    existing = make(Term, uid=8840, name="existing")
+    if payload.get("id") == "existing":
+        payload["id"] = existing.pk
+    elif payload.get("id") == "missing":
+        payload["id"] = existing.pk + 100000
+    if method == "post":
+        payload.setdefault("uid", 8841)
+        payload.setdefault("name", "invalid")
+        url = reverse("vocab:api:term-bulk-create")
+        response = client.post(url, [payload], format="json")
+    else:
+        url = reverse("vocab:api:term-bulk-update")
+        response = client.patch(url, [payload], format="json")
+    assert response.status_code == 400
 
 
 @pytest.mark.django_db

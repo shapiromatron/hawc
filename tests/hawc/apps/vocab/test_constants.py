@@ -4,9 +4,11 @@ import pytest
 from django.contrib import admin
 from django.test import RequestFactory
 from django.urls import reverse
+from model_bakery.baker import make
 
 from hawc.apps.vocab.admin import TermAdmin
 from hawc.apps.vocab.constants import VocabularyNamespace, VocabularyTermType
+from hawc.apps.vocab.models import Term
 
 
 @pytest.mark.django_db
@@ -26,11 +28,9 @@ def test_constants_mappings_and_admin_queryset():
     assert VocabularyTermType.value_to_text_field()[5] == "name"
     assert VocabularyTermType.value_to_term_field()[5] == "name_term_id"
 
-    # Test admin queryset returns non-zero count (admin is not model-specific)
-    # Import Term here since it's needed for the admin test
-    from hawc.apps.vocab.models import Term
-
+    # Test the admin queryset against data created in this test.
+    term = make(Term, uid=8920, name="admin term")
     admin_obj = TermAdmin(Term, admin.site)
     request = RequestFactory().get("/admin/vocab/term/")
-    assert admin_obj.get_queryset(request).count() >= 1
+    assert admin_obj.get_queryset(request).filter(pk=term.pk).exists()
     assert admin_obj.has_delete_permission(request) is False

@@ -41,6 +41,37 @@ def chain(namespace, prefix):
     return system, organ, effect, subtype, endpoint
 
 
+def tox_chain(prefix):
+    system = make(
+        Term,
+        namespace=VocabularyNamespace.ToxRefDB,
+        type=VocabularyTermType.system,
+        name=f"{prefix} system",
+    )
+    effect = make(
+        Term,
+        namespace=VocabularyNamespace.ToxRefDB,
+        type=VocabularyTermType.effect,
+        parent=system,
+        name=f"{prefix} effect",
+    )
+    subtype = make(
+        Term,
+        namespace=VocabularyNamespace.ToxRefDB,
+        type=VocabularyTermType.effect_subtype,
+        parent=effect,
+        name=f"{prefix} subtype",
+    )
+    endpoint = make(
+        Term,
+        namespace=VocabularyNamespace.ToxRefDB,
+        type=VocabularyTermType.endpoint_name,
+        parent=subtype,
+        name=f"{prefix} endpoint",
+    )
+    return system, effect, subtype, endpoint
+
+
 @pytest.mark.django_db
 class TestTerm:
     def test_attributes_and_deprecated(self):
@@ -67,33 +98,19 @@ class TestTerm:
         assert result["name_term_id"] == endpoint.id
 
     def test_inheritance_toxrefdb(self):
-        system, effect, subtype, endpoint = None, None, None, None
-        system = make(
-            Term, namespace=VocabularyNamespace.ToxRefDB, type=1, name="tox system", uid=8200
-        )
-        effect = make(
-            Term, namespace=VocabularyNamespace.ToxRefDB, type=3, parent=system, name="tox effect"
-        )
-        subtype = make(
-            Term, namespace=VocabularyNamespace.ToxRefDB, type=4, parent=effect, name="tox subtype"
-        )
-        endpoint = make(
-            Term,
-            namespace=VocabularyNamespace.ToxRefDB,
-            type=5,
-            parent=subtype,
-            name="tox endpoint",
-        )
+        system, effect, _subtype, endpoint = tox_chain("tox")
         result = endpoint.inheritance()
         assert result["system"] == system.name
         assert result["organ"] is None
+        assert result["effect_term_id"] == effect.id
         assert result["name"] == endpoint.name
 
     def test_dataframes(self):
         chain(VocabularyNamespace.EHV, "df ehv")
-        make(Term, namespace=VocabularyNamespace.ToxRefDB, type=1, name="df tox", uid=8300)
+        _system, _effect, _subtype, endpoint = tox_chain("df tox")
         assert not Term.ehv_dataframe().empty
-        assert not Term.toxrefdb_dataframe().empty
+        toxrefdb = Term.toxrefdb_dataframe()
+        assert endpoint.name in toxrefdb["name"].values
         assert not Term.vocab_dataframe(VocabularyNamespace.EHV).empty
 
 
@@ -116,27 +133,3 @@ def test_invalid_namespace_and_unknown_ontology_raise():
     entity = make(Entity, ontology=99, uid="bad-ontology")
     with pytest.raises(ValueError):
         entity.get_external_url()
-
-
-@pytest.mark.django_db
-def test_namespace_properties():
-    assert VocabularyNamespace.display_choices()
-    assert VocabularyNamespace.EHV.display_name.startswith("EPA")
-    assert VocabularyNamespace.ToxRefDB.display_name.startswith("EPA")
-    assert VocabularyNamespace.EHV.display_url == reverse("vocab:ehv-browse")
-    assert VocabularyNamespace.ToxRefDB.display_url == reverse("vocab:toxrefdb-browse")
-
-
-@pytest.mark.django_db
-def test_constants_mappings_and_admin_queryset():
-    from django.contrib import admin
-    from django.test import RequestFactory
-
-    from hawc.apps.vocab.admin import TermAdmin
-
-    assert VocabularyTermType.value_to_text_field()[5] == "name"
-    assert VocabularyTermType.value_to_term_field()[5] == "name_term_id"
-    admin_obj = TermAdmin(Term, admin.site)
-    request = RequestFactory().get("/admin/vocab/term/")
-    assert admin_obj.get_queryset(request).count() >= 1
-    assert admin_obj.has_delete_permission(request) is False
