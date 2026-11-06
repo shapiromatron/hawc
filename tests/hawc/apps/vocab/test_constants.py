@@ -25,11 +25,11 @@ def test_constants_mappings_and_admin_queryset():
     # Verify constant mappings
     assert VocabularyTermType.value_to_text_field()[5] == "name"
     assert VocabularyTermType.value_to_term_field()[5] == "name_term_id"
-    
+
     # Test admin queryset returns non-zero count (admin is not model-specific)
     # Import Term here since it's needed for the admin test
     from hawc.apps.vocab.models import Term
-    
+
     admin_obj = TermAdmin(Term, admin.site)
     request = RequestFactory().get("/admin/vocab/term/")
     assert admin_obj.get_queryset(request).count() >= 1
