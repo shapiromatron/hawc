@@ -235,6 +235,11 @@ class ExploreHeatmapPlot {
                     ? settings.x_fields[i].wrap_text
                     : AUTOROTATE_TEXT_WRAP_X;
 
+            // if horizontal x axis tick rotation is 0, set wrap_text to cell width
+            if (x_tick_rotate === 0) {
+                wrap_text = settings.cell_width;
+            }
+
             for (let j = 0; j <= this.xs.length; j++) {
                 thisItem = j < this.xs.length ? this.xs[j] : null;
                 if (
@@ -288,7 +293,12 @@ class ExploreHeatmapPlot {
                     .attr("y", 0)
                     .attr("transform", `rotate(${x_tick_rotate})`)
                     .text("Grand Total")
-                    .style("font-weight", "bold");
+                    .style("font-weight", "bold")
+                    .each(function () {
+                        if (wrap_text) {
+                            HAWCUtils.wrapText(this, wrap_text);
+                        }
+                    });
 
                 let box = label.node().getBBox(),
                     label_x_offset =
@@ -431,7 +441,12 @@ class ExploreHeatmapPlot {
                     .attr("y", 0)
                     .attr("transform", `rotate(${y_tick_rotate})`)
                     .text("Grand Total")
-                    .style("font-weight", "bold");
+                    .style("font-weight", "bold")
+                    .each(function () {
+                        if (wrap_text) {
+                            HAWCUtils.wrapText(this, wrap_text);
+                        }
+                    });
 
                 let box = label.node().getBBox(),
                     label_y_offset =
