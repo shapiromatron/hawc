@@ -62,7 +62,12 @@ _keys = Keys()
 
 
 @pytest.fixture(scope="session", autouse=True)
-def test_db(django_db_setup, django_db_blocker):
+def test_db(request, django_db_blocker):
+    """Load the fixture database only when the selected tests use the database."""
+    if not any(item.get_closest_marker("django_db") for item in request.session.items):
+        return
+
+    request.getfixturevalue("django_db_setup")
     logging.info("Loading db fixture...")
     with django_db_blocker.unblock():
         call_command("load_test_db")

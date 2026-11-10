@@ -160,7 +160,7 @@ omit = [
   "./hawc/main/*",
   "./scripts/private/*",
   "./tests/*",
-  "./venv/*",
+  "./.venv/*",
 ]
 
 [tool.coverage.report]
