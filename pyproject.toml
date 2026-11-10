@@ -146,7 +146,7 @@ known-first-party = ["hawc", "hawc_client"]
 
 # --- --- --- --- --- --- --- --- --- --- TEST --- --- --- --- --- --- --- --- --- ---
 [tool.pytest.ini_options]
-addopts = "--ds=hawc.main.settings.unittest --record-mode=once --reuse-db --nomigrations --dist loadscope"
+addopts = "--ds=hawc.main.settings.unittest --record-mode=once --reuse-db --nomigrations"
 testpaths = [
   "tests/hawc",
   "tests/integration",
@@ -268,7 +268,7 @@ sequence = [
 
 [tool.poe.tasks.coverage]
 help = "Run python coverage and create HTML report"
-cmd = "pytest -n auto --maxprocesses=6 --dist=loadfile --cov=hawc --cov-report html"
+cmd = "pytest -n auto --maxprocesses=6 --dist=loadfile --cov=hawc --cov=client --cov-report html"
 
 [tool.poe.tasks.loc]
 help = "Generate lines of code report"
