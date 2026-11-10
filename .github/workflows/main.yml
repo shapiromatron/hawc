@@ -59,8 +59,8 @@ jobs:
         DJANGO_DB_USER: hawc
         DJANGO_DB_PW: password
         DJANGO_DB_HOST: localhost
-        PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
         DJANGO_CACHE_LOCATION: redis://localhost:6379/0
+        PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
         uv run coverage run -m pytest -v --block-network --allowed-hosts=127.0.0.1,::1 --record-mode=none
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
@@ -158,13 +158,13 @@ jobs:
       id: test
       continue-on-error: true
       run: |
-        uv run py.test -v --block-network --allowed-hosts=127.0.0.1,::1 tests/integration/
+        uv run py.test -v --block-network --allowed-hosts=127.0.0.1,::1 tests/integration/ -p no:xdist -p no:cov
     - name: run integration tests (retry)
       if: steps.test.outcome=='failure'
       id: retry
       continue-on-error: true
       run: |
-        uv run py.test -v --block-network --allowed-hosts=127.0.0.1,::1 --lf tests/integration/
+        uv run py.test -v --block-network --allowed-hosts=127.0.0.1,::1 --lf tests/integration/ -p no:xdist -p no:cov
     - name: set status
       if: always()
       run: |
