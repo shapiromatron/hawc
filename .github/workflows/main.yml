@@ -158,13 +158,13 @@ jobs:
       id: test
       continue-on-error: true
       run: |
-        uv run py.test -v --block-network --allowed-hosts=127.0.0.1,::1 tests/integration/
+        uv run py.test -v --block-network --allowed-hosts=127.0.0.1,::1 tests/integration/ -p no:xdist -p no:cov
     - name: run integration tests (retry)
       if: steps.test.outcome=='failure'
       id: retry
       continue-on-error: true
       run: |
-        uv run py.test -v --block-network --allowed-hosts=127.0.0.1,::1 --lf tests/integration/
+        uv run py.test -v --block-network --allowed-hosts=127.0.0.1,::1 --lf tests/integration/ -p no:xdist -p no:cov
     - name: set status
       if: always()
       run: |

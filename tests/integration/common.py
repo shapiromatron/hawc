@@ -10,7 +10,14 @@ if RUN_INTEGRATION:
     os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 
+def _database_marker(cls):
+    if RUN_INTEGRATION:
+        return pytest.mark.django_db(cls)
+    return cls
+
+
 @pytest.mark.skipif(not RUN_INTEGRATION, reason="integration test")
+@_database_marker
 class PlaywrightTestCase(StaticLiveServerTestCase, TestCase):
     """
     We use a single class that inherits from both StaticLiveServerTestCase and TestCase
