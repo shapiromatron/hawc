@@ -28,6 +28,11 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
         ports:
         - 5432:5432
+      redis:
+        image: redis:6-alpine
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+        - 6379:6379
 
     steps:
     - uses: actions/checkout@v7
@@ -55,6 +60,7 @@ jobs:
         DJANGO_DB_PW: password
         DJANGO_DB_HOST: localhost
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
+        DJANGO_CACHE_LOCATION: redis://localhost:6379/0
       run: |
         uv run coverage run -m pytest -v --block-network --allowed-hosts=127.0.0.1,::1 --record-mode=none
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY

@@ -24,13 +24,6 @@ DATABASES["default"]["TEST"] = {"NAME": "hawc-test"}
 
 IS_TESTING = True
 
-# Keep test workers isolated from a shared Redis cache. LocMemCache is process-local,
-# so cache.clear() in one worker cannot affect another worker's tests.
-CACHES["default"] = {
-    "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-    "LOCATION": "hawc-test-cache",
-}
-
 PRIVATE_DATA_ROOT = PROJECT_ROOT / "tests/data/private-data"
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
