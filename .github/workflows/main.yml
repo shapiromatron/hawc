@@ -56,7 +56,7 @@ jobs:
         DJANGO_DB_HOST: localhost
         PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
       run: |
-        uv run coverage run -m pytest -v -n auto --block-network --allowed-hosts=127.0.0.1,::1 --record-mode=none
+        uv run coverage run -m pytest -v --block-network --allowed-hosts=127.0.0.1,::1 --record-mode=none
         echo "# Python coverage report" >> $GITHUB_STEP_SUMMARY
         uv run coverage report --format=markdown -i >> $GITHUB_STEP_SUMMARY || true
         uv run coverage html -d coverage -i
