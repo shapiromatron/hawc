@@ -90,6 +90,9 @@ dev = [
   "mkdocs-material~=9.7.0",
   # hawc client (testing)
   "hawc-client",
+  # parallel test execution
+  "pytest-xdist~=3.8",
+  "pytest-cov~=7.1",
 ]
 
 [project.scripts]
@@ -144,7 +147,7 @@ known-first-party = ["hawc", "hawc_client"]
 
 # --- --- --- --- --- --- --- --- --- --- TEST --- --- --- --- --- --- --- --- --- ---
 [tool.pytest.ini_options]
-addopts = "--ds=hawc.main.settings.unittest --record-mode=once --reuse-db --nomigrations"
+addopts = "--ds=hawc.main.settings.unittest --record-mode=once --reuse-db --nomigrations --dist loadscope"
 testpaths = [
   "tests/hawc",
   "tests/integration",
@@ -153,7 +156,7 @@ testpaths = [
 
 [tool.coverage.run]
 omit = [
-  "*migrations*",
+  "**/migrations/**",
   "./build/",
   "./client/hawc_client/interactive.py",
   "./hawc/apps/*/management/*",
@@ -266,10 +269,7 @@ sequence = [
 
 [tool.poe.tasks.coverage]
 help = "Run python coverage and create HTML report"
-sequence = [
-  {cmd = "coverage run -m pytest"},
-  {cmd = "coverage html -d coverage_html -i"},
-]
+cmd = "pytest -n auto --maxprocesses=6 --dist=loadfile --cov=hawc --cov-report html"
 
 [tool.poe.tasks.loc]
 help = "Generate lines of code report"
