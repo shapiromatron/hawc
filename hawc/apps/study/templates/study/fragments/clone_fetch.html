@@ -1,7 +1,7 @@
 <form>
   <h3>Source assessment: <a href="{{ src_assessment.get_absolute_url }}" {% anchor_new_tab %}>{{ src_assessment }}</a></h3>
   <p class="text-muted">Select which studies from the selected assessment to copy into this assessment.</p>
-  <table id="src-studies-table" class='table table-sm table-striped'>
+  <table id="src-studies-table" class="table table-sm table-striped">
     {% bs4_colgroup '40,20,20,20' %}
     <thead>
       <tr>
@@ -24,21 +24,24 @@
               name="study_bioassay"
               value="{{ study.id }}"
               {% if not study.has_bioassay %}disabled{% endif %}
-              type="checkbox">
+              type="checkbox"
+            >
           </td>
           <td>
             <input
               name="study_epi"
               value="{{ study.id }}"
               {% if not study.has_epi %}disabled{% endif %}
-              type="checkbox">
+              type="checkbox"
+            >
           </td>
           <td>
             <input
               name="study_rob"
               value="{{ study.id }}"
               {% if not study.has_rob or not dst_metrics %}disabled{% endif %}
-              type="checkbox">
+              type="checkbox"
+            >
           </td>
         </tr>
       {% empty %}
@@ -60,27 +63,31 @@
 
   {% if src_metrics and dst_metrics %}
     <h3>{{ assessment.get_rob_name_display|title }} Mapping</h3>
-    <p class="text-muted">Optional; if any selected studies have been selected with {{ assessment.get_rob_name_display|lower }}, you must also map metrics from the source assessment to the destination assessment. Skip this section if no evaluations were selected. Any evaluations which are cloned will be be authored by you in the cloned assessment.</p>
+    <p class="text-muted">
+      Optional; if any selected studies have been selected with {{ assessment.get_rob_name_display|lower }}, you must also map metrics from the source
+      assessment to the destination assessment. Skip this section if no evaluations were selected. Any evaluations which are cloned will be be authored by you
+      in the cloned assessment.
+    </p>
     <div class="form-row">
       <div class="col-md-6">
         <div class="form-group">
           <div class="custom-control custom-checkbox">
-            <input type='checkbox' name='include_rob' id="include-rob" checked></i>
-          <label for="include-rob" >Include study evaluation</label>
+            <input type="checkbox" name="include_rob" id="include-rob" checked>
+            <label for="include-rob">Include study evaluation</label>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 hide-if-no-include-rob">
+        <div class="form-group">
+          <label>Where should these be copied to</label>
+          <select class="custom-select" name="copy_mode">
+            <option value="final-to-initial">Final Review in Source → Initial Review in Clone</option>
+            <option value="final-to-final">Final Review in Source → Final Review in Clone</option>
+          </select>
         </div>
       </div>
     </div>
-    <div class="col-md-6 hide-if-no-include-rob">
-      <div class="form-group">
-        <label>Where should these be copied to</label>
-        <select class="custom-select" name="copy_mode">
-          <option value="final-to-initial">Final Review in Source → Initial Review in Clone</option>
-          <option value="final-to-final">Final Review in Source → Final Review in Clone</option>
-        </select>
-      </div>
-    </div>
-    </div>
-    <table id="metric-map-table" class='table table-sm table-striped hide-if-no-include-rob'>
+    <table id="metric-map-table" class="table table-sm table-striped hide-if-no-include-rob">
       {% bs4_colgroup '50,50' %}
       <thead>
         <tr>
@@ -97,7 +104,7 @@
             </td>
             <td>
               <select class="custom-select" name="metric-{{ metric.id }}">
-                <option value="" selected >N/A (do not clone)</option>
+                <option value="" selected>N/A (do not clone)</option>
                 {% for src_metric in src_metrics %}
                   <option value="{{ src_metric.id }}">{{ src_metric.domain.name }}: {{ src_metric.name }}</option>
                 {% endfor %}
@@ -110,10 +117,10 @@
   {% endif %}
 
   {% csrf_token %}
-  <input name="src_assessment" value="{{ src_assessment.id }}" class='hidden' />
+  <input name="src_assessment" value="{{ src_assessment.id }}" class="hidden">
   <div class="form-group form-actions">
     <button
-      name='action'
+      name="action"
       value="clone"
       type="submit"
       class="btn btn-primary"
@@ -121,7 +128,9 @@
       hx-indicator="#spinner-clone"
       hx-target="#clone-result"
       hx-on::before-request="document.getElementById('clone-result').textContent = ''"
-    >Clone Selected Studies</button>
+    >
+      Clone Selected Studies
+    </button>
     <a class="btn btn-light" href="{% url 'study:list' assessment.pk %}">Cancel</a>
   </div>
   <div id="clone-result"></div>

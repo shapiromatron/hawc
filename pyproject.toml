@@ -148,11 +148,10 @@ line-length = 160
 indent-width = 2
 custom-blocks = ["actions", "alert"]
 exclude = [
-  "hawc/static/vendor",
   "hawc/apps/common/templates/common/crispy_layout_filter_field.html",
-  "hawc/apps/study/templates/study/fragments/clone_fetch.html",
-  "hawc/templates/bootstrap4/field.html",
+  "hawc/static/vendor",
   "hawc/templates/bootstrap4/field_create_new_button.html",
+  "hawc/templates/bootstrap4/field.html",
 ]
 
 # --- --- --- --- --- --- --- --- --- --- TEST --- --- --- --- --- --- --- --- --- ---
