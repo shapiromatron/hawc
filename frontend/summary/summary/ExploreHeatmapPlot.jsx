@@ -237,7 +237,7 @@ class ExploreHeatmapPlot {
 
             // if horizontal x axis tick rotation is 0, set wrap_text to cell width
             if (x_tick_rotate === 0) {
-                wrap_text = settings.cell_width;
+                wrap_text = this.cellDimensions.width;
             }
 
             for (let j = 0; j <= this.xs.length; j++) {
