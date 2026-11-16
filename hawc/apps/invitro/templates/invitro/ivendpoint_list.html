@@ -17,7 +17,9 @@
       {% for object in object_list %}
         <tr>
           <td>
-            <a href="{{ object.experiment.study.get_absolute_url }}">{{ object.experiment.study.short_citation }}</a>{% debug_badge object.experiment.study_id %}
+            <a
+              href="{{ object.experiment.study.get_absolute_url }}"
+            >{{ object.experiment.study.short_citation }}</a>{% debug_badge object.experiment.study_id %}
           </td>
           <td>
             <a href="{{ object.experiment.get_absolute_url }}">{{ object.experiment.name }}</a>{% debug_badge object.experiment_id %}
@@ -25,8 +27,8 @@
           <td>
             <a href="{{ object.chemical.get_absolute_url }}">{{ object.chemical.name }}</a>{% debug_badge object.chemical_id %}
           </td>
-          <td  class="previewModalParent">
-            <i data-id={{ object.pk }} class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
+          <td class="previewModalParent">
+            <i data-id="{{ object.pk }}" class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
             <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>{% debug_badge object.id %}
           </td>
           <td>
@@ -53,11 +55,10 @@
   </table>
 
   {% include "includes/paginator.html" with plural_object_name="endpoints" %}
-
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function() {
       window.app.startup("invitroStartup", function (app) {
         $("i.previewModalIcon").click(e => app.IVEndpoint.displayAsModal($(e.target).data("id")));

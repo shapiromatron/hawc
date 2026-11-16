@@ -5,7 +5,7 @@
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function() {
       const canEdit = {{ obj_perms.edit|lower }},
             id = {{ object.id }};

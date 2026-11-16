@@ -6,10 +6,13 @@
   {% crispy form %}
   <div id="detail_display" class="hidden"></div>
   <div id="detail_library" class="hidden">
-    <div id="detail-0" >
-      <p><i>The judgment field is not shown; only textual descriptions are recorded. If a custom judgment response is required, select "None" and then put the custom value in the description field.</i></p>
+    <div id="detail-0">
+      <p>
+        <i>The judgment field is not shown; only textual descriptions are recorded. If a custom judgment response is required, select "None" and then put the
+          custom value in the description field.</i>
+      </p>
     </div>
-    <div id="detail-1" >
+    <div id="detail-1">
       <p><b>Available judgments:</b></p>
       <ul>
         {% score_option 17 %}
@@ -20,7 +23,7 @@
         {% score_option 10 %}
       </ul>
     </div>
-    <div id="detail-2" >
+    <div id="detail-2">
       <p><b>Available judgments:</b></p>
       <ul>
         {% score_option 27 %}
@@ -31,7 +34,7 @@
         {% score_option 20 %}
       </ul>
     </div>
-    <div id="detail-3" >
+    <div id="detail-3">
       <p><b>Available judgments:</b></p>
       <ul>
         {% score_option 37 %}
@@ -42,7 +45,7 @@
         {% score_option 20 %}
       </ul>
     </div>
-    <div id="detail-4" >
+    <div id="detail-4">
       <p><b>Available judgments:</b></p>
       <ul>
         {% score_option 40 %}
@@ -78,7 +81,7 @@
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function() {
       $('#detail_display').insertAfter($('#div_id_responses')).removeClass('hidden');
       $('#id_name').focus();

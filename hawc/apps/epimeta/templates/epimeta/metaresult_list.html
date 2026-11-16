@@ -17,11 +17,10 @@
       {% for object in object_list %}
         <tr>
           <td>
-            <a
-              href="{{ object.protocol.study.get_absolute_url }}">{{ object.protocol.study.short_citation }}</a>{% debug_badge object.protocol.study_id %}
+            <a href="{{ object.protocol.study.get_absolute_url }}">{{ object.protocol.study.short_citation }}</a>{% debug_badge object.protocol.study_id %}
           </td>
           <td class="previewModalParent">
-            <i data-id={{ object.pk }} class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
+            <i data-id="{{ object.pk }}" class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
             <a href="{{ object.get_absolute_url }}">{{ object.label }}</a>{% debug_badge object.id %}
           </td>
           <td>
@@ -55,11 +54,10 @@
   </table>
 
   {% include "includes/paginator.html" with plural_object_name="results" %}
-
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function() {
       window.app.startup("epiMetaStartup", function (app) {
         $("i.previewModalIcon").click(e=>app.MetaResult.displayAsModal($(e.target).data("id")));

@@ -1,7 +1,6 @@
 {{ formset.non_form_errors|add_class:"alert alert-danger" }}
 {{ formset.non_field_errors|add_class:"alert alert-danger" }}
 <table class="table table-sm table-striped formset">
-
   <thead>
     {% for form in formset.forms %}
       {% if forloop.first %}
@@ -42,11 +41,9 @@
             {# add delete button only if it's a new form in formset #}
             {% if not form.instance.pk and showDeleteRow %}
               {% if forloop.first %}
-                <button id="remove-{{ form.prefix }}-row"
-                        type="button"
-                        title="Remove row"
-                        class="deleteForm btn btn-sm btn-danger my-1">
-                  <i class="fa fa-trash"></i>&nbsp;Remove row</button>
+                <button id="remove-{{ form.prefix }}-row" type="button" title="Remove row" class="deleteForm btn btn-sm btn-danger my-1">
+                  <i class="fa fa-trash"></i>&nbsp;Remove row
+                </button>
               {% endif %}
             {% endif %}
           </td>

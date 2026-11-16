@@ -8,7 +8,7 @@
 {% block extrajs %}
   {{ smart_tag_form.media }}
   {{ config|json_script:"config" }}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function() {
       window.app.startup("summaryFormsStartup", function(summaryForms){
         const config = window.app.getConfig();

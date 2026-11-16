@@ -1,13 +1,11 @@
 {% extends first_log.assessment|yesno:"assessment-rooted.html,crumbless.html" %}
 
 {% block content %}
-
   <h2>{{ first_log }}s</h2>
 
   <table class="table table-sm table-striped">
     {% bs4_colgroup '30,70' %}
     <tbody>
-
       <tr>
         <th>Item</th>
         <td>
@@ -30,7 +28,6 @@
         <th>Assessment</th>
         <td>{{ first_log.assessment }}</td>
       </tr>
-
     </tbody>
   </table>
 

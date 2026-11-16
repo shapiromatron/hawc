@@ -5,7 +5,7 @@
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function() {
       $('#id_title').on('keyup', function () {
         $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()));

@@ -1,10 +1,8 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
   <h2>Assessment endpoints</h2>
   <ul>
-
     {% if total_endpoints == 0 %}
       <li><i>No endpoints are available for this assessment.</i></li>
     {% endif %}
@@ -32,12 +30,11 @@
     {% if ivendpoints > 0 %}
       <li><a href="{% url 'invitro:endpoint_list' assessment.id %}">{{ ivendpoints }} <i>in vitro</i> endpoints</a></li>
     {% endif %}
-
   </ul>
 
   {% if total_endpoints > 0 %}
     <h3>Dataset overview dashboards</h3>
-    <table class='table table-sm table-striped'>
+    <table class="table table-sm table-striped">
       {% bs4_colgroup '40,20,20,20' %}
       {% bs4_thead 'Data type,Study summary,Outcome/Results,Outcome/Results + Doses' %}
       <tbody>
@@ -50,10 +47,9 @@
           </tr>
           {% if obj_perms.edit %}
             <tr>
-              <td>Bioassay (including unpublished HAWC data)
-                &nbsp;
-                <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash"
-                   aria-hidden="true"></i>
+              <td>
+                Bioassay (including unpublished HAWC data) &nbsp;
+                <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash" aria-hidden="true"></i>
               </td>
               <td><a href="{% url 'animal:heatmap_study_design' assessment.id %}?unpublished=true">Study summary</a></td>
               <td><a href="{% url 'animal:heatmap_endpoints' assessment.id %}?unpublished=true">Endpoints</a></td>
@@ -70,10 +66,9 @@
           </tr>
           {% if obj_perms.edit %}
             <tr>
-              <td>Epidemiology (including unpublished HAWC data)
-                &nbsp;
-                <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash"
-                   aria-hidden="true"></i>
+              <td>
+                Epidemiology (including unpublished HAWC data) &nbsp;
+                <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash" aria-hidden="true"></i>
               </td>
               <td><a href="{% url 'epi:heatmap_study_design' assessment.id %}?unpublished=true">Study summary</a></td>
               <td><a href="{% url 'epi:heatmap_results' assessment.id %}?unpublished=true">Results</a></td>
@@ -90,10 +85,9 @@
           </tr>
           {% if obj_perms.edit %}
             <tr>
-              <td>Ecology (including unpublished HAWC data)
-                &nbsp;
-                <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash"
-                   aria-hidden="true"></i>
+              <td>
+                Ecology (including unpublished HAWC data) &nbsp;
+                <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash" aria-hidden="true"></i>
               </td>
               <td><a href="{% url 'eco:heatmap_study_design' assessment.id %}?unpublished=true">Study summary</a></td>
               <td><a href="{% url 'eco:heatmap_results' assessment.id %}?unpublished=true">Results</a></td>
@@ -110,10 +104,9 @@
           </tr>
           {% if obj_perms.edit %}
             <tr>
-              <td>Epidemiology (including unpublished HAWC data)
-                &nbsp;
-                <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash"
-                   aria-hidden="true"></i>
+              <td>
+                Epidemiology (including unpublished HAWC data) &nbsp;
+                <i title="Include published & unpublished HAWC studies (not visible to the public)" class="fa fa-eye-slash" aria-hidden="true"></i>
               </td>
               <td><a href="{% url 'epiv2:heatmap-study-design' assessment.id %}?unpublished=true">Study design</a></td>
               <td><a href="{% url 'epiv2:heatmap-result' assessment.id %}?unpublished=true">Study results</a></td>
@@ -130,5 +123,4 @@
     <p><a href="{% url 'animal:endpoint_list_v2' assessment.id %}">WIP</a></p>
     <p><a href="{% url 'animal:endpoint_list_v2' assessment.id %}?unpublished=true">WIP (unpublished)</a></p>
   {% endif %}
-
 {% endblock content %}

@@ -19,14 +19,23 @@
     {% bs4_colgroup '20,80' %}
     <tbody>
       {% if object.description %}
-        <tr><th>Description</th><td>{{ object.description|safe }}</td></tr>
+        <tr>
+          <th>Description</th>
+          <td>{{ object.description|safe }}</td>
+        </tr>
       {% endif %}
-      <tr><th>Search type</th><td>{{ object.get_search_type_display }}</td></tr>
-      <tr><th>Search database</th><td>{{ object.get_source_display }}</td></tr>
+      <tr>
+        <th>Search type</th>
+        <td>{{ object.get_search_type_display }}</td>
+      </tr>
+      <tr>
+        <th>Search database</th>
+        <td>{{ object.get_source_display }}</td>
+      </tr>
       {% if object.search_string %}
         <tr>
           <th>{{ object.get_search_type_display }} text</th>
-          <td style="overflow-wrap: anywhere;">{{ object.search_string|safe }}</td>
+          <td style="overflow-wrap: anywhere">{{ object.search_string|safe }}</td>
         </tr>
       {% endif %}
       {% if obj_perms.edit and object.import_file %}
@@ -35,8 +44,14 @@
           <td><a href="{{ object.import_file.url }}">{{ object.import_file.name }}</a></td>
         </tr>
       {% endif %}
-      <tr><th>Created</th><td>{{ object.created }}</td></tr>
-      <tr><th>Last updated</th><td>{{ object.last_updated }}</td></tr>
+      <tr>
+        <th>Created</th>
+        <td>{{ object.created }}</td>
+      </tr>
+      <tr>
+        <th>Last updated</th>
+        <td>{{ object.last_updated }}</td>
+      </tr>
     </tbody>
   </table>
 
@@ -81,7 +96,7 @@
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function () {
       $('#run_search').on('click', function(e){
         $('#loading_div').show();

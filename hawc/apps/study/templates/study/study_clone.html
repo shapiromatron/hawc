@@ -6,7 +6,7 @@
     {% crispy form %}
     <div class="form-group form-actions">
       <button
-        name='action'
+        name="action"
         value="fetch"
         type="submit"
         class="btn btn-primary"
@@ -14,7 +14,9 @@
         hx-trigger="click"
         hx-indicator="#spinner-fetch"
         hx-target="#src-assessment-details"
-      >Fetch Studies</button>
+      >
+        Fetch Studies
+      </button>
       <a class="btn btn-light" href="{% url 'study:list' assessment.pk %}">Cancel</a>
       <i class="fa fa-spinner fa-spin htmx-indicator ml-3" id="spinner-fetch" aria-hidden="true"></i>
     </div>
@@ -23,7 +25,7 @@
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function(){
       // check/uncheck nested data types with deep clone.
       $('#src-assessment-details').on('click', '.study-selector', e => {

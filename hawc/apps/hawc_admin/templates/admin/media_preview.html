@@ -7,21 +7,19 @@
 {% block breadcrumbs %}
   <div class="breadcrumbs">
     <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
-    &rsaquo;
-    Media preview
+    &rsaquo; Media preview
   </div>
 {% endblock breadcrumbs %}
 
 {% block content %}
   <div class="container-fluid" id="main">
-
     <h2>Media preview:</h2>
     <p>Preview a user-uploaded file in the admin. <a href="{% url 'api:admin_dashboard-media' %}">Download list</a></p>
 
     <form>
       <div class="form-row">
         <label for="id_item">Specify an item</label>
-        <input id="id_item" name="item" value="{{ object_name }}" />
+        <input id="id_item" name="item" value="{{ object_name }}">
       </div>
       <button typ="submit">Submit</button>
     </form>
@@ -34,7 +32,7 @@
     {% endif %}
 
     {% if object_text %}
-        <pre style="white-space: pre-wrap;">{{ object_text }}</pre>
+      <pre style="white-space: pre-wrap">{{ object_text }}</pre>
     {% endif %}
 
     {% if object_html %}
@@ -42,32 +40,42 @@
     {% endif %}
 
     {% if object_image %}
-      <img alt="Media preview image" src="{{ object_uri }}" />
+      <img alt="Media preview image" src="{{ object_uri }}">
     {% endif %}
 
     {% if object_pdf %}
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"
-              integrity="sha512-Z8CqofpIcnJN80feS2uccz+pXWgZzeKxDsDNMD/dJ6997/LSRY+W4NmEt9acwR+Gt9OHN0kkI1CTianCwoqcjQ=="
-              crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js"
-              integrity="sha512-lHibs5XrZL9hXP3Dhr/d2xJgPy91f2mhVAasrSbMkbmoTSm2Kz8DuSWszBLUg31v+BM6tSiHSqT72xwjaNvl0g=="
-              crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js"
+        integrity="sha512-Z8CqofpIcnJN80feS2uccz+pXWgZzeKxDsDNMD/dJ6997/LSRY+W4NmEt9acwR+Gt9OHN0kkI1CTianCwoqcjQ=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+      ></script>
+      <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js"
+        integrity="sha512-lHibs5XrZL9hXP3Dhr/d2xJgPy91f2mhVAasrSbMkbmoTSm2Kz8DuSWszBLUg31v+BM6tSiHSqT72xwjaNvl0g=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+      ></script>
       <script src="{% static 'js/pdf.js' %}"></script>
       <script>
         document.addEventListener("DOMContentLoaded", function () {
           renderPdf("{{ object_uri }}");
         });
       </script>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf_viewer.min.css"
-            integrity="sha512-5cOE2Zw/F4SlIUHR/xLTyFLSAR0ezXsra+8azx47gJyQCilATjazEE2hLQmMY7xeAv/RxxZhs8w8zEL7dTsvnA=="
-            crossorigin="anonymous" referrerpolicy="no-referrer" />
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf_viewer.min.css"
+        integrity="sha512-5cOE2Zw/F4SlIUHR/xLTyFLSAR0ezXsra+8azx47gJyQCilATjazEE2hLQmMY7xeAv/RxxZhs8w8zEL7dTsvnA=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+      >
       <div>
         <button id="prev">Previous</button>
         <button id="next">Next</button>
         &nbsp; &nbsp;
         <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
       </div>
-      <canvas id="pdf-canvas" style='border: 4px solid black; margin-top: 1em;'></canvas>
+      <canvas id="pdf-canvas" style="border: 4px solid black; margin-top: 1em"></canvas>
     {% endif %}
   </div>
 {% endblock content %}

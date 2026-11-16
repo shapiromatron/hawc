@@ -15,11 +15,10 @@
           {% csrf_token %}
           <i class="fa fa-fw fa-exclamation-triangle"></i>&nbsp;Are you sure you want to delete?
           <div class="d-flex">
-            <button class="btn btn-sm btn-danger"
-                    hx-post="{{ object.get_delete_url }}"
-                    hx-swap="outerHTML swap:1s"><i class="fa fa-trash"></i>&nbsp;Delete</button>
-            <button class="btn btn-sm btn-light ml-2"
-                    hx-get="{{ object.get_absolute_url }}">Cancel</button>
+            <button class="btn btn-sm btn-danger" hx-post="{{ object.get_delete_url }}" hx-swap="outerHTML swap:1s">
+              <i class="fa fa-trash"></i>&nbsp;Delete
+            </button>
+            <button class="btn btn-sm btn-light ml-2" hx-get="{{ object.get_absolute_url }}">Cancel</button>
           </div>
         </form>
       {% endalert %}
@@ -28,12 +27,16 @@
     <td>
       <button
         class="btn btn-sm btn-primary"
-        hx-get="{{ object.get_edit_url }}">
-        <i class="fa fa-fw fa-edit"></i>&nbsp;Update</button>
+        hx-get="{{ object.get_edit_url }}"
+      >
+        <i class="fa fa-fw fa-edit"></i>&nbsp;Update
+      </button>
       <button
         class="btn btn-sm btn-danger"
-        hx-get="{{ object.get_delete_url }}">
-        <i class="fa fa-fw fa-trash"></i>&nbsp;Delete</button>
+        hx-get="{{ object.get_delete_url }}"
+      >
+        <i class="fa fa-fw fa-trash"></i>&nbsp;Delete
+      </button>
     </td>
   {% endif %}
 </tr>

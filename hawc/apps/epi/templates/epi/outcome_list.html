@@ -17,13 +17,15 @@
       {% for object in object_list %}
         <tr>
           <td>
-            <a href="{{ object.study_population.study.get_absolute_url }}">{{ object.study_population.study.short_citation }}</a>{% debug_badge object.study_population.study_id %}
+            <a
+              href="{{ object.study_population.study.get_absolute_url }}"
+            >{{ object.study_population.study.short_citation }}</a>{% debug_badge object.study_population.study_id %}
           </td>
           <td>
             <a href="{{ object.study_population.get_absolute_url }}">{{ object.study_population.name }}</a>{% debug_badge object.study_population_id %}
           </td>
           <td class="previewModalParent">
-            <i data-id={{ object.pk }} class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
+            <i data-id="{{ object.pk }}" class="float-right fa fa-external-link previewModalIcon mr-2" title="preview"></i>
             <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>{% debug_badge object.id %}
           </td>
           <td>
@@ -47,11 +49,10 @@
   </table>
 
   {% include "includes/paginator.html" with plural_object_name="outcomes" %}
-
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function() {
       window.app.startup("epiStartup", function (app) {
         $("i.previewModalIcon").click(e => app.Outcome.displayAsModal($(e.target).data("id")));

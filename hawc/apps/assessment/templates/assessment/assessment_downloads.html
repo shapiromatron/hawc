@@ -3,12 +3,13 @@
 {% block content %}
   <h2>{{ object }} downloads</h2>
 
-  <p class='form-text text-muted mb-3'>
-    All data in HAWC are exportable into Excel. Data-scientist and developer friendly exports are also available. Visualizations can be exported into SVG and PNG formats; download visuals on each visualization page. Please <a href="{% url 'contact' %}">contact us</a> for more information regarding export capabilities.
+  <p class="form-text text-muted mb-3">
+    All data in HAWC are exportable into Excel. Data-scientist and developer friendly exports are also available. Visualizations can be exported into SVG and
+    PNG formats; download visuals on each visualization page. Please <a href="{% url 'contact' %}">contact us</a> for more information regarding export
+    capabilities.
   </p>
 
   <div class="d-flex flex-column">
-
     {% if assessment.has_lit_data %}
       <h6 class="mb-1 font-size-regular font-weight-bold">Literature Review</h6>
       <div class="list-group my-2">

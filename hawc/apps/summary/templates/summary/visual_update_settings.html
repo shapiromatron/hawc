@@ -3,10 +3,9 @@
 {% load static %}
 
 {% block dp_content %}
-
   <div id="loading_div"></div>
 
-  <div id='data_pivot' style='display:none;'>
+  <div id="data_pivot" style="display: none">
     <ul class="nav nav-tabs">
       <li class="nav-item"><a class="nav-link active" href="#dp_data" data-toggle="tab">Data</a></li>
       <li class="nav-item"><a class="nav-link" href="#dp_settings" data-toggle="tab">Settings</a></li>
@@ -32,12 +31,11 @@
       <a href="{{ object.get_absolute_url }}" class="btn btn-light">Cancel</a>
     </div>
   </form>
-
 {% endblock dp_content %}
 
 {% block extrajs %}
   {{ config|json_script:"dp-config" }}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function() {
       $('#loading_div').html(window.app.HAWCUtils.loading())
       window.app.startup("dataPivotStartup", function(app){

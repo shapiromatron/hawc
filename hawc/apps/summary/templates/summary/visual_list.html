@@ -35,7 +35,7 @@
               {% endfor %}
             </div>
             {% if object.caption %}
-              <div class='text-muted' title="{{ object.caption|striptags|safe }}">{{ object.caption|striptags|truncatewords:20|safe }}</div>
+              <div class="text-muted" title="{{ object.caption|striptags|safe }}">{{ object.caption|striptags|truncatewords:20|safe }}</div>
             {% endif %}
           </td>
           <td>{{ object.get_visual_type_display }}</td>
@@ -49,7 +49,7 @@
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function(){
       window.app.HAWCUtils.tablesort(document.getElementById('mainTbl'));
     });

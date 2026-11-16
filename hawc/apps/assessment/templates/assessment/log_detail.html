@@ -1,7 +1,6 @@
 {% extends object.assessment|yesno:"assessment-rooted.html,crumbless.html" %}
 
 {% block content %}
-
   <div class="d-flex">
     <h2>{{ object }}</h2>
     {% if object.get_object_name %}
@@ -11,11 +10,9 @@
     {% endif %}
   </div>
 
-
   <table class="table table-sm table-striped">
     {% bs4_colgroup '30,70' %}
     <tbody>
-
       <tr>
         <th>Object</th>
         <td>
@@ -53,7 +50,6 @@
         <th>Timestamp</th>
         <td>{{ object.created }}</td>
       </tr>
-
     </tbody>
   </table>
   {% include 'assessment/_logs_note.html' %}

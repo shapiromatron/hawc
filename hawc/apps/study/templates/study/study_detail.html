@@ -64,7 +64,8 @@
 
   {% if not object.get_study_types and obj_perms.edit %}
     {% alert type="warning" %}
-      This study currently has no type(s) selected. If you'd like to perform data extraction or study evaluation for this study, you'll need to update the study and select at least one type (e.g., bioassay, epidemiology, etc.).
+      This study currently has no type(s) selected. If you'd like to perform data extraction or study evaluation for this study, you'll need to update the study
+      and select at least one type (e.g., bioassay, epidemiology, etc.).
     {% endalert %}
   {% endif %}
 
@@ -92,7 +93,6 @@
   {% endif %}
 
   {% if crud == "Read" %}
-
     {% if assessment.enable_risk_of_bias and object.riskofbiases.count > 0 %}
       <div class="d-flex">
         <h3>{{ assessment.get_rob_name_display }}</h3>
@@ -128,14 +128,12 @@
     {% if study.eco %}
       {% include "eco/fragments/_design_list.html" with object_list=object.eco_designs.all %}
     {% endif %}
-
   {% endif %}
-
 {% endblock content %}
 
 {% block extrajs %}
   {{ config|json_script:"config" }}
-  <script type="text/javascript">
+  <script>
     $(document).ready(() => {
       window.app.startup("studyStartup", function(app){
         const data = window.app.getConfig(),

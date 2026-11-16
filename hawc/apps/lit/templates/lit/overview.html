@@ -37,23 +37,23 @@
   <div class="row no-gutter">
     <div class="col-md-8">
       <div class="d-flex row justify-content-around">
-      {% comment %} row #1 {% endcomment %}
+        {% comment %} row #1 {% endcomment %}
         <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:ref_search' assessment.pk %}">
           <div>
             <p class="h3 m-0 mt-1">{{ overview.total_references }}</p>
             <p class="small">total references</p>
           </div>
           <div class="lit-icon">
-            <i class="fa fa-file-text icon-bg" style="color: white; background-color: #162e51;"></i>
+            <i class="fa fa-file-text icon-bg" style="color: white; background-color: #162e51"></i>
           </div>
         </a>
-        <a class="lit-review-box box-shadow with-icon clickable w-30"href="{% url 'lit:ref_list' assessment.pk %}">
+        <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:ref_list' assessment.pk %}">
           <div>
             <p class="h3 m-0 mt-1">{{ overview.total_tagged }}</p>
             <p class="small">tagged</p>
           </div>
           <div class="lit-icon">
-            <i class="fa fa-tags icon-bg" style="color: white; background-color: #162e51;"></i>
+            <i class="fa fa-tags icon-bg" style="color: white; background-color: #162e51"></i>
           </div>
         </a>
         <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:ref_search' assessment.pk %}?tags=untagged">
@@ -62,9 +62,9 @@
             <p class="small">untagged</p>
           </div>
           <div class="lit-icon">
-            <span class="fa-stack fa-1x icon-bg" style="background-color: #162e51;">
-              <i class="fa fa-tag fa-stack-1x" style="font-size: 0.65em;"></i>
-              <i class="fa fa-ban fa-stack-1x" style="font-size: 1.5em;"></i>
+            <span class="fa-stack fa-1x icon-bg" style="background-color: #162e51">
+              <i class="fa fa-tag fa-stack-1x" style="font-size: 0.65em"></i>
+              <i class="fa fa-ban fa-stack-1x" style="font-size: 1.5em"></i>
             </span>
           </div>
         </a>
@@ -82,10 +82,12 @@
           <a class="btn btn-primary" href="{% url 'lit:ref_visual' assessment.pk %}">Visualize</a>
         </div>
         {% if overview.total_references > 10 %}
-          <div class="lit-review-box box-shadow {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}w-30{% else %}w-60{% endif %}" style="height: 235px">
+          <div
+            class="lit-review-box box-shadow {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}w-30{% else %}w-60{% endif %}"
+            style="height: 235px"
+          >
             <p>References by year:</p>
-            <div id="referenceYearHistogram" style="height: 175px; width: 100%;">
-            </div>
+            <div id="referenceYearHistogram" style="height: 175px; width: 100%"></div>
           </div>
         {% endif %}
         {% if assessment.literature_settings.conflict_resolution and obj_perms.edit %}
@@ -104,11 +106,11 @@
                 <p class="small">with tag conflicts</p>
               </div>
               <div class="lit-icon">
-                <div class="icon-bg" style="background-color: #ff9393;">&#8800;</div>
+                <div class="icon-bg" style="background-color: #ff9393">&#8800;</div>
               </div>
             </a>
           </div>
-        {% comment %} row #3 {% endcomment %}
+          {% comment %} row #3 {% endcomment %}
           {% if overview.my_reviews > 0 %}
             <a class="lit-review-box box-shadow with-icon clickable w-30" href="{% url 'lit:user-tag-list' assessment.pk %}?anything_tagged_me=on">
               <div>
@@ -127,45 +129,56 @@
               {% if show_conflicts and show_tags %}
                 <div class="lit-review-box box-shadow w-30 d-flex flex-column justify-content-between py-0" style="padding-bottom: 8px">
                   <div class="d-flex row justify-content-between flex-grow-1">
-                    <a class="pl-3 pb-1 clickable w-50 box-shadow-minor border-right border-bottom" style="padding-top: 12px;"
-                       href="{{ workflow.tag_url }}">
+                    <a class="pl-3 pb-1 clickable w-50 box-shadow-minor border-right border-bottom" style="padding-top: 12px" href="{{ workflow.tag_url }}">
                       <div class="d-flex pl-0">
                         <p class="h3 m-0 text-black">{{ workflow.in_workflow }}</p>
-                        <div class="lit-icon px-2 text-black"><i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.1rem dotted #162e51; background-color: white; height: 25px; width: 25px; font-size: .9em; border-radius: 5px;"></i></div>
+                        <div class="lit-icon px-2 text-black">
+                          <i
+                            class="fa fa-tags icon-bg"
+                            style="color: #162e51; border: 0.1rem dotted #162e51; background-color: white; height: 25px; width: 25px; font-size: 0.9em; border-radius: 5px"
+                          ></i>
+                        </div>
                       </div>
                       <p class="m-0 small text-black">in workflow</p>
                     </a>
-                    <a class="pr-3 pb-1 clickable w-50 text-right box-shadow-minor border-left border-bottom" href="{{ workflow.tag_conflicts_url }}" style="padding-top: 12px;">
+                    <a
+                      class="pr-3 pb-1 clickable w-50 text-right box-shadow-minor border-left border-bottom"
+                      href="{{ workflow.tag_conflicts_url }}"
+                      style="padding-top: 12px"
+                    >
                       <div class="d-flex flex-row-reverse pl-0">
                         <p class="h3 m-0 text-black">{{ workflow.conflicts }}</p>
-                        <div class="lit-icon px-2 text-black"><div class="icon-bg" style="color: white; background-color: #ff9393; height: 25px; width: 25px; font-size: 1.2em; border-radius: 5px;">&#8800;</div></div>
+                        <div class="lit-icon px-2 text-black">
+                          <div class="icon-bg" style="color: white; background-color: #ff9393; height: 25px; width: 25px; font-size: 1.2em; border-radius: 5px">
+                            &#8800;
+                          </div>
+                        </div>
                       </div>
                       <p class="m-0 small text-black">with conflicts</p>
                     </a>
                   </div>
-                  <div class="text-center small" style="overflow: hidden; padding: 6px;">
+                  <div class="text-center small" style="overflow: hidden; padding: 6px">
                     <div class="d-flex flex-row justify-content-center">
-                      <p class="small mt-0 d-flex" style="overflow: hidden;">in&nbsp;<i class="text-truncate" title="{{ workflow }}">{{ workflow }}</i></p>
-                      <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem;">
+                      <p class="small mt-0 d-flex" style="overflow: hidden">in&nbsp;<i class="text-truncate" title="{{ workflow }}">{{ workflow }}</i></p>
+                      <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem">
                         {% include "common/helptext_popup.html" with text=workflow.get_description title=workflow %}
                       </i>
                     </div>
                   </div>
                 </div>
               {% elif show_tags %}
-                <a class="lit-review-box box-shadow with-icon clickable w-30"
-                   href="{{ workflow.tag_url }}">
+                <a class="lit-review-box box-shadow with-icon clickable w-30" href="{{ workflow.tag_url }}">
                   <div class="text-truncate">
                     <p class="h3 m-0 mt-1">{{ workflow.in_workflow }}</p>
                     <div class="d-flex flex-row">
                       <p class="small mt-0 d-flex flex-column text-truncate">in <i class="text-truncate" title="{{ workflow }}">{{ workflow }}</i></p>
-                      <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem;">
+                      <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem">
                         {% include "common/helptext_popup.html" with text=workflow.get_description title=workflow %}
                       </i>
                     </div>
                   </div>
                   <div class="lit-icon pl-2">
-                    <i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.15rem dotted #162e51; background-color: white;"></i>
+                    <i class="fa fa-tags icon-bg" style="color: #162e51; border: 0.15rem dotted #162e51; background-color: white"></i>
                   </div>
                 </a>
               {% elif show_conflicts %}
@@ -173,14 +186,16 @@
                   <div class="text-truncate">
                     <p class="h3 m-0 mt-1">{{ workflow.conflicts }}</p>
                     <div class="d-flex flex-row">
-                      <p class="small mt-0 d-flex flex-column text-truncate">with tag conflicts in <i class="text-truncate" title="{{ workflow }}">{{ workflow }}</i></p>
-                      <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem;">
+                      <p class="small mt-0 d-flex flex-column text-truncate">
+                        with tag conflicts in <i class="text-truncate" title="{{ workflow }}">{{ workflow }}</i>
+                      </p>
+                      <i class="align-self-end justify-content-end d-flex" style="margin-bottom: 0.2rem">
                         {% include "common/helptext_popup.html" with text=workflow.get_description title=workflow %}
                       </i>
                     </div>
                   </div>
                   <div class="lit-icon pl-2">
-                    <div class="icon-bg" style="background-color: #ff9393;">&#8800;</div>
+                    <div class="icon-bg" style="background-color: #ff9393">&#8800;</div>
                   </div>
                 </a>
               {% endif %}
@@ -191,7 +206,8 @@
     </div>
     <div class="col-md-4">
       <div class="lit-review-box box-shadow w-100">
-        <p class="h4 m-0">Tagtree
+        <p class="h4 m-0">
+          Tagtree
           {% include "common/helptext_popup.html" with text="Tag, plus count of references with this tag applied" %}
         </p>
         <div id="tags"></div>
@@ -202,14 +218,21 @@
   {% if obj_perms.edit and overview.conflicts %}
     {% alert classes="mt-3" dismiss=True %}
       <b>References have tag conflicts!</b><br>
-      <p class="m-0">{{ overview.conflicts }} reference{{ overview.conflicts|pluralize }} {{ overview.conflicts|pluralize:"is,are" }} ready for conflict resolution. <a href="{% url 'lit:tag-conflicts' assessment.pk %}">Resolve tag conflicts</a></p>
+      <p class="m-0">
+        {{ overview.conflicts }} reference{{ overview.conflicts|pluralize }} {{ overview.conflicts|pluralize:"is,are" }} ready for conflict resolution. <a
+          href="{% url 'lit:tag-conflicts' assessment.pk %}"
+        >Resolve tag conflicts</a>
+      </p>
     {% endalert %}
   {% endif %}
 
   {% if assessment.enable_data_extraction and need_import_count > 0 %}
     {% alert type="warning" classes="mt-3" dismiss=True %}
       <b>New references marked for inclusion.</b><br>
-      <p class="m-0">{{ need_import_count }} reference{{ need_import_count|pluralize }} marked for inclusion {{ need_import_count|pluralize:"is,are" }} ready for {{ assessment.get_rob_name_display|lower }} and/or data-extraction. <a href="{% url 'lit:ref_list_extract' assessment.pk %}">Prepare references</a></p>
+      <p class="m-0">
+        {{ need_import_count }} reference{{ need_import_count|pluralize }} marked for inclusion {{ need_import_count|pluralize:"is,are" }} ready for
+        {{ assessment.get_rob_name_display|lower }} and/or data-extraction. <a href="{% url 'lit:ref_list_extract' assessment.pk %}">Prepare references</a>
+      </p>
     {% endalert %}
   {% endif %}
 
@@ -218,12 +241,11 @@
 
   <h3>Manually added references</h3>
   <p>References manually added: {{ manual_import.references.count }}</p>
-
 {% endblock content %}
 
 {% block extrajs %}
   {{ config|json_script:"config" }}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function() {
       const config = window.app.getConfig();
       window.app.startup("litStartup", function(lit){

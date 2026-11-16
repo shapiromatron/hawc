@@ -5,8 +5,9 @@
 {% block content %}
   <div class="container-fluid">
     <h2>{{ action }} a new visualization</h2>
-    <p class="form-text text-muted">Multiple visualization types are available. Please select the type of visualization
-      you would like to create.</p>
+    <p class="form-text text-muted">
+      Multiple visualization types are available. Please select the type of visualization you would like to create.
+    </p>
     <div class="row">
       <div class="col-md-9">
         <select id="vis_selector" class="form-control col-md-12">
@@ -29,7 +30,7 @@
     </div>
     <div id="detail_display" class="row py-3"></div>
     <div id="detail_library" class="hidden">
-      <div id="detail-0" class="col-md-12" >
+      <div id="detail-0" class="col-md-12">
         <h3>Bioassay endpoint aggregation</h3>
         <div class="row">
           <img alt="Image of a bioassay endpoint aggregation figure" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/aggregation1.png' %}">
@@ -38,49 +39,44 @@
           <img alt="Image of a bioassay endpoint aggregation figure" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/aggregation2.png' %}">
         </div>
         <p class="form-text text-muted">
-          Select a subset of animal bioassay endpoints and present these using
-          an exposure-response array or forest-plot design.
-          Also creates a dose-response summary table of selected endpoints.
-          Interactive, clicking on any point shows dose-response details.
+          Select a subset of animal bioassay endpoints and present these using an exposure-response array or forest-plot design. Also creates a dose-response
+          summary table of selected endpoints. Interactive, clicking on any point shows dose-response details.
         </p>
       </div>
-      <div id="detail-1" class="col-md-12" >
+      <div id="detail-1" class="col-md-12">
         <h3>Bioassay endpoint crossview</h3>
         <div class="row">
           <img alt="Image of a bioassay endpoint crossview figure" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/crossview.png' %}">
         </div>
         <p class="form-text text-muted">
-          All animal bioassay dose-response datasets available in a HAWC assessment
-          for a given dose-unit, with response normalized to percent change from
-          control using spline interpolation. Interactive, clicking on any line
-          displays dose-response details and highlights metadata in red.
-          An endpoint can only plotted if it has dose-response data extracted, and
-          at least <strong>3-dose groups</strong> (an interpolation is created
-          between non-control dose-groups, and 2+ are required to create a line).
+          All animal bioassay dose-response datasets available in a HAWC assessment for a given dose-unit, with response normalized to percent change from
+          control using spline interpolation. Interactive, clicking on any line displays dose-response details and highlights metadata in red. An endpoint can
+          only plotted if it has dose-response data extracted, and at least <strong>3-dose groups</strong> (an interpolation is created between non-control
+          dose-groups, and 2+ are required to create a line).
         </p>
       </div>
-      <div id="detail-10" class="col-md-12" >
+      <div id="detail-10" class="col-md-12">
         <div class="row">
           {% if action == "Create" %}
             <div class="col-md-12">
               {% if assessment.has_animal_data %}
-                <input type="radio" id="10-bio" name="evidence-type" value="0" data-url="{% url url_copy assessment.id 10 0 %}" />
+                <input type="radio" id="10-bio" name="evidence-type" value="0" data-url="{% url url_copy assessment.id 10 0 %}">
                 <label for="10-bio">Animal Bioassay</label>
               {% endif %}
               {% if assessment.has_epi_data %}
-                <input type="radio" id="10-epi" name="evidence-type" value="1" data-url="{% url url_copy assessment.id 10 1 %}" />
+                <input type="radio" id="10-epi" name="evidence-type" value="1" data-url="{% url url_copy assessment.id 10 1 %}">
                 <label for="10-epi">Epidemiology</label>
               {% endif %}
               {% if assessment.has_epimeta_data %}
-                <input type="radio" id="10-epi-meta" name="evidence-type" value="4" data-url="{% url url_copy assessment.id 10 4 %}" />
+                <input type="radio" id="10-epi-meta" name="evidence-type" value="4" data-url="{% url url_copy assessment.id 10 4 %}">
                 <label for="10-epi-meta">Epidemiology meta-analysis/pooled analysis</label>
               {% endif %}
               {% if assessment.has_invitro_data %}
-                <input type="radio" id="10-invitro" name="evidence-type" value="2" data-url="{% url url_copy assessment.id 10 2 %}" />
+                <input type="radio" id="10-invitro" name="evidence-type" value="2" data-url="{% url url_copy assessment.id 10 2 %}">
                 <label for="10-invitro">In vitro</label>
               {% endif %}
               {% if assessment.has_eco_data %}
-                <input type="radio" id="10-eco" name="evidence-type" value="5" data-url="{% url url_copy assessment.id 10 5 %}" />
+                <input type="radio" id="10-eco" name="evidence-type" value="5" data-url="{% url url_copy assessment.id 10 5 %}">
                 <label for="10-eco">Ecological</label>
               {% endif %}
             </div>
@@ -95,11 +91,14 @@
             <img alt="Image of a data pivot barchart" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/data_pivot-barchart.png' %}">
           </div>
           <div class="col-md-12">
-            <p class='form-text text-muted'>Create a data-pivot based on querying information off the HAWC database for this assessment. Your settings will always be applied to this query; but it will contain the latest information from the database, so the visualization may change from time to time.</p>
+            <p class="form-text text-muted">
+              Create a data-pivot based on querying information off the HAWC database for this assessment. Your settings will always be applied to this query;
+              but it will contain the latest information from the database, so the visualization may change from time to time.
+            </p>
           </div>
         </div>
       </div>
-      <div id="detail-11" class="col-md-12" >
+      <div id="detail-11" class="col-md-12">
         <div class="row">
           <div class="col-md-12">
             <h3>Data Pivot (from file)</h3>
@@ -111,48 +110,61 @@
             <img alt="Image of a data pivot barchart" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/data_pivot-barchart.png' %}">
           </div>
           <div class="col-md-12">
-            <p class='form-text text-muted'>Create a data-pivot based on an uploaded Excel file of data. Your settings will always be applied to the uploaded dataset; therefore the visualization will be constant, but will not use the latest information from the HAWC database. However, if you <a href="{% url 'summary:dataset_interactivity' %}" onclick="return window.app.HAWCUtils.newWindowPopupLink(this);">design your dataset</a> appropriately, HAWC interactivity is available.</p>
+            <p class="form-text text-muted">
+              Create a data-pivot based on an uploaded Excel file of data. Your settings will always be applied to the uploaded dataset; therefore the
+              visualization will be constant, but will not use the latest information from the HAWC database. However, if you <a
+                href="{% url 'summary:dataset_interactivity' %}"
+                onclick="return window.app.HAWCUtils.newWindowPopupLink(this)"
+              >design your dataset</a> appropriately, HAWC interactivity is available.
+            </p>
           </div>
         </div>
       </div>
       <div id="detail-2" class="col-md-12">
         {% if action == "Create" %}
-          <input type="radio" id="2-bio" name="evidence-type" value="0" data-url="{% url url_copy assessment.id 2 0 %}" />
+          <input type="radio" id="2-bio" name="evidence-type" value="0" data-url="{% url url_copy assessment.id 2 0 %}">
           <label for="2-bio">Bioassay</label>
-          <input type="radio" id="2-epi" name="evidence-type" value="1" data-url="{% url url_copy assessment.id 2 1 %}" />
+          <input type="radio" id="2-epi" name="evidence-type" value="1" data-url="{% url url_copy assessment.id 2 1 %}">
           <label for="2-epi">Epidemiology</label>
-          <input type="radio" id="2-invitro" name="evidence-type" value="2" data-url="{% url url_copy assessment.id 2 2 %}" />
+          <input type="radio" id="2-invitro" name="evidence-type" value="2" data-url="{% url url_copy assessment.id 2 2 %}">
           <label for="2-invitro">In vitro</label>
         {% endif %}
         <h3>{{ assessment.get_rob_name_display }} heatmap</h3>
         <div class="row">
-          <img alt="Image of a study evaluation heatmap" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
-               src="{% static 'img/summary/rob-heatmap.svg' %}">
+          <img
+            alt="Image of a study evaluation heatmap"
+            class="col-md-10 col-md-offset-1"
+            style="border-right: 1px solid black; border-bottom: 1px solid black"
+            src="{% static 'img/summary/rob-heatmap.svg' %}"
+          >
         </div>
         <p class="form-text text-muted">
           A {{ assessment.get_rob_name_display|lower }} heatmap, showing a subset of selected studies and
-          {{ assessment.get_rob_name_display|lower }} findings for each metric. This plot is interactive; a user
-          can select and row, column, or cell, to view all details associated
-          with these cells.
+          {{ assessment.get_rob_name_display|lower }} findings for each metric. This plot is interactive; a user can select and row, column, or cell, to view
+          all details associated with these cells.
         </p>
       </div>
       <div id="detail-3" class="col-md-12">
         {% if action == "Create" %}
-          <input type="radio" id="3-bio" name="evidence-type" value="0" data-url="{% url url_copy assessment.id 3 0 %}" />
+          <input type="radio" id="3-bio" name="evidence-type" value="0" data-url="{% url url_copy assessment.id 3 0 %}">
           <label for="3-bio">Bioassay</label>
-          <input type="radio" id="3-epi" name="evidence-type" value="1" data-url="{% url url_copy assessment.id 3 1 %}" />
+          <input type="radio" id="3-epi" name="evidence-type" value="1" data-url="{% url url_copy assessment.id 3 1 %}">
           <label for="3-epi">Epidemiology</label>
-          <input type="radio" id="3-invitro" name="evidence-type" value="2" data-url="{% url url_copy assessment.id 3 2 %}" />
+          <input type="radio" id="3-invitro" name="evidence-type" value="2" data-url="{% url url_copy assessment.id 3 2 %}">
           <label for="3-invitro">In vitro</label>
         {% endif %}
         <h3>{{ assessment.get_rob_name_display }} barchart</h3>
         <div class="row">
-          <img alt="Image of a study evaluation barchart" class="col-md-10 col-md-offset-1" style="border-right: 1px solid black; border-bottom: 1px solid black;"
-               src="{% static 'img/summary/rob-barchart.svg' %}">
+          <img
+            alt="Image of a study evaluation barchart"
+            class="col-md-10 col-md-offset-1"
+            style="border-right: 1px solid black; border-bottom: 1px solid black"
+            src="{% static 'img/summary/rob-barchart.svg' %}"
+          >
         </div>
         <p class="form-text text-muted">
-          A {{ assessment.get_rob_name_display|lower }} stacked barchart, showing the percent of studies with
-          each judgment, for each metric, in a selectable subset of studies.
+          A {{ assessment.get_rob_name_display|lower }} stacked barchart, showing the percent of studies with each judgment, for each metric, in a selectable
+          subset of studies.
         </p>
       </div>
       <div id="detail-4" class="col-md-12">
@@ -185,19 +197,20 @@
           <img alt="Image of an exploratory data heatmap" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/exploratory-heatmap.png' %}">
         </div>
         <p class="form-text text-muted">
-          A heatmap with customizable axes, filters, and interactivity to explore a dataset visually. The data presented
-          in the heatmap can be content extracted for this assessment (bioassay or epidemiology), or you can upload a <a
-            href="{% url 'assessment:dataset_create' assessment.id %}">tabular dataset</a> for analysis.
+          A heatmap with customizable axes, filters, and interactivity to explore a dataset visually. The data presented in the heatmap can be content extracted
+          for this assessment (bioassay or epidemiology), or you can upload a <a href="{% url 'assessment:dataset_create' assessment.id %}">tabular dataset</a>
+          for analysis.
         </p>
       </div>
       <div id="detail-7" class="col-md-12">
         <h3>Plotly visual</h3>
         <div class="row">
-          <img alt="Image of a graph made using plotly" class="col-md-10 col-md-offset-1"
-               src="{% static 'img/summary/plotly-example.jpg' %}">
+          <img alt="Image of a graph made using plotly" class="col-md-10 col-md-offset-1" src="{% static 'img/summary/plotly-example.jpg' %}">
         </div>
         <p class="form-text text-muted">
-          Create a {% external_url "https://plotly.com/" "Plotly" %} visual using Python or R, and then export the visual and display to JSON ({% external_url "https://github.com/plotly/plotly.R/issues/590#issuecomment-220864613" "R" %} or {% external_url "https://plotly.github.io/plotly.py-docs/generated/plotly.io.to_json.html" "Python" %}). Currently under development 🧪.
+          Create a {% external_url "https://plotly.com/" "Plotly" %} visual using Python or R, and then export the visual and display to JSON
+          ({% external_url "https://github.com/plotly/plotly.R/issues/590#issuecomment-220864613" "R" %} or
+          {% external_url "https://plotly.github.io/plotly.py-docs/generated/plotly.io.to_json.html" "Python" %}). Currently under development 🧪.
         </p>
       </div>
       <div id="detail-8" class="col-md-12">
@@ -217,7 +230,7 @@
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function () {
       // change selector detail
       window.app.HAWCUtils.onSelectChangeShowDetail(

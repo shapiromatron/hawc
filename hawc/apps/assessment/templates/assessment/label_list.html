@@ -3,12 +3,13 @@
 {% block content %}
   <div class="d-flex mt-1">
     <h2 class="mb-0">Labels</h2>
-    <button class="btn btn-primary ml-2 ml-auto align-self-start flex-shrink-0"
-            hx-get="{% url 'assessment:label-htmx' assessment.pk 'create' %}"
-            hx-target=".create-row"
-            hx-swap="outerHTML">
-      <i class="fa fa-fw fa-save"></i>&nbsp;
-      Create label
+    <button
+      class="btn btn-primary ml-2 ml-auto align-self-start flex-shrink-0"
+      hx-get="{% url 'assessment:label-htmx' assessment.pk 'create' %}"
+      hx-target=".create-row"
+      hx-swap="outerHTML"
+    >
+      <i class="fa fa-fw fa-save"></i>&nbsp; Create label
     </button>
   </div>
   <div>
@@ -17,7 +18,7 @@
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     function linkLabel(e) {
       url = $(this).attr("label_url");
       window.location = url

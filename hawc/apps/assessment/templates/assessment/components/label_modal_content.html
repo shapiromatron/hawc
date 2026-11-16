@@ -16,10 +16,12 @@
 </div>
 <div class="modal-footer">
   <i class="fa fa-spinner fa-spin htmx-indicator" id="spinner" aria-hidden="true"></i>
-  <button class="btn btn-primary ml-2"
-          hx-target="#label-modal-content"
-          hx-indicator="#spinner"
-          hx-post="{% url 'assessment:label-item' content_type object_id %}?action=label">
+  <button
+    class="btn btn-primary ml-2"
+    hx-target="#label-modal-content"
+    hx-indicator="#spinner"
+    hx-post="{% url 'assessment:label-item' content_type object_id %}?action=label"
+  >
     Save
   </button>
   <button type="button" class="btn btn-light" data-dismiss="modal" aria-label="Close">

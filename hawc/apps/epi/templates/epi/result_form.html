@@ -17,7 +17,7 @@
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function() {
       var elFormset = $("#rFormset").insertBefore($('#rForm .form-actions')),
           isNew = "{{ crud|lower }}" == "create",

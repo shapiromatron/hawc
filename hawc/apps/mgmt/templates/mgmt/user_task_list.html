@@ -14,12 +14,14 @@
           </td>
           <td>
             {% if assess.num_tasks %}
-              <a href="{% url 'mgmt:task-list' assess.assessment.id %}?owner={{ user.id }}&status=990">{{ assess.num_tasks }} task{{ assess.num_tasks|pluralize }}</a>
+              <a href="{% url 'mgmt:task-list' assess.assessment.id %}?owner={{ user.id }}&status=990">{{ assess.num_tasks }}
+                task{{ assess.num_tasks|pluralize }}</a>
             {% else %}---{% endif %}
           </td>
           <td>
             {% if assess.num_robs %}
-              <a href="{% url 'riskofbias:rob_assignments' assess.assessment.id %}?assigned_user={{ user.id }}">{{ assess.num_robs }} evaluation{{ assess.num_robs|pluralize }}</a>
+              <a href="{% url 'riskofbias:rob_assignments' assess.assessment.id %}?assigned_user={{ user.id }}">{{ assess.num_robs }}
+                evaluation{{ assess.num_robs|pluralize }}</a>
             {% else %}---{% endif %}
           </td>
         </tr>

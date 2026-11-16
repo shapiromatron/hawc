@@ -1,7 +1,6 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
   {% if crud == "Read" %}
     <div class="d-flex">
       <h2>{{ object }}</h2>
@@ -38,17 +37,16 @@
       <table id="dr-tbl" class="table table-sm table-striped"></table>
     </div>
 
-    <div id='dr-plot-container' class="col-md-5">
+    <div id="dr-plot-container" class="col-md-5">
       <h3>Plot</h3>
-      <div id='bmd_ds_plot' class="mb-5"></div>
+      <div id="bmd_ds_plot" class="mb-5"></div>
       <div id="endpoint-general-notes"></div>
     </div>
   </div>
-
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(() => {
       const data = {{ object.get_json|safe }};
       window.app.startup("animalStartup", function(app){

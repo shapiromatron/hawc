@@ -3,14 +3,12 @@
 {% block content %}
   <h2>Modify published items</h2>
   <p class="text-muted">
-    Publish or unpublish multiple items for public visibility in the current assessment. If an item
-    is made published, then if your assessment is public, anyone in the general public can view it.
-    If the item is unpublished, but it cannot be browsed to by viewing content on the site.
-    In some cases, unpublished content may be visible with a direct link, but not always. Reviewers
-    are treated in a similar way as the general public with regards to published content.
+    Publish or unpublish multiple items for public visibility in the current assessment. If an item is made published, then if your assessment is public, anyone
+    in the general public can view it. If the item is unpublished, but it cannot be browsed to by viewing content on the site. In some cases, unpublished
+    content may be visible with a direct link, but not always. Reviewers are treated in a similar way as the general public with regards to published content.
   </p>
-  <div class='row'>
-    <div class='col-xl-4'>
+  <div class="row">
+    <div class="col-xl-4">
       <h3>Studies</h3>
       <p class="help-text">View all <a href="{% url 'study:list' assessment.id %}">studies</a>.</p>
       <table class="table table-sm table-bordered">
@@ -30,7 +28,7 @@
         </tbody>
       </table>
     </div>
-    <div class='col-xl-4'>
+    <div class="col-xl-4">
       <h3>Visuals</h3>
       <p class="help-text">View all <a href="{% url 'summary:visualization_list' assessment.id %}">visuals</a>.</p>
       <table class="table table-sm table-bordered">
@@ -55,7 +53,7 @@
         </tbody>
       </table>
     </div>
-    <div class='col-xl-4'>
+    <div class="col-xl-4">
       <h3>Summary tables</h3>
       <p class="help-text">View all <a href="{% url 'summary:tables_list' assessment.id %}">tables</a>.</p>
       <table class="table table-sm table-bordered">
@@ -111,7 +109,10 @@
         </tbody>
       </table>
       <h3>Labels</h3>
-      <p class="help-text">View all <a href="{% url 'assessment:manage-labels' assessment.id %}">labels</a>. All parent labels must be published in order to publish a child label. All children must be unpublished to unpublish a parent label.</p>
+      <p class="help-text">
+        View all <a href="{% url 'assessment:manage-labels' assessment.id %}">labels</a>. All parent labels must be published in order to publish a child label.
+        All children must be unpublished to unpublish a parent label.
+      </p>
       <table class="table table-sm table-bordered">
         {% bs4_colgroup '20,80' %}
         {% bs4_thead 'Published,Label' %}

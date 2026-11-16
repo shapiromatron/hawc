@@ -18,17 +18,19 @@
         <tr>
           <td>
             <a
-              href="{{ object.animal_group.experiment.study.get_absolute_url }}">{{ object.animal_group.experiment.study.short_citation }}</a>{% debug_badge object.animal_group.experiment.study_id %}
+              href="{{ object.animal_group.experiment.study.get_absolute_url }}"
+            >{{ object.animal_group.experiment.study.short_citation }}</a>{% debug_badge object.animal_group.experiment.study_id %}
           </td>
           <td>
             <a
-              href="{{ object.animal_group.experiment.get_absolute_url }}">{{ object.animal_group.experiment.name }}</a>{% debug_badge object.animal_group.experiment_id %}
+              href="{{ object.animal_group.experiment.get_absolute_url }}"
+            >{{ object.animal_group.experiment.name }}</a>{% debug_badge object.animal_group.experiment_id %}
           </td>
           <td>
             <a href="{{ object.animal_group.get_absolute_url }}">{{ object.animal_group.name }}</a>{% debug_badge object.animal_group_id %}
           </td>
           <td class="previewModalParent">
-            <i data-id={{ object.pk }} class="float-right fa fa-fixed fa-external-link previewModalIcon mr-2" title="preview"></i>
+            <i data-id="{{ object.pk }}" class="float-right fa fa-fixed fa-external-link previewModalIcon mr-2" title="preview"></i>
             <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>{% debug_badge object.id %}
           </td>
           <td>{{ object.units_name|default:"-" }}</td>
@@ -48,11 +50,10 @@
   </table>
 
   {% include "includes/paginator.html" with plural_object_name="endpoints" %}
-
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(() => {
       window.app.startup("animalStartup", function (animal) {
         $("i.previewModalIcon").click(e=>animal.Endpoint.displayAsModal($(e.target).data("id"), { complete: true }));
