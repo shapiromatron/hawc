@@ -1,4 +1,5 @@
 import pytest
+from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.urls import reverse
 from rest_framework.test import APIClient
@@ -34,15 +35,21 @@ def test_throttle(db_keys):
     factory = APIClient()
 
     throttled = False
-    for _i in range(10):
-        response = factory.post(
-            url, {"username": db_keys.pm_user.email, "password": "wrong-password"}
-        )
-        assert response.status_code in [400, 429]
-        if response.status_code == 429:
-            assert response.json() == {"detail": "Request was throttled."}
-            throttled = True
-            break
+    try:
+        for _i in range(10):
+            response = factory.post(
+                url, {"username": db_keys.pm_user.email, "password": "wrong-password"}
+            )
+            assert response.status_code in [400, 429]
+            if response.status_code == 429:
+                assert response.json() == {"detail": "Request was throttled."}
+                throttled = True
+                break
+    finally:
+        # throttle state is tracked in the process-wide cache (keyed by IP), not the
+        # database, so it isn't rolled back between tests; clear it so other tests
+        # hitting this endpoint aren't affected by the burst triggered here.
+        cache.clear()
 
     if not throttled:
         raise ImproperlyConfigured("Throttling was not enabled for burst authentication request")
