@@ -94,7 +94,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.HTTP_INFO("Migrating database schema..."))
         call_command("migrate", verbosity=0)
         self.stdout.write(self.style.HTTP_INFO("Flushing data..."))
-        call_command("flush", verbosity=0, interactive=False)
+        call_command("flush", verbosity=0, interactive=False, allow_cascade=True)
         self.stdout.write(self.style.HTTP_INFO("Loading database fixture..."))
         call_command("loaddata", str(settings.TEST_DB_FIXTURE), verbosity=0)
 

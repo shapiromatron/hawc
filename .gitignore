@@ -32,7 +32,7 @@ docs/site
 __pycache__/
 _build/
 build/
-coverage_html/
+htmlcov/
 dist/
 node_modules/
 private/
