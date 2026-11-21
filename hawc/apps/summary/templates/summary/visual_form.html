@@ -1,8 +1,8 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-  <div id="main" style="display:none;"></div>
-  <div id="formContainer" style="display:none;">
+  <div id="main" style="display: none"></div>
+  <div id="formContainer" style="display: none">
     {% crispy form %}
   </div>
   {% include "summary/_smartTagEditModal.html" with modal_id="smartTagModal" form=smart_tag_form only %}
@@ -11,7 +11,7 @@
 {% block extrajs %}
   {{ smart_tag_form.media }}
   {{ config|json_script:"config" }}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function() {
       window.app.startup("summaryFormsStartup", function(summaryForms){
         const config = window.app.getConfig(),

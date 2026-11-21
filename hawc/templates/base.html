@@ -3,42 +3,44 @@
 <!DOCTYPE html>
 <html class="js" lang="en-us">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="robots" content="NONE,NOARCHIVE" />
-    {% if session_expire_time %}<meta name="session_expire_time" content="{{ session_expire_time }}" />{% endif %}
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="NONE,NOARCHIVE">
+    {% if session_expire_time %}<meta name="session_expire_time" content="{{ session_expire_time }}">{% endif %}
     <title>{% block title %}Health Assessment Workspace Collaborative (HAWC){% endblock %}</title>
 
     {% if GTM_ID %}
       <!-- Google Tag Manager -->
-      <script>(function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != "dataLayer" ? "&l=" + l : ""; j.async = true; j.src = "//www.googletagmanager.com/gtm.js?id=" + i + dl; f.parentNode.insertBefore(j, f); })(window, document, "script", "dataLayer", "{{ GTM_ID }}");</script>
+      <script>
+        (function (w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" }); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != "dataLayer" ? "&l=" + l : ""; j.async = true; j.src = "//www.googletagmanager.com/gtm.js?id=" + i + dl; f.parentNode.insertBefore(j, f); })(window, document, "script", "dataLayer", "{{ GTM_ID }}");
+      </script>
       <!-- End Google Tag Manager -->
     {% endif %}
 
     {% if flavor == "EPA" %}
-      <link rel="icon" href="https://www.epa.gov/themes/epa_theme/images/favicon.ico" type="image/x-icon" />
+      <link rel="icon" href="https://www.epa.gov/themes/epa_theme/images/favicon.ico" type="image/x-icon">
     {% else %}
-      <link id="favicon" href="{% static 'img/favicon-256.png' %}" rel="shortcut icon" sizes="256x256" />
-      <link id="favicon" href="{% static 'img/favicon-128.png' %}" rel="shortcut icon" sizes="128x128" />
-      <link id="favicon" href="{% static 'img/favicon-64.png' %}" rel="shortcut icon" sizes="64x64" />
-      <link id="favicon" href="{% static 'img/favicon-32.png' %}" rel="shortcut icon" sizes="32x32" />
+      <link id="favicon" href="{% static 'img/favicon-256.png' %}" rel="shortcut icon" sizes="256x256">
+      <link id="favicon" href="{% static 'img/favicon-128.png' %}" rel="shortcut icon" sizes="128x128">
+      <link id="favicon" href="{% static 'img/favicon-64.png' %}" rel="shortcut icon" sizes="64x64">
+      <link id="favicon" href="{% static 'img/favicon-32.png' %}" rel="shortcut icon" sizes="32x32">
     {% endif %}
 
     {% block extrahead %}{% endblock %}
 
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/font-awesome/4.7.0/css/font-awesome.min.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/4.6.2/css/bootstrap.min.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/hawc.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/d3.css' %}" />
+    <link rel="stylesheet" href="{% static 'vendor/font-awesome/4.7.0/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/bootstrap/4.6.2/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/hawc.css' %}">
+    <link rel="stylesheet" href="{% static 'css/d3.css' %}">
     {% if flavor == "EPA" %}
-      <link rel="stylesheet" type="text/css" href="{% static 'vendor/uswds/3.1.0/css/styles.css' %}" />
-      <link rel="stylesheet" type="text/css" href="{% static 'css/epa/core/style.css' %}" />
-      <link rel="stylesheet" type="text/css" href="{% static 'css/epa-bootstrap.css' %}" />
-      <link rel="stylesheet" type="text/css" href="{% static 'css/epa-hawc.css' %}" />
-      <script type="text/javascript" src="{% static 'vendor/uswds/3.1.0/js/uswds-init.min.js' %}"></script>
+      <link rel="stylesheet" href="{% static 'vendor/uswds/3.1.0/css/styles.css' %}">
+      <link rel="stylesheet" href="{% static 'css/epa/core/style.css' %}">
+      <link rel="stylesheet" href="{% static 'css/epa-bootstrap.css' %}">
+      <link rel="stylesheet" href="{% static 'css/epa-hawc.css' %}">
+      <script src="{% static 'vendor/uswds/3.1.0/js/uswds-init.min.js' %}"></script>
     {% else %}
-      <link rel="stylesheet" type="text/css" href="{% static 'css/prime-hawc.css' %}" />
+      <link rel="stylesheet" href="{% static 'css/prime-hawc.css' %}">
     {% endif %}
     {% block extrastyle %}{% endblock %}
   </head>
@@ -46,8 +48,12 @@
   <body class="html">
     {% if GTM_ID %}
       <!-- Google Tag Manager -->
-      <noscript><iframe src="//www.googletagmanager.com/ns.html?id={{ GTM_ID }}" height="0" width="0"
-                        style="display:none;visibility:hidden"></iframe></noscript>
+      <noscript><iframe
+          src="//www.googletagmanager.com/ns.html?id={{ GTM_ID }}"
+          height="0"
+          width="0"
+          style="display: none; visibility: hidden"
+        ></iframe></noscript>
       <!-- End Google Tag Manager -->
     {% endif %}
 
@@ -64,7 +70,7 @@
     {% block content_row_outer %}
       <section class="main-content clearfix" id="main-content">
         {% include 'includes/navigation.html' %}
-        <div class="row no-gutters" style="min-height: 100vh;">
+        <div class="row no-gutters" style="min-height: 100vh">
           {% block sidebar_outer %}{% endblock %}
           <div class="col overflow-auto">
             <div id="main-content-container" class="container-fluid mt-2">
@@ -73,7 +79,7 @@
               {% include "includes/htmx_alert.html" %}
               {% block content_header %}{% endblock %}
               {% block content_outer %}
-                <div class="row overflow-auto mb-4" style="min-height: 48rem;">
+                <div class="row overflow-auto mb-4" style="min-height: 48rem">
                   <div class="col overflow-auto">
                     {% block content %}{% endblock %}
                   </div>
@@ -93,11 +99,11 @@
       {% endif %}
     {% endcache %}
     {% if flavor == "EPA" %}
-      <script type="text/javascript" src="{% static 'vendor/uswds/3.1.0/js/uswds.min.js' %}"></script>
+      <script src="{% static 'vendor/uswds/3.1.0/js/uswds.min.js' %}"></script>
     {% endif %}
-    <script type="text/javascript" src="{% static 'vendor/jquery/3.7.0/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'vendor/bootstrap/4.6.2/js/bootstrap.bundle.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'vendor/htmx/2.0.3/htmx.min.js' %}"></script>
+    <script src="{% static 'vendor/jquery/3.7.0/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/4.6.2/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'vendor/htmx/2.0.3/htmx.min.js' %}"></script>
     <script>
       document.cookie = `timezone=${Intl.DateTimeFormat().resolvedOptions().timeZone}; path=/`;
     </script>

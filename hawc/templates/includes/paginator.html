@@ -1,6 +1,5 @@
 {% if is_paginated %}
   <ul class="pagination justify-content-center mb-0">
-
     {% if page_obj.has_previous %}
       <li class="page-item">
         <a class="page-link" href="?{% url_replace page=page_obj.previous_page_number %}">&lt;&lt;</a>
@@ -29,12 +28,22 @@
       <label class="page-link font-weight-normal text-muted" for="quickPageSelector">Go to page:&nbsp;</label>
     </li>
     <li class="page-item">
-      <select id="quickPageSelector" class="form-control" onchange="location=this.value;">
+      <select
+        id="quickPageSelector"
+        class="form-control"
+        name="page"
+        hx-get="?{% url_replace page=None %}"
+        hx-trigger="change"
+        hx-target="body"
+        hx-push-url="true"
+      >
         {% for n in page_obj.paginator.page_range %}
-          <option {% if page_obj.number == n %}selected{% endif %} value="?{% url_replace page=n %}">{{ n }}</option>
+          <option {% if page_obj.number == n %}selected{% endif %} value="{{ n }}">{{ n }}</option>
         {% endfor %}
       </select>
     </li>
   </ul>
-  <p class="text-center">Showing {{ plural_object_name|default:"items" }} <b>{{ page_obj.start_index }}-{{ page_obj.end_index }}</b> of <b>{{ paginator.count }}</b></p>
+  <p class="text-center">
+    Showing {{ plural_object_name|default:"items" }} <b>{{ page_obj.start_index }}-{{ page_obj.end_index }}</b> of <b>{{ paginator.count }}</b>
+  </p>
 {% endif %}

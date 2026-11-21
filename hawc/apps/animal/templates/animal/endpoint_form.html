@@ -12,27 +12,21 @@
   {# extra stuff that JS will move to correct location #}
   <div id="extra" class="hidden">
     {# Endpoint Group formset #}
-    <div id='endpointGroups'>
+    <div id="endpointGroups">
       <legend>Dose-response data</legend>
       <p>
         <small class="form-text text-muted">
           <span class="d_only">
-            For dichotomous data, all fields are required. For p-values,
-            0.05 or &lt;0.05 should be coded as 0.05; 0.01 or &lt;0.01
-            should be coded as 0.01; 0.001 or &lt;0.001 should be coded
-            as 0.001.
+            For dichotomous data, all fields are required. For p-values, 0.05 or &lt;0.05 should be coded as 0.05; 0.01 or &lt;0.01 should be coded as 0.01;
+            0.001 or &lt;0.001 should be coded as 0.001.
           </span>
           <span class="c_only">
-            For continuous data, if variance is not-reported, ensure the
-            "variance type" input-field above is "NR", and then variance can be
-            left blank; otherwise it is required. If any data are not reported,
-            leave those fields blank. For p-values, 0.05 or &lt;0.05 should be coded
-            as 0.05; 0.01 or &lt;0.01 should be coded as 0.01; 0.001 or &lt;0.001
-            should be coded as 0.001.
+            For continuous data, if variance is not-reported, ensure the "variance type" input-field above is "NR", and then variance can be left blank;
+            otherwise it is required. If any data are not reported, leave those fields blank. For p-values, 0.05 or &lt;0.05 should be coded as 0.05; 0.01 or
+            &lt;0.01 should be coded as 0.01; 0.001 or &lt;0.001 should be coded as 0.001.
           </span>
           <span class="p_only">
-            For percent-difference data, lower CI (%) and upper CI (%) are optional.
-            If any data are not reported, leave those fields blank.
+            For percent-difference data, lower CI (%) and upper CI (%) are optional. If any data are not reported, leave those fields blank.
           </span>
         </small>
       </p>
@@ -52,10 +46,12 @@
                 <th id="varianceHeader" class="c_only">Variance (SD or SE)</th>
                 <th class="p_only">Low CI (%)</th>
                 <th class="p_only">High CI (%)</th>
-                <th>Significance<br>Level<br>(if significant)
+                <th>
+                  Significance<br>Level<br>(if significant)
                   {% include "common/helptext_popup.html" with text=formset.0.significance_level.help_text %}
                 </th>
-                <th>Treatment Related Effect
+                <th>
+                  Treatment Related Effect
                   {% include "common/helptext_popup.html" with text=formset.0.treatment_effect.help_text %}
                 </th>
               </tr>
@@ -87,7 +83,7 @@
         </div>
 
         <div class="col-md-4">
-          <div id='endpoint_plot'></div>
+          <div id="endpoint_plot"></div>
         </div>
       </div>
     </div>
@@ -114,7 +110,7 @@
       {% endif %}
     }
   </script>
-  <script type="text/javascript">
+  <script>
     $(document).ready(() => {
       const settings = window.app.getConfig();
       window.app.startup("animalStartup", function (animal) {

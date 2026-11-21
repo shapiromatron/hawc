@@ -3,10 +3,14 @@
 {% block content %}
   <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="tree-tab" data-toggle="tab" data-target="#tree" type="button" role="tab" aria-controls="tree" aria-selected="true">Tree</button>
+      <button class="nav-link active" id="tree-tab" data-toggle="tab" data-target="#tree" type="button" role="tab" aria-controls="tree" aria-selected="true">
+        Tree
+      </button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="venn-tab" data-toggle="tab" data-target="#venn" type="button" role="tab" aria-controls="venn" aria-selected="false">Venn</button>
+      <button class="nav-link" id="venn-tab" data-toggle="tab" data-target="#venn" type="button" role="tab" aria-controls="venn" aria-selected="false">
+        Venn
+      </button>
     </li>
   </ul>
   <div class="tab-content mt-2" id="myTabContent">
@@ -14,7 +18,7 @@
       <div id="main"></div>
     </div>
     <div class="tab-pane fade" id="venn" role="tabpanel" aria-labelledby="venn-tab">
-      <div id="venn-container" hx-swap="outerHTML" hx-target="#venn-container" hx-select="#venn-container" >
+      <div id="venn-container" hx-swap="outerHTML" hx-target="#venn-container" hx-select="#venn-container">
         <div id="venn-main"></div>
         {% crispy venn.form %}
         {{ venn.app|json_script:"venn-config" }}

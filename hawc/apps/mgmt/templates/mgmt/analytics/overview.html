@@ -31,7 +31,7 @@
       {% include 'common/analytics_plot.html' with title='References by publication year' plot=refs_by_year_plot %}
       {% include 'common/analytics_plot.html' with title='References and tags plot' plot=refs_tags_plot %}
     </div>
-    <hr/>
+    <hr>
   </div>
 
   <div class="my-4">
@@ -61,7 +61,7 @@
         </div>
       </div>
     </div>
-    <hr/>
+    <hr>
   </div>
 
   <div class="my-4">
@@ -76,7 +76,7 @@
       {% analytics_card value=n_endpoints_ehv label='endpoints using Environmental Health Vocabulary (EHV)' %}
       {% analytics_card value=n_dose_res_groups label='total dose response groups' %}
     </div>
-    <hr/>
+    <hr>
   </div>
 
   <div class="my-4">
@@ -92,7 +92,7 @@
         {% include 'common/analytics_plot.html' with title='Study Population by design' plot=epiv2_study_design_plot %}
       {% endif %}
     </div>
-    <hr/>
+    <hr>
   </div>
 
   <div class="my-4">
@@ -104,7 +104,7 @@
       {% analytics_card value=rob_counts.n_scores label='judgments' %}
       {% include 'common/analytics_plot.html' with title='Judgement by type' plot=rob_score_plot %}
     </div>
-    <hr/>
+    <hr>
   </div>
 
   <div class="my-4">
@@ -115,6 +115,6 @@
       {% include 'common/analytics_plot.html' with title='Visuals by type' plot=summary_count.visual_barchart %}
       {% include 'common/analytics_plot.html' with title='Tables by type' plot=summary_count.table_barchart %}
     </div>
-    <hr/>
+    <hr>
   </div>
 {% endblock content %}

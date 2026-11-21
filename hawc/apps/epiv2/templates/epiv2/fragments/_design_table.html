@@ -16,9 +16,10 @@
       {% if countries %}
         <tr>
           <th>Countries</th>
-          <td>{% for object in object.countries.all %}
-            <span class="badge badge-secondary">{{ object.name }}</span>
-          {% endfor %}
+          <td>
+            {% for object in object.countries.all %}
+              <span class="badge badge-secondary">{{ object.name }}</span>
+            {% endfor %}
           </td>
         </tr>
       {% endif %}

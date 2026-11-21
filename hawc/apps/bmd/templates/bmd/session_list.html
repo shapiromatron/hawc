@@ -10,7 +10,7 @@
       {% endactions %}
     {% endif %}
   </div>
-  <table class='table table-sm table-striped'>
+  <table class="table table-sm table-striped">
     {% bs4_thead 'Session,BMDS Version,Dose Units,Created,Last Updated' %}
     <tbody>
       {% for o in object_list %}
@@ -25,7 +25,7 @@
         </tr>
       {% empty %}
         <tr>
-          <td colspan="5"><p class='form-text text-muted'><i>No BMD modeling sessions available.</i></p></td>
+          <td colspan="5"><p class="form-text text-muted"><i>No BMD modeling sessions available.</i></p></td>
         </tr>
       {% endfor %}
     </tbody>

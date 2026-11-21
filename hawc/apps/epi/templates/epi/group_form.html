@@ -6,19 +6,18 @@
   </div>
 
   <div id="gnFormset">
-    <legend>Numerical group descriptions
-      <button class="float-right btn btn-primary"
-              title="Add new group"
-              type="button"
-              id="addFormToFormset">+</button>
+    <legend>
+      Numerical group descriptions
+      <button class="float-right btn btn-primary" title="Add new group" type="button" id="addFormToFormset">+</button>
     </legend>
     {% if crud == "Create" %}
       <p class="form-text text-muted">
-        Groups are associated with each group-collection. The total number of individuals in all groups should equal the total number of individuals in the group-collection.
+        Groups are associated with each group-collection. The total number of individuals in all groups should equal the total number of individuals in the
+        group-collection.
       </p>
       <p class="form-text text-muted">
-
-        For cohort-base studies groups, may be exposure measurements. For example, exposure-group descriptions may be "quartile 1 (≤1.0)", "quartile 2 (1.0-2.5)", etc.
+        For cohort-base studies groups, may be exposure measurements. For example, exposure-group descriptions may be "quartile 1 (≤1.0)", "quartile 2
+        (1.0-2.5)", etc.
       </p>
       <p class="form-text text-muted">
         For case-controls studies, groups may be based on "cases" and "controls", or similar descriptions of different comparable sample populations.
@@ -29,7 +28,7 @@
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function() {
       new window.app.DynamicFormset($('#gnFormset'), 'form', {oneFormRequired: true});
       $('#gnFormset').insertBefore($('#gForm .form-actions'));

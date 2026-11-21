@@ -6,7 +6,8 @@
     <tbody>
       {% for object in object_list %}
         <tr>
-          <td><a href="{{ object.get_absolute_url }}">{{ object.name }}</a>
+          <td>
+            <a href="{{ object.get_absolute_url }}">{{ object.name }}</a>
             {% if obj_perms.edit and not object.published %}
               <i class="fa fa-eye-slash" title="Unpublished (not be visible to the public)" aria-hidden="true"></i>
             {% endif %}

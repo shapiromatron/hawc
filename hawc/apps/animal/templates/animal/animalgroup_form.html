@@ -1,7 +1,6 @@
 {% extends 'assessment-rooted.html' %}
 
 {% block content %}
-
   <!-- Animal-Group Form -->
   {% crispy form %}
 
@@ -12,12 +11,10 @@
       {% include 'animal/_doseGroupsDiv.html' %}
     </div>
   {% endif %}
-
-
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function() {
       var animalGroupSetup = function(){
         var onSpeciesChange = function(e, onStrainUpdateComplete){

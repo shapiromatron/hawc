@@ -51,29 +51,35 @@
 <div class="modal-footer">
   <i class="fa fa-spinner fa-spin htmx-indicator" id="spinner" aria-hidden="true"></i>
   {% if action == 'preview' and object_list %}
-    <button class="btn btn-primary ml-2"
-            hx-target="#bulk-merge-modal-content"
-            hx-indicator="#spinner"
-            hx-post="{% url 'lit:bulk-merge-conflicts' assessment.pk %}?action=merge"
-            hx-encoding="multipart/form-data">
+    <button
+      class="btn btn-primary ml-2"
+      hx-target="#bulk-merge-modal-content"
+      hx-indicator="#spinner"
+      hx-post="{% url 'lit:bulk-merge-conflicts' assessment.pk %}?action=merge"
+      hx-encoding="multipart/form-data"
+    >
       Bulk Merge Tags
     </button>
   {% endif %}
   {% if action == 'preview' or merged == True %}
-    <button class="btn btn-secondary ml-2"
-            hx-target="#bulk-merge-modal-content"
-            hx-indicator="#spinner"
-            hx-post="{% url 'lit:bulk-merge-conflicts' assessment.pk %}?action=index"
-            hx-encoding="multipart/form-data">
+    <button
+      class="btn btn-secondary ml-2"
+      hx-target="#bulk-merge-modal-content"
+      hx-indicator="#spinner"
+      hx-post="{% url 'lit:bulk-merge-conflicts' assessment.pk %}?action=index"
+      hx-encoding="multipart/form-data"
+    >
       Change Tag Selection
     </button>
   {% endif %}
   {% if action == 'index' %}
-    <button class="btn btn-primary ml-2"
-            hx-target="#bulk-merge-modal-content"
-            hx-indicator="#spinner"
-            hx-post="{% url 'lit:bulk-merge-conflicts' assessment.pk %}?action=preview"
-            hx-encoding="multipart/form-data">
+    <button
+      class="btn btn-primary ml-2"
+      hx-target="#bulk-merge-modal-content"
+      hx-indicator="#spinner"
+      hx-post="{% url 'lit:bulk-merge-conflicts' assessment.pk %}?action=preview"
+      hx-encoding="multipart/form-data"
+    >
       Preview Bulk Merge
     </button>
   {% endif %}

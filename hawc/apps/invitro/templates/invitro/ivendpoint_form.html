@@ -6,11 +6,9 @@
   </div>
 
   <div id="egFormset">
-    <legend>Endpoint groups
-      <button class="float-right btn btn-primary"
-              title="Add new group"
-              type="button"
-              id="addFormToFormset">+</button>
+    <legend>
+      Endpoint groups
+      <button class="float-right btn btn-primary" title="Add new group" type="button" id="addFormToFormset">+</button>
     </legend>
     {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
   </div>
@@ -22,8 +20,7 @@
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
-
+  <script>
     var OELwidget = function($el){
       this.$el = $el;
       this.startup();

@@ -29,12 +29,11 @@
     {% include "udf/fragments/table.html" with object=udf_content %}
     <div id="animalGroupTableMain"></div>
   {% endif %}
-
 {% endblock content %}
 
 {% block extrajs %}
   {{ config|json_script:"config" }}
-  <script type="text/javascript">
+  <script>
     $(document).ready(() => {
       window.app.startup("animalStartup", function(animal){
         const data = window.app.getConfig();

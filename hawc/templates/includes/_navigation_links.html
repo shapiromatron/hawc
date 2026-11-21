@@ -12,8 +12,7 @@
   {% endif %}
   {% if user.is_authenticated %}
     <li class="nav-item dropdown">
-      <a href="#" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown"
-         aria-haspopup="true" aria-expanded="false">Your HAWC</a>
+      <a href="#" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Your HAWC</a>
       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
         <a class="dropdown-item" href="{% url 'portal' %}">Portal</a>
         <a class="dropdown-item" href="{% url 'user:settings' %}">Profile</a>

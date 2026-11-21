@@ -5,7 +5,7 @@
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function(){
       $('#id_name').on('select2:close', function(){
         $('#id_slug').val(window.app.HAWCUtils.urlify($(this).val()||"",128));

@@ -6,7 +6,8 @@
   </div>
 
   <div id="ctFormset">
-    <legend>Central Tendencies
+    <legend>
+      Central Tendencies
       <button class="float-right btn btn-primary" title="Add new central tendency" type="button" id="addFormToFormset">+</button>
     </legend>
     {% include "hawc/_formset_table_template.html" with showDeleteRow=True %}
@@ -14,7 +15,7 @@
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function() {
       new window.app.DynamicFormset($('#ctFormset'), 'form', { oneFormRequired: true });
       $('#ctFormset').insertBefore($('.form-actions'));

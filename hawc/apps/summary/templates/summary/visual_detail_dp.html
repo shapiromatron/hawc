@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block extrahead %}
-  <meta name="hawc-viz-type" data-viz-type="data pivot" />
+  <meta name="hawc-viz-type" data-viz-type="data pivot">
 {% endblock extrahead %}
 
 {% block content %}
@@ -31,7 +31,7 @@
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function() {
       $('#loading_div').html(window.app.HAWCUtils.loading())
       window.app.startup("dataPivotStartup", function(app){

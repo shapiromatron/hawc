@@ -95,6 +95,8 @@ class HawcLogoutView(LogoutView):
 
 class HawcPasswordResetView(PasswordResetView):
     form_class = forms.HAWCPasswordResetForm
+    email_template_name = "registration/password_reset_email.txt"
+    html_email_template_name = "registration/password_reset_email.html"
     success_url = reverse_lazy("user:reset_password_sent")
 
 

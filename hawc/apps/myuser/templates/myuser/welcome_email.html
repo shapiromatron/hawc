@@ -6,17 +6,15 @@ An account has just been created for you on <a href="https://{{ domain }}">{{ do
   You have been assigned to the following projects:
   <ul>
     {% for assessment in assessments %}
-      <li><a href="https://{{ domain }}{{ assessment.get_absolute_url }}" >{{ assessment }}</a></li>
+      <li><a href="https://{{ domain }}{{ assessment.get_absolute_url }}">{{ assessment }}</a></li>
     {% endfor %}
   </ul>
 {% endif %}
 
-In order to use the site, you'll need to set your password. To set your
-password, click this link:<br>
-<a href="https://{{ domain }}/user/password-reset/" >Set your password</a><br><br>
+In order to use the site, you'll need to set your password. To set your password, click this link:<br>
+<a href="https://{{ domain }}/user/password-reset/">Set your password</a><br><br>
 
-Enter your email address, {{ user.email }}, and a link will be emailed to you to
-reset your password.<br><br>
+Enter your email address, {{ user.email }}, and a link will be emailed to you to reset your password.<br><br>
 
 Thank you for joining HAWC; we hope this is helpful in your health assessment!<br><br>
 

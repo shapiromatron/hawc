@@ -4,7 +4,7 @@
 
 {% block content %}
   <h2>Search</h2>
-  <div id='response' style='display:none' >
+  <div id="response" style="display: none">
     {% crispy form %}
     <div id="results">
       {% if form.is_bound %}
@@ -65,7 +65,7 @@
                       {% include "assessment/fragments/label.html" with label=labeled_item.label anchor_tag=True %}
                     {% endfor %}
                     {% if object.caption %}
-                      <div class='text-muted' title="{{ object.caption|striptags|safe }}">{{ object.caption|striptags|truncatewords:20|safe }}</div>
+                      <div class="text-muted" title="{{ object.caption|striptags|safe }}">{{ object.caption|striptags|truncatewords:20|safe }}</div>
                     {% endif %}
                   </td>
                   <td>
@@ -94,7 +94,7 @@
 {% endblock content %}
 
 {% block extrajs %}
-  <script type="text/javascript">
+  <script>
     $(document).ready(function () {
       const public_div = $('#div_id_public'),
             internal_div = $('#div_id_internal');

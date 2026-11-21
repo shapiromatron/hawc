@@ -23,11 +23,12 @@
       </tr>
       <tr>
         <th>HERO website</th>
-        <td>{% if object.HERO_access %}
-          <a href="https://heronet.epa.gov">https://heronet.epa.gov</a> (authentication required)
-        {% else %}
-          <a href="https://hero.epa.gov">https://hero.epa.gov</a> (no authentication required)
-        {% endif %}
+        <td>
+          {% if object.HERO_access %}
+            <a href="https://heronet.epa.gov">https://heronet.epa.gov</a> (authentication required)
+          {% else %}
+            <a href="https://hero.epa.gov">https://hero.epa.gov</a> (no authentication required)
+          {% endif %}
           <p class="text-muted mb-0">Website used to redirect HERO links.</p>
         </td>
       </tr>
@@ -41,7 +42,7 @@
       <tr>
         <th>Show debug information</th>
         <td>
-          <span id="id_debug"></span><br/>
+          <span id="id_debug"></span><br>
           <p class="text-muted mb-0">Show additional debug information on views throughout HAWC.</p>
         </td>
       </tr>
