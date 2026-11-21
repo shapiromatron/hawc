@@ -28,9 +28,17 @@
       <label class="page-link font-weight-normal text-muted" for="quickPageSelector">Go to page:&nbsp;</label>
     </li>
     <li class="page-item">
-      <select id="quickPageSelector" class="form-control" onchange="location=this.value">
+      <select
+        id="quickPageSelector"
+        class="form-control"
+        name="page"
+        hx-get="?{% url_replace page=None %}"
+        hx-trigger="change"
+        hx-target="body"
+        hx-push-url="true"
+      >
         {% for n in page_obj.paginator.page_range %}
-          <option {% if page_obj.number == n %}selected{% endif %} value="?{% url_replace page=n %}">{{ n }}</option>
+          <option {% if page_obj.number == n %}selected{% endif %} value="{{ n }}">{{ n }}</option>
         {% endfor %}
       </select>
     </li>
