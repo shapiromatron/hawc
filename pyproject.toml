@@ -165,6 +165,7 @@ testpaths = [
 
 [tool.coverage.run]
 omit = [
+  "**/uv/python/**",
   "**/migrations/**",
   "./build/",
   "./client/hawc_client/interactive.py",

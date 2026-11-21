@@ -1,19 +1,24 @@
+import pytest
+
 from hawc.apps.lit.constants import DOI_EXACT, ReferenceDatabase
 
 
-def test_doi_regex():
-    # valid
-    assert DOI_EXACT.fullmatch("10.1234/1234") is not None
-    assert DOI_EXACT.fullmatch("10.1234/fff") is not None
-    assert DOI_EXACT.fullmatch("10.1234/fff-1234/-._;()") is not None
-
-    # invalid
-    assert DOI_EXACT.fullmatch(" 10.1234/fff") is None
-    assert DOI_EXACT.fullmatch("10.1234/fff ") is None
-    assert DOI_EXACT.fullmatch("10.abcd") is None
-    assert DOI_EXACT.fullmatch("10.abcd/") is None
-    assert DOI_EXACT.fullmatch("10.abcd/fff") is None
-    assert DOI_EXACT.fullmatch("doi:10.1234/fff") is None
+@pytest.mark.parametrize(
+    ("doi", "valid"),
+    [
+        ("10.1234/1234", True),
+        ("10.1234/fff", True),
+        ("10.1234/fff-1234/-._;()", True),
+        (" 10.1234/fff", False),
+        ("10.1234/fff ", False),
+        ("10.abcd", False),
+        ("10.abcd/", False),
+        ("10.abcd/fff", False),
+        ("doi:10.1234/fff", False),
+    ],
+)
+def test_doi_exact(doi, valid):
+    assert (DOI_EXACT.fullmatch(doi) is not None) is valid
 
 
 class TestReferenceDatabase:
