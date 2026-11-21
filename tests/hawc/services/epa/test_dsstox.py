@@ -20,6 +20,12 @@ class TestDssSubstance:
         substance = DssSubstance.create_from_dtxsid("DTXSID7020970")
         assert substance.dtxsid == "DTXSID7020970"
 
+    def test_missing_api_key(self, settings):
+        settings.IS_TESTING = False
+        settings.EPA_COMPTOX_API_KEY = None
+        with pytest.raises(ValueError, match="Missing API key"):
+            DssSubstance.create_from_dtxsid("DTXSID7020970")
+
     def test_fake(self, settings):
         settings.HAWC_FEATURES.FAKE_IMPORTS = True
         substance = DssSubstance.create_from_dtxsid("DTXSID123456")

@@ -1,6 +1,12 @@
+import logging
+import xml.etree.ElementTree as ET
+
 import pytest
 
 from hawc.services.nih import pubmed
+
+COUNT_XML = "<eSearchResult><Count>1</Count></eSearchResult>"
+IDS_XML = "<eSearchResult><IdList><Id>5</Id></IdList></eSearchResult>"
 
 
 @pytest.mark.vcr
@@ -52,6 +58,37 @@ class TestPubMedSearch:
         assert search.id_count == 6
         results_list = [19008416, 18927361, 18787170, 18487186, 18239126, 18239125]
         assert set(search.ids) == set(results_list)
+
+    def test_get_payload(self, settings):
+        settings.PUBMED_API_KEY = "key"
+        payload = pubmed.PubMedSearch(term="foo").get_payload(extra={"retmax": 1})
+        assert payload == {
+            "db": "pubmed",
+            "retmode": "xml",
+            "term": "foo",
+            "api_key": "key",
+            "retmax": 1,
+        }
+
+    def test_count_failure(self, build_response, build_session):
+        search = pubmed.PubMedSearch(term="foo")
+        search.session = build_session(build_response(status_code=500))
+        with pytest.raises(Exception, match="Search query failed"):
+            search.get_ids_count()
+
+    def test_ids_without_count(self, build_response, build_session):
+        # the count is requested automatically if not already known
+        search = pubmed.PubMedSearch(term="foo")
+        search.session = build_session(build_response(COUNT_XML), build_response(IDS_XML))
+        assert search.get_ids() == [5]
+        assert search.request_count == 1
+
+    def test_ids_failure(self, build_response, build_session):
+        search = pubmed.PubMedSearch(term="foo")
+        search.id_count = 1
+        search.session = build_session(build_response(status_code=500))
+        with pytest.raises(Exception, match="Search query failed"):
+            search.get_ids()
 
 
 @pytest.mark.vcr
@@ -212,3 +249,91 @@ class TestPubMedFetch:
         ]
         actual = [item["authors_short"] for item in fetch.content]
         assert expected == actual
+
+    def test_get_payload(self, settings):
+        settings.PUBMED_API_KEY = "key"
+        payload = pubmed.PubMedFetch(id_list=[1]).get_payload(extra={"retmax": 1})
+        assert payload == {"retmax": 1, "db": "pubmed", "retmode": "xml", "api_key": "key"}
+
+    def test_unexpected_response(self, build_response, build_session):
+        fetch = pubmed.PubMedFetch(id_list=[1])
+        fetch.session = build_session(build_response("<Other/>"))
+        with pytest.raises(ValueError, match="Unexpected response type: Other"):
+            fetch.get_content()
+
+    def test_failure(self, caplog, build_response, build_session):
+        caplog.set_level(logging.ERROR, logger=pubmed.logger.name)
+        fetch = pubmed.PubMedFetch(id_list=[1])
+        fetch.session = build_session(build_response("error", status_code=500))
+        with pytest.raises(Exception, match="Fetch query failed"):
+            fetch.get_content()
+        assert "Pubmed failure: 500 -> error" in caplog.text
+
+    def test_unparsable_items_skipped(self, build_response, build_session):
+        fetch = pubmed.PubMedFetch(id_list=[1])
+        fetch.session = build_session(
+            build_response("<PubmedArticleSet><Other/></PubmedArticleSet>")
+        )
+        assert fetch.get_content() == []
+
+
+def tree(xml: str) -> ET.Element:
+    return ET.fromstring(xml)
+
+
+class TestPubMedParser:
+    def test_parse_unknown_tag(self, caplog):
+        caplog.set_level(logging.WARNING, logger=pubmed.logger.name)
+        assert pubmed.PubMedParser.parse(tree("<Other/>")) is None
+        assert "Cannot parse response: Other" in caplog.text
+
+    def test_authors_info(self, caplog):
+        caplog.set_level(logging.ERROR, logger=pubmed.logger.name)
+        article = tree(
+            """<PubmedArticle><MedlineCitation><Article><AuthorList>
+            <Author><LastName>Smith</LastName><Initials>J</Initials></Author>
+            <Author><CollectiveName>The Group</CollectiveName></Author>
+            <Author><Other/></Author>
+            </AuthorList></Article></MedlineCitation></PubmedArticle>"""
+        )
+        info = pubmed.PubMedParser._authors_info(article, pubmed.PubMedParser.ARTICLE)
+        assert info["authors"] == ["Smith J", "The Group"]
+        assert "Error parsing authors" in caplog.text
+
+    def test_authors_info_unknown_dtype(self, caplog):
+        caplog.set_level(logging.ERROR, logger=pubmed.logger.name)
+        info = pubmed.PubMedParser._authors_info(tree("<PubmedArticle/>"), 99)
+        assert info == {"authors": [], "authors_short": ""}
+        assert "Unknown dtype: 99" in caplog.text
+
+    @pytest.mark.parametrize(
+        ("pub_date", "expected"),
+        [
+            ("<Year>2008</Year>", 2008),
+            ("<MedlineDate>2008 Dec-2009 Jan</MedlineDate>", 2008),
+            ("<MedlineDate>Winter</MedlineDate>", None),
+            ("", None),
+        ],
+    )
+    def test_get_year_article(self, pub_date, expected):
+        article = tree(
+            f"""<PubmedArticle><MedlineCitation><Article><Journal><JournalIssue>
+            <PubDate>{pub_date}</PubDate></JournalIssue></Journal></Article>
+            </MedlineCitation></PubmedArticle>"""
+        )
+        assert pubmed.PubMedParser._get_year(article, pubmed.PubMedParser.ARTICLE) == expected
+
+    @pytest.mark.parametrize(
+        ("pub_date", "expected"),
+        [("<Year>2015</Year>", 2015), ("", None)],
+    )
+    def test_get_year_book(self, pub_date, expected):
+        book = tree(
+            f"<PubmedBookArticle><BookDocument><Book><PubDate>{pub_date}</PubDate></Book>"
+            "</BookDocument></PubmedBookArticle>"
+        )
+        assert pubmed.PubMedParser._get_year(book, pubmed.PubMedParser.BOOK) == expected
+
+    def test_get_year_unknown_dtype(self):
+        with pytest.raises(ValueError, match="Unreachable code"):
+            pubmed.PubMedParser._get_year(tree("<PubmedArticle/>"), 99)
