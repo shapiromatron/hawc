@@ -51,15 +51,11 @@ def build_dataset(endpoint: Endpoint, dose_units_id: int, n_drop_doses: int = 0)
     return Cls(**kwargs)
 
 
-def build_session(dataset) -> pybmds.Session:
-    return pybmds.Session(dataset=dataset)
-
-
 def build_and_execute(endpoint, inputs):
     dataset = build_dataset(
         endpoint, inputs.settings.dose_units_id, inputs.settings.num_doses_dropped
     )
-    session = build_session(dataset)
+    session = pybmds.Session(dataset=dataset)
     inputs.add_models(session)
     session.execute_and_recommend()
     return session
