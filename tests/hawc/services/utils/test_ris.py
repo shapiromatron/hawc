@@ -1,6 +1,12 @@
+import io
+import logging
 from pathlib import Path
 
-from hawc.services.utils.ris import RisImporter
+import pytest
+from rispy.parser import ParseError
+
+from hawc.services.utils import ris
+from hawc.services.utils.ris import ReferenceParser, RisImporter
 
 DATA_ROOT = Path(__file__).parent / "data"
 
@@ -88,3 +94,179 @@ def test_accession_nuber():
     # accession numbers
     ans = {ref["id"]: ref["accession_number"] for ref in refs}
     assert ans == {1: "1234", 2: "abc", 3: "123", 4: None, 5: None}
+
+
+class TestRisImporter:
+    def test_file_object(self):
+        f = io.StringIO("TY  - JOUR\nID  - 1\nER  - \n")
+        importer = RisImporter(f)
+        assert importer.raw_references == [{"type_of_reference": "JOUR", "id": "1"}]
+        assert len(importer.references) == 1
+        assert f.closed
+
+    def test_file_readable(self):
+        f = io.StringIO("TY  - JOUR\nID  - 1\nER  - \n")
+        assert RisImporter.file_readable(f) is True
+        assert f.tell() == 0
+
+    def test_file_not_readable(self, monkeypatch, caplog):
+        def raise_error(*args, **kwargs):
+            raise ParseError("bad file")
+
+        monkeypatch.setattr(ris.rispy, "load", raise_error)
+        caplog.set_level(logging.WARNING, logger=ris.logger.name)
+        assert RisImporter.file_readable(io.StringIO("")) is False
+        assert "bad file" in caplog.text
+
+
+class TestReferenceParser:
+    @pytest.mark.parametrize(
+        ("value", "expected"),
+        [(None, None), ("", None), (" ", None), ("2020", 2020)],
+    )
+    def test_get_year(self, value, expected):
+        assert ReferenceParser({}).get_year(value) == expected
+
+    def test_get_year_invalid(self):
+        with pytest.raises(ValueError, match="Invalid year: abc"):
+            ReferenceParser({}).get_year("abc")
+
+    def test_get_doi(self):
+        assert ReferenceParser({"doi": "10.1/abc"}).get_doi(None) == "10.1/abc"
+        with pytest.raises(ValueError, match="DOI too long"):
+            ReferenceParser({"doi": "1" * 257}).get_doi(None)
+
+    def test_get_id(self):
+        assert ReferenceParser({}).get_id("123") == 123
+
+    @pytest.mark.parametrize("value", [None, "abc"])
+    def test_get_id_invalid(self, value):
+        with pytest.raises(ValueError, match=ReferenceParser.ID_MISSING):
+            ReferenceParser({}).get_id(value)
+
+    @pytest.mark.parametrize(
+        ("content", "expected"),
+        [
+            ({"pubmed_id": 123}, 123),
+            ({"pubmed_id": "PMID: 456 (url/789)"}, 456),
+            ({"pubmed_id": "none"}, None),
+            ({"name_of_database": "NLM", "accession_number": "789"}, 789),
+            ({"name_of_database": "NLM", "accession_number": "abc"}, None),
+            ({"name_of_database": "Embase", "accession_number": "789"}, None),
+            ({}, None),
+        ],
+    )
+    def test_get_pmid(self, content, expected):
+        assert ReferenceParser(content)._get_pmid() == expected
+
+    @pytest.mark.parametrize(
+        ("number", "expected"),
+        [
+            (" 123 ", "123"),
+            ("https://foo.com/?eid=2-s2.0-123&partnerID=1", "2-s2.0-123"),
+            ("eid=", "eid="),
+            ("null", None),
+            (None, None),
+        ],
+    )
+    def test_get_accession_number(self, number, expected):
+        content = {} if number is None else {"accession_number": number}
+        assert ReferenceParser(content)._get_accession_number() == expected
+
+    @pytest.mark.parametrize(
+        ("content", "expected"),
+        [
+            (
+                {
+                    "type_of_reference": "JOUR",
+                    "secondary_title": "J Tox",
+                    "year": "2020",
+                    "volume": "1",
+                    "note": "2",
+                    "start_page": "3",
+                },
+                "J Tox 2020; 1 (2):3",
+            ),
+            ({"type_of_reference": "JFULL", "year": "2020"}, " 2020"),
+            (
+                {
+                    "type_of_reference": "BOOK",
+                    "secondary_title": "Book",
+                    "year": "2020",
+                    "start_page": "3",
+                    "issn": "1234",
+                },
+                "Book. 2020. Pages 3. 1234",
+            ),
+            ({"type_of_reference": "CHAP"}, ""),
+            ({"type_of_reference": "SER", "alternate_title1": "Series"}, "Series"),
+            ({"type_of_reference": "SER"}, ""),
+            ({"type_of_reference": "CONF", "short_title": "Conf"}, "Conf"),
+            ({"type_of_reference": "CONF"}, ""),
+        ],
+    )
+    def test_get_citation(self, content, expected):
+        assert ReferenceParser(content)._get_citation() == expected
+
+    def test_get_citation_unknown_type(self, caplog):
+        caplog.set_level(logging.WARNING, logger=ris.logger.name)
+        parser = ReferenceParser({"type_of_reference": "XXXX", "id": 5})
+        assert parser._get_citation() == ReferenceParser.PLACEHOLDER_TEXT
+        assert 'Unknown type: "XXXX", id="5"' in caplog.text
+
+    def test_clean_authors(self):
+        parser = ReferenceParser(
+            {"authors": ["Smith, J"], "first_authors": ["Doe, A"], "title": "ignored"}
+        )
+        parser._clean_authors()
+        assert parser._authors == ["Smith J", "Doe A"]
+
+    def test_clean_authors_none(self):
+        parser = ReferenceParser({})
+        parser._clean_authors()
+        assert parser._authors == []
+
+    @pytest.mark.parametrize(
+        ("content", "expected"),
+        [
+            ({}, ""),
+            ({"authors": ["Smith, J"]}, "Smith J"),
+            ({"authors": ["Smith, J", "Doe, A"]}, "Smith J and Doe A"),
+            ({"authors": ["Smith, J", "Doe, A", "Roe, B"]}, "Smith J, Doe A, and Roe B"),
+            (
+                {"authors": ["Smith, J"], "first_authors": ["Doe, A", "Roe, B", "Poe, C"]},
+                "Smith J et al.",
+            ),
+        ],
+    )
+    def test_get_authors_short(self, content, expected):
+        assert ReferenceParser(content)._get_authors_short() == expected
+
+    def test_format(self):
+        content = {
+            "type_of_reference": "SER",
+            "alternate_title1": "Series",
+            "authors": ["Smith, J"],
+            "id": "7",
+            "year": "2020",
+            "doi": "10.1/abc",
+            "pubmed_id": 12,
+        }
+        parser = ReferenceParser(content)
+        formatted = parser.format()
+        assert formatted is parser.format()
+        assert formatted == {
+            "authors_short": "Smith J",
+            "authors": ["Smith J"],
+            "title": ReferenceParser.PLACEHOLDER_TEXT,
+            "year": 2020,
+            "citation": "Series",
+            "abstract": "",
+            "PMID": 12,
+            "doi": "10.1/abc",
+            "accession_number": None,
+            "accession_db": None,
+            "reference_type": "SER",
+            "id": 7,
+            "json": content,
+        }

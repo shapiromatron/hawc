@@ -1,4 +1,9 @@
-from hawc.services.utils.doi import try_get_doi
+import json
+
+import pytest
+from model_bakery import baker
+
+from hawc.services.utils.doi import get_doi_from_identifier, try_get_doi
 
 
 class TestTryGetDoi:
@@ -50,3 +55,21 @@ class TestTryGetDoi:
         assert try_get_doi("1") is None
         assert try_get_doi("trust me, im a doi") is None
         assert try_get_doi("10.123/141414141") is None
+
+
+@pytest.mark.parametrize(
+    ("content", "expected"),
+    [
+        ("not json", None),
+        (
+            json.dumps({"doi": "10.1016/J.ANIFEEDSCI.2017.11.014"}),
+            "10.1016/j.anifeedsci.2017.11.014",
+        ),
+        (json.dumps({"json": {"doi": "10.1037/arc0000014"}}), "10.1037/arc0000014"),
+        (json.dumps({"json": {}}), None),
+        (json.dumps({}), None),
+    ],
+)
+def test_get_doi_from_identifier(content, expected):
+    identifier = baker.prepare("lit.Identifiers", content=content)
+    assert get_doi_from_identifier(identifier) == expected

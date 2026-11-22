@@ -57,7 +57,7 @@ class PubMedSearch:
         ids = []
         payload = self.get_payload(extra=dict(retmax=self.retmax))
         if self.id_count is None:
-            self._get_id_count()
+            self.get_ids_count()
         rng = list(range(0, self.id_count, self.retmax))
         self.request_count = len(rng)
         for retstart in rng:

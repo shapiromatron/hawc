@@ -1,6 +1,19 @@
-import pytest
+import logging
 
+import pytest
+import requests
+from django.conf import settings as django_settings
+
+from hawc.services.epa import hero
 from hawc.services.epa.hero import HEROFetch
+
+
+@pytest.mark.parametrize(
+    ("content", "expected"),
+    [({"a": "null"}, None), ({"a": "value"}, "value"), ({}, None)],
+)
+def test_parse_pseudo_json(content, expected):
+    assert hero._parse_pseudo_json(content, "a") == expected
 
 
 class TestHEROFetch:
@@ -109,3 +122,45 @@ class TestHEROFetch:
         fetch.get_content()
         assert [d["HEROID"] for d in fetch.content] == ids
         settings.HAWC_FEATURES.FAKE_IMPORTS = False
+
+    def test_init_settings_override(self):
+        assert HEROFetch(id_list=[1]).settings["recordsperpage"] == 100
+        assert HEROFetch(id_list=[1], recordsperpage=5).settings["recordsperpage"] == 5
+
+    def test_new_hero_missing_api_key(self, monkeypatch, settings):
+        monkeypatch.setattr(django_settings.HAWC_FEATURES, "ENABLE_NEW_HERO", True)
+        settings.HERO_API_KEY = None
+        with pytest.raises(ValueError, match="HERO_API_KEY required"):
+            HEROFetch(id_list=[1]).get_content()
+
+    @pytest.mark.parametrize("new_hero", [False, True])
+    @pytest.mark.parametrize(
+        ("outcome", "message"),
+        [
+            ({"status_code": 500}, "HERO request failure"),
+            (requests.exceptions.Timeout(), "HERO request timeout"),
+            ({"text": "not json"}, "HERO request failure"),
+        ],
+    )
+    def test_request_failures(
+        self,
+        monkeypatch,
+        settings,
+        caplog,
+        build_response,
+        build_session,
+        new_hero,
+        outcome,
+        message,
+    ):
+        monkeypatch.setattr(django_settings.HAWC_FEATURES, "ENABLE_NEW_HERO", new_hero)
+        settings.HERO_API_KEY = "key"
+        if isinstance(outcome, dict):
+            outcome = build_response(**outcome)
+        session = build_session(outcome)
+        monkeypatch.setattr(hero, "get_session", lambda headers=None: session)
+        fetch = HEROFetch(id_list=[1, 2])
+        caplog.set_level(logging.INFO, logger=hero.logger.name)
+        result = fetch.get_content()
+        assert result == {"success": [], "failure": [1, 2]}
+        assert message in caplog.text
