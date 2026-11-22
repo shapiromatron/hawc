@@ -5,9 +5,10 @@ from typing import NamedTuple
 
 import pytest
 import requests
+from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
-from django.db import connections
+from django.db import connection, connections
 from requests.adapters import HTTPAdapter
 
 CI = os.environ.get("CI") == "true"
@@ -102,6 +103,23 @@ def vcr_config():
 def vcr_cassette_dir(request):
     cassette_dir = Path(__file__).parent.absolute() / "data/cassettes" / request.module.__name__
     return str(cassette_dir)
+
+
+@pytest.fixture
+def materialized_views(db):
+    """Create materialized views in the test transaction; call the returned function to refresh."""
+    views = list(apps.get_app_config("materialized").get_models())
+    for view in views:
+        view.drop()
+        view.create()
+
+    def refresh():
+        with connection.cursor() as cursor:
+            for view in views:
+                # non-concurrent refresh; concurrent refresh doesn't see rows from this transaction
+                cursor.execute(f"REFRESH MATERIALIZED VIEW {view._meta.db_table}")
+
+    return refresh
 
 
 @pytest.fixture
