@@ -102,7 +102,9 @@ class BaseTable(BaseCellGroup):
                 raise ValueError(f"{cell} outside of table bounds") from err
 
     def sort_cells(self):
-        self.cells.sort(key=lambda cell: cell.row_order_index(self.columns))
+        # compute columns up front; the property reads self.cells, which is empty during a sort
+        columns = self.columns
+        self.cells.sort(key=lambda cell: cell.row_order_index(columns))
 
     def to_docx(
         self,

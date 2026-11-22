@@ -21,3 +21,8 @@ def documents_equal(doc1, doc2):
             if not equal:
                 return False
     return True
+
+
+def block_text(block) -> list[str]:
+    """Return the paragraph texts of a docx body or cell."""
+    return [p.text.strip() for p in block.paragraphs]
